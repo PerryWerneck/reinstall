@@ -11,13 +11,6 @@
 
 	setlocale( LC_ALL, "" );
 
-	Logger::redirect(nullptr,true);
-
-	Udjat::load("./test.xml");
-
-
-
-	Module::unload();
 
 	return 0;
 }

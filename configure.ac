@@ -84,6 +84,9 @@ case "$host" in
 		OSNAME="windows"
 
 		CFLAGS="$CFLAGS -D_WIN32_WINNT=0x0600"
+		DLL_LDFLAGS="-shared -Wl,--output-def,\$(@D)/\$(LIBNAME).def"
+		DLLEXT=".dll"
+		AC_SUBST(SONAME,"reinstall.dll")
 
 		app_win32_revision=$(date +%y.%m.%d.%H)
 		AC_SUBST(WIN32_VERSION,$app_win32_revision)
@@ -111,15 +114,20 @@ dnl		AC_CONFIG_FILES(win/userinfo.nsi)
 
  	*)
 		EXEEXT=""
+		DLLEXT=".so"
 		OSNAME="linux"
 		CFLAGS="$CFLAGS -pthread"
 		LDFLAGS="$LDFLAGS -pthread"
+		DLL_LDFLAGS="-shared -Wl,-soname,\$(@F)"
+		AC_SUBST(SONAME,libreinstall.so.$app_vrs_major.$app_vrs_minor)
 
 esac
 
 AC_SUBST(LIBS)
 AC_SUBST(EXEEXT)
+AC_SUBST(DLLEXT)
 AC_SUBST(OSNAME)
+AC_SUBST(DLL_LDFLAGS)
 
 dnl ---------------------------------------------------------------------------
 dnl Check for other programs
@@ -191,12 +199,12 @@ AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 
 dnl ---------------------------------------------------------------------------
-dnl Check for pugixml (Not necessary since libudjat does all xml related actions)
+dnl Check for pugixml
 dnl ---------------------------------------------------------------------------
 
-dnl PKG_CHECK_MODULES(PUGIXML, pugixml, AC_DEFINE(HAVE_PUGIXML,[],[Do we have PUGIXML?]),AC_MSG_ERROR(pugixml is required))
-dnl AC_SUBST(PUGIXML_LIBS)
-dnl AC_SUBST(PUGIXML_CFLAGS)
+PKG_CHECK_MODULES(PUGIXML, pugixml, AC_DEFINE(HAVE_PUGIXML,[],[Do we have PUGIXML?]),AC_MSG_ERROR(pugixml is required))
+AC_SUBST(PUGIXML_LIBS)
+AC_SUBST(PUGIXML_CFLAGS)
 
 dnl ---------------------------------------------------------------------------
 dnl Output config
@@ -208,7 +216,7 @@ dnl ---------------------------------------------------------------------------
 dnl Configure which files to generate.
 dnl ---------------------------------------------------------------------------
 
-dnl AC_CONFIG_FILES(Makefile)
+AC_CONFIG_FILES(src/library/Makefile)
 
 dnl ---------------------------------------------------------------------------
 dnl Output the generated config.status script.

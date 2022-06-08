@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+
+	<!-- Versão do sistema -->
+	<attribute name='suseversion' value='15.4' />
+
+	<!-- URL para imagem de instalação -->
+	<attribute name='install' value='https://download.opensuse.net.br/distribution/leap/${suseversion}/repo/oss' />
+
+	<driver-installation-disk url='http://localhost/tmf-ag.dud' image-path='boot' />	
+
+	<kernel-parameters>
+		<value name='splash' value='silent' /> 
+		<value name='lang' value='pt_BR' />
+		<value name='dhcptimeout' value='240' /> 
+		<value name='noshell' value='1' /> 
+		<value name='insecure' value='1' /> 
+		<value name='self_update' value='0' />
+	</kernel-parameters>
+
+	<group name='OpenSUSE'>
+
+		<!-- Nome que aparece na opção de menu -->
+ 		<attribute name='label' value='OpenSUSE ${suseversion}' />
+
+
+	</group>
+
+</config>
+

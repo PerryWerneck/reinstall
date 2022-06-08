@@ -2,6 +2,7 @@
 #---[ Library configuration ]------------------------------------------------------------
 
 PACKAGE_NAME=@PACKAGE_NAME@
+SONAME=@SONAME@
 
 SOURCES= \
 		$(wildcard *.cc) \
@@ -39,7 +40,7 @@ localedir=@localedir@
 docdir=@docdir@
 sysconfdir=/etc
 
-OBJDIR=.obj/core
+OBJDIR=.obj
 OBJDBG=$(OBJDIR)/Debug
 OBJRLS=$(OBJDIR)/Release
 

@@ -12,6 +12,9 @@
 /* Define to 1 if localtime_r is available. */
 #undef HAVE_LOCALTIME_R
 
+/* Do we have PUGIXML? */
+#undef HAVE_PUGIXML
+
 /* Define to 1 if you have the `pwrite' function. */
 #undef HAVE_PWRITE
 
