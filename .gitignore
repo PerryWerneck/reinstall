@@ -51,4 +51,5 @@ stamp-h1
 .bin
 .obj
 Makefile
+vgcore.*
 

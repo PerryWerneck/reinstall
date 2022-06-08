@@ -20,7 +20,6 @@
  #pragma once
 
  #include <udjat/defs.h>
- #include <udjat/tools/quark.h>
  #include <pugixml.hpp>
  #include <reinstall/object.h>
  #include <reinstall/worker.h>
@@ -28,32 +27,36 @@
  #include <set>
  #include <memory>
  #include <cstring>
+ #include <functional>
 
  namespace Reinstall {
 
 	class UDJAT_API Action : public Reinstall::Object {
-	protected:
-
+	public:
 		/// @brief File/Folder to copy from repository to image.
 		class UDJAT_API Source {
+		public:
+			const char *url;		///< @brief The file URL.
+			const char *path;		///< @brief The path inside the image.
+			const char *message;	///< @brief User message while downloading file.
 
-			const char *url;			///< @brief The file URL.
-			const char *path;			///< @brief The path inside the image.
-			const char *message = "";	///< @brief User message while downloading file.
+			Source(const pugi::xml_node &node);
 
-			Source(const char *u, const char *p) : url(Udjat::Quark(u).c_str()), path(Udjat::Quark(p).c_str()) {
+			/// @brief Check if it's required to download the source.
+			inline bool local() const noexcept {
+				return (*path != 0);
 			}
 
 			inline bool operator< (const Source &b) const noexcept {
-				return strcasecmp(url,b.url) < 0;
+				return strcasecmp(path,b.path) < 0;
 			}
 
 			bool operator> (const Source &b) const noexcept {
-				return strcasecmp(url,b.url) > 0;
+				return strcasecmp(path,b.path) > 0;
 			}
 
 			bool operator== (const Source &b) const noexcept {
-				return strcasecmp(url,b.url) == 0;
+				return strcasecmp(path,b.path) == 0;
 			}
 
 			/// @brief Download file.
@@ -61,8 +64,19 @@
 
 		};
 
-		std::set<Source> sources;
+	protected:
+		std::set<std::shared_ptr<Source>> sources;
 		std::list<std::shared_ptr<Worker>> workers;
+
+		/// @brief Scan xml for 'tagname', call lambda in every occurrence.
+		/// @param tagname the <tag> to search for.
+		/// @param node the start node.
+		/// @param call The method to call on every tag (returning 'true' stop the search).
+		/// @return true if the 'call' has returned true.
+		bool scan(const pugi::xml_node &node, const char *tagname, const std::function<bool(const pugi::xml_node &node)> &call);
+
+		/// @brief Get list of sources from 'tagname'.
+		void scanForSources(const pugi::xml_node &node, const char *tagname);
 
 		Action(const pugi::xml_node &node);
 
