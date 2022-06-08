@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="BBReinstall core library" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output=".bin/Debug/BBReinstall core library" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output=".bin/Release/BBReinstall core library" prefix_auto="1" extension_auto="1" />
+				<Option object_output=".obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="../include/config.h" />
+		<Unit filename="../include/reinstall/action.h" />
+		<Unit filename="../include/reinstall/controller.h" />
+		<Unit filename="../include/reinstall/group.h" />
+		<Unit filename="../include/reinstall/object.h" />
+		<Unit filename="../include/reinstall/worker.h" />
+		<Unit filename="action.cc" />
+		<Unit filename="controller.cc" />
+		<Unit filename="object.cc" />
+		<Unit filename="private.h" />
+		<Unit filename="testprogram/testprogram.cc" />
+		<Unit filename="worker.cc" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>
