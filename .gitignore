@@ -30,3 +30,21 @@
 *.exe
 *.out
 *.app
+
+# Backups
+*~
+*.bak
+
+ABOUT-NLS
+aclocal.m4
+*.cache/
+*.log
+*.status
+configure
+intl
+m4
+po
+scripts
+config.h
+stamp-h1
+
