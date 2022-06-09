@@ -43,9 +43,7 @@
 			controller.push_back(rc);
 		}
 
-		cout << "aaaaaaaaaaaaaaaa" << endl;
 		rc->load(node);
-		cout << "bbbbbbbbbbbbbbbb" << endl;
 
 		return rc;
 	}
@@ -56,8 +54,17 @@
 		const char *name = node.attribute("group-name").as_string("");
 		Controller &controller = controller.getInstance();
 
-		if(!*name) {
-			return controller.group();
+		while(!*name) {
+
+			auto parent = node.parent();
+			if(!parent) {
+				throw runtime_error("Can't determine group, use the 'group-name' attribute to set it");
+			}
+
+			if(strcasecmp(parent.name(),"group") == 0) {
+				name = parent.attribute("name").as_string("");
+			}
+
 		}
 
 		controller.for_each([&rc,name](std::shared_ptr<Group> group){

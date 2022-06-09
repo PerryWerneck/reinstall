@@ -56,12 +56,14 @@
 		return true;
 	}
 
+	/*
 	std::shared_ptr<Group> Controller::group() {
 		if(groups.empty()) {
 			throw runtime_error("No default group");
 		}
 		return groups.back();
 	}
+	*/
 
  }
 

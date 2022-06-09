@@ -50,7 +50,7 @@
 			groups.push_back(group);
 		}
 
-		std::shared_ptr<Group> group();
+		//std::shared_ptr<Group> group();
 
 	};
 
