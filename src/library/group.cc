@@ -22,16 +22,72 @@
 
  namespace Reinstall {
 
+	std::shared_ptr<Group> Group::factory(const pugi::xml_node &node) {
+
+		std::shared_ptr<Group> rc;
+		const char *name = node.attribute("name").as_string("default");
+		Controller &controller = Controller::getInstance();
+
+		controller.for_each([&rc,name](std::shared_ptr<Group> group){
+
+			if(*group == name) {
+				rc = group;
+				return true;
+			}
+			return false;
+
+		});
+
+		if(!rc) {
+			rc = make_shared<Group>(node);
+			controller.push_back(rc);
+		}
+
+		return rc;
+	}
+
+	std::shared_ptr<Group> Group::find(const pugi::xml_node &node) {
+
+		std::shared_ptr<Group> rc;
+		const char *name = node.attribute("group-name").as_string("");
+		Controller &controller = controller.getInstance();
+
+		if(!*name) {
+			return controller.group();
+		}
+
+		controller.for_each([&rc,name](std::shared_ptr<Group> group){
+
+			if(*group == name) {
+				rc = group;
+				return true;
+			}
+			return false;
+
+		});
+
+		if(!rc) {
+			throw runtime_error(string{"Cant find group '"} + name + "'");
+		}
+
+		return rc;
+
+	}
+
 	Group::Group(const pugi::xml_node &node) : Object(node) {
 		static unsigned short id = 0;
 		this->id = ++id;
+		info() << "Group initialized with id " << this->id << endl;
 	}
 
-	void Controller::for_each(const std::function<void (std::shared_ptr<Group> group)> &call) const {
+	bool Controller::for_each(const std::function<bool (std::shared_ptr<Group> group)> &call) const {
 
 		for(auto group : groups) {
-			call(group);
+			if(call(group)) {
+				return true;
+			}
 		}
+		return false;
 
 	}
 

@@ -1,5 +1,5 @@
 
- #include <udjat/defs.h>
+ #include "private.h"
  #include <udjat/tools/logger.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/application.h>
@@ -29,6 +29,7 @@
 
 		cout << "\t" << group->id << " - " << group->label << endl;
 
+		return false;
 	});
 
 	// Finalize application.

@@ -33,7 +33,8 @@
 		return controller;
 	}
 
-	std::shared_ptr<Group> Controller::find(const pugi::xml_node &node) {
+	/*
+	std::shared_ptr<Group> Controller::find(const char *name, bool create) {
 
 		const char * name = node.attribute("name").as_string("default");
 
@@ -48,10 +49,18 @@
 		return group;
 
 	}
+	*/
 
 	bool Controller::push_back(const pugi::xml_node &node) {
-		find(node);
+		Group::factory(node);
 		return true;
+	}
+
+	std::shared_ptr<Group> Controller::group() {
+		if(groups.empty()) {
+			throw runtime_error("No default group");
+		}
+		return groups.back();
 	}
 
  }

@@ -7,7 +7,7 @@
 	<!-- URL para imagem de instalação -->
 	<attribute name='install' value='https://download.opensuse.net.br/distribution/leap/${suseversion}/repo/oss' />
 
-	<driver-installation-disk url='http://localhost/tmf-ag.dud' file-path='boot/tmf-ag.dud' />	
+	<!-- driver-installation-disk url='http://localhost/updates.dud' file-path='boot/updates.dud' / -->	
 
 	<kernel-parameters>
 		<value name='splash' value='silent' /> 

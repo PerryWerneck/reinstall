@@ -17,27 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
- #include <reinstall/action.h>
- #include <list>
- #include <memory>
- #include <functional>
+ #include "private.h"
+ #include <udjat/factory.h>
+ #include <udjat/moduleinfo.h>
 
- namespace Reinstall {
+ Udjat::Module * udjat_module_init() {
 
-	class UDJAT_API Group : public Reinstall::Object {
-	private:
-		std::list<std::shared_ptr<Action>> actions;
+	static const Udjat::ModuleInfo moduleinfo{PACKAGE_NAME " Test module"};
 
+	class Module : public Udjat::Module, public Udjat::Factory {
 	public:
+		Module() : Udjat::Module("test", moduleinfo), Udjat::Factory("option",moduleinfo) {
+		}
 
-		unsigned short id;
+		bool push_back(const pugi::xml_node &node) override {
 
-		Group(const pugi::xml_node &node);
 
-		static std::shared_ptr<Group> find(const pugi::xml_node &node);
-		static std::shared_ptr<Group> factory(const pugi::xml_node &node);
+			return true;
+		}
 
 	};
 
+	return new Module();
  }

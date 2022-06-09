@@ -31,17 +31,11 @@
 		/// @brief Lista de grupos registrados.
 		std::list<std::shared_ptr<Group>> groups;
 
-		/// @brief Último grupo incluído (default).
-		std::shared_ptr<Group> group;
-
 		Controller();
 
 	public:
 
 		static Controller & getInstance();
-
-		/// @brief Find group, create and insert if not exist.
-		std::shared_ptr<Group> find(const pugi::xml_node &node);
 
 		/// @brief Factory a new group from XML node.
 		/// @param XML definition for the new element.
@@ -49,8 +43,14 @@
 		bool push_back(const pugi::xml_node &node) override;
 
 		/// @brief Navigate from groups.
-		void for_each(const std::function<void (std::shared_ptr<Group> group)> &call) const;
+		bool for_each(const std::function<bool (std::shared_ptr<Group> group)> &call) const;
 
+		/// @brief Insert new group.
+		inline void push_back(std::shared_ptr<Group> group) {
+			groups.push_back(group);
+		}
+
+		std::shared_ptr<Group> group();
 
 	};
 

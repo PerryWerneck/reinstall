@@ -25,6 +25,8 @@
 
 	Action::Action(const pugi::xml_node &node) : Object(node) {
 
+		auto group = Group::find(node);
+
 		// Load Kernel
 		if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
 			auto rc = sources.insert(make_shared<Kernel>(node));
@@ -60,6 +62,9 @@
 			return false;
 		});
 		*/
+
+
+		// Register action.
 
 
 	}

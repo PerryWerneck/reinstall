@@ -18,26 +18,8 @@
  */
 
  #pragma once
- #include <reinstall/action.h>
- #include <list>
- #include <memory>
- #include <functional>
 
- namespace Reinstall {
+ #include <config.h>
+ #include <udjat/defs.h>
+ #include <udjat/module.h>
 
-	class UDJAT_API Group : public Reinstall::Object {
-	private:
-		std::list<std::shared_ptr<Action>> actions;
-
-	public:
-
-		unsigned short id;
-
-		Group(const pugi::xml_node &node);
-
-		static std::shared_ptr<Group> find(const pugi::xml_node &node);
-		static std::shared_ptr<Group> factory(const pugi::xml_node &node);
-
-	};
-
- }
