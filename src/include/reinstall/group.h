@@ -27,13 +27,18 @@
 
 	class UDJAT_API Group : public Reinstall::Object {
 	private:
-		std::list<std::shared_ptr<Action>> actions;
+		std::list<Action *> actions;
 
 	public:
 
 		unsigned short id;
 
 		Group(const pugi::xml_node &node);
+		virtual ~Group();
+
+		inline void push_back(Action *action) {
+			actions.push_back(action);
+		}
 
 		static std::shared_ptr<Group> find(const pugi::xml_node &node);
 		static std::shared_ptr<Group> factory(const pugi::xml_node &node);

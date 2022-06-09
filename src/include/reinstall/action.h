@@ -81,6 +81,9 @@
 		Action(const pugi::xml_node &node);
 
 	public:
+		unsigned short id;
+
+		virtual ~Action();
 
 		virtual void pre();
 		virtual void apply();

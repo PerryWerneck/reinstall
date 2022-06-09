@@ -63,10 +63,17 @@
 		});
 		*/
 
+		// Create action id
+		static unsigned short id = 0;
+		this->id = ++id;
+		info() << "Action initialized with id " << this->id << endl;
 
 		// Register action.
+		group->push_back(this);
 
+	}
 
+	Action::~Action() {
 	}
 
 	Action::Source::Source(const pugi::xml_node &node)

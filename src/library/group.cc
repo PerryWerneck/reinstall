@@ -80,6 +80,12 @@
 		info() << "Group initialized with id " << this->id << endl;
 	}
 
+	Group::~Group() {
+		for(auto action : actions) {
+			delete action;
+		}
+	}
+
 	bool Controller::for_each(const std::function<bool (std::shared_ptr<Group> group)> &call) const {
 
 		for(auto group : groups) {
