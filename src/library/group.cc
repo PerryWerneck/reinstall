@@ -17,24 +17,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
- #include <reinstall/action.h>
- #include <list>
- #include <memory>
- #include <functional>
+ #include "private.h"
+ #include <reinstall/controller.h>
 
  namespace Reinstall {
 
-	class UDJAT_API Group : public Reinstall::Object {
-	private:
-		std::list<std::shared_ptr<Action>> actions;
+	Group::Group(const pugi::xml_node &node) : Object(node) {
+		static unsigned short id = 0;
+		this->id = ++id;
+	}
 
-	public:
+	void Controller::for_each(const std::function<void (std::shared_ptr<Group> group)> &call) const {
 
-		unsigned short id;
+		for(auto group : groups) {
+			call(group);
+		}
 
-		Group(const pugi::xml_node &node);
-
-	};
+	}
 
  }

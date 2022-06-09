@@ -48,6 +48,10 @@
 		/// @return true if the node whas inserted.
 		bool push_back(const pugi::xml_node &node) override;
 
+		/// @brief Navigate from groups.
+		void for_each(const std::function<void (std::shared_ptr<Group> group)> &call) const;
+
+
 	};
 
  }

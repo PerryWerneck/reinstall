@@ -40,6 +40,7 @@
 		<Unit filename="../include/reinstall/worker.h" />
 		<Unit filename="action.cc" />
 		<Unit filename="controller.cc" />
+		<Unit filename="group.cc" />
 		<Unit filename="object.cc" />
 		<Unit filename="private.h" />
 		<Unit filename="testprogram/testprogram.cc" />

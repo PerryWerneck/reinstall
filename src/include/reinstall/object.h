@@ -72,7 +72,7 @@
 
 		};
 
-	private:
+	public:
 
 		/// @brief Label (for menu)
 		const char *label = "";
@@ -86,8 +86,8 @@
 		/// @brief Link para o botão de help.
 		Link help;
 
-	public:
 		Object(const pugi::xml_node &node);
+
 
 	};
 

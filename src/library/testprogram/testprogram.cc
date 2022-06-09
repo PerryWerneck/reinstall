@@ -1,6 +1,10 @@
 
  #include <udjat/defs.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/quark.h>
+ #include <udjat/tools/application.h>
+ #include <udjat/agent.h>
+ #include <udjat/module.h>
 
  #include <reinstall/controller.h>
 
@@ -13,8 +17,22 @@
 
 	setlocale( LC_ALL, "" );
 
-	Reinstall::Controller::getInstance();
+	// First get controller to create factories.
+	Reinstall::Controller &controller = Reinstall::Controller::getInstance();
 
+	// Initialize application, load xml definitions.
+	Udjat::Application::init(argc,argv,"./test.xml");
 
+	cout << endl << "Selecione a imagem de sistema" << endl << endl;
+
+	controller.for_each([](std::shared_ptr<Reinstall::Group> group){
+
+		cout << "\t" << group->id << " - " << group->label << endl;
+
+	});
+
+	// Finalize application.
+	Udjat::Application::finalize();
 	return 0;
+
 }
