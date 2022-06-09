@@ -43,6 +43,10 @@
 			controller.push_back(rc);
 		}
 
+		cout << "aaaaaaaaaaaaaaaa" << endl;
+		rc->load(node);
+		cout << "bbbbbbbbbbbbbbbb" << endl;
+
 		return rc;
 	}
 

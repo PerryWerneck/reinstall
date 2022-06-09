@@ -66,7 +66,7 @@
 		// Create action id
 		static unsigned short id = 0;
 		this->id = ++id;
-		info() << "Action initialized with id " << this->id << endl;
+		info() << "Action " << group->c_str() << "/" << this->c_str() << " initialized with id " << group->id << "." << this->id << endl;
 
 		// Register action.
 		group->push_back(this);

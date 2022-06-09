@@ -5,6 +5,7 @@
  #include <reinstall/object.h>
  #include <reinstall/group.h>
  #include <reinstall/action.h>
+ #include <iostream>
 
  using namespace std;
  using namespace Udjat;

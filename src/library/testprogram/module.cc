@@ -20,6 +20,10 @@
  #include "private.h"
  #include <udjat/factory.h>
  #include <udjat/moduleinfo.h>
+ #include <reinstall/action.h>
+ #include <iostream>
+
+ using namespace std;
 
  Udjat::Module * udjat_module_init() {
 
@@ -32,6 +36,16 @@
 
 		bool push_back(const pugi::xml_node &node) override {
 
+			cout << "----------- Creating action" << endl;
+
+			class Action : public Reinstall::Action {
+			public:
+				Action(const pugi::xml_node &node) : Reinstall::Action(node) {
+				}
+
+			};
+
+			new Action(node);
 
 			return true;
 		}

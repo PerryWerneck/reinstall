@@ -20,6 +20,9 @@
 	// First get controller to create factories.
 	Reinstall::Controller &controller = Reinstall::Controller::getInstance();
 
+	// Initialize module.
+	udjat_module_init();
+
 	// Initialize application, load xml definitions.
 	Udjat::Application::init(argc,argv,"./test.xml");
 

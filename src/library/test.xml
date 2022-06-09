@@ -22,6 +22,12 @@
 
 		<!-- Nome que aparece na opção de menu -->
  		<attribute name='label' value='OpenSUSE ${suseversion}' />
+ 		
+ 		<option name='opt1'>
+
+	 		<attribute name='label' value='Option 1' />
+ 		
+ 		</option>
 
 
 	</group>
