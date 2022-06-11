@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <config>
 
-	<!-- Versão do sistema -->
-	<attribute name='suseversion' value='15.4' />
+	<!-- System version (if not defined will be read from /etc/os-release) -->
+	<attribute name='osversion' value='15.4' />
 
-	<!-- URL para imagem de instalação -->
-	<attribute name='install' value='https://download.opensuse.net.br/distribution/leap/${suseversion}/repo/oss' />
+	<!-- URL for the installation repositóry -->
+	<attribute name='install' value='https://download.opensuse.net.br/distribution/leap/${osversion}/repo/oss' />
+
+	<!-- URL for the installation kernel (Full URL or starting with '/' to be relative to install URL) -->
+	<attribute name='kernel' value='/boot/x86_64/loader/linux' />
+
+	<!-- URL for the installation init (Full URL or starting with '/' to be relative to install URL) -->
+	<attribute name='initrd' value='/boot/x86_64/loader/initrd' />
 
 	<!-- driver-installation-disk url='http://localhost/updates.dud' file-path='boot/updates.dud' / -->	
 
