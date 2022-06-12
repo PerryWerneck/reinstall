@@ -27,28 +27,6 @@
 
 		auto group = Group::find(node);
 
-		// Load Kernel
-		if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
-			auto rc = sources.insert(make_shared<Kernel>(node));
-			if(rc.first != sources.end()) {
-				info() << "Using kernel from " << (*rc.first)->url << endl;
-			}
-			return true;
-		})) {
-			throw runtime_error("Missing required entry <kernel> with the URL for installation kernel");
-		}
-
-		// Load Kernel
-		if(!scan(node,"init",[this](const pugi::xml_node &node) {
-			auto rc = sources.insert(make_shared<InitRD>(node));
-			if(rc.first != sources.end()) {
-				info() << "Using init from " << (*rc.first)->url << endl;
-			}
-			return true;
-		})) {
-			throw runtime_error("Missing required entry <init> with the URL for the linuxrc program");
-		}
-
 		/*
 
 		TODO: Check if the file has local path, if yes, insert it as a source, if not it's just a kernel parameter.
