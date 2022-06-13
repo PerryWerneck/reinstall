@@ -108,4 +108,9 @@
 
 	}
 
+	void Group::push_back(Action *action) {
+		actions.push_back(action);
+		info() << "Action " << c_str() << "/" << action->c_str() << " initialized with id " << id << "." << action->id << endl;
+	}
+
  }

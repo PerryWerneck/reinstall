@@ -8,10 +8,10 @@
 	<attribute name='install' value='https://download.opensuse.net.br/distribution/leap/${osversion}/repo/oss' />
 
 	<!-- URL for the installation kernel (Full URL or starting with '/' to be relative to install URL) -->
-	<attribute name='kernel' value='/boot/x86_64/loader/linux' />
+	<kernel url='/boot/x86_64/loader/linux' />
 
 	<!-- URL for the installation init (Full URL or starting with '/' to be relative to install URL) -->
-	<attribute name='initrd' value='/boot/x86_64/loader/initrd' />
+	<init url='/boot/x86_64/loader/initrd' />
 
 	<!-- driver-installation-disk url='http://localhost/updates.dud' file-path='boot/updates.dud' / -->	
 

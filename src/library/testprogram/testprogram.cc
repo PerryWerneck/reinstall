@@ -17,6 +17,8 @@
 
 	setlocale( LC_ALL, "" );
 
+	Udjat::Quark::init(argc,argv);
+
 	// First get controller to create factories.
 	Reinstall::Controller &controller = Reinstall::Controller::getInstance();
 

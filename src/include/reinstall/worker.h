@@ -21,18 +21,18 @@
 
  #include <pugixml.hpp>
  #include <udjat/defs.h>
- #include <udjat/tools/object.h>
+ #include <reinstall/action.h>
 
  namespace Reinstall {
 
-	class UDJAT_API Worker {
+	class Worker {
 	public:
 
 		Worker(const pugi::xml_node &node);
 
-		virtual void pre();
-		virtual void apply();
-		virtual void post();
+		virtual void pre(const Action &action);
+		virtual void apply(const Action &action);
+		virtual void post(const Action &action);
 
 	};
 

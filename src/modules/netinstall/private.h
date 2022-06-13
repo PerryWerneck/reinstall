@@ -27,6 +27,9 @@
 	class UDJAT_PRIVATE Action : public Reinstall::Action {
 	public:
 		Action(const pugi::xml_node &node);
+		virtual ~Action();
+
+		void activate() override;
 
 	};
 

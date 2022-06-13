@@ -25,13 +25,13 @@
 	Worker::Worker(const pugi::xml_node &node) {
 	}
 
-	void Worker::pre() {
+	void Worker::pre(const Action &action) {
 	}
 
-	void Worker::apply() {
+	void Worker::apply(const Action &action) {
 	}
 
-	void Worker::post() {
+	void Worker::post(const Action &action) {
 	}
 
  }

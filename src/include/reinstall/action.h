@@ -22,7 +22,6 @@
  #include <udjat/defs.h>
  #include <pugixml.hpp>
  #include <reinstall/object.h>
- #include <reinstall/worker.h>
  #include <list>
  #include <set>
  #include <memory>
@@ -77,16 +76,13 @@
 		/// @brief Get list of sources from 'tagname'.
 		void scanForSources(const pugi::xml_node &node, const char *tagname);
 
-		Action(const pugi::xml_node &node);
-
 	public:
-		unsigned short id;
-
+		Action(const pugi::xml_node &node);
 		virtual ~Action();
 
-		virtual void pre();
-		virtual void apply();
-		virtual void post();
+		unsigned short id;
+
+		virtual void activate();
 
 		bool push_back(std::shared_ptr<Source> source);
 	};

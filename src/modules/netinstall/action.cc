@@ -21,6 +21,7 @@
  #include <memory>
  #include <reinstall/actions/kernel.h>
  #include <reinstall/actions/initrd.h>
+ #include <reinstall/isobuilder.h>
 
  using namespace std;
  using namespace Reinstall;
@@ -45,8 +46,26 @@
 			throw runtime_error("Missing required entry <init> with the URL for the linuxrc program");
 		}
 
+#ifdef DEBUG
+		info() << "Net Install action constructed" << endl;
+#endif // DEBUG
 
 	}
 
+	Action::~Action() {
+#ifdef DEBUG
+		info() << "Net Install action deleted" << endl;
+#endif // DEBUG
+	}
+
+	void Action::activate() {
+
+		IsoBuilder iso;
+
+		iso.pre(*this);
+		iso.apply(*this);
+		iso.post(*this);
+
+	}
 
  }

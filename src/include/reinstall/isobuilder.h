@@ -22,6 +22,7 @@
  #include <pugixml.hpp>
  #include <udjat/defs.h>
  #include <udjat/tools/object.h>
+ #include <reinstall/worker.h>
 
  namespace Reinstall {
 
@@ -31,8 +32,12 @@
 
 	public:
 
-		IsoBuilder(const pugi::xml_node &node);
+		IsoBuilder();
+		~IsoBuilder();
 
+		void pre(const Action &action) override;
+		void apply(const Action &action) override;
+		void post(const Action &action) override;
 
 	};
 

@@ -22,13 +22,14 @@
  #include <udjat/module.h>
  #include <udjat/moduleinfo.h>
  #include <reinstall/action.h>
+ #include <reinstall/group.h>
  #include <iostream>
 
  using namespace std;
 
  Udjat::Module * udjat_module_init() {
 
-	static const Udjat::ModuleInfo moduleinfo{PACKAGE_NAME " Net install builder"};
+	static const Udjat::ModuleInfo moduleinfo{"Net install builder"};
 
 	class Module : public Udjat::Module, public Udjat::Factory {
 	public:
@@ -36,11 +37,7 @@
 		}
 
 		bool push_back(const pugi::xml_node &node) override {
-
-			cout << "----------- Creating action" << endl;
-
-			new NetInstall::Action(node);
-
+			Reinstall::Group::find(node)->push_back(new NetInstall::Action(node));
 			return true;
 		}
 

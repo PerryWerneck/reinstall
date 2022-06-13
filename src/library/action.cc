@@ -25,8 +25,6 @@
 
 	Action::Action(const pugi::xml_node &node) : Object(node) {
 
-		auto group = Group::find(node);
-
 		/*
 
 		TODO: Check if the file has local path, if yes, insert it as a source, if not it's just a kernel parameter.
@@ -44,10 +42,6 @@
 		// Create action id
 		static unsigned short id = 0;
 		this->id = ++id;
-		info() << "Action " << group->c_str() << "/" << this->c_str() << " initialized with id " << group->id << "." << this->id << endl;
-
-		// Register action.
-		group->push_back(this);
 
 	}
 
@@ -65,20 +59,18 @@
 
 	}
 
-	void Action::pre() {
+	void Action::activate() {
+		error() << "No activation code" << endl;
+		throw runtime_error("Action is not available");
 	}
 
-	void Action::apply() {
-	}
-
-	void Action::post() {
-	}
 
 	bool Action::scan(const pugi::xml_node &node, const char *tagname, const std::function<bool(const pugi::xml_node &node)> &call) {
 
 		for(pugi::xml_node nd = node; nd; nd = nd.parent()) {
-			for(pugi::xml_node child = node.child(tagname); child; child = child.next_sibling(tagname)) {
-				if(call(node)) {
+			cout << "******** " << nd.name() << endl;
+			for(pugi::xml_node child = nd.child(tagname); child; child = child.next_sibling(tagname)) {
+				if(call(child)) {
 					return true;
 				}
 			}
