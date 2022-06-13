@@ -30,19 +30,27 @@
 
  namespace Reinstall {
 
+ 	class Worker;
+
 	class UDJAT_API Action : public Reinstall::Object {
 	public:
 		/// @brief File/Folder to copy from repository to image.
 		class UDJAT_API Source {
+		private:
+			std::string tempfilename;				///< @brief If not empty, the temporary file name.
+
 		public:
-			const char *url;		///< @brief The file URL.
-			const char *path;		///< @brief The path inside the image.
-			const char *message;	///< @brief User message while downloading file.
+			const char *url;					///< @brief The file URL.
+			const char *path;					///< @brief The path inside the image.
+			const char *message;				///< @brief User message while downloading file.
+			const char *filename = nullptr;		///< @brief Nome do arquivo local.
 
 			/// @brief Create new file source.
 			/// @param node XML definitions for this file source.
 			/// @param url Default URL.
 			Source(const pugi::xml_node &node, const char *url="");
+
+			~Source();
 
 			/// @brief Check if it's required to download the source.
 			inline bool local() const noexcept {
@@ -62,7 +70,8 @@
 			}
 
 			/// @brief Download file.
-			//virtual void apply();
+			/// @return Nome do arquivo local.
+			std::string save();
 
 		};
 
@@ -79,6 +88,9 @@
 		/// @brief Get list of sources from 'tagname'.
 		void scanForSources(const pugi::xml_node &node, const char *tagname);
 
+		/// @brief Activate with worker.
+		virtual void activate(Reinstall::Worker &worker);
+
 	public:
 		Action(const pugi::xml_node &node);
 		virtual ~Action();
@@ -91,6 +103,9 @@
 		virtual const char * install();
 
 		bool push_back(std::shared_ptr<Source> source);
+
+		void for_each(const std::function<void (Source &source)> &call);
+
 	};
 
  }

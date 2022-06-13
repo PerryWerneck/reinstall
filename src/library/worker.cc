@@ -22,16 +22,16 @@
 
  namespace Reinstall {
 
-	Worker::Worker(const pugi::xml_node &node) {
+	Worker::Worker() {
 	}
 
-	void Worker::pre(const Action &action) {
+	void Worker::pre(Action &action) {
 	}
 
-	void Worker::apply(const Action &action) {
+	void Worker::apply(Action &action) {
 	}
 
-	void Worker::post(const Action &action) {
+	void Worker::post(Action &action) {
 	}
 
  }

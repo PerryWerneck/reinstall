@@ -60,11 +60,9 @@
 
 	void Action::activate() {
 
-		IsoBuilder iso;
+		IsoBuilder worker;
 
-		iso.pre(*this);
-		iso.apply(*this);
-		iso.post(*this);
+		this->Reinstall::Action::activate(worker);
 
 	}
 

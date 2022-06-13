@@ -47,6 +47,7 @@
 		<Unit filename="action.cc" />
 		<Unit filename="controller.cc" />
 		<Unit filename="group.cc" />
+		<Unit filename="isobuilder.cc" />
 		<Unit filename="object.cc" />
 		<Unit filename="private.h" />
 		<Unit filename="testprogram/private.h" />

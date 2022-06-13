@@ -19,7 +19,9 @@
 
  #include "private.h"
  #include <reinstall/action.h>
+ #include <reinstall/worker.h>
  #include <udjat/tools/quark.h>
+ #include <udjat/tools/protocol.h>
 
  namespace Reinstall {
 
@@ -59,6 +61,15 @@
 
 	}
 
+	Action::Source::~Source() {
+		if(!tempfilename.empty()) {
+			if(remove(tempfilename.c_str()) != 0) {
+				cerr << "tempfile\tError removing '" << tempfilename << "'" << endl;
+			}
+		}
+	}
+
+
 	void Action::activate() {
 		error() << "No activation code" << endl;
 		throw runtime_error("Action is not available");
@@ -68,10 +79,17 @@
 		throw runtime_error("No instalattion media");
 	}
 
+	void Action::for_each(const std::function<void (Source &source)> &call) {
+
+		for(auto source : sources) {
+			call(*source);
+		}
+
+	}
+
 	bool Action::scan(const pugi::xml_node &node, const char *tagname, const std::function<bool(const pugi::xml_node &node)> &call) {
 
 		for(pugi::xml_node nd = node; nd; nd = nd.parent()) {
-			cout << "******** " << nd.name() << endl;
 			for(pugi::xml_node child = nd.child(tagname); child; child = child.next_sibling(tagname)) {
 				if(call(child)) {
 					return true;
@@ -86,6 +104,14 @@
  		return (sources.insert(source).first != sources.end());
 	}
 
+	void Action::activate(Worker &worker) {
+
+		worker.pre(*this);
+		worker.apply(*this);
+		worker.post(*this);
+
+	}
+
 	void Action::scanForSources(const pugi::xml_node &node, const char *tagname) {
 
 		/*
@@ -98,6 +124,28 @@
 			return false;
 		});
 		*/
+
+	}
+
+	string Action::Source::save() {
+
+		auto worker = Udjat::Protocol::WorkerFactory(this->url);
+
+		if(filename) {
+
+			// Download URL to 'filename'
+			worker->save(filename);
+			return filename;
+
+		} else if(tempfilename.empty()) {
+
+			// Download to temporary file.
+			tempfilename = worker->save();
+			filename = tempfilename.c_str();
+
+		}
+
+		return string(filename);
 
 	}
 

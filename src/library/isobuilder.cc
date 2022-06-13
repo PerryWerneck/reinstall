@@ -17,27 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
-
- #include <pugixml.hpp>
- #include <udjat/defs.h>
- #include <udjat/tools/object.h>
- #include <reinstall/worker.h>
+ #include "private.h"
+ #include <reinstall/isobuilder.h>
 
  namespace Reinstall {
 
-	/// @brief Worker for building an iso image.
-	class UDJAT_API IsoBuilder : public Worker {
-	private:
+	IsoBuilder::IsoBuilder() {
+	}
 
-	public:
+	IsoBuilder::~IsoBuilder() {
+	}
 
-		IsoBuilder();
-		~IsoBuilder();
+	/// @brief Download files, append to the ISO image.
+	void IsoBuilder::apply(Action &action) {
 
-		/// @brief Download files, append to the ISO image.
-		void apply(Action &action) override;
+		action.for_each([this](Action::Source &source) {
+			source.save();
+		});
 
-	};
+	}
 
  }
+

@@ -28,11 +28,11 @@
 	class Worker {
 	public:
 
-		Worker(const pugi::xml_node &node);
+		Worker();
 
-		virtual void pre(const Action &action);
-		virtual void apply(const Action &action);
-		virtual void post(const Action &action);
+		virtual void pre(Action &action);
+		virtual void apply(Action &action);
+		virtual void post(Action &action);
 
 	};
 
