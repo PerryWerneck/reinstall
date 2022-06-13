@@ -17,36 +17,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include "private.h"
- #include <memory>
- #include <reinstall/actions/kernel.h>
- #include <reinstall/actions/initrd.h>
+ #pragma once
 
- using namespace std;
- using namespace Reinstall;
+ #include <pugixml.hpp>
+ #include <udjat/defs.h>
+ #include <udjat/tools/object.h>
 
- namespace NetInstall {
+ namespace Reinstall {
 
-	Action::Action(const pugi::xml_node &node) : Reinstall::Action(node) {
+	/// @brief Worker for building an iso image.
+	class UDJAT_API IsoBuilder : public Worker {
+	private:
 
-		// Get URL for installation kernel.
-		if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
-			push_back(make_shared<Kernel>(node));
-			return true;
-		})) {
-			throw runtime_error("Missing required entry <kernel> with the URL for installation kernel");
-		}
+	public:
 
-		// Get URL for installation init.
-		if(!scan(node,"init",[this](const pugi::xml_node &node) {
-			push_back(make_shared<InitRD>(node));
-			return true;
-		})) {
-			throw runtime_error("Missing required entry <init> with the URL for the linuxrc program");
-		}
+		IsoBuilder(const pugi::xml_node &node);
 
 
-	}
-
+	};
 
  }

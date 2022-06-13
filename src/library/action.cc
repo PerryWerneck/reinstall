@@ -66,21 +66,12 @@
 	}
 
 	void Action::pre() {
-		for(auto worker : workers) {
-			worker->pre();
-		}
 	}
 
 	void Action::apply() {
-		for(auto worker : workers) {
-			worker->apply();
-		}
 	}
 
 	void Action::post() {
-		for(auto worker : workers) {
-			worker->post();
-		}
 	}
 
 	bool Action::scan(const pugi::xml_node &node, const char *tagname, const std::function<bool(const pugi::xml_node &node)> &call) {
@@ -94,6 +85,10 @@
 		}
 		return false;
 
+	}
+
+	bool Action::push_back(std::shared_ptr<Source> source) {
+ 		return (sources.insert(source).first != sources.end());
 	}
 
 	void Action::scanForSources(const pugi::xml_node &node, const char *tagname) {

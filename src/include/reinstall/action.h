@@ -66,7 +66,6 @@
 
 	protected:
 		std::set<std::shared_ptr<Source>> sources;
-		std::list<std::shared_ptr<Worker>> workers;
 
 		/// @brief Scan xml for 'tagname', call lambda in every occurrence.
 		/// @param tagname the <tag> to search for.
@@ -89,6 +88,7 @@
 		virtual void apply();
 		virtual void post();
 
+		bool push_back(std::shared_ptr<Source> source);
 	};
 
  }
