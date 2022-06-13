@@ -39,7 +39,10 @@
 			const char *path;		///< @brief The path inside the image.
 			const char *message;	///< @brief User message while downloading file.
 
-			Source(const pugi::xml_node &node);
+			/// @brief Create new file source.
+			/// @param node XML definitions for this file source.
+			/// @param url Default URL.
+			Source(const pugi::xml_node &node, const char *url="");
 
 			/// @brief Check if it's required to download the source.
 			inline bool local() const noexcept {
@@ -83,6 +86,9 @@
 		unsigned short id;
 
 		virtual void activate();
+
+		/// @brief Return the URL for installation media.
+		virtual const char * install();
 
 		bool push_back(std::shared_ptr<Source> source);
 	};

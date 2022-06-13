@@ -48,8 +48,8 @@
 	Action::~Action() {
 	}
 
-	Action::Source::Source(const pugi::xml_node &node)
-		: 	url(Quark(node,"url","",false).c_str()),
+	Action::Source::Source(const pugi::xml_node &node,const char *url)
+		: 	url(Quark(node,"url",url,false).c_str()),
 			path(Quark(node,"file-path","",false).c_str()),
 			message(Quark(node,"download-message","",true).c_str()) {
 
@@ -64,6 +64,9 @@
 		throw runtime_error("Action is not available");
 	}
 
+	const char * Action::install() {
+		throw runtime_error("No instalattion media");
+	}
 
 	bool Action::scan(const pugi::xml_node &node, const char *tagname, const std::function<bool(const pugi::xml_node &node)> &call) {
 
