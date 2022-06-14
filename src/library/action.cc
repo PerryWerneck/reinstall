@@ -25,6 +25,15 @@
 
  namespace Reinstall {
 
+	Action *Action::defaction = nullptr;
+
+	Action & Action::getDefault() {
+		if(defaction) {
+			return *defaction;
+		}
+		throw runtime_error("No default action");
+	}
+
 	Action::Action(const pugi::xml_node &node) : Object(node) {
 
 		/*
@@ -41,6 +50,10 @@
 		});
 		*/
 
+		if(node.attribute("default").as_bool(false)) {
+			defaction = this;
+		}
+
 		// Create action id
 		static unsigned short id = 0;
 		this->id = ++id;
@@ -48,6 +61,9 @@
 	}
 
 	Action::~Action() {
+		if(defaction == this) {
+			defaction == nullptr;
+		}
 	}
 
 	void Action::activate() {

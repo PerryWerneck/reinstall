@@ -23,6 +23,10 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/protocol.h>
  #include <udjat/tools/url.h>
+ #include <udjat/tools/object.h>
+ #include <udjat/tools/xml.h>
+ #include <udjat/tools/string.h>
+ #include <udjat/tools/configuration.h>
 
  namespace Reinstall {
 
@@ -31,15 +35,23 @@
 			path(Quark(node,"path",defpath,false).c_str()),
 			message(Quark(node,"download-message","",true).c_str()) {
 
-		if(!*url && path[0] == '/') {
-			Udjat::URL install(getAttribute(node,"defaults","install",""));
+
+		if(!this->url[0] && path[0] == '/') {
+
+			Udjat::URL install(Udjat::String(Udjat::Attribute(node,"install").as_string()).expand(node));
+
+			if(install.empty()) {
+				install = Udjat::String(Udjat::Config::get("defaults","install","")).expand(node);
+			}
+
 			if(!install.empty()) {
 				install += path;
-				url = Quark(install).c_str();
+				this->url = Quark(install).c_str();
 			}
+
 		}
 
-		if(!*url) {
+		if(!this->url[0]) {
 			throw runtime_error("Missing required attribute 'url'");
 		}
 

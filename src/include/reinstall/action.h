@@ -92,11 +92,16 @@
 		/// @brief Activate with worker.
 		virtual void activate(Reinstall::Worker &worker);
 
+	private:
+		static Action * defaction;		///< @brief Default action.
+
 	public:
 		Action(const pugi::xml_node &node);
 		virtual ~Action();
 
 		unsigned short id;
+
+		static Action & getDefault();
 
 		virtual void activate();
 

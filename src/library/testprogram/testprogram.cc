@@ -7,6 +7,7 @@
  #include <udjat/module.h>
 
  #include <reinstall/controller.h>
+ #include <reinstall/action.h>
 
  #include <unistd.h>
 
@@ -19,8 +20,8 @@
 
 	Udjat::Quark::init(argc,argv);
 
-	// First get controller to create factories.
-	Reinstall::Controller &controller = Reinstall::Controller::getInstance();
+	// First get controller to construct the factories.
+	Reinstall::Controller::getInstance();
 
 	// Initialize module.
 	udjat_module_init();
@@ -28,14 +29,7 @@
 	// Initialize application, load xml definitions.
 	Udjat::Application::init(argc,argv,"./test.xml");
 
-	cout << endl << "Selecione a imagem de sistema" << endl << endl;
-
-	controller.for_each([](std::shared_ptr<Reinstall::Group> group){
-
-		cout << "\t" << group->id << " - " << group->label << endl;
-
-		return false;
-	});
+	Reinstall::Action::getDefault().activate();
 
 	// Finalize application.
 	Udjat::Application::finalize();
