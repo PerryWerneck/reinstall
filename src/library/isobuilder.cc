@@ -65,13 +65,12 @@
 		iso_write_opts_free(opts);
 	}
 
-	/// @brief Download files, append to the ISO image.
-	void IsoBuilder::pre(Action &action) {
+	void IsoBuilder::push_back(Action::Source &source) {
 
-		action.for_each([this](Action::Source &source) {
-			source.save();
-		});
+		// First download and save
+		auto filename = source.save();
 
 	}
+
 
  }

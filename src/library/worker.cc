@@ -25,7 +25,13 @@
 	Worker::Worker() {
 	}
 
+	void Worker::push_back(Action::Source &source) {
+	}
+
 	void Worker::pre(Action &action) {
+		action.for_each([this](Action::Source &source) {
+			push_back(source);
+		});
 	}
 
 	void Worker::apply(Action &action) {

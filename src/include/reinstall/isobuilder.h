@@ -35,13 +35,13 @@
 		IsoImage *image = nullptr;
 		IsoWriteOpts *opts;
 
+	protected:
+		void push_back(Action::Source &source) override;
+
 	public:
 
 		IsoBuilder();
 		~IsoBuilder();
-
-		/// @brief Download files, append to the ISO image.
-		void pre(Action &action) override;
 
 	};
 

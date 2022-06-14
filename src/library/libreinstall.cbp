@@ -45,6 +45,7 @@
 		<Unit filename="../modules/netinstall/init.cc" />
 		<Unit filename="../modules/netinstall/private.h" />
 		<Unit filename="action.cc" />
+		<Unit filename="actionsource.cc" />
 		<Unit filename="controller.cc" />
 		<Unit filename="group.cc" />
 		<Unit filename="isobuilder.cc" />

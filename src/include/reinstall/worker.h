@@ -26,6 +26,11 @@
  namespace Reinstall {
 
 	class Worker {
+	protected:
+
+		/// @brief Insert source on the target image.
+		virtual void push_back(Action::Source &source);
+
 	public:
 
 		Worker();

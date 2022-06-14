@@ -50,26 +50,6 @@
 	Action::~Action() {
 	}
 
-	Action::Source::Source(const pugi::xml_node &node,const char *url)
-		: 	url(Quark(node,"url",url,false).c_str()),
-			path(Quark(node,"file-path","",false).c_str()),
-			message(Quark(node,"download-message","",true).c_str()) {
-
-		if(!*url) {
-			throw runtime_error("Missing required attribute 'url'");
-		}
-
-	}
-
-	Action::Source::~Source() {
-		if(!tempfilename.empty()) {
-			if(remove(tempfilename.c_str()) != 0) {
-				cerr << "tempfile\tError removing '" << tempfilename << "'" << endl;
-			}
-		}
-	}
-
-
 	void Action::activate() {
 		error() << "No activation code" << endl;
 		throw runtime_error("Action is not available");
@@ -124,28 +104,6 @@
 			return false;
 		});
 		*/
-
-	}
-
-	string Action::Source::save() {
-
-		auto worker = Udjat::Protocol::WorkerFactory(this->url);
-
-		if(filename) {
-
-			// Download URL to 'filename'
-			worker->save(filename);
-			return filename;
-
-		} else if(tempfilename.empty()) {
-
-			// Download to temporary file.
-			tempfilename = worker->save();
-			filename = tempfilename.c_str();
-
-		}
-
-		return string(filename);
 
 	}
 

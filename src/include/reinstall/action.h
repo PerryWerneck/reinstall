@@ -37,7 +37,7 @@
 		/// @brief File/Folder to copy from repository to image.
 		class UDJAT_API Source {
 		private:
-			std::string tempfilename;				///< @brief If not empty, the temporary file name.
+			std::string tempfilename;			///< @brief If not empty, the temporary file name.
 
 		public:
 			const char *url;					///< @brief The file URL.
@@ -48,7 +48,8 @@
 			/// @brief Create new file source.
 			/// @param node XML definitions for this file source.
 			/// @param url Default URL.
-			Source(const pugi::xml_node &node, const char *url="");
+			/// @param defpath Default path.
+			Source(const pugi::xml_node &node, const char *url="", const char *defpath="");
 
 			~Source();
 
