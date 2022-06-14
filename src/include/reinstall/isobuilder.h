@@ -24,11 +24,16 @@
  #include <udjat/tools/object.h>
  #include <reinstall/worker.h>
 
+ typedef struct Iso_Image IsoImage;
+ typedef struct iso_write_opts IsoWriteOpts;
+
  namespace Reinstall {
 
 	/// @brief Worker for building an iso image.
 	class UDJAT_API IsoBuilder : public Worker {
 	private:
+		IsoImage *image = nullptr;
+		IsoWriteOpts *opts;
 
 	public:
 
@@ -36,7 +41,7 @@
 		~IsoBuilder();
 
 		/// @brief Download files, append to the ISO image.
-		void apply(Action &action) override;
+		void pre(Action &action) override;
 
 	};
 

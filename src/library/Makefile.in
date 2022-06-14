@@ -57,7 +57,8 @@ CFLAGS= \
 	-I../include \
 	-DBUILD_DATE=`date +%Y%m%d` \
 	@UDJAT_CFLAGS@ \
-	@PUGIXML_CFLAGS@
+	@PUGIXML_CFLAGS@ \
+	@ISOFS_CFLAGS@
 
 LDFLAGS=\
 	@LDFLAGS@
@@ -66,7 +67,8 @@ LIBS= \
 	@LIBS@ \
 	@LIBICONV@ \
 	@UDJAT_LIBS@ \
-	@PUGIXML_LIBS@
+	@PUGIXML_LIBS@ \
+	@ISOFS_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 

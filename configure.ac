@@ -207,6 +207,24 @@ AC_SUBST(PUGIXML_LIBS)
 AC_SUBST(PUGIXML_CFLAGS)
 
 dnl ---------------------------------------------------------------------------
+dnl Check for libburn
+dnl ---------------------------------------------------------------------------
+
+PKG_CHECK_MODULES( [BURN], [libburn-1], AC_DEFINE(HAVE_BURN,[],[Do we have libburn?]), AC_MSG_NOTICE([libburn not present.]) )
+
+AC_SUBST(BURN_LIBS)
+AC_SUBST(BURN_CFLAGS)
+
+dnl ---------------------------------------------------------------------------
+dnl Check for Libisofs
+dnl ---------------------------------------------------------------------------
+
+PKG_CHECK_MODULES( [ISOFS], [libisofs-1], AC_DEFINE(HAVE_ISOFS,[],[Do we have libisofs?]), AC_MSG_NOTICE([libisofs not present.]) )
+
+AC_SUBST(ISOFS_LIBS)
+AC_SUBST(ISOFS_CFLAGS)
+
+dnl ---------------------------------------------------------------------------
 dnl Output config
 dnl ---------------------------------------------------------------------------
 
