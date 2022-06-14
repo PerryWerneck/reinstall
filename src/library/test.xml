@@ -4,6 +4,9 @@
 	<!-- System version -->
 	<attribute name='osversion' value='15.4' />
 
+	<!-- HTTP is required for downloading files -->
+	<module name='http' required='yes' />
+
 	<!-- URL for the installation repositóry -->
 	<attribute name='install' value='https://download.opensuse.net.br/distribution/leap/${osversion}/repo/oss' />
 
