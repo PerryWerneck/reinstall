@@ -113,15 +113,18 @@
 			return;
 		}
 
-		// Reject folders (ends with '/')
-		if( *(source.path + strlen(source.path) - 1) == '/') {
-			cerr << "isobuilder\tRejecting folder path " << source.path << endl;
-			throw system_error(EINVAL,system_category(),source.path);
-		}
-
+		// Expand folders (ends with '/')
 		if( *(source.url + strlen(source.url) - 1) == '/') {
-			cerr << "isobuilder\tRejecting folder url " << source.url << endl;
-			throw system_error(EINVAL,system_category(),source.url);
+
+			cerr << "isobuilder\tExpanding " << source.url << endl;
+
+			if( *(source.path + strlen(source.path) - 1) == '/') {
+				cerr << "isobuilder\tPath " << source.path << " is not a folder" << endl;
+				throw system_error(EINVAL,system_category(),source.path);
+			}
+
+
+
 		}
 
 		// Download and apply files.

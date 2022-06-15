@@ -29,6 +29,7 @@
 	}
 
 	void Worker::pre(Action &action) {
+
 		action.for_each([this](Action::Source &source) {
 			push_back(source);
 		});

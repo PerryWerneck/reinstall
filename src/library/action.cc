@@ -62,7 +62,7 @@
 
 	Action::~Action() {
 		if(defaction == this) {
-			defaction == nullptr;
+			defaction = nullptr;
 		}
 	}
 
