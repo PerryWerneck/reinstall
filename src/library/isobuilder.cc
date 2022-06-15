@@ -113,6 +113,18 @@
 			return;
 		}
 
+		// Reject folders (ends with '/')
+		if( *(source.path + strlen(source.path) - 1) == '/') {
+			cerr << "isobuilder\tRejecting folder path " << source.path << endl;
+			throw system_error(EINVAL,system_category(),source.path);
+		}
+
+		if( *(source.url + strlen(source.url) - 1) == '/') {
+			cerr << "isobuilder\tRejecting folder url " << source.url << endl;
+			throw system_error(EINVAL,system_category(),source.url);
+		}
+
+		// Download and apply files.
 		string filename;
 
 		cout << "isobuilder\t" << source.url << " -> " << source.path << endl;

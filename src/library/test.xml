@@ -16,7 +16,11 @@
 	<!-- Path for the installation init (Full URL or path from ${install} -->
 	<init path='/boot/x86_64/loader/initrd' />
 
-	<!-- driver-installation-disk url='http://localhost/updates.dud' file-path='boot/updates.dud' / -->	
+	<!-- driver-installation-disk url='http://localhost/updates.dud' path='boot/updates.dud' / -->	
+
+	<!-- source url='${install}/boot/x86_64/' path='boot/x86_64/' -->
+	<source path='/boot/x86_64/' />
+	<source path='/EFI/' />
 
 	<kernel-parameters>
 		<value name='splash' value='silent' /> 
