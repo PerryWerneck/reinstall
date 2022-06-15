@@ -46,6 +46,7 @@
 	};
 
 	IsoBuilder::IsoBuilder() {
+
 		IsoBuilderSingleTon::getInstance();
 
 		if(!iso_image_new("name", &image)) {
@@ -123,10 +124,11 @@
 
 		}
 
-		IsoDir *dir;
-
 		auto pos = strrchr(source.path,'/');
 		if(pos) {
+
+			// Has path, get iso dir.
+
 			iso_tree_add_new_node(
 				image,
 				getIsoDir(image,string(source.path,pos - source.path).c_str()),
@@ -134,9 +136,19 @@
 				filename.c_str(),
 				NULL
 			);
+
 		} else {
 
-			throw runtime_error("Not implemented 'YET'");
+			// No path, store on root.
+
+			iso_tree_add_new_node(
+				image,
+				iso_image_get_root(image),
+				source.path,
+				filename.c_str(),
+				NULL
+			);
+
 		}
 
 
