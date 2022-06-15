@@ -65,10 +65,80 @@
 		iso_write_opts_free(opts);
 	}
 
+	static IsoDir * getIsoDir(IsoImage *image, const char *dirname) {
+
+		IsoDir * dir = iso_image_get_root(image);
+
+		while(*dirname) {
+
+			string dn;
+
+			const char *next = strchr(dirname,'/');
+			if(next) {
+				dn = string(dirname,next-dirname);
+				dirname = next+1;
+			} else {
+				dn = string(dirname);
+				dirname += dn.size();
+			}
+
+			IsoNode * node = NULL;
+			int rc = iso_image_dir_get_node(image,dir,dn.c_str(),&node,0);
+
+			if(rc == 0) {
+
+				// Not found, add it.
+				iso_tree_add_new_dir(dir, dn.c_str(), (IsoDir **) &node);
+				dir = (IsoDir *) node;
+
+			} else {
+
+				// Found, use it.
+				dir = (IsoDir *) node;
+
+			}
+
+		}
+
+
+		return dir;
+
+	}
+
 	void IsoBuilder::push_back(Action::Source &source) {
 
-		// First download and save
-		auto filename = source.save();
+		if(!(source.path && *source.path)) {
+			// No local path, ignore it.
+			return;
+		}
+
+		string filename;
+
+		cout << "isobuilder\t" << source.url << " -> " << source.path << endl;
+
+		if(source.local()) {
+
+			// Download and save.
+			filename = source.save();
+
+		}
+
+		IsoDir *dir;
+
+		auto pos = strrchr(source.path,'/');
+		if(pos) {
+			iso_tree_add_new_node(
+				image,
+				getIsoDir(image,string(source.path,pos - source.path).c_str()),
+				pos+1,
+				filename.c_str(),
+				NULL
+			);
+		} else {
+
+			throw runtime_error("Not implemented 'YET'");
+		}
+
 
 	}
 
