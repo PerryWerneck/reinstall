@@ -8,7 +8,8 @@
 	<module name='http' required='yes' />
 
 	<!-- URL for the installation repositóry -->
-	<attribute name='install' value='https://download.opensuse.net.br/distribution/leap/${osversion}/repo/oss' />
+	<!-- attribute name='install' value='https://download.opensuse.net.br/distribution/leap/${osversion}/repo/oss' / -->
+	<attribute name='install' value='http://localhost/~perry/openSUSE-Leap-15.3-NET-x86_64' />
 
 	<!-- Path for the installation kernel (Full URL or path from ${install} -->
 	<kernel path='/boot/x86_64/loader/linux' />
@@ -31,6 +32,12 @@
 		<value name='self_update' value='0' />
 	</kernel-parameters>
 
+	<!-- Replace every 'grub.cfg' file with template -->
+	<template name='grub.cfg' />
+	
+	<!-- Replace every 'isolinux.cfg' file with template -->
+	<template name='isolinux.cfg' />
+	
 	<group name='OpenSUSE'>
 
 		<!-- Nome que aparece na opção de menu -->

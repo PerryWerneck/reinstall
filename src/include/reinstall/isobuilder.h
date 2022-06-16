@@ -43,6 +43,9 @@
 		IsoBuilder();
 		~IsoBuilder();
 
+		/// @brief Save image to 'fd'.
+		void save(int fd);
+
 	};
 
  }

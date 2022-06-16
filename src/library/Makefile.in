@@ -9,8 +9,7 @@ SOURCES= \
 		$(wildcard os/@OSNAME@/*.cc)
 
 TEST_SOURCES= \
-		$(wildcard testprogram/*.cc) \
-		$(wildcard ../modules/netinstall/*.cc)
+		$(wildcard testprogram/*.cc)
 	
 #---[ Tools ]----------------------------------------------------------------------------
 

@@ -9,10 +9,65 @@
  #include <reinstall/controller.h>
  #include <reinstall/action.h>
 
+ #include <reinstall/actions/kernel.h>
+ #include <reinstall/actions/initrd.h>
+ #include <reinstall/isobuilder.h>
+
+ #include <udjat/moduleinfo.h>
+ #include <reinstall/isobuilder.h>
+
  #include <unistd.h>
 
  using namespace std;
  using namespace Udjat;
+
+ static const Udjat::ModuleInfo moduleinfo{"Net install builder"};
+
+ class TestModule : public Udjat::Module, public Udjat::Factory {
+ public:
+	TestModule() : Udjat::Module("test", moduleinfo), Udjat::Factory("option",moduleinfo) {
+	}
+
+	bool push_back(const pugi::xml_node &node) override {
+
+		class Action : public Reinstall::Action {
+		public:
+			Action(const pugi::xml_node &node) : Reinstall::Action(node) {
+
+				// Get URL for installation kernel.
+				if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
+					push_back(make_shared<Reinstall::Kernel>(node));
+					return true;
+				})) {
+					throw runtime_error("Missing required entry <kernel> with the URL for installation kernel");
+				}
+
+				// Get URL for installation init.
+				if(!scan(node,"init",[this](const pugi::xml_node &node) {
+					push_back(make_shared<Reinstall::InitRD>(node));
+					return true;
+				})) {
+					throw runtime_error("Missing required entry <init> with the URL for the linuxrc program");
+				}
+
+			}
+
+			virtual ~Action() {
+			}
+
+			void activate() {
+				Reinstall::IsoBuilder worker;
+				this->Reinstall::Action::activate(worker);
+			}
+
+		};
+
+		Reinstall::Group::find(node)->push_back(new Action(node));
+
+		return true;
+	}
+
+ };
 
  int main(int argc, char **argv) {
 
@@ -24,7 +79,7 @@
 	Reinstall::Controller::getInstance();
 
 	// Initialize module.
-	udjat_module_init();
+	new TestModule();
 
 	// Initialize application, load xml definitions.
 	Udjat::Application::init(argc,argv,"./test.xml");
