@@ -19,6 +19,7 @@
 
  #include "private.h"
  #include <reinstall/worker.h>
+ #include <vector>
 
  namespace Reinstall {
 
@@ -30,6 +31,10 @@
 
 	void Worker::pre(Action &action) {
 
+		// Get folder contents.
+		action.load();
+
+		// Download files.
 		action.for_each([this](Action::Source &source) {
 			push_back(source);
 		});

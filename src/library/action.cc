@@ -22,6 +22,7 @@
  #include <reinstall/worker.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/protocol.h>
+ #include <pugixml.hpp>
 
  namespace Reinstall {
 
@@ -36,19 +37,10 @@
 
 	Action::Action(const pugi::xml_node &node) : Object(node) {
 
-		/*
-
-		TODO: Check if the file has local path, if yes, insert it as a source, if not it's just a kernel parameter.
-		scan(node,"driver-installation-disk",[this](const pugi::xml_node &node) {
-			Source source{node};
-			auto search = sources.find(source);
-			if(search == sources.end()) {
-				// Insert new DUD
-				sources.insert(source);
-			}
+		scan(node, "source", [this](const pugi::xml_node &node){
+			push_back(make_shared<Source>(node));
 			return false;
 		});
-		*/
 
 		if(node.attribute("default").as_bool(false)) {
 			defaction = this;
@@ -76,11 +68,15 @@
 	}
 
 	void Action::for_each(const std::function<void (Source &source)> &call) {
-
 		for(auto source : sources) {
 			call(*source);
 		}
+	}
 
+	void Action::for_each(const std::function<void (std::shared_ptr<Source> &source)> &call) {
+		for(auto source : sources) {
+			call(source);
+		}
 	}
 
 	bool Action::scan(const pugi::xml_node &node, const char *tagname, const std::function<bool(const pugi::xml_node &node)> &call) {
@@ -108,18 +104,59 @@
 
 	}
 
-	void Action::scanForSources(const pugi::xml_node &node, const char *tagname) {
+	std::shared_ptr<Action::Source> Action::folder() {
 
-		/*
-		scan(node,tagname,[this](const pugi::xml_node &node) {
-			Source source{node};
-			auto search = sources.find(source);
-			if(search == sources.end()) {
-				sources.insert(source);
+		for(auto source : sources) {
+			if( *(source->url + strlen(source->url) - 1) == '/') {
+				return source;
 			}
-			return false;
-		});
-		*/
+		}
+
+		return std::shared_ptr<Source>();
+	}
+
+	void Action::load() {
+
+		while(auto source = folder()) {
+
+			sources.erase(source);
+
+			string index = Udjat::Protocol::WorkerFactory(string{source->url,strlen(source->url)-1}.c_str())->get();
+			if(index.empty()) {
+				throw runtime_error(string{"Empty response from "} + source->url);
+			}
+
+			for(auto href = index.find("<a href=\""); href != string::npos; href = index.find("<a href=\"",href)) {
+
+				auto from = href+9;
+				href = index.find("\"",from);
+				if(href == string::npos) {
+					throw runtime_error("Erro ao processar indice html");
+				}
+
+				string link = index.substr(from,href-from);
+
+				if(link[0] =='/' || link[0] == '?' || link[0] == '.' || link[0] == '$')
+					continue;
+
+				if(link.size() >= 7 && strncmp(link.c_str(),"http://",7) == 0 ) {
+					continue;
+				}
+
+				if(link.size() >= 8 && strncmp(link.c_str(),"https://",8) == 0 ) {
+					continue;
+				}
+
+				string remote = source->url + link;
+				string local = source->path + link;
+
+				cout << "source\t" << remote << " -> " << local << endl;
+				push_back(std::make_shared<Source>(remote.c_str(),local.c_str()));
+
+				href = from+1;
+			}
+
+		}
 
 	}
 

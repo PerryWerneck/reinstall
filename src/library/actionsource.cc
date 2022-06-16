@@ -30,6 +30,11 @@
 
  namespace Reinstall {
 
+	Action::Source::Source(const char *u, const char *p)
+		:	url(Quark(u).c_str()),
+			path(Quark(p).c_str()) {
+	}
+
 	Action::Source::Source(const pugi::xml_node &node,const char *url,const char *defpath)
 		: 	url(Quark(node,"url",url,false).c_str()),
 			path(Quark(node,"path",defpath,false).c_str()),

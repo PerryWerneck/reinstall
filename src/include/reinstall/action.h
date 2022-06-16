@@ -23,7 +23,7 @@
  #include <pugixml.hpp>
  #include <reinstall/object.h>
  #include <list>
- #include <set>
+ #include <unordered_set>
  #include <memory>
  #include <cstring>
  #include <functional>
@@ -44,6 +44,9 @@
 			const char *path;					///< @brief The path inside the image.
 			const char *message;				///< @brief User message while downloading file.
 			const char *filename = nullptr;		///< @brief Nome do arquivo local.
+
+			/// @brief Create a simple source.
+			Source(const char *url, const char *path);
 
 			/// @brief Create new file source.
 			/// @param node XML definitions for this file source.
@@ -76,8 +79,25 @@
 
 		};
 
+
+		typedef struct {
+			bool operator() (const std::shared_ptr<Source> a, const std::shared_ptr<Source> b) const {
+				return strcmp(a->path,b->path) == 0;
+			}
+		} SourceEqual;
+
+		typedef struct {
+			size_t operator() (const std::shared_ptr<Source> a) const {
+				size_t rc = 5381;
+				for (const signed char *p = (const signed char *) a->path; *p != '\0'; p++)
+					rc = (rc << 5) + rc + *p;
+				return rc;
+			}
+		} SourceHash;
+
 	protected:
-		std::set<std::shared_ptr<Source>> sources;
+
+		std::unordered_set<std::shared_ptr<Source>, SourceHash, SourceEqual> sources;
 
 		/// @brief Scan xml for 'tagname', call lambda in every occurrence.
 		/// @param tagname the <tag> to search for.
@@ -86,11 +106,11 @@
 		/// @return true if the 'call' has returned true.
 		bool scan(const pugi::xml_node &node, const char *tagname, const std::function<bool(const pugi::xml_node &node)> &call);
 
-		/// @brief Get list of sources from 'tagname'.
-		void scanForSources(const pugi::xml_node &node, const char *tagname);
-
 		/// @brief Activate with worker.
 		virtual void activate(Reinstall::Worker &worker);
+
+		/// @brief Get first folder.
+		std::shared_ptr<Source> folder();
 
 	private:
 		static Action * defaction;		///< @brief Default action.
@@ -105,12 +125,16 @@
 
 		virtual void activate();
 
+		/// @brief Load folders.
+		void load();
+
 		/// @brief Return the URL for installation media.
 		virtual const char * install();
 
 		bool push_back(std::shared_ptr<Source> source);
 
 		void for_each(const std::function<void (Source &source)> &call);
+		void for_each(const std::function<void (std::shared_ptr<Source> &source)> &call);
 
 	};
 
