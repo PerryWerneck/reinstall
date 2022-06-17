@@ -29,23 +29,30 @@
 
  namespace Reinstall {
 
-	/// @brief Worker for building an iso image.
-	class UDJAT_API IsoBuilder : public Worker {
-	private:
-		IsoImage *image = nullptr;
-		IsoWriteOpts *opts;
+	namespace iso9660 {
 
-	protected:
-		void push_back(Action::Source &source) override;
+		/// @brief Worker for building an iso image.
+		class UDJAT_API Worker : public Reinstall::Worker {
+		private:
+			IsoImage *image = nullptr;
+			IsoWriteOpts *opts;
 
-	public:
+		protected:
+			void push_back(Action::Source &source) override;
 
-		IsoBuilder();
-		~IsoBuilder();
+		public:
 
-		/// @brief Save image to 'fd'.
-		void save(int fd);
+			Worker();
+			~Worker();
 
-	};
+			/// @brief Save image to 'fd'.
+			void save(int fd);
+
+			/// @brief Save image to file.
+			void save(const char *filename);
+
+		};
+
+	}
 
  }

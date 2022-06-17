@@ -38,7 +38,7 @@
 		<Unit filename="../include/reinstall/actions/kernel.h" />
 		<Unit filename="../include/reinstall/controller.h" />
 		<Unit filename="../include/reinstall/group.h" />
-		<Unit filename="../include/reinstall/isobuilder.h" />
+		<Unit filename="../include/reinstall/iso9660.h" />
 		<Unit filename="../include/reinstall/object.h" />
 		<Unit filename="../include/reinstall/worker.h" />
 		<Unit filename="../modules/netinstall/action.cc" />
@@ -48,7 +48,7 @@
 		<Unit filename="actionsource.cc" />
 		<Unit filename="controller.cc" />
 		<Unit filename="group.cc" />
-		<Unit filename="isobuilder.cc" />
+		<Unit filename="iso9660/worker.cc" />
 		<Unit filename="object.cc" />
 		<Unit filename="private.h" />
 		<Unit filename="testprogram/private.h" />

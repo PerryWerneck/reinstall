@@ -6,6 +6,7 @@ SONAME=@SONAME@
 
 SOURCES= \
 		$(wildcard *.cc) \
+		$(wildcard iso9660/*.cc) \
 		$(wildcard os/@OSNAME@/*.cc)
 
 TEST_SOURCES= \

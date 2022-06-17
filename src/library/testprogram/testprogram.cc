@@ -11,10 +11,9 @@
 
  #include <reinstall/actions/kernel.h>
  #include <reinstall/actions/initrd.h>
- #include <reinstall/isobuilder.h>
+ #include <reinstall/iso9660.h>
 
  #include <udjat/moduleinfo.h>
- #include <reinstall/isobuilder.h>
 
  #include <unistd.h>
 
@@ -56,8 +55,9 @@
 			}
 
 			void activate() {
-				Reinstall::IsoBuilder worker;
-				this->Reinstall::Action::activate(worker);
+				Reinstall::iso9660::Worker worker;
+				Reinstall::Action::activate(worker);
+				worker.save("/tmp/test.iso");
 			}
 
 		};
