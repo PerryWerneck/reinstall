@@ -22,6 +22,7 @@
  #include <iostream>
  #include <reinstall/iso9660.h>
  #include <udjat/tools/url.h>
+ #include <udjat/tools/string.h>
 
  #include <sys/stat.h>
  #include <fcntl.h>
@@ -80,39 +81,32 @@
 
 	static IsoDir * getIsoDir(IsoImage *image, const char *dirname) {
 
+		if(*dirname == '/') {
+			dirname++;
+		}
+
+		int rc;
 		IsoDir * dir = iso_image_get_root(image);
 
-		while(*dirname) {
+		for(auto dn : Udjat::String(dirname).split("/")) {
 
-			string dn;
-
-			const char *next = strchr(dirname,'/');
-			if(next) {
-				dn = string(dirname,next-dirname);
-				dirname = next+1;
-			} else {
-				dn = string(dirname);
-				dirname += dn.size();
-			}
-
-			IsoNode * node = NULL;
-			int rc = iso_image_dir_get_node(image,dir,dn.c_str(),&node,0);
-
+			IsoNode *node;
+			rc = iso_image_dir_get_node(image,dir,dn.c_str(),&node,0);
 			if(rc == 0) {
 
 				// Not found, add it.
-				iso_tree_add_new_dir(dir, dn.c_str(), (IsoDir **) &node);
-				dir = (IsoDir *) node;
+				rc = iso_tree_add_new_dir(dir, dn.c_str(), (IsoDir **) &node);
 
-			} else {
+			};
 
-				// Found, use it.
-				dir = (IsoDir *) node;
-
+			if(rc < 0) {
+				cerr << "iso9660\tError '" << iso_error_to_msg(rc) << "' adding path " << dirname << endl;
+				throw runtime_error(iso_error_to_msg(rc));
 			}
 
-		}
+			dir = (IsoDir *) node;
 
+		}
 
 		return dir;
 
@@ -137,12 +131,13 @@
 
 		}
 
+		int rc = 0;
+
 		auto pos = strrchr(source.path,'/');
 		if(pos) {
 
 			// Has path, get iso dir.
-
-			iso_tree_add_new_node(
+			rc = iso_tree_add_new_node(
 				image,
 				getIsoDir(image,string(source.path,pos - source.path).c_str()),
 				pos+1,
@@ -153,8 +148,7 @@
 		} else {
 
 			// No path, store on root.
-
-			iso_tree_add_new_node(
+			rc = iso_tree_add_new_node(
 				image,
 				iso_image_get_root(image),
 				source.path,
@@ -162,6 +156,11 @@
 				NULL
 			);
 
+		}
+
+		if(rc < 0) {
+			cerr << "iso9660\tError '" << iso_error_to_msg(rc) << "' adding node" << endl;
+			throw runtime_error(iso_error_to_msg(rc));
 		}
 
 	}
