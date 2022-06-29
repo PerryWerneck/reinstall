@@ -34,6 +34,7 @@
 
 	class UDJAT_API Action : public Reinstall::Object {
 	public:
+
 		/// @brief File/Folder to copy from repository to image.
 		class UDJAT_API Source {
 		private:
@@ -42,7 +43,7 @@
 		public:
 			const char *url;					///< @brief The file URL.
 			const char *path;					///< @brief The path inside the image.
-			const char *message;				///< @brief User message while downloading file.
+			const char *message;				///< @brief User message while downloading source.
 			const char *filename = nullptr;		///< @brief Nome do arquivo local.
 
 			/// @brief Create a simple source.
@@ -56,10 +57,12 @@
 
 			~Source();
 
+			/*
 			/// @brief Check if it's required to download the source.
 			inline bool local() const noexcept {
 				return (*path != 0);
 			}
+			*/
 
 			inline bool operator< (const Source &b) const noexcept {
 				return strcasecmp(path,b.path) < 0;
@@ -94,6 +97,25 @@
 				return rc;
 			}
 		} SourceHash;
+
+		/// @brief Template for image contents replacing.
+		class UDJAT_API Template {
+		private:
+
+			/// @brief Template name.
+			const char *name;
+
+			/// @brief Template file name.
+			const char *filename;
+
+		public:
+			Template(const char *name);
+			Template(const pugi::xml_node &node);
+
+			void apply(Source &source);
+		};
+
+		std::list<Template> templates;
 
 	protected:
 

@@ -27,6 +27,7 @@
  #include <udjat/tools/xml.h>
  #include <udjat/tools/string.h>
  #include <udjat/tools/configuration.h>
+ #include <reinstall/dialogs.h>
 
  namespace Reinstall {
 
@@ -72,18 +73,28 @@
 
 	string Action::Source::save() {
 
+		Dialog::Progress &progress = Dialog::Progress::getInstance();
 		auto worker = Udjat::Protocol::WorkerFactory(this->url);
 
 		if(filename) {
 
 			// Download URL to 'filename'
-			worker->save(filename);
+			progress.set(worker->url().c_str());
+			worker->save(filename,[&progress](double current, double total){
+				progress.update(current,total);
+				return true;
+			});
+
 			return filename;
 
 		} else if(tempfilename.empty()) {
 
 			// Download to temporary file.
-			tempfilename = worker->save();
+			tempfilename = worker->save([&progress](double current, double total){
+				progress.update(current,total);
+				return true;
+			});
+
 			filename = tempfilename.c_str();
 
 		}

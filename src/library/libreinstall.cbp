@@ -37,9 +37,13 @@
 		<Unit filename="../include/reinstall/actions/initrd.h" />
 		<Unit filename="../include/reinstall/actions/kernel.h" />
 		<Unit filename="../include/reinstall/controller.h" />
+		<Unit filename="../include/reinstall/dialogs.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="../include/reinstall/group.h" />
 		<Unit filename="../include/reinstall/iso9660.h" />
 		<Unit filename="../include/reinstall/object.h" />
+		<Unit filename="../include/reinstall/value.h" />
 		<Unit filename="../include/reinstall/worker.h" />
 		<Unit filename="../modules/netinstall/action.cc" />
 		<Unit filename="../modules/netinstall/init.cc" />
@@ -47,6 +51,8 @@
 		<Unit filename="action.cc" />
 		<Unit filename="actionsource.cc" />
 		<Unit filename="controller.cc" />
+		<Unit filename="dialogs/progress.cc" />
+		<Unit filename="dialogs/window.cc" />
 		<Unit filename="group.cc" />
 		<Unit filename="iso9660/worker.cc" />
 		<Unit filename="object.cc" />

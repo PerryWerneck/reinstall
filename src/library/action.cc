@@ -20,6 +20,7 @@
  #include "private.h"
  #include <reinstall/action.h>
  #include <reinstall/worker.h>
+ #include <reinstall/dialogs.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/protocol.h>
  #include <pugixml.hpp>
@@ -98,9 +99,13 @@
 
 	void Action::activate(Worker &worker) {
 
+		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
 		worker.pre(*this);
+		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
 		worker.apply(*this);
+		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
 		worker.post(*this);
+		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
 
 	}
 
@@ -117,9 +122,23 @@
 
 	void Action::load() {
 
-		while(auto source = folder()) {
+		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
+		progress.set("Getting file lists");
+
+		// Store on a vector to get the total number of folders.
+		std::vector<std::shared_ptr<Action::Source>> folders;
+		while(auto source = folder()) {
+			folders.push_back(source);
 			sources.erase(source);
+		}
+
+		// Download file lists.
+		size_t current = 0;
+		size_t total = folders.size();
+		for(auto source : folders) {
+
+			progress.count(++current,total);
 
 			string index = Udjat::Protocol::WorkerFactory(string{source->url,strlen(source->url)-1}.c_str())->get();
 			if(index.empty()) {
@@ -131,7 +150,7 @@
 				auto from = href+9;
 				href = index.find("\"",from);
 				if(href == string::npos) {
-					throw runtime_error("Erro ao processar indice html");
+					throw runtime_error(string{"Unable to parse file list from "} + source->url);
 				}
 
 				string link = index.substr(from,href-from);

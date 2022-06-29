@@ -23,6 +23,7 @@
  #include <reinstall/iso9660.h>
  #include <udjat/tools/url.h>
  #include <udjat/tools/string.h>
+ #include <reinstall/dialogs.h>
 
  #include <sys/stat.h>
  #include <fcntl.h>
@@ -120,13 +121,13 @@
 		}
 
 		// Download and apply files.
-		string filename;
+		string filename = source.filename;
 
 		cout << "iso9660\t" << source.url << " -> " << source.path << endl;
 
-		if(source.local()) {
+		if(filename.empty()) {
 
-			// Download and save.
+			// No local filename, download the file to get one.
 			filename = source.save();
 
 		}
@@ -204,13 +205,17 @@
 			throw runtime_error(iso_error_to_msg(rc));
 		}
 
+		Dialog::Progress &progress = Dialog::Progress::getInstance();
+		progress.set("Writing ISO image");
+
 		try {
 
 			#define BUFLEN 2048
 			unsigned char buffer[BUFLEN];
 
-			uint64_t current = 0;
-			uint64_t total = burn_src->get_size(burn_src);
+			double current = 0;
+			double total = burn_src->get_size(burn_src);
+
 			while(burn_src->read_xt(burn_src, buffer, BUFLEN) == BUFLEN) {
 
 				if(write(fd,buffer,BUFLEN) != BUFLEN) {
@@ -218,61 +223,24 @@
 				}
 
 				current += BUFLEN;
-				//if(total) {
-				//	activity.setProgress(current,total,true);
-				//}
-
-			}
-
-
-		} catch(...) {
-
-			burn_src->free_data(burn_src);
-			throw;
-
-		}
-
-		burn_src->free_data(burn_src);
-		free(burn_src);
-
-/*
-
-		#define BUFLEN 2048
-		unsigned char * buffer = new unsigned char[BUFLEN];
-		try {
-
-			uint64_t current = 0;
-			uint64_t total = burn_src->get_size(burn_src);
-			while(burn_src->read_xt(burn_src, buffer, BUFLEN) == BUFLEN) {
-
-				if(write(fd,buffer,BUFLEN) != BUFLEN) {
-					throw system_error(errno, system_category(),"Erro ao gravar imagem");
-				}
-
-				current += BUFLEN;
 				if(total) {
-					activity.setProgress(current,total,true);
+					progress.update(current,total);
 				}
 
 			}
 
-			activity.setProgress(total,total,true);
 
 		} catch(...) {
 
 			burn_src->free_data(burn_src);
-			free(burn_src);
-
-			delete[] buffer;
 			throw;
+
 		}
+
 		burn_src->free_data(burn_src);
 		free(burn_src);
-		delete[] buffer;
 
-
-*/
-
+		progress.set("Finalizing");
 		::fsync(fd);
 
 	}

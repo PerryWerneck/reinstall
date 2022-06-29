@@ -8,6 +8,7 @@
 
  #include <reinstall/controller.h>
  #include <reinstall/action.h>
+ #include <reinstall/dialogs.h>
 
  #include <reinstall/actions/kernel.h>
  #include <reinstall/actions/initrd.h>
@@ -55,9 +56,17 @@
 			}
 
 			void activate() {
+
+				cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
+				Reinstall::Dialog::Progress progress(*this);
+				cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
 				Reinstall::iso9660::Worker worker;
+				cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
 				Reinstall::Action::activate(worker);
-				worker.save("/tmp/test.iso");
+				cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
+				//worker.save("/tmp/test.iso");
+				cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
+
 			}
 
 		};
