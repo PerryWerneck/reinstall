@@ -36,7 +36,7 @@
 		throw runtime_error("No default action");
 	}
 
-	Action::Action(const pugi::xml_node &node) : Object(node) {
+	Action::Action(const pugi::xml_node &node) : Object(node), kparms(node,"kernel-parameters") {
 
 		scan(node, "source", [this](const pugi::xml_node &node){
 			push_back(make_shared<Source>(node));

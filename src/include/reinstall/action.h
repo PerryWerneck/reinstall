@@ -22,6 +22,7 @@
  #include <udjat/defs.h>
  #include <pugixml.hpp>
  #include <reinstall/object.h>
+ #include <reinstall/value.h>
  #include <list>
  #include <unordered_set>
  #include <memory>
@@ -119,6 +120,10 @@
 
 	protected:
 
+		/// @brief Kernel parameters.
+		Parameters kparms;
+
+		/// @brief Sources list.
 		std::unordered_set<std::shared_ptr<Source>, SourceHash, SourceEqual> sources;
 
 		/// @brief Scan xml for 'tagname', call lambda in every occurrence.

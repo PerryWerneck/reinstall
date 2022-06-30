@@ -21,6 +21,7 @@
  #include <reinstall/value.h>
  #include <stdexcept>
  #include <string>
+ #include <iostream>
 
  using namespace std;
 
@@ -39,7 +40,7 @@
 
 						if(values.find(name) == values.end()) {
 							values.insert(make_pair(name,Parameters::Value(value)));
-						}
+ 						}
 
 					}
 
@@ -63,8 +64,7 @@
 	void Parameters::for_each(const std::function<void(const char *name, const Udjat::Value &value)> &call) const {
 
 		for(auto value = values.begin(); value != values.end(); value++) {
-
-
+			call(value->first.c_str(),value->second);
 		}
 
 	}
