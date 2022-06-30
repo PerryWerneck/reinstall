@@ -121,7 +121,10 @@
 		}
 
 		// Download and apply files.
-		string filename = source.filename;
+		string filename;
+		if(source.filename) {
+			filename = source.filename;
+		}
 
 		cout << "iso9660\t" << source.url << " -> " << source.path << endl;
 
@@ -136,6 +139,11 @@
 
 		auto pos = strrchr(source.path,'/');
 		if(pos) {
+
+			if(!*(pos+1)) {
+				cerr << "iso9660\tCan't insert node '" << source.path << "' it's not a FILE name" << endl;
+				throw logic_error("Unexpanded path in source list");
+			}
 
 			// Has path, get iso dir.
 			rc = iso_tree_add_new_node(

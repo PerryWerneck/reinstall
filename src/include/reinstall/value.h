@@ -38,10 +38,10 @@
 			virtual ~Value();
 
 			bool isNull() const override;
-			Value & reset(const Type type = Undefined) override;
-			Value & set(const Value &value) override;
-			Value & set(const char *value, const Type type = String) override;
-			const Value & get(std::string &value) const override;
+			Udjat::Value & reset(const Type type = Undefined) override;
+			Udjat::Value & set(const Udjat::Value &value) override;
+			Udjat::Value & set(const char *value, const Type type = String) override;
+			const Udjat::Value & get(std::string &value) const override;
 
 		};
 
@@ -49,20 +49,19 @@
 
 	public:
 		Parameters(const pugi::xml_node &node, const char *tagname);
-
 		virtual ~Parameters();
 
 		/// @brief Has any value?
 		bool isNull() const override;
 
 		/// @brief Navigate from all values.
-		void for_each(const std::function<void(const char *name, const Value &value)> &call) const override;
+		void for_each(const std::function<void(const char *name, const Udjat::Value &value)> &call) const override;
 
 		/// @brief Clear contents, set value type.
-		Value & reset(const Type type = Undefined) override;
+		Udjat::Value & reset(const Type type = Undefined) override;
 
 		/// @brief Convert value to 'object' and insert child.
-		Value & set(const Value &value) override;
+		Udjat::Value & set(const Udjat::Value &value) override;
 
 	};
 

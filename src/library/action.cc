@@ -124,22 +124,14 @@
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
-		progress.set("Getting file lists");
+		progress.set("Parsing file lists");
 
-		// Store on a vector to get the total number of folders.
-		std::vector<std::shared_ptr<Action::Source>> folders;
-		while(auto source = folder()) {
-			folders.push_back(source);
+		for(std::shared_ptr<Action::Source> source = folder();source;source = folder()) {
+
+			// Remove folder from source list.
 			sources.erase(source);
-		}
 
-		// Download file lists.
-		size_t current = 0;
-		size_t total = folders.size();
-		for(auto source : folders) {
-
-			progress.count(++current,total);
-
+			// Get index and insert folder contents.
 			string index = Udjat::Protocol::WorkerFactory(string{source->url,strlen(source->url)-1}.c_str())->get();
 			if(index.empty()) {
 				throw runtime_error(string{"Empty response from "} + source->url);
@@ -174,7 +166,6 @@
 
 				href = from+1;
 			}
-
 		}
 
 	}

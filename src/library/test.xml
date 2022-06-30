@@ -33,10 +33,10 @@
 	</kernel-parameters>
 
 	<!-- Replace every 'grub.cfg' file with template -->
-	<template name='grub.cfg' />
+	<template name='grub.cfg' url='file://../../templates/grub.cfg' />
 	
 	<!-- Replace every 'isolinux.cfg' file with template -->
-	<template name='isolinux.cfg' />
+	<template name='isolinux.cfg' url='file://../../templates/isolinux.cfg' />
 	
 	<group name='OpenSUSE'>
 

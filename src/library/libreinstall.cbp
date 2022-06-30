@@ -56,9 +56,11 @@
 		<Unit filename="group.cc" />
 		<Unit filename="iso9660/worker.cc" />
 		<Unit filename="object.cc" />
+		<Unit filename="parameters.cc" />
 		<Unit filename="private.h" />
 		<Unit filename="testprogram/private.h" />
 		<Unit filename="testprogram/testprogram.cc" />
+		<Unit filename="value.cc" />
 		<Unit filename="worker.cc" />
 		<Extensions />
 	</Project>
