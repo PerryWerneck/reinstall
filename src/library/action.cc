@@ -210,10 +210,15 @@
 
 			tmpl->load((Udjat::Object &) *this);
 
+			for(auto source : sources) {
+
+				if(tmpl->test(source->path)) {
+					tmpl->apply(*source);
+				}
+
+			}
 
 		}
-
-		exit(-1);
 
 	}
 

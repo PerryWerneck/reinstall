@@ -115,6 +115,8 @@
 			Template(const pugi::xml_node &node);
 			~Template();
 
+			bool test(const char *path) const noexcept;
+
 			void load(const Udjat::Object &object);
 			void apply(Source &source);
 

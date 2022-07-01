@@ -66,7 +66,27 @@
 
 	}
 
+	bool Action::Template::test(const char *path) const noexcept {
+
+		if(*name == '/') {
+			return strcmp(name,path) == 0;
+		}
+
+		const char *ptr = strrchr(path,'/');
+		if(ptr) {
+			ptr++;
+		} else {
+			ptr = path;
+		}
+
+		return strcmp(name,ptr) == 0;
+	}
+
+
 	void Action::Template::apply(Source &source) {
+
+		cout << "templates\tReplacing file '" << source.path << "' with '" << name << "' template" << endl;
+		source.filename = this->filename.c_str();
 
 	}
 
