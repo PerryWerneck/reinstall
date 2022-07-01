@@ -143,6 +143,8 @@
 		/// @brief Get first folder.
 		std::shared_ptr<Source> folder();
 
+		bool getProperty(const char *key, std::string &value) const noexcept override;
+
 	private:
 		static Action * defaction;		///< @brief Default action.
 

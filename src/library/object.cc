@@ -33,6 +33,29 @@
 
 	}
 
+	bool Object::getProperty(const char *key, std::string &value) const noexcept {
+
+		if(!strcasecmp(key,"label")) {
+
+			value = label;
+			return true;
+
+		} else if(!strcasecmp(key,"title")) {
+
+			value = title;
+			return true;
+
+		} else if(!strcasecmp(key,"sub-title")) {
+
+			value = subtitle.body;
+			return true;
+
+		}
+
+		return Udjat::NamedObject::getProperty(key,value);
+	}
+
+
 	Object::Link::Link(const char *tagname, const pugi::xml_node &node) {
 
 		const pugi::xml_node & child = node.child(tagname);

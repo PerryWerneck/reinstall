@@ -72,6 +72,8 @@
 
 		};
 
+		bool getProperty(const char *key, std::string &value) const noexcept override;
+
 	public:
 
 		/// @brief Label (for menu)

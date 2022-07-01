@@ -23,6 +23,7 @@
  #include <udjat/tools/string.h>
  #include <udjat/tools/protocol.h>
  #include <reinstall/dialogs.h>
+ #include <udjat/tools/file.h>
  #include <iostream>
 
  using namespace std;
@@ -56,7 +57,12 @@
 			return true;
 		});
 
+		// Expand ${} values using object.
 		contents.expand(object);
+
+		// Save to temporary.
+		filename = Udjat::File::Temporary::create();
+		Udjat::File::Path::save(filename.c_str(),contents.c_str());
 
 	}
 

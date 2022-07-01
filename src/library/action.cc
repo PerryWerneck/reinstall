@@ -179,6 +179,28 @@
 
 	}
 
+	bool Action::getProperty(const char *key, std::string &value) const noexcept {
+
+		if(!strcasecmp(key,"kernel-parameters")) {
+
+			kparms.for_each([&value](const char *name, const Udjat::Value &v){
+
+				if(!value.empty()) {
+					value += " ";
+				}
+
+				value += name;
+				value += "=";
+				value += v.to_string();
+
+			});
+
+			return true;
+		}
+
+		return Object::getProperty(key,value);
+	}
+
 	void Action::applyTemplates() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
