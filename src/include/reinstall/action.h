@@ -102,21 +102,25 @@
 		/// @brief Template for image contents replacing.
 		class UDJAT_API Template {
 		private:
-
 			/// @brief Template name.
 			const char *name;
 
+			/// @brief Template URL.
+			const char *url;
+
 			/// @brief Template file name.
-			const char *filename;
+			std::string filename;
 
 		public:
-			Template(const char *name);
 			Template(const pugi::xml_node &node);
+			~Template();
 
+			void load(const Udjat::Object &object);
 			void apply(Source &source);
+
 		};
 
-		std::list<Template> templates;
+		std::list<std::shared_ptr<Template>> templates;
 
 	protected:
 
@@ -155,10 +159,14 @@
 		/// @brief Load folders.
 		void load();
 
+		/// @brief Apply templates.
+		void applyTemplates();
+
 		/// @brief Return the URL for installation media.
 		virtual const char * install();
 
 		bool push_back(std::shared_ptr<Source> source);
+		bool push_back(std::shared_ptr<Template> tmpl);
 
 		void for_each(const std::function<void (Source &source)> &call);
 		void for_each(const std::function<void (std::shared_ptr<Source> &source)> &call);

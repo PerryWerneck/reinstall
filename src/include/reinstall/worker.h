@@ -25,7 +25,7 @@
 
  namespace Reinstall {
 
-	class Worker {
+	class UDJAT_API Worker {
 	protected:
 
 		/// @brief Insert source on the target image.

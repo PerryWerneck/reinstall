@@ -43,6 +43,11 @@
 			return false;
 		});
 
+		scan(node, "template", [this](const pugi::xml_node &node){
+			push_back(make_shared<Template>(node));
+			return false;
+		});
+
 		if(node.attribute("default").as_bool(false)) {
 			defaction = this;
 		}
@@ -97,6 +102,11 @@
  		return (sources.insert(source).first != sources.end());
 	}
 
+	bool Action::push_back(std::shared_ptr<Template> tmpl) {
+		templates.push_back(tmpl);
+		return true;
+	}
+
 	void Action::activate(Worker &worker) {
 
 		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
@@ -123,8 +133,7 @@
 	void Action::load() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-
-		progress.set("Parsing file lists");
+		progress.set("Getting file list");
 
 		for(std::shared_ptr<Action::Source> source = folder();source;source = folder()) {
 
@@ -167,6 +176,22 @@
 				href = from+1;
 			}
 		}
+
+	}
+
+	void Action::applyTemplates() {
+
+		Dialog::Progress &progress = Dialog::Progress::getInstance();
+		progress.set("Applying templates");
+
+		for(auto tmpl : templates) {
+
+			tmpl->load((Udjat::Object &) *this);
+
+
+		}
+
+		exit(-1);
 
 	}
 

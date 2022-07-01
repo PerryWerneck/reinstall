@@ -34,6 +34,9 @@
 		// Get folder contents.
 		action.load();
 
+		// Apply templates.
+		action.applyTemplates();
+
 		// Download files.
 		action.for_each([this](Action::Source &source) {
 			push_back(source);

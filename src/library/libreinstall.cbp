@@ -58,6 +58,7 @@
 		<Unit filename="object.cc" />
 		<Unit filename="parameters.cc" />
 		<Unit filename="private.h" />
+		<Unit filename="template.cc" />
 		<Unit filename="testprogram/private.h" />
 		<Unit filename="testprogram/testprogram.cc" />
 		<Unit filename="value.cc" />
