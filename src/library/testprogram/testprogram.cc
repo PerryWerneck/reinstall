@@ -16,6 +16,7 @@
  #include <udjat/moduleinfo.h>
 
  #include <unistd.h>
+ #include <reinstall/diskimage.h>
 
  using namespace std;
  using namespace Udjat;
@@ -60,6 +61,11 @@
 	// First get controller to construct the factories.
 	Reinstall::Controller::getInstance();
 
+	{
+		Reinstall::Disk::Image disk("efi.iso","vfat");
+	}
+
+	/*
 	// Initialize module.
 	new TestModule();
 
@@ -67,6 +73,7 @@
 	Udjat::Application::init(argc,argv,"./test.xml");
 
 	Reinstall::Action::getDefault().activate();
+	*/
 
 	// Finalize application.
 	Udjat::Application::finalize();

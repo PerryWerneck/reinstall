@@ -227,12 +227,12 @@ AC_SUBST(ISOFS_CFLAGS)
 dnl ---------------------------------------------------------------------------
 dnl Check for libguestfs
 dnl ---------------------------------------------------------------------------
-
-PKG_CHECK_MODULES( [GUESTFS], [libguestfs], AC_DEFINE(HAVE_GUESTFS,[],[Do we have libiguestfs?]), AC_MSG_NOTICE([libguestfs not present.]) )
-
-AC_SUBST(GUESTFS_LIBS)
-AC_SUBST(GUESTFS_CFLAGS)
-
+dnl 
+dnl PKG_CHECK_MODULES( [GUESTFS], [libguestfs], AC_DEFINE(HAVE_GUESTFS,[],[Do we have libiguestfs?]), AC_MSG_NOTICE([libguestfs not present.]) )
+dnl 
+dnl AC_SUBST(GUESTFS_LIBS)
+dnl AC_SUBST(GUESTFS_CFLAGS)
+dnl 
 dnl ---------------------------------------------------------------------------
 dnl Output config
 dnl ---------------------------------------------------------------------------

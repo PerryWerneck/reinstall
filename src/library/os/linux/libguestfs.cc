@@ -20,6 +20,7 @@
  #include <config.h>
  #include <reinstall/diskimage.h>
  #include <stdexcept>
+ #include <iostream>
 
  using namespace std;
 
@@ -41,14 +42,16 @@
 
 		~Handler() {
 			if(guestfs_umount_all(g) == -1) {
-				throw runtime_error("Error on guestfs umount");
+				cerr << "guestfs\tError on guestfs umount" << endl;
 			}
 
 			if(guestfs_shutdown(g) == -1) {
-				throw runtime_error("Error on guestfs shutdown");
+				cerr << "guestfs\tError on guestfs shutdown" << endl;
 			}
 
 			guestfs_close(g);
+
+			cout << "guestfs\tGuestfs handle closed" << endl;
 		}
 
 	};
@@ -58,20 +61,21 @@
 		handler = new Handler();
 
 		if(guestfs_add_drive(handler->g, filename) == -1) {
-			throw runtime_error("Error in guestfs_add_drive");
+			throw runtime_error(string{"Error in guestfs_add_drive ("} + filename + ")");
 		}
 
 		if(guestfs_launch(handler->g) == -1) {
 			throw runtime_error("Error in guestfs_launch");
 		};
 
+		cout << "guestfs\tFile '" << filename << "' mounted" << endl;
 	}
 
 	Disk::Image::~Image() {
 		delete handler;
 	}
 
-	void forEach(const std::function<void (const char *filename)> &call) {
+	void Disk::Image::forEach(const std::function<void (const char *filename)> &call) {
 
 	}
 

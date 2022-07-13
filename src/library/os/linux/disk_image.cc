@@ -17,6 +17,196 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ #include <config.h>
+ #include <reinstall/diskimage.h>
+ #include <udjat/tools/file.h>
+ #include <stdexcept>
+ #include <iostream>
+ #include <unistd.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <linux/loop.h>
+ #include <sys/ioctl.h>
+ #include <sys/mount.h>
+
+ using namespace std;
+ using namespace Udjat;
+
+ namespace Reinstall {
+
+	static void retry(const std::function<bool(int current, int total)> &exec) {
+
+		for(size_t ix = 0; ix < 10; ix++) {
+
+			if(exec(ix+1,10)) {
+				return;
+			}
+
+			usleep(100);
+
+		}
+
+		cerr << "disk\tAborting disk image cleanup due too many retries" << endl;
+
+	}
+
+	struct Disk::Image::Handler {
+
+		/// @brief Mountpoint.
+		std::string mountpoint;
+
+		struct {
+			int fd;
+			int ctl;
+			long devnr;			///< @brief Loop device number.
+			std::string name;	///< @brief Name of the loop device.
+		} loop;
+
+		struct {
+			int fd;				///< @brief Image fd.
+		} image;
+
+		Handler(const char *imgpath) : mountpoint(File::Temporary::mkdir()) {
+
+			//
+			// https://stackoverflow.com/questions/11295154/how-do-i-loop-mount-programmatically
+			//
+
+#ifdef DEBUG
+			cout << "disk\tUsing '" << mountpoint << "' for mountpoint" << endl;
+#endif // DEBUG
+
+			//
+			// Get a free loop device
+			//
+			loop.ctl = open("/dev/loop-control", O_RDWR);
+			if(loop.ctl == -1) {
+				throw system_error(errno, system_category(),"/dev/loop-control");
+			}
+
+			loop.devnr = ioctl(loop.ctl, LOOP_CTL_GET_FREE);
+
+			if (loop.devnr == -1) {
+				close(loop.ctl);
+				throw system_error(errno, system_category(),"Can't get an available loop device");
+			}
+
+			//
+			// Open loop device
+			//
+			loop.name = "/dev/loop";
+			loop.name += to_string(loop.devnr);
+
+			loop.fd = open(loop.name.c_str(), O_RDWR);
+			if(loop.fd == -1) {
+				close(loop.ctl);
+				throw system_error(errno, system_category(),loop.name);
+			}
+
+			//
+			// Connect image
+			//
+			image.fd = open(imgpath, O_RDWR);
+			if (image.fd == -1) {
+				close(loop.fd);
+				close(loop.ctl);
+				throw system_error(errno, system_category(),imgpath);
+			}
+
+			if (ioctl(loop.fd, LOOP_SET_FD, image.fd) == -1) {
+				close(image.fd);
+				close(loop.fd);
+				close(loop.ctl);
+				throw system_error(errno, system_category(),imgpath);
+			}
+
+			//
+			// Setup auto cleanup.
+			//
+			struct loop_info loopinfo;
+			memset(&loopinfo,0,sizeof(loopinfo));
+
+			if (ioctl(loop.fd, LOOP_GET_STATUS, &loopinfo) == -1) {
+				close(image.fd);
+				close(loop.fd);
+				close(loop.ctl);
+				throw system_error(errno, system_category(),"Can't get loop device status");
+			}
+
+			loopinfo.lo_flags |= LO_FLAGS_AUTOCLEAR;
+
+			if (ioctl(loop.fd, LOOP_SET_STATUS, &loopinfo) == -1) {
+				close(image.fd);
+				close(loop.fd);
+				close(loop.ctl);
+				throw system_error(errno, system_category(),"Can't update loop device status");
+			}
+
+		}
+
+		~Handler() {
+
+			retry([this](int current, int total){
+
+				if (ioctl(loop.fd, LOOP_CLR_FD, 0) == 0) {
+					cout << "disk\tDevice '" << loop.name << "' released" << endl;
+					return true;
+				}
+
+				cerr << "disk\tError '" << strerror(errno) << "' releasing '" << loop.name << "' (" << current << "/" << total << ")" << endl;
+
+				return false;
+
+			});
+
+			close(image.fd);
+			close(loop.fd);
+			close(loop.ctl);
+
+			rmdir(mountpoint.c_str());
+
+		}
+
+	};
+
+	Disk::Image::Image(const char *filename, const char *filesystemtype) {
+
+		handler = new Handler(filename);
+
+		if(mount(handler->loop.name.c_str(), handler->mountpoint.c_str(), filesystemtype, MS_SYNCHRONOUS, "") == -1) {
+			delete handler;
+			throw system_error(errno, system_category(),filename);
+		}
+
+		cout << "disk\tFile '" << filename << "' mounted on " << handler->mountpoint << endl;
+
+	}
+
+	Disk::Image::~Image() {
+
+		retry([this](int current, int total){
+
+			if(umount2(handler->mountpoint.c_str(),MNT_FORCE)) {
+				cout << "disk\tDevice '" << handler->loop.name << "' umounted" << endl;
+				return true;
+			}
+
+			cerr << "disk\tError '" << strerror(errno) << "' umounting " << handler->loop.name << " ("  << current << "/" << total << ")" << endl;
+			return false;
+
+		});
+
+		delete handler;
+	}
+
+	void Disk::Image::forEach(const std::function<void (const char *filename)> &call) {
+
+	}
+
+ }
+
+
 /*
  #include <bbreinstall/disk.h>
  #include <bbreinstall/activity.h>
@@ -294,5 +484,5 @@
 	}
 
  }
- 
+
 */
