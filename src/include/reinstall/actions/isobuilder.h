@@ -35,12 +35,12 @@
 		const char *system_id = nullptr;
 
 		struct {
-			const char *boot_image = "boot/x86_64/loader/isolinux.bin";
-            const char *catalog = "boot/x86_64/loader/boot.cat";
+			const char *boot_image = "/boot/x86_64/loader/isolinux.bin";
+            const char *catalog = "/boot/x86_64/loader/boot.cat";
 		} eltorito;
 
 		struct {
-			const char *boot_image = "boot/x86_64/efi";
+			const char *boot_image = "/boot/x86_64/efi";
 		} efi;
 
 		/// @brief Write ISO image.
