@@ -35,6 +35,9 @@
 		<Unit filename="../include/config.h" />
 		<Unit filename="../include/reinstall/action.h" />
 		<Unit filename="../include/reinstall/actions/initrd.h" />
+		<Unit filename="../include/reinstall/actions/isobuilder.h">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="../include/reinstall/actions/kernel.h" />
 		<Unit filename="../include/reinstall/controller.h" />
 		<Unit filename="../include/reinstall/dialogs.h">
@@ -55,6 +58,7 @@
 		<Unit filename="dialogs/window.cc" />
 		<Unit filename="group.cc" />
 		<Unit filename="iso9660/worker.cc" />
+		<Unit filename="isobuilder.cc" />
 		<Unit filename="object.cc" />
 		<Unit filename="parameters.cc" />
 		<Unit filename="private.h" />

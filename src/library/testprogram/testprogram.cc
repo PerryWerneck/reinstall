@@ -7,12 +7,11 @@
  #include <udjat/module.h>
 
  #include <reinstall/controller.h>
- #include <reinstall/action.h>
+ #include <reinstall/actions/isobuilder.h>
  #include <reinstall/dialogs.h>
 
  #include <reinstall/actions/kernel.h>
  #include <reinstall/actions/initrd.h>
- #include <reinstall/iso9660.h>
 
  #include <udjat/moduleinfo.h>
 
@@ -30,43 +29,16 @@
 
 	bool push_back(const pugi::xml_node &node) override {
 
-		class Action : public Reinstall::Action {
+		class Action : public Reinstall::IsoBuilder {
 		public:
-			Action(const pugi::xml_node &node) : Reinstall::Action(node) {
-
-				// Get URL for installation kernel.
-				if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
-					push_back(make_shared<Reinstall::Kernel>(node));
-					return true;
-				})) {
-					throw runtime_error("Missing required entry <kernel> with the URL for installation kernel");
-				}
-
-				// Get URL for installation init.
-				if(!scan(node,"init",[this](const pugi::xml_node &node) {
-					push_back(make_shared<Reinstall::InitRD>(node));
-					return true;
-				})) {
-					throw runtime_error("Missing required entry <init> with the URL for the linuxrc program");
-				}
-
+			Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node) {
 			}
 
 			virtual ~Action() {
 			}
 
-			void activate() {
-
-				cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
-				Reinstall::Dialog::Progress progress(*this);
-				cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
-				Reinstall::iso9660::Worker worker;
-				cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
-				Reinstall::Action::activate(worker);
-				cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
-				//worker.save("/tmp/test.iso");
-				cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
-
+			void write(Reinstall::iso9660::Worker &worker) override {
+				worker.save("/tmp/test.iso");
 			}
 
 		};

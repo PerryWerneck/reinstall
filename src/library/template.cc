@@ -61,8 +61,7 @@
 		contents.expand(object);
 
 		// Save to temporary.
-		filename = Udjat::File::Temporary::create();
-		Udjat::File::Path::save(filename.c_str(),contents.c_str());
+		filename = Udjat::File::save(contents.c_str());
 
 	}
 
