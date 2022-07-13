@@ -159,11 +159,19 @@
 
 		if(efi.boot_image && *efi.boot_image) {
 
-			const char * disk = find(efi.boot_image)->filename;
-			if(!(disk && *disk)) {
+			auto source = find(efi.boot_image);
+			if(!(source->filename && *source->filename)) {
 				throw runtime_error("Unexpected filename on EFI boot image");
 			}
 
+			// Apply templates on EFI boot image.
+#ifndef DEBUG
+			#error Missing templates on EFI boot image.
+#endif // DEBUG
+
+			// Add EFI boot image
+			worker.set_efi_boot_image(source->filename);
+			worker.add_boot_image(source->path,0xEF);
 
 		}
 
