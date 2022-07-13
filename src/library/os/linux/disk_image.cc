@@ -29,6 +29,7 @@
  #include <linux/loop.h>
  #include <sys/ioctl.h>
  #include <sys/mount.h>
+ #include <dirent.h>
 
  using namespace std;
  using namespace Udjat;
@@ -201,6 +202,44 @@
 	}
 
 	void Disk::Image::forEach(const std::function<void (const char *filename)> &call) {
+		forEach(handler->mountpoint.c_str(),call);
+	}
+
+	void Disk::Image::forEach(const char *path, const std::function<void (const char *filename)> &call) {
+
+		DIR *dir = opendir(path);
+		if(!dir) {
+			throw system_error(errno, system_category(),path);
+		}
+
+		try {
+
+			for(struct dirent *entry = readdir(dir); entry; entry = readdir(dir)) {
+
+				if(entry->d_name[0] == '.')
+					continue;
+
+				if(entry->d_type == DT_DIR) {
+
+					forEach((string{path}+"/"+entry->d_name).c_str(),call);
+
+				} else {
+
+					call( (string{path}+"/"+entry->d_name).c_str());
+
+				}
+
+
+			}
+
+		} catch(...) {
+
+			closedir(dir);
+			throw;
+
+		}
+
+		closedir(dir);
 
 	}
 

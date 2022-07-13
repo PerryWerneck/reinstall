@@ -36,8 +36,8 @@
 			Image(const char *filename, const char *filesystemtype);
 			~Image();
 
-			/// @brief Navigate on all disk files.
 			void forEach(const std::function<void (const char *filename)> &call);
+			static void forEach(const char *path, const std::function<void (const char *filename)> &call);
 
 		};
 

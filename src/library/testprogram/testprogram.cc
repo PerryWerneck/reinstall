@@ -62,7 +62,9 @@
 	Reinstall::Controller::getInstance();
 
 	{
-		Reinstall::Disk::Image disk("efi.iso","vfat");
+		Reinstall::Disk::Image("efi.iso","vfat").forEach([](const char *filename){
+			cout << filename << endl;
+		});
 	}
 
 	/*
