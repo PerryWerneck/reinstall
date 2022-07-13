@@ -121,6 +121,15 @@
 	IsoBuilder::~IsoBuilder() {
 	}
 
+	void IsoBuilder::patch(const char *image) {
+
+		if(efi.isohibrid_cmdline && *efi.isohibrid_cmdline) {
+			// Apply isohybrid
+
+		}
+
+	}
+
 	void IsoBuilder::activate() {
 
 		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;

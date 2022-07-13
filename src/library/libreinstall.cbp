@@ -43,6 +43,7 @@
 		<Unit filename="../include/reinstall/dialogs.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="../include/reinstall/diskimage.h" />
 		<Unit filename="../include/reinstall/group.h" />
 		<Unit filename="../include/reinstall/iso9660.h" />
 		<Unit filename="../include/reinstall/object.h" />
@@ -60,6 +61,7 @@
 		<Unit filename="iso9660/worker.cc" />
 		<Unit filename="isobuilder.cc" />
 		<Unit filename="object.cc" />
+		<Unit filename="os/linux/libguestfs.cc" />
 		<Unit filename="parameters.cc" />
 		<Unit filename="private.h" />
 		<Unit filename="template.cc" />

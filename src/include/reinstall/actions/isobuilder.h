@@ -47,6 +47,9 @@
 		/// @brief Write ISO image.
 		virtual void write(iso9660::Worker &worker) = 0;
 
+		/// @brief Patch image (isohybrid)
+		void patch(const char *image);
+
 	public:
 		IsoBuilder(const pugi::xml_node &node);
 		virtual ~IsoBuilder();

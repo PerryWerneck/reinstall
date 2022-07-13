@@ -59,7 +59,8 @@ CFLAGS= \
 	-DBUILD_DATE=`date +%Y%m%d` \
 	@UDJAT_CFLAGS@ \
 	@PUGIXML_CFLAGS@ \
-	@ISOFS_CFLAGS@
+	@ISOFS_CFLAGS@ \
+	@GUESTFS_CFLAGS@
 
 LDFLAGS=\
 	@LDFLAGS@
@@ -69,7 +70,8 @@ LIBS= \
 	@LIBICONV@ \
 	@UDJAT_LIBS@ \
 	@PUGIXML_LIBS@ \
-	@ISOFS_LIBS@
+	@ISOFS_LIBS@ \
+	@GUESTFS_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 

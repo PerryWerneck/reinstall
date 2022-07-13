@@ -39,6 +39,7 @@
 
 			void write(Reinstall::iso9660::Worker &worker) override {
 				worker.save("/tmp/test.iso");
+				patch("/tmp/test.iso");
 			}
 
 		};
