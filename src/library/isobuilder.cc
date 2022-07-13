@@ -23,6 +23,7 @@
  #include <reinstall/actions/isobuilder.h>
  #include <iostream>
  #include <reinstall/dialogs.h>
+ #include <reinstall/diskimage.h>
 
  using namespace std;
 
@@ -181,9 +182,22 @@
 			}
 
 			// Apply templates on EFI boot image.
-#ifndef DEBUG
-			#error Missing templates on EFI boot image.
-#endif // DEBUG
+			Disk::Image disk(source->filename);
+
+			for(auto tmpl : templates) {
+
+				tmpl->load((Udjat::Object &) *this);
+
+				disk.forEach([this,&tmpl](const char *mountpoint, const char *path){
+
+					if(tmpl->test(path)) {
+						cout << "*** TEMPLATE FOUND AT " << mountpoint << " " << path << endl;
+					}
+
+
+				});
+
+			}
 
 			// Add EFI boot image
 			worker.set_efi_boot_image(source->filename);

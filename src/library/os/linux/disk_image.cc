@@ -201,13 +201,21 @@
 		delete handler;
 	}
 
-	void Disk::Image::forEach(const std::function<void (const char *filename)> &call) {
-		forEach(handler->mountpoint.c_str(),call);
+	void Disk::Image::forEach(const std::function<void (const char *mountpoint, const char *path)> &call) {
+		forEach(handler->mountpoint.c_str(),nullptr,call);
 	}
 
-	void Disk::Image::forEach(const char *path, const std::function<void (const char *filename)> &call) {
+	void Disk::Image::forEach(const char *mountpoint, const char *path, const std::function<void (const char *mountpoint, const char *path)> &call) {
 
-		DIR *dir = opendir(path);
+		DIR *dir;
+
+		if(path && *path) {
+			dir = opendir( (string{mountpoint} + "/" + path).c_str() );
+		} else {
+			path = "";
+			dir = opendir(mountpoint);
+		}
+
 		if(!dir) {
 			throw system_error(errno, system_category(),path);
 		}
@@ -221,11 +229,11 @@
 
 				if(entry->d_type == DT_DIR) {
 
-					forEach((string{path}+"/"+entry->d_name).c_str(),call);
+					forEach(mountpoint,(string{path}+"/"+entry->d_name).c_str(),call);
 
 				} else {
 
-					call( (string{path}+"/"+entry->d_name).c_str());
+					call(mountpoint,(string{path}+"/"+entry->d_name).c_str());
 
 				}
 

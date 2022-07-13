@@ -33,11 +33,11 @@
 			Handler *handler = nullptr;
 
 		public:
-			Image(const char *filename, const char *filesystemtype);
+			Image(const char *filename, const char *filesystemtype = "vfat");
 			~Image();
 
-			void forEach(const std::function<void (const char *filename)> &call);
-			static void forEach(const char *path, const std::function<void (const char *filename)> &call);
+			void forEach(const std::function<void (const char *mountpoint, const char *path)> &call);
+			static void forEach(const char *mountpoint, const char *path, const std::function<void (const char *mountpoint, const char *path)> &call);
 
 		};
 

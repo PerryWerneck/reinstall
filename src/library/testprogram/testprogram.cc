@@ -61,21 +61,23 @@
 	// First get controller to construct the factories.
 	Reinstall::Controller::getInstance();
 
+	/*
 	{
-		Reinstall::Disk::Image("efi.iso","vfat").forEach([](const char *filename){
-			cout << filename << endl;
+		Reinstall::Disk::Image("efi.iso","vfat").forEach([](const char *mountpoint, const char *path){
+			cout << mountpoint << " " << path << endl;
 		});
 	}
-
-	/*
-	// Initialize module.
-	new TestModule();
-
-	// Initialize application, load xml definitions.
-	Udjat::Application::init(argc,argv,"./test.xml");
-
-	Reinstall::Action::getDefault().activate();
 	*/
+
+	{
+		// Initialize module.
+		new TestModule();
+
+		// Initialize application, load xml definitions.
+		Udjat::Application::init(argc,argv,"./test.xml");
+
+		Reinstall::Action::getDefault().activate();
+	}
 
 	// Finalize application.
 	Udjat::Application::finalize();
