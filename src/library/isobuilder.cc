@@ -102,11 +102,18 @@
 							eltorito.catalog
 						);
 
-		efi.boot_image =  getAttribute(
+		efi.boot_image = getAttribute(
 							node,
 							"iso-9660",
 							"efi-boot-image",
 							efi.boot_image
+						);
+
+		efi.isohibrid_cmdline = getAttribute(
+							node,
+							"iso-9660",
+							"isohibrid-cmdline",
+							efi.isohibrid_cmdline
 						);
 
 	}

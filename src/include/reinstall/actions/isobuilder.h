@@ -41,6 +41,7 @@
 
 		struct {
 			const char *boot_image = "/boot/x86_64/efi";
+			const char *isohibrid_cmdline = "/usr/bin/isohybrid -u %{isoname}";
 		} efi;
 
 		/// @brief Write ISO image.
