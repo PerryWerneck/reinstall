@@ -46,6 +46,69 @@
 			throw runtime_error("Missing required entry <init> with the URL for the linuxrc program");
 		}
 
+		system_area = getAttribute(
+							node,
+							"iso-9660",
+							"system-area",
+							system_area
+						);
+
+		volume_id =  getAttribute(
+							node,
+							"iso-9660",
+							"volume-id",
+							volume_id
+						);
+
+		publisher_id =  getAttribute(
+							node,
+							"iso-9660",
+							"publisher-id",
+							publisher_id
+						);
+
+		data_preparer_id =  getAttribute(
+							node,
+							"iso-9660",
+							"data-preparer-id",
+							data_preparer_id
+						);
+
+		application_id =  getAttribute(
+							node,
+							"iso-9660",
+							"application-id",
+							application_id
+						);
+
+		system_id =  getAttribute(
+							node,
+							"iso-9660",
+							"system-id",
+							system_id
+						);
+
+		eltorito.boot_image = getAttribute(
+							node,
+							"iso-9660",
+							"eltorito-boot-image",
+							eltorito.boot_image
+						);
+
+		eltorito.catalog =  getAttribute(
+							node,
+							"iso-9660",
+							"eltorito-boot-catalog",
+							eltorito.catalog
+						);
+
+		efi.boot_image =  getAttribute(
+							node,
+							"iso-9660",
+							"efi-boot-image",
+							efi.boot_image
+						);
+
 	}
 
 	IsoBuilder::~IsoBuilder() {
@@ -55,13 +118,95 @@
 
 		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
 		Reinstall::Dialog::Progress progress(*this);
-		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
+
+		// Create and activate worker
 		Reinstall::iso9660::Worker worker;
-		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
+
+		progress.set("Building installation image");
+
+		// Setup isofs.
+		worker.set_system_area(system_area);
+		worker.set_volume_id(volume_id);
+		worker.set_publisher_id(publisher_id);
+		worker.set_data_preparer_id(data_preparer_id);
+		worker.set_system_id(system_id);
+		worker.set_application_id(application_id);
+
 		Reinstall::Action::activate(worker);
-		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
+
+		// Finalize
+		//worker.set_iso_level();
+		worker.set_rockridge();
+		worker.set_joliet();
+		worker.set_allow_deep_paths();
+
+		if(eltorito.boot_image && *eltorito.boot_image) {
+
+			// Search to confirm presence of the boot_image.
+			const char *filename = find(eltorito.boot_image)->filename;
+			if(!(filename && *filename)) {
+				throw runtime_error("Unexpected filename on el-torito boot image");
+			}
+
+			worker.set_el_torito_boot_image(
+				eltorito.boot_image,
+				eltorito.catalog,
+				volume_id
+			);
+
+			cout << "iso9660\tEl-torito boot image set to '" << eltorito.boot_image << "'" << endl;
+		}
+
+		if(efi.boot_image && *efi.boot_image) {
+
+			const char * disk = find(efi.boot_image)->filename;
+			if(!(disk && *disk)) {
+				throw runtime_error("Unexpected filename on EFI boot image");
+			}
+
+
+		}
+
+		/*
+
+		if(!efi.boot_image.empty()) {
+
+#ifdef DEBUG
+			cout << "Imagem de boot EFI em " << efi.boot_image << endl;
+#endif // DEBUG
+
+			// Obtém caminho do arquivo temporário
+			auto tempfile = find(efi.boot_image.c_str());
+
+			if(!templates.empty()) {
+
+				// Aplica templates na imagem EFI.
+#ifdef DEBUG
+				cout << "  Aplicando templates em " << efi.boot_image << endl;
+#endif // DEBUG
+
+				// Procura por templates dentro da imagem vfat
+				Disk::Image(tempfile.c_str())
+					.forEach([this](const std::string &mountpoint, const std::string &dirname, const char *basename) {
+
+					for(auto t = templates.begin();t != templates.end(); t++) {
+						if(t->apply(mountpoint.c_str(),dirname.c_str(),basename)) {
+							cout << "    Template '" << t->isopath << "' aplicado com sucesso" << endl;
+							break;
+						}
+					}
+
+				});
+
+			}
+
+			// Aplica partição na imagem
+			image.set_efi_boot_image(tempfile.c_str());
+			image.add_boot_image(efi.boot_image.c_str(),0xEF);
+		*/
+
+		// Write image to destination.
 		write(worker);
-		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
 
 	}
 

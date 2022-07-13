@@ -132,6 +132,9 @@
 		/// @brief Sources list.
 		std::unordered_set<std::shared_ptr<Source>, SourceHash, SourceEqual> sources;
 
+		/// @brief Search for source based on image path
+		std::shared_ptr<Source> find(const char *path);
+
 		/// @brief Scan xml for 'tagname', call lambda in every occurrence.
 		/// @param tagname the <tag> to search for.
 		/// @param node the start node.

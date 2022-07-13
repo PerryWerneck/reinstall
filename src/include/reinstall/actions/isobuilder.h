@@ -27,6 +27,22 @@
 	class UDJAT_API IsoBuilder : public Reinstall::Action {
 	protected:
 
+		const char *system_area = nullptr;
+		const char *volume_id = nullptr;
+		const char *publisher_id = nullptr;
+		const char *data_preparer_id = nullptr;
+		const char *application_id = nullptr;
+		const char *system_id = nullptr;
+
+		struct {
+			const char *boot_image = "boot/x86_64/loader/isolinux.bin";
+            const char *catalog = "boot/x86_64/loader/boot.cat";
+		} eltorito;
+
+		struct {
+			const char *boot_image = "boot/x86_64/efi";
+		} efi;
+
 		/// @brief Write ISO image.
 		virtual void write(iso9660::Worker &worker) = 0;
 

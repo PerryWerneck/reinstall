@@ -222,5 +222,19 @@
 
 	}
 
+	std::shared_ptr<Action::Source> Action::find(const char *path) {
+
+		for(auto source : sources) {
+
+			if(source->path && *source->path && !strcmp(path,source->path)) {
+				return source;
+			}
+
+		}
+
+		throw system_error(ENOENT,system_category(),path);
+
+	}
+
  }
 
