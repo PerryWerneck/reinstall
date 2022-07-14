@@ -21,9 +21,11 @@
  #include <reinstall/actions/kernel.h>
  #include <reinstall/actions/initrd.h>
  #include <reinstall/actions/isobuilder.h>
+ #include <udjat/tools/string.h>
  #include <iostream>
  #include <reinstall/dialogs.h>
  #include <reinstall/diskimage.h>
+ #include <cstdlib>
 
  using namespace std;
 
@@ -126,6 +128,25 @@
 
 		if(efi.isohibrid_cmdline && *efi.isohibrid_cmdline) {
 			// Apply isohybrid
+			cout << "isobuilder\tPatching image" << endl;
+
+			Udjat::String cmdline{efi.isohibrid_cmdline};
+
+			cmdline.expand(*this);
+
+			cmdline.expand([image](const char *key, std::string &value){
+				if(!strcasecmp(key,"isoname")) {
+					value = image;
+					return true;
+				}
+				return false;
+			});
+
+			if(system(cmdline.c_str()) != 0) {
+				throw runtime_error("Error patching image");
+			}
+
+			cout << "isobuilder\tCommand '" << cmdline << "' runs without error" << endl;
 
 		}
 
