@@ -49,6 +49,13 @@
 			throw runtime_error("Missing required entry <init> with the URL for the linuxrc program");
 		}
 
+		// Get post scripts.
+		scan(node,"image-post",[this](const pugi::xml_node &node) {
+			post_scripts.emplace_back(node);
+			return true;
+		});
+
+		// Get options.
 		system_area = getAttribute(
 							node,
 							"iso-9660",
@@ -112,20 +119,40 @@
 							efi.boot_image
 						);
 
-		efi.isohibrid_cmdline = getAttribute(
-							node,
-							"iso-9660",
-							"isohibrid-cmdline",
-							efi.isohibrid_cmdline
-						);
 
 	}
 
 	IsoBuilder::~IsoBuilder() {
 	}
 
-	void IsoBuilder::patch(const char *image) {
+	void IsoBuilder::post(const char *image) {
 
+		cout << "isobuilder\tRunning post scripts" << endl;
+		for(Script &script : post_scripts) {
+
+			Udjat::String cmdline{script.cmdline()};
+
+			cmdline.expand(*this);
+
+			cmdline.expand([image](const char *key, std::string &value){
+				if(!strcasecmp(key,"devname")) {
+					value = image;
+					return true;
+				}
+				return false;
+			});
+
+			cout << "isobuilder\tRunning '" << cmdline << "'" << endl;
+
+			if(system(cmdline.c_str()) != 0) {
+				throw runtime_error("Error on post-script");
+			}
+
+			cout << "isobuilder\tScript '" << cmdline << "' is complete" << endl;
+
+		}
+
+		/*
 		if(efi.isohibrid_cmdline && *efi.isohibrid_cmdline) {
 			// Apply isohybrid
 			cout << "isobuilder\tPatching image" << endl;
@@ -149,6 +176,7 @@
 			cout << "isobuilder\tCommand '" << cmdline << "' runs without error" << endl;
 
 		}
+		*/
 
 	}
 

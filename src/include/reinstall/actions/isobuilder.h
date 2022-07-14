@@ -21,6 +21,8 @@
 
  #include <reinstall/action.h>
  #include <reinstall/iso9660.h>
+ #include <reinstall/script.h>
+ #include <vector>
 
  namespace Reinstall {
 
@@ -41,14 +43,18 @@
 
 		struct {
 			const char *boot_image = "/boot/x86_64/efi";
-			const char *isohibrid_cmdline = "/usr/bin/isohybrid -u ${isoname}";
 		} efi;
 
 		/// @brief Write ISO image.
 		virtual void write(iso9660::Worker &worker) = 0;
 
-		/// @brief Patch image (isohybrid)
-		void patch(const char *image);
+	protected:
+
+		/// brief Post scripts.
+		std::vector<Script> post_scripts;
+
+		/// @brief Run image post-processing (isohybrid).
+		void post(const char *isoname);
 
 	public:
 		IsoBuilder(const pugi::xml_node &node);

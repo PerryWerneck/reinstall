@@ -47,6 +47,7 @@
 		<Unit filename="../include/reinstall/group.h" />
 		<Unit filename="../include/reinstall/iso9660.h" />
 		<Unit filename="../include/reinstall/object.h" />
+		<Unit filename="../include/reinstall/script.h" />
 		<Unit filename="../include/reinstall/value.h" />
 		<Unit filename="../include/reinstall/worker.h" />
 		<Unit filename="../modules/netinstall/action.cc" />
@@ -65,6 +66,7 @@
 		<Unit filename="os/linux/libguestfs.cc" />
 		<Unit filename="parameters.cc" />
 		<Unit filename="private.h" />
+		<Unit filename="script.cc" />
 		<Unit filename="template.cc" />
 		<Unit filename="testprogram/private.h" />
 		<Unit filename="testprogram/testprogram.cc" />
