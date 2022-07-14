@@ -25,6 +25,10 @@
  #include <reinstall/dialogs.h>
  #include <udjat/tools/file.h>
  #include <iostream>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <unistd.h>
 
  using namespace std;
  using namespace Udjat;
@@ -81,6 +85,34 @@
 		return strcmp(name,ptr) == 0;
 	}
 
+	void Action::Template::save(const char *path) const {
+
+		int fd = creat(path,0644);
+		if(fd < 0) {
+			throw system_error(errno,system_category(),path);
+		}
+
+		try {
+
+			while(*path) {
+
+				auto sz = strlen(path);
+				auto bytes = write(fd,path,sz);
+				if(bytes < 0) {
+					throw system_error(errno,system_category(),path);
+				}
+
+				path += bytes;
+
+			}
+
+		} catch(...) {
+			close(fd);
+			throw;
+		}
+
+		close(fd);
+	}
 
 	void Action::Template::apply(Source &source) {
 

@@ -191,7 +191,8 @@
 				disk.forEach([this,&tmpl](const char *mountpoint, const char *path){
 
 					if(tmpl->test(path)) {
-						cout << "*** TEMPLATE FOUND AT " << mountpoint << " " << path << endl;
+						tmpl->save((string{mountpoint} + "/" + path).c_str());
+						cout << "efi\tReplacing " << path << " with template " << tmpl->c_str() << endl;
 					}
 
 
@@ -202,7 +203,7 @@
 			// Add EFI boot image
 			worker.set_efi_boot_image(source->filename);
 			worker.add_boot_image(source->path,0xEF);
-
+			cout << "efi\tUsing " << source->path << " as boot image" << endl;
 		}
 
 		/*

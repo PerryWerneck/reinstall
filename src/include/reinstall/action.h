@@ -120,6 +120,12 @@
 			void load(const Udjat::Object &object);
 			void apply(Source &source);
 
+			void save(const char *path) const;
+
+			inline const char * c_str() const noexcept {
+				return name;
+			}
+
 		};
 
 		std::list<std::shared_ptr<Template>> templates;

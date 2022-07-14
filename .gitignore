@@ -52,4 +52,5 @@ stamp-h1
 .obj
 Makefile
 vgcore.*
+*.[0-9]
 
