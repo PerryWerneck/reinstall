@@ -240,7 +240,7 @@
 				disk.forEach([this,&tmpl](const char *mountpoint, const char *path){
 
 					if(tmpl->test(path)) {
-						tmpl->save((string{mountpoint} + "/" + path).c_str());
+						tmpl->save_to_file((Udjat::Object &) *this,(string{mountpoint} + "/" + path).c_str());
 						cout << "efi\tReplacing " << path << " with template " << tmpl->c_str() << endl;
 					}
 
@@ -251,47 +251,10 @@
 
 			// Add EFI boot image
 			worker.set_efi_boot_image(source->filename);
+
+			cout << "isobuilder\tAdding " << source->path << " as boot image" << endl;
 			worker.add_boot_image(source->path,0xEF);
-			cout << "efi\tUsing " << source->path << " as boot image" << endl;
 		}
-
-		/*
-
-		if(!efi.boot_image.empty()) {
-
-#ifdef DEBUG
-			cout << "Imagem de boot EFI em " << efi.boot_image << endl;
-#endif // DEBUG
-
-			// Obtém caminho do arquivo temporário
-			auto tempfile = find(efi.boot_image.c_str());
-
-			if(!templates.empty()) {
-
-				// Aplica templates na imagem EFI.
-#ifdef DEBUG
-				cout << "  Aplicando templates em " << efi.boot_image << endl;
-#endif // DEBUG
-
-				// Procura por templates dentro da imagem vfat
-				Disk::Image(tempfile.c_str())
-					.forEach([this](const std::string &mountpoint, const std::string &dirname, const char *basename) {
-
-					for(auto t = templates.begin();t != templates.end(); t++) {
-						if(t->apply(mountpoint.c_str(),dirname.c_str(),basename)) {
-							cout << "    Template '" << t->isopath << "' aplicado com sucesso" << endl;
-							break;
-						}
-					}
-
-				});
-
-			}
-
-			// Aplica partição na imagem
-			image.set_efi_boot_image(tempfile.c_str());
-			image.add_boot_image(efi.boot_image.c_str(),0xEF);
-		*/
 
 		// Write image to destination.
 		write(worker);

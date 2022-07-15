@@ -239,7 +239,7 @@
 		if(volume_id && *volume_id) {
 			iso_image_set_volume_id(image, volume_id);
 		} else {
-			iso_image_set_volume_id(image, Config::Value<string>("iso9660","volume-id","").c_str());
+			iso_image_set_volume_id(image, Config::Value<string>("iso9660","volume-id",PACKAGE_NAME).c_str());
 		}
 
 	}
@@ -327,11 +327,19 @@
 		el_torito_patch_isolinux_image(bootimg);
 		iso_write_opts_set_part_like_isohybrid(opts, 1);
 
-		if(id) {
+		{
 			uint8_t id_string[28];
 			memset(id_string,' ',sizeof(id_string));
-			strncpy((char *) id_string,id,strlen(id));
+
+			if(id && *id) {
+				strncpy((char *) id_string,id,strlen(id));
+			} else {
+				Config::Value<string> defstring("iso9660","el-torito-id",PACKAGE_NAME);
+				strncpy((char *) id_string,defstring,strlen(defstring));
+			}
+
 			el_torito_set_id_string(bootimg,id_string);
+			cout << "iso9660\tEl-torito ID string set to '" << id_string << "'" << endl;
 		}
 
 		// bit0= Patch the boot info table of the boot image. This does the same as mkisofs option -boot-info-table.
@@ -355,16 +363,24 @@
 		if(like_iso_hybrid) {
 
 			// Isohybrid, set partition
-			iso_write_opts_set_partition_img(opts,2,0xef,(char *) boot_image,0);
+			int rc = iso_write_opts_set_partition_img(opts,2,0xef,(char *) boot_image,0);
+			if(rc != ISO_SUCCESS) {
+				cerr << "iso9660\tError '" << iso_error_to_msg(rc) << "' setting EFI partition" << endl;
+				throw runtime_error(iso_error_to_msg(rc));
+			}
+
+			cout << "iso9660\tEFI partition set from '" << boot_image << "'" << endl;
 
 		} else {
 
 			// Not isohybrid.
 			int rc = iso_write_opts_set_efi_bootp(opts,(char *) boot_image,0);
-			if(rc < 0) {
+			if(rc != ISO_SUCCESS) {
 				cerr << "iso9660\tError '" << iso_error_to_msg(rc) << "' setting EFI boot image" << endl;
 				throw runtime_error(iso_error_to_msg(rc));
 			}
+
+			cout << "iso9660\tEFI bootp set from '" << boot_image << "'" << endl;
 
 		}
 

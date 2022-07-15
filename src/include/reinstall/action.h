@@ -120,7 +120,10 @@
 			void load(const Udjat::Object &object);
 			void apply(Source &source);
 
-			void save(const char *path) const;
+			/// @brief Export template to file.
+			/// @param object objeto for ${} properties.
+			/// @param path Path to filename.
+			void save_to_file(const Udjat::Object &object, const char *path) const;
 
 			inline const char * c_str() const noexcept {
 				return name;

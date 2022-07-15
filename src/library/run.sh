@@ -67,9 +67,11 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-sudo mount -o loop ~/Público/iso/openSUSE-Leap-15.3-NET-x86_64-Media.iso ~/Público/openSUSE-Leap-15.3-NET-x86_64/
 
-sudo make run
+sudo mount -o loop ~/Público/iso/openSUSE-Leap-15.3-NET-x86_64-Media.iso ~/Público/openSUSE-Leap-15.3-NET-x86_64/
+sudo setcap cap_dac_override,cap_setuid,cap_setgid,cap_chown,cap_sys_admin+ep .bin/Debug/reinstall 
+
+.bin/Debug/reinstall
 if [ "$?" != "0" ]; then
 	exit -1
 fi

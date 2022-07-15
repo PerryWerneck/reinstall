@@ -85,8 +85,25 @@
 		return strcmp(name,ptr) == 0;
 	}
 
-	void Action::Template::save(const char *path) const {
+	void Action::Template::save_to_file(const Udjat::Object &object, const char *path) const {
 
+		if(!filename.empty()) {
+			return;
+		}
+
+		Dialog::Progress &progress = Dialog::Progress::getInstance();
+		auto worker = Udjat::Protocol::WorkerFactory(this->url);
+
+		progress.set(worker->url().c_str());
+		Udjat::String contents = worker->get([&progress](double current, double total){
+			progress.update(current,total);
+			return true;
+		});
+
+		// Expand ${} values using object.
+		contents.expand(object);
+
+		// Save to output file.
 		int fd = creat(path,0644);
 		if(fd < 0) {
 			throw system_error(errno,system_category(),path);
@@ -94,15 +111,16 @@
 
 		try {
 
-			while(*path) {
+			const char *ptr = contents.c_str();
+			while(*ptr) {
 
-				auto sz = strlen(path);
-				auto bytes = write(fd,path,sz);
+				auto sz = strlen(ptr);
+				auto bytes = write(fd,ptr,sz);
 				if(bytes < 0) {
 					throw system_error(errno,system_category(),path);
 				}
 
-				path += bytes;
+				ptr += bytes;
 
 			}
 

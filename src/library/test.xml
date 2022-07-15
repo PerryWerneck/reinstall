@@ -39,7 +39,7 @@
 	<template name='isolinux.cfg' url='file://../../templates/isolinux.cfg' />
 	
 	<!-- Image post processing -->
-	<image-post name='iso-hybrid' cmdline='/usr/bin/isohybrid -u ${devname}' />
+	<!-- image-post name='iso-hybrid' cmdline='/usr/bin/isohybrid -u ${devname}' / -->
 	
 	<group name='OpenSUSE'>
 
