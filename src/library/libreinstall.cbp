@@ -61,6 +61,7 @@
 		<Unit filename="group.cc" />
 		<Unit filename="iso9660/worker.cc" />
 		<Unit filename="isobuilder.cc" />
+		<Unit filename="kernelparameter.cc" />
 		<Unit filename="object.cc" />
 		<Unit filename="os/linux/disk_image.cc" />
 		<Unit filename="os/linux/libguestfs.cc" />

@@ -26,6 +26,7 @@
 
  namespace Reinstall {
 
+	/*
 	class UDJAT_API Parameters : public Udjat::Value {
 	private:
 
@@ -64,6 +65,7 @@
 		Udjat::Value & set(const Udjat::Value &value) override;
 
 	};
+	*/
 
  }
 

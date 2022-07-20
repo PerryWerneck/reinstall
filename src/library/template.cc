@@ -85,51 +85,14 @@
 		return strcmp(name,ptr) == 0;
 	}
 
-	void Action::Template::save_to_file(const Udjat::Object &object, const char *path) const {
+	void Action::Template::replace(const char *path) const {
 
-		if(!filename.empty()) {
-			return;
+		if(filename.empty()) {
+			throw runtime_error("Template was not loaded");
 		}
 
-		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		auto worker = Udjat::Protocol::WorkerFactory(this->url);
+		Udjat::File::copy(filename.c_str(),path);
 
-		progress.set(worker->url().c_str());
-		Udjat::String contents = worker->get([&progress](double current, double total){
-			progress.update(current,total);
-			return true;
-		});
-
-		// Expand ${} values using object.
-		contents.expand(object);
-
-		// Save to output file.
-		int fd = creat(path,0644);
-		if(fd < 0) {
-			throw system_error(errno,system_category(),path);
-		}
-
-		try {
-
-			const char *ptr = contents.c_str();
-			while(*ptr) {
-
-				auto sz = strlen(ptr);
-				auto bytes = write(fd,ptr,sz);
-				if(bytes < 0) {
-					throw system_error(errno,system_category(),path);
-				}
-
-				ptr += bytes;
-
-			}
-
-		} catch(...) {
-			close(fd);
-			throw;
-		}
-
-		close(fd);
 	}
 
 	void Action::Template::apply(Source &source) {

@@ -339,7 +339,7 @@
 			}
 
 			el_torito_set_id_string(bootimg,id_string);
-			cout << "iso9660\tEl-torito ID string set to '" << id_string << "'" << endl;
+			cout << "iso9660\tEl-torito ID string set to '" << string((const char *) id_string,28) << "'" << endl;
 		}
 
 		// bit0= Patch the boot info table of the boot image. This does the same as mkisofs option -boot-info-table.

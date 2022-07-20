@@ -231,22 +231,23 @@
 			}
 
 			// Apply templates on EFI boot image.
-			Disk::Image disk(source->filename);
+			{
+				Disk::Image disk(source->filename);
 
-			for(auto tmpl : templates) {
+				for(auto tmpl : templates) {
 
-				tmpl->load((Udjat::Object &) *this);
+					disk.forEach([this,&tmpl](const char *mountpoint, const char *path){
 
-				disk.forEach([this,&tmpl](const char *mountpoint, const char *path){
+						if(tmpl->test(path)) {
+							tmpl->load((Udjat::Object &) *this);
+							cout << "efi\tReplacing " << path << " with template " << tmpl->c_str() << endl;
+							tmpl->replace((string{mountpoint} + "/" + path).c_str());
+						}
 
-					if(tmpl->test(path)) {
-						tmpl->save_to_file((Udjat::Object &) *this,(string{mountpoint} + "/" + path).c_str());
-						cout << "efi\tReplacing " << path << " with template " << tmpl->c_str() << endl;
-					}
 
+					});
 
-				});
-
+				}
 			}
 
 			// Add EFI boot image

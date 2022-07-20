@@ -27,6 +27,7 @@
 
  namespace Reinstall {
 
+	/*
 	Parameters::Parameters(const pugi::xml_node &node, const char *tagname) {
 
 		for(pugi::xml_node nd = node; nd; nd = nd.parent()) {
@@ -78,5 +79,6 @@
 	Udjat::Value & Parameters::set(const Udjat::Value &value) {
 		throw runtime_error("Unsupported request");
 	}
+	*/
 
  }

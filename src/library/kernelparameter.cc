@@ -18,43 +18,34 @@
  */
 
  #include <config.h>
- #include <reinstall/value.h>
- #include <stdexcept>
- #include <udjat/tools/string.h>
+ #include <reinstall/action.h>
+ #include <udjat/tools/quark.h>
 
  using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
-	/*
-	Parameters::Value::Value(const pugi::xml_node &node) : std::string(Udjat::String(node.attribute("value").as_string()).expand(node).c_str()) {
+	Action::KernelParameter::KernelParameter(const pugi::xml_node &node) : nm(Quark(node,"name").c_str()) {
+
+		const char *value = node.attribute("url").as_string("");
+
+		if(!*value) {
+			value = node.attribute("value").as_string("");
+		}
+
+		if(value && *value) {
+			vl.assign(value);
+			vl.expand(node);
+		}
+
 	}
 
-	Parameters::Value::~Value() {
+	Action::KernelParameter::~KernelParameter() {
 	}
 
-	bool Parameters::Value::isNull() const {
-		return empty();
+	void Action::KernelParameter::set(const Reinstall::Object &object) {
+		vl.expand(object);
 	}
-
-	Udjat::Value & Parameters::Value::reset(const Type type) {
-		clear();
-		return *this;
-	}
-
-	Udjat::Value & Parameters::Value::set(const Udjat::Value &value) {
-		throw runtime_error("Invalid operation");
-	}
-
-	Udjat::Value & Parameters::Value::set(const char *value, const Type type) {
-		this->assign(value);
-		return *this;
-	}
-
-	const Udjat::Value & Parameters::Value::get(std::string &value) const {
-		value = c_str();
-		return *this;
-	}
-	*/
 
  }

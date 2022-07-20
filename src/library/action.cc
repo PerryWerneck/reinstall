@@ -36,10 +36,15 @@
 		throw runtime_error("No default action");
 	}
 
-	Action::Action(const pugi::xml_node &node) : Object(node), kparms(node,"kernel-parameters") {
+	Action::Action(const pugi::xml_node &node) : Object(node) {
 
 		scan(node, "source", [this](const pugi::xml_node &node){
 			push_back(make_shared<Source>(node));
+			return false;
+		});
+
+		scan(node, "kernel-parameters", [this](const pugi::xml_node &node){
+			kparms.emplace_back(node);
 			return false;
 		});
 
@@ -109,13 +114,21 @@
 
 	void Action::activate(Worker &worker) {
 
-		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
-		worker.pre(*this);
-		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
+		{
+			Dialog::Progress::getInstance().set("Initializing");
+			worker.pre(*this);
+		}
+
+		// Update kernel parameters.
+		{
+			Dialog::Progress::getInstance().set("Getting installation parameters");
+			for(KernelParameter &kparm : kparms) {
+				kparm.set(*this);
+			}
+		}
+
 		worker.apply(*this);
-		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
 		worker.post(*this);
-		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
 
 	}
 
@@ -183,17 +196,21 @@
 
 		if(!strcasecmp(key,"kernel-parameters")) {
 
-			kparms.for_each([&value](const char *name, const Udjat::Value &v){
+			for(const KernelParameter &kparm : kparms) {
 
-				if(!value.empty()) {
-					value += " ";
+				const char * val = kparm.value();
+
+				if(val && *val) {
+					if(!value.empty()) {
+						value += " ";
+					}
+
+					value += kparm.name();
+					value += "=";
+					value += val;
 				}
 
-				value += name;
-				value += "=";
-				value += v.to_string();
-
-			});
+			}
 
 			return true;
 		}

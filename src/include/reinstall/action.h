@@ -21,6 +21,7 @@
 
  #include <udjat/defs.h>
  #include <pugixml.hpp>
+ #include <udjat/tools/string.h>
  #include <reinstall/object.h>
  #include <reinstall/value.h>
  #include <list>
@@ -35,6 +36,28 @@
 
 	class UDJAT_API Action : public Reinstall::Object {
 	public:
+
+		/// @brief Kernel parameters.
+		class UDJAT_API KernelParameter {
+		private:
+			const char * nm;
+			Udjat::String vl;
+
+		public:
+			KernelParameter(const pugi::xml_node &node);
+			~KernelParameter();
+
+			void set(const Reinstall::Object &object);
+
+			inline const char * name() const noexcept {
+				return nm;
+			}
+
+			inline const char * value() const noexcept {
+				return vl.c_str();
+			}
+
+		};
 
 		/// @brief File/Folder to copy from repository to image.
 		class UDJAT_API Source {
@@ -120,10 +143,9 @@
 			void load(const Udjat::Object &object);
 			void apply(Source &source);
 
-			/// @brief Export template to file.
-			/// @param object objeto for ${} properties.
+			/// @brief copy loaded template to file.
 			/// @param path Path to filename.
-			void save_to_file(const Udjat::Object &object, const char *path) const;
+			void replace(const char *path) const;
 
 			inline const char * c_str() const noexcept {
 				return name;
@@ -136,7 +158,7 @@
 	protected:
 
 		/// @brief Kernel parameters.
-		Parameters kparms;
+		std::vector<KernelParameter> kparms;
 
 		/// @brief Sources list.
 		std::unordered_set<std::shared_ptr<Source>, SourceHash, SourceEqual> sources;
