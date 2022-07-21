@@ -209,7 +209,7 @@
 		if(eltorito.boot_image && *eltorito.boot_image) {
 
 			// Search to confirm presence of the boot_image.
-			const char *filename = find(eltorito.boot_image)->filename;
+			const char *filename = source(eltorito.boot_image)->filename;
 			if(!(filename && *filename)) {
 				throw runtime_error("Unexpected filename on el-torito boot image");
 			}
@@ -225,7 +225,7 @@
 
 		if(efi.boot_image && *efi.boot_image) {
 
-			auto source = find(efi.boot_image);
+			auto source = this->source(efi.boot_image);
 			if(!(source->filename && *source->filename)) {
 				throw runtime_error("Unexpected filename on EFI boot image");
 			}

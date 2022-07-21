@@ -23,6 +23,7 @@
  #include <pugixml.hpp>
  #include <udjat/tools/string.h>
  #include <reinstall/object.h>
+ #include <reinstall/repository.h>
  #include <reinstall/value.h>
  #include <list>
  #include <unordered_set>
@@ -66,6 +67,7 @@
 
 		public:
 			const char *url;					///< @brief The file URL.
+			const char *repository;				///< @brief Repository name.
 			const char *path;					///< @brief The path inside the image.
 			const char *message;				///< @brief User message while downloading source.
 			const char *filename = nullptr;		///< @brief Nome do arquivo local.
@@ -80,13 +82,6 @@
 			Source(const pugi::xml_node &node, const char *url="", const char *defpath="");
 
 			~Source();
-
-			/*
-			/// @brief Check if it's required to download the source.
-			inline bool local() const noexcept {
-				return (*path != 0);
-			}
-			*/
 
 			inline bool operator< (const Source &b) const noexcept {
 				return strcasecmp(path,b.path) < 0;
@@ -104,23 +99,23 @@
 			/// @return Nome do arquivo local.
 			std::string save();
 
+			typedef struct {
+				bool operator() (const std::shared_ptr<Source> a, const std::shared_ptr<Source> b) const {
+					return strcmp(a->path,b->path) == 0;
+				}
+			} Equal;
+
+			typedef struct {
+				size_t operator() (const std::shared_ptr<Source> a) const {
+					size_t rc = 5381;
+					for (const signed char *p = (const signed char *) a->path; *p != '\0'; p++)
+						rc = (rc << 5) + rc + *p;
+					return rc;
+				}
+			} Hash;
+
 		};
 
-
-		typedef struct {
-			bool operator() (const std::shared_ptr<Source> a, const std::shared_ptr<Source> b) const {
-				return strcmp(a->path,b->path) == 0;
-			}
-		} SourceEqual;
-
-		typedef struct {
-			size_t operator() (const std::shared_ptr<Source> a) const {
-				size_t rc = 5381;
-				for (const signed char *p = (const signed char *) a->path; *p != '\0'; p++)
-					rc = (rc << 5) + rc + *p;
-				return rc;
-			}
-		} SourceHash;
 
 		/// @brief Template for image contents replacing.
 		class UDJAT_API Template {
@@ -160,11 +155,14 @@
 		/// @brief Kernel parameters.
 		std::vector<KernelParameter> kparms;
 
+		/// @brief Repositories list.
+		std::unordered_set<std::shared_ptr<Repository>, Repository::Hash, Repository::Equal> repositories;
+
 		/// @brief Sources list.
-		std::unordered_set<std::shared_ptr<Source>, SourceHash, SourceEqual> sources;
+		std::unordered_set<std::shared_ptr<Source>, Source::Hash, Source::Equal> sources;
 
 		/// @brief Search for source based on image path
-		std::shared_ptr<Source> find(const char *path);
+		std::shared_ptr<Source> source(const char *path);
 
 		/// @brief Scan xml for 'tagname', call lambda in every occurrence.
 		/// @param tagname the <tag> to search for.

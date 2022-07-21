@@ -33,29 +33,15 @@
 
 	Action::Source::Source(const char *u, const char *p)
 		:	url(Quark(u).c_str()),
+			repository(Quark::getFromStatic("install").c_str()),
 			path(Quark(p).c_str()) {
 	}
 
 	Action::Source::Source(const pugi::xml_node &node,const char *url,const char *defpath)
 		: 	url(Quark(node,"url",url,false).c_str()),
+			repository(Quark(node,"repository","install").c_str()),
 			path(Quark(node,"path",defpath,false).c_str()),
 			message(Quark(node,"download-message","",true).c_str()) {
-
-
-		if(!this->url[0] && path[0] == '/') {
-
-			Udjat::URL install(Udjat::String(Udjat::Attribute(node,"install").as_string()).expand(node));
-
-			if(install.empty()) {
-				install = Udjat::String(Udjat::Config::get("defaults","install","")).expand(node);
-			}
-
-			if(!install.empty()) {
-				install += path;
-				this->url = Quark(install).c_str();
-			}
-
-		}
 
 		if(!this->url[0]) {
 			throw runtime_error("Missing required attribute 'url'");

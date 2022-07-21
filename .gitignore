@@ -49,6 +49,8 @@ config.h
 stamp-h1
 *.layout
 .bin
+*.iso
+*.txt
 .obj
 Makefile
 vgcore.*

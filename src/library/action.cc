@@ -148,6 +148,24 @@
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 		progress.set("Getting file list");
 
+		// Update source URLs.
+		for(std::shared_ptr<Action::Source> source = folder();source;source = folder()) {
+
+			if(source->url[0] == '/') {
+
+				// Prefix URL with repository path.
+				throw runtime_error("Work in progress");
+
+			} else if(strncmp(source->url,"../",3) == 0) {
+
+				// Adjust URL using the repository path.
+				throw runtime_error("Work in progress");
+
+			}
+
+		}
+
+		// Get folder contents.
 		for(std::shared_ptr<Action::Source> source = folder();source;source = folder()) {
 
 			// Remove folder from source list.
@@ -239,18 +257,13 @@
 
 	}
 
-	std::shared_ptr<Action::Source> Action::find(const char *path) {
-
+	std::shared_ptr<Action::Source> Action::source(const char *path) {
 		for(auto source : sources) {
-
 			if(source->path && *source->path && !strcmp(path,source->path)) {
 				return source;
 			}
-
 		}
-
 		throw system_error(ENOENT,system_category(),path);
-
 	}
 
  }
