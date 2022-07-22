@@ -115,7 +115,7 @@
 
 	}
 
-	void iso9660::Worker::push_back(Action::Source &source) {
+	void iso9660::Worker::push_back(Source &source) {
 
 		if(!(source.path && *source.path)) {
 			// No local path, ignore it.

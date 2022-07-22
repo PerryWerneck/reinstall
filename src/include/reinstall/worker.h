@@ -29,7 +29,7 @@
 	protected:
 
 		/// @brief Insert source on the target image.
-		virtual void push_back(Action::Source &source);
+		virtual void push_back(Source &source);
 
 	public:
 

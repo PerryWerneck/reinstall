@@ -51,6 +51,7 @@ stamp-h1
 .bin
 *.iso
 *.txt
+*.depend
 .obj
 Makefile
 vgcore.*

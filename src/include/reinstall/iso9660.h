@@ -38,7 +38,7 @@
 			IsoWriteOpts *opts;
 
 		protected:
-			void push_back(Action::Source &source) override;
+			void push_back(Source &source) override;
 
 		public:
 

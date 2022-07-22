@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ #include <config.h>
  #include <reinstall/repository.h>
  #include <udjat/tools/quark.h>
 
@@ -25,10 +26,21 @@
 
  namespace Reinstall {
 
-	Repository::Repository(const pugi::xml_node &node) : NamedObject(node), url(Quark(node,"url").c_str()), slp(node) {
+	Repository::Path::Path(const pugi::xml_node &node) : url(Quark(node,"url").c_str()) {
+	}
+
+	Repository::Repository(const pugi::xml_node &node) : NamedObject(node), path(node), slp(node) {
 	}
 
 	Repository::~Repository() {
+	}
+
+	const char * Repository::url(bool expand) {
+#ifdef HAVE_OPENSLP
+		#error Implement SLP query.
+#else
+		return path.url;
+#endif // HAVE_OPENSLP
 	}
 
  }

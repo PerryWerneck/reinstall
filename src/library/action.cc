@@ -22,7 +22,6 @@
  #include <reinstall/worker.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/quark.h>
- #include <udjat/tools/protocol.h>
  #include <pugixml.hpp>
 
  namespace Reinstall {
@@ -132,7 +131,8 @@
 
 	}
 
-	std::shared_ptr<Action::Source> Action::folder() {
+	/*
+	std::shared_ptr<Source> Action::folder() {
 
 		for(auto source : sources) {
 			if( *(source->url + strlen(source->url) - 1) == '/') {
@@ -142,14 +142,34 @@
 
 		return std::shared_ptr<Source>();
 	}
+	*/
 
 	void Action::load() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 		progress.set("Getting file list");
 
+		{
+			std::vector<std::shared_ptr<Source>> contents;
+
+			// Expand all sources.
+			for(auto source = sources.begin(); source != sources.end();) {
+				if((*source)->contents(*this,contents)) {
+					source = sources.erase(source);
+				} else {
+					source++;
+				}
+			}
+
+			// Add expanded elements.
+			for(auto source : contents) {
+				sources.insert(source);
+			}
+
+		}
+		/*
 		// Update source URLs.
-		for(std::shared_ptr<Action::Source> source = folder();source;source = folder()) {
+		for(std::shared_ptr<Source> source = folder();source;source = folder()) {
 
 			if(source->url[0] == '/') {
 
@@ -166,7 +186,7 @@
 		}
 
 		// Get folder contents.
-		for(std::shared_ptr<Action::Source> source = folder();source;source = folder()) {
+		for(std::shared_ptr<Source> source = folder();source;source = folder()) {
 
 			// Remove folder from source list.
 			sources.erase(source);
@@ -207,6 +227,7 @@
 				href = from+1;
 			}
 		}
+		*/
 
 	}
 
@@ -257,7 +278,7 @@
 
 	}
 
-	std::shared_ptr<Action::Source> Action::source(const char *path) {
+	std::shared_ptr<Source> Action::source(const char *path) {
 		for(auto source : sources) {
 			if(source->path && *source->path && !strcmp(path,source->path)) {
 				return source;

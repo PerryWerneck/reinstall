@@ -17,55 +17,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include "private.h"
- #include <reinstall/action.h>
+ #include <config.h>
+ #include <udjat/defs.h>
+ #include <reinstall/source.h>
  #include <reinstall/worker.h>
- #include <udjat/tools/quark.h>
- #include <udjat/tools/protocol.h>
- #include <udjat/tools/url.h>
- #include <udjat/tools/object.h>
- #include <udjat/tools/xml.h>
- #include <udjat/tools/string.h>
- #include <udjat/tools/configuration.h>
  #include <reinstall/dialogs.h>
+ #include <udjat/tools/protocol.h>
+
+ using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
-	Action::Source::Source(const char *u, const char *p)
-		:	url(Quark(u).c_str()),
-			repository(Quark::getFromStatic("install").c_str()),
-			path(Quark(p).c_str()) {
-	}
-
-	Action::Source::Source(const pugi::xml_node &node,const char *url,const char *defpath)
-		: 	url(Quark(node,"url",url,false).c_str()),
-			repository(Quark(node,"repository","install").c_str()),
-			path(Quark(node,"path",defpath,false).c_str()),
-			message(Quark(node,"download-message","",true).c_str()) {
-
-		if(!this->url[0]) {
-			throw runtime_error("Missing required attribute 'url'");
-		}
-
-	}
-
-	Action::Source::~Source() {
-		if(!tempfilename.empty()) {
-			if(remove(tempfilename.c_str()) != 0) {
-				cerr << "tempfile\tError removing '" << tempfilename << "'" << endl;
-			}
-		}
-	}
-
-	string Action::Source::save() {
+	string Source::save() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		auto worker = Udjat::Protocol::WorkerFactory(this->url);
+
+		auto worker = Protocol::WorkerFactory(this->url);
+
+		if(message && *message) {
+			progress.set(message);
+		} else {
+			progress.set(worker->url().c_str());
+		}
 
 		if(filename) {
 
 			// Download URL to 'filename'
-			progress.set(worker->url().c_str());
 			worker->save(filename,[&progress](double current, double total){
 				progress.update(current,total);
 				return true;
@@ -90,4 +68,3 @@
 	}
 
  }
-

@@ -17,36 +17,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include "private.h"
- #include <reinstall/worker.h>
- #include <vector>
+ #include <reinstall/repository.h>
+ #include <udjat/tools/quark.h>
+
+ using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
-	Worker::Worker() {
-	}
-
-	void Worker::push_back(Source &source) {
-	}
-
-	void Worker::pre(Action &action) {
-
-		// Get folder contents.
-		action.load();
-
-		// Apply templates.
-		action.applyTemplates();
-
-		// Download files.
-		action.for_each([this](Source &source) {
-			push_back(source);
-		});
-	}
-
-	void Worker::apply(Action &action) {
-	}
-
-	void Worker::post(Action &action) {
+	Repository::SlpClient::SlpClient(const pugi::xml_node &node)
+		: service_type(Quark(node,"slp-service-type").c_str()), scope(Quark(node,"slp-scope").c_str()), filter(Quark(node,"slp-filter").c_str()) {
 	}
 
  }

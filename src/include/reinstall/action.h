@@ -25,6 +25,7 @@
  #include <reinstall/object.h>
  #include <reinstall/repository.h>
  #include <reinstall/value.h>
+ #include <reinstall/source.h>
  #include <list>
  #include <unordered_set>
  #include <memory>
@@ -59,63 +60,6 @@
 			}
 
 		};
-
-		/// @brief File/Folder to copy from repository to image.
-		class UDJAT_API Source {
-		private:
-			std::string tempfilename;			///< @brief If not empty, the temporary file name.
-
-		public:
-			const char *url;					///< @brief The file URL.
-			const char *repository;				///< @brief Repository name.
-			const char *path;					///< @brief The path inside the image.
-			const char *message;				///< @brief User message while downloading source.
-			const char *filename = nullptr;		///< @brief Nome do arquivo local.
-
-			/// @brief Create a simple source.
-			Source(const char *url, const char *path);
-
-			/// @brief Create new file source.
-			/// @param node XML definitions for this file source.
-			/// @param url Default URL.
-			/// @param defpath Default path.
-			Source(const pugi::xml_node &node, const char *url="", const char *defpath="");
-
-			~Source();
-
-			inline bool operator< (const Source &b) const noexcept {
-				return strcasecmp(path,b.path) < 0;
-			}
-
-			bool operator> (const Source &b) const noexcept {
-				return strcasecmp(path,b.path) > 0;
-			}
-
-			bool operator== (const Source &b) const noexcept {
-				return strcasecmp(path,b.path) == 0;
-			}
-
-			/// @brief Download file.
-			/// @return Nome do arquivo local.
-			std::string save();
-
-			typedef struct {
-				bool operator() (const std::shared_ptr<Source> a, const std::shared_ptr<Source> b) const {
-					return strcmp(a->path,b->path) == 0;
-				}
-			} Equal;
-
-			typedef struct {
-				size_t operator() (const std::shared_ptr<Source> a) const {
-					size_t rc = 5381;
-					for (const signed char *p = (const signed char *) a->path; *p != '\0'; p++)
-						rc = (rc << 5) + rc + *p;
-					return rc;
-				}
-			} Hash;
-
-		};
-
 
 		/// @brief Template for image contents replacing.
 		class UDJAT_API Template {
@@ -175,7 +119,7 @@
 		virtual void activate(Reinstall::Worker &worker);
 
 		/// @brief Get first folder.
-		std::shared_ptr<Source> folder();
+		// std::shared_ptr<Source> folder();
 
 		bool getProperty(const char *key, std::string &value) const noexcept override;
 

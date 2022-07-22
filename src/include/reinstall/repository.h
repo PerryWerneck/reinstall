@@ -29,7 +29,15 @@
 	/// @brief Installation repository defined by XML.
 	class UDJAT_API Repository : public Udjat::NamedObject {
 	private:
-		const char *url;
+
+		struct Path {
+
+			/// @brief Defined URL.
+			const char * url;
+
+			Path(const pugi::xml_node &node);
+
+		} path;
 
 		/// @brief SLP based repository detection.
 		class SlpClient {
@@ -67,6 +75,10 @@
 
 		Repository(const pugi::xml_node &node);
 		~Repository();
+
+		/// @brief Get repository URL.
+		/// @param expand If true resolve the real URL using SLP.
+		const char * url(bool expand = false);
 
 	};
 
