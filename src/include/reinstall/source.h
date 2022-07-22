@@ -35,10 +35,10 @@
 		std::string tempfilename;			///< @brief If not empty, the temporary file name.
 
 	public:
-		const char *url;					///< @brief The file URL.
-		const char *repository;				///< @brief Repository name.
-		const char *path;					///< @brief The path inside the image.
-		const char *message;				///< @brief User message while downloading source.
+		const char *url = nullptr;			///< @brief The file URL.
+		const char *repository = nullptr;	///< @brief Repository name.
+		const char *path = nullptr;			///< @brief The path inside the image.
+		const char *message = nullptr;		///< @brief User message while downloading source.
 		const char *filename = nullptr;		///< @brief Nome do arquivo local.
 
 		/// @brief Create a simple source.

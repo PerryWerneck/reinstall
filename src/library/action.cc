@@ -294,6 +294,7 @@
 				return source;
 			}
 		}
+		error() << "Cant find source for path '" << path << "'" << endl;
 		throw system_error(ENOENT,system_category(),path);
 	}
 

@@ -58,10 +58,16 @@
 			}
 
 			string remote = url + link;
+			string local = path + link;
+
 			if(remote[remote.size()-1] == '/') {
-				mirror(name,path,remote.c_str(),contents);
+
+				// Its a folder, expand it.
+				mirror(name,local.c_str(),remote.c_str(),contents);
+
 			} else {
-				string local = path + link;
+
+				// Its a file, append in the content list.
 				cout << name << "\t" << remote << " -> " << local << endl;
 				contents.push_back(std::make_shared<Source>(name,remote.c_str(),local.c_str()));
 			}
@@ -87,6 +93,11 @@
 		}
 
 		mirror(name(),path,url,contents);
+
+#ifdef DEBUG
+		cout << endl << endl << "Source " << name() << " contents loaded" << endl << endl;
+#endif // DEBUG
+
 		return true;
 	}
 
