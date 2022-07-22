@@ -31,6 +31,11 @@
 
 	string Source::save() {
 
+		if(!this->url[0]) {
+			error() << "Cant save source with empty URL" << endl;
+			throw runtime_error("Unable to get source with an empty URL");
+		}
+
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
 		auto worker = Protocol::WorkerFactory(this->url);

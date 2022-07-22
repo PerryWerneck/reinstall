@@ -47,6 +47,11 @@
 			return false;
 		});
 
+		scan(node, "repository", [this](const pugi::xml_node &node){
+			repositories.insert(make_shared<Repository>(node));
+			return false;
+		});
+
 		scan(node, "template", [this](const pugi::xml_node &node){
 			push_back(make_shared<Template>(node));
 			return false;
@@ -147,8 +152,13 @@
 	void Action::load() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set("Getting file list");
 
+		progress.set("Updating file sources");
+		for(auto source : sources) {
+			source->set(*this);
+		}
+
+		progress.set("Getting file list");
 		{
 			std::vector<std::shared_ptr<Source>> contents;
 
@@ -285,6 +295,23 @@
 			}
 		}
 		throw system_error(ENOENT,system_category(),path);
+	}
+
+	std::shared_ptr<Repository> Action::repository(const char *name) const {
+
+		if(repositories.empty()) {
+			throw runtime_error("No repositories on this action");
+		}
+
+		cout << "searching for repository '" << name << "' in " << repositories.size() << " repos" << endl;
+
+		for(auto repository : repositories) {
+			if(*repository == name) {
+				return repository;
+			}
+		}
+
+		throw system_error(ENOENT,system_category(),name);
 	}
 
  }

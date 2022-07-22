@@ -63,8 +63,13 @@
 			return strcasecmp(path,b.path) == 0;
 		}
 
+		/// @brief Process source based on action properties.
+		/// @param action The current action.
+		void set(const Action &action);
+
 		/// @brief Download file.
-		/// @return Nome do arquivo local.
+		/// @param action The current action.
+		/// @return Filename.
 		std::string save();
 
 		/// @brief Get folders contents.

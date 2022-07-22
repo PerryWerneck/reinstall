@@ -134,6 +134,9 @@
 
 		static Action & getDefault();
 
+		/// @brief Get repository.
+		std::shared_ptr<Repository> repository(const char *name = "install") const;
+
 		virtual void activate();
 
 		/// @brief Load folders.

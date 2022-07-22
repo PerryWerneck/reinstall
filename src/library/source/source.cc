@@ -48,11 +48,11 @@
 			path(Quark(node,"path",defpath,false).c_str()),
 			message(Quark(node,"download-message","",true).c_str()) {
 
-		if(!this->url[0]) {
+		if(!url[0]) {
 			url = Quark(node,"path").c_str();
 		}
 
-		if(!this->url[0]) {
+		if(!url[0]) {
 			throw runtime_error("Missing required attribute 'url'");
 		}
 
@@ -64,6 +64,21 @@
 				error() << "Error removing '" << tempfilename << "'" << endl;
 			}
 		}
+	}
+
+	void Source::set(const Action &action) {
+
+		if(!url[0]) {
+			// Expand URL based on repository path
+			URL url(action.repository(repository)->url(true));
+			url += path;
+			this->url = Quark(url.c_str()).c_str();
+		}
+
+#ifdef DEBUG
+		cout << "URL=" << this->url << endl;
+#endif // DEBUG
+
 	}
 
  }

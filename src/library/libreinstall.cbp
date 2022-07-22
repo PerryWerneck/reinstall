@@ -56,7 +56,6 @@
 		<Unit filename="../modules/netinstall/init.cc" />
 		<Unit filename="../modules/netinstall/private.h" />
 		<Unit filename="action.cc" />
-		<Unit filename="actionsource.cc" />
 		<Unit filename="controller.cc" />
 		<Unit filename="dialogs/progress.cc" />
 		<Unit filename="dialogs/window.cc" />
@@ -69,7 +68,6 @@
 		<Unit filename="os/linux/libguestfs.cc" />
 		<Unit filename="parameters.cc" />
 		<Unit filename="private.h" />
-		<Unit filename="repository.cc" />
 		<Unit filename="script.cc" />
 		<Unit filename="source/expand_url.cc" />
 		<Unit filename="source/save.cc" />
