@@ -8,6 +8,7 @@ SOURCES= \
 		$(wildcard *.cc) \
 		$(wildcard iso9660/*.cc) \
 		$(wildcard dialogs/*.cc) \
+		$(wildcard repository/*.cc) \
 		$(wildcard os/@OSNAME@/*.cc)
 
 TEST_SOURCES= \
