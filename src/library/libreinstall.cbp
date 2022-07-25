@@ -68,6 +68,8 @@
 		<Unit filename="os/linux/libguestfs.cc" />
 		<Unit filename="parameters.cc" />
 		<Unit filename="private.h" />
+		<Unit filename="repository/construct.cc" />
+		<Unit filename="repository/slpclient.cc" />
 		<Unit filename="script.cc" />
 		<Unit filename="source/expand_url.cc" />
 		<Unit filename="source/save.cc" />

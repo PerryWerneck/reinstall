@@ -17,4 +17,7 @@ sudo mount "/dev/mapper/${PART2}" "/tmp/reinstall/iso/p2"
 echo "Press exit to release"
 /bin/bash
 
+sudo umount "/tmp/reinstall/iso/p1"
+sudo umount "/tmp/reinstall/iso/p2"
+
 sudo kpartx -d /tmp/test.iso

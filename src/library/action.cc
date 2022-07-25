@@ -136,19 +136,6 @@
 
 	}
 
-	/*
-	std::shared_ptr<Source> Action::folder() {
-
-		for(auto source : sources) {
-			if( *(source->url + strlen(source->url) - 1) == '/') {
-				return source;
-			}
-		}
-
-		return std::shared_ptr<Source>();
-	}
-	*/
-
 	void Action::load() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
@@ -177,67 +164,6 @@
 			}
 
 		}
-		/*
-		// Update source URLs.
-		for(std::shared_ptr<Source> source = folder();source;source = folder()) {
-
-			if(source->url[0] == '/') {
-
-				// Prefix URL with repository path.
-				throw runtime_error("Work in progress");
-
-			} else if(strncmp(source->url,"../",3) == 0) {
-
-				// Adjust URL using the repository path.
-				throw runtime_error("Work in progress");
-
-			}
-
-		}
-
-		// Get folder contents.
-		for(std::shared_ptr<Source> source = folder();source;source = folder()) {
-
-			// Remove folder from source list.
-			sources.erase(source);
-
-			// Get index and insert folder contents.
-			string index = Udjat::Protocol::WorkerFactory(string{source->url,strlen(source->url)-1}.c_str())->get();
-			if(index.empty()) {
-				throw runtime_error(string{"Empty response from "} + source->url);
-			}
-
-			for(auto href = index.find("<a href=\""); href != string::npos; href = index.find("<a href=\"",href)) {
-
-				auto from = href+9;
-				href = index.find("\"",from);
-				if(href == string::npos) {
-					throw runtime_error(string{"Unable to parse file list from "} + source->url);
-				}
-
-				string link = index.substr(from,href-from);
-
-				if(link[0] =='/' || link[0] == '?' || link[0] == '.' || link[0] == '$')
-					continue;
-
-				if(link.size() >= 7 && strncmp(link.c_str(),"http://",7) == 0 ) {
-					continue;
-				}
-
-				if(link.size() >= 8 && strncmp(link.c_str(),"https://",8) == 0 ) {
-					continue;
-				}
-
-				string remote = source->url + link;
-				string local = source->path + link;
-
-				cout << "source\t" << remote << " -> " << local << endl;
-				push_back(std::make_shared<Source>(remote.c_str(),local.c_str()));
-
-				href = from+1;
-			}
-		}
-		*/
 
 	}
 

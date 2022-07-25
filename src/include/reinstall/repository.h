@@ -32,8 +32,8 @@
 
 		struct Path {
 
-			/// @brief Defined URL.
-			const char * url;
+			/// @brief Repository URL got from XML definition.
+			const char * url = "";
 
 			Path(const pugi::xml_node &node);
 
@@ -42,11 +42,23 @@
 		/// @brief SLP based repository detection.
 		class SlpClient {
 		private:
-			const char *service_type;
-			const char *scope;
-			const char *filter;
+
+			/// @brief The service type string, including the authority string (if any) for the request.
+			const char *service_type = "";
+
+			/// @brief A comma separated list of scope names.
+			const char *scope = "";
+
+			/// @brief A query formulated of attribute pattern matching expressions in the form of an LDAPv3 search filter.
+			const char *filter = "";
+
+			/// @brief URL for kernel parameter when SLP server was detected.
+			const char *url = "";
 
 		public:
+			constexpr SlpClient() {
+			}
+
 			SlpClient(const pugi::xml_node &node);
 
 			inline operator bool() const noexcept {
@@ -65,11 +77,7 @@
 
 		typedef struct {
 			size_t operator() (const std::shared_ptr<Repository> a) const {
-				// return a->hash();
-				size_t rc = 5381;
-				for (const signed char *p = (const signed char *) a->name(); *p != '\0'; p++)
-					rc = (rc << 5) + rc + *p;
-				return rc;
+				return a->hash();
 			}
 		} Hash;
 
@@ -78,6 +86,7 @@
 
 		/// @brief Get repository URL.
 		/// @param expand If true resolve the real URL using SLP.
+		/// @param Repository URL.
 		const char * url(bool expand = false);
 
 	};

@@ -20,7 +20,7 @@
 			* slp-filter: A query formulated of attribute pattern matching expressions in the form of an LDAPv3 search filter.
 		
 	-->
-	<repository name='install' url='http://localhost/~perry/openSUSE-Leap-15.3-NET-x86_64' slp-service-type='service:install.suse' slp-scope-list='' slp-filter='' slp-allow-local='no' />
+	<repository name='install' url='http://localhost/~perry/openSUSE-Leap-15.3-NET-x86_64' slp-service-type='service:install.suse' slp-scope-list='' slp-filter='' slp-allow-local='no' slp-url='slp:/' />
 
 	<!-- Path for the installation kernel (Full URL or path from repository -->
 	<kernel path='/boot/x86_64/loader/linux' repository='install' />

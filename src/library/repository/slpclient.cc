@@ -26,7 +26,10 @@
  namespace Reinstall {
 
 	Repository::SlpClient::SlpClient(const pugi::xml_node &node)
-		: service_type(Quark(node,"slp-service-type").c_str()), scope(Quark(node,"slp-scope").c_str()), filter(Quark(node,"slp-filter").c_str()) {
+		: service_type(Quark(node,"slp-service-type").c_str()),
+			scope(Quark(node,"slp-scope").c_str()),
+			filter(Quark(node,"slp-filter").c_str()),
+			url(Quark(node,"slp-url","slp:/").c_str()) {
 	}
 
  }
