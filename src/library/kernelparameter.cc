@@ -20,23 +20,45 @@
  #include <config.h>
  #include <reinstall/action.h>
  #include <udjat/tools/quark.h>
+ #include <udjat/tools/string.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	Action::KernelParameter::KernelParameter(const pugi::xml_node &node) : nm(Quark(node,"name").c_str()) {
+	Action::KernelParameter::KernelParameter(const pugi::xml_node &node) : nm(Quark(node.attribute("name").as_string()).c_str()) {
 
-		const char *value = node.attribute("url").as_string("");
-
-		if(!*value) {
-			value = node.attribute("value").as_string("");
+		if(!name()[0]) {
+			throw runtime_error("Unnamed kernel parameter");
 		}
 
-		if(value && *value) {
-			vl.assign(value);
-			vl.expand(node);
+		pugi::xml_attribute attribute;
+
+		static const struct Args {
+			Type type;
+			const char *name;
+		} args[] = {
+			{ Value, 		"value"			},
+			{ Url, 			"url"			},
+			{ Repository,	"repository"	},
+		};
+
+		type = Invalid;
+		for(size_t ix=0; ix < (sizeof(args)/sizeof(args[0])); ix++) {
+
+			attribute = node.attribute(args[ix].name);
+			if(attribute) {
+				type = args[ix].type;
+				vl = attribute.as_string();
+				vl.expand(node,false);
+				break;
+			}
+
+		}
+
+		if(type == Invalid) {
+			throw runtime_error("Invalid kernel parameter value type");
 		}
 
 	}
@@ -45,7 +67,7 @@
 	}
 
 	void Action::KernelParameter::set(const Reinstall::Object &object) {
-		vl.expand(object);
+		vl.expand(object,true);
 	}
 
  }

@@ -62,7 +62,11 @@
 		});
 
 		// Expand ${} values using object.
-		contents.expand(object);
+		contents.expand(object,true,true);
+
+#ifdef DEBUG
+		object.info() << endl << contents << endl;
+#endif // DEBUG
 
 		// Save to temporary.
 		filename = Udjat::File::save(contents.c_str());

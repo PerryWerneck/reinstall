@@ -42,8 +42,15 @@
 		/// @brief Kernel parameters.
 		class UDJAT_API KernelParameter {
 		private:
-			const char * nm;
+			const char * nm = "";
 			Udjat::String vl;
+
+			enum Type : uint8_t {
+				Invalid,
+				Value,			///< @brief Standard string value.
+				Url,			///< @brief URL.
+				Repository		///< @brief Repository.
+			} type = Invalid;
 
 		public:
 			KernelParameter(const pugi::xml_node &node);

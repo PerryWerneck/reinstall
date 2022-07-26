@@ -42,7 +42,7 @@
 			return false;
 		});
 
-		scan(node, "kernel-parameters", [this](const pugi::xml_node &node){
+		scan(node, "kernel-parameter", [this](const pugi::xml_node &node){
 			kparms.emplace_back(node);
 			return false;
 		});
@@ -171,22 +171,32 @@
 
 		if(!strcasecmp(key,"kernel-parameters")) {
 
-			for(const KernelParameter &kparm : kparms) {
+			if(kparms.empty()) {
+				warning() << "The kernel parameters list is empty" << endl;
+				value.clear();
+			} else {
 
-				const char * val = kparm.value();
+				for(const KernelParameter &kparm : kparms) {
 
-				if(val && *val) {
-					if(!value.empty()) {
-						value += " ";
+					const char * name = kparm.name();
+					if(!(name && *name)) {
+						error() << "Unnamed kernel parameter, possible misconfiguration" << endl;
+						continue;
 					}
 
-					value += kparm.name();
-					value += "=";
-					value += val;
+					const char * val = kparm.value();
+					if(val && *val) {
+						if(!value.empty()) {
+							value += " ";
+						}
+
+						value += name;
+						value += "=";
+						value += val;
+					}
+
 				}
-
 			}
-
 			return true;
 		}
 

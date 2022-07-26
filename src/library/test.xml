@@ -39,15 +39,13 @@
 	<source name='boot' path='/boot/x86_64/' repository='install' />
 	<source name='efi' path='/EFI/' repository='install' />
 
-	<kernel-parameters>
-		<value name='splash' value='silent' /> 
-		<value name='lang' value='pt_BR' />
-		<value name='dhcptimeout' value='240' /> 
-		<value name='noshell' value='1' /> 
-		<value name='insecure' value='1' /> 
-		<value name='self_update' value='0' />
-		<value name='install' repository='install' />
-	</kernel-parameters>
+	<kernel-parameter name='splash' value='silent' /> 
+	<kernel-parameter name='lang' value='pt_BR' />
+	<kernel-parameter name='dhcptimeout' value='240' /> 
+	<kernel-parameter name='noshell' value='1' /> 
+	<kernel-parameter name='insecure' value='1' /> 
+	<kernel-parameter name='self_update' value='0' />
+	<kernel-parameter name='install' repository='install' />
 
 	<!-- Replace every 'grub.cfg' file with template -->
 	<template name='grub.cfg' url='file://../../templates/grub.cfg' />
