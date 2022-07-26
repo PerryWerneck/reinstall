@@ -53,7 +53,7 @@
 			const char *filter = "";
 
 			/// @brief URL for kernel parameter when SLP server was detected.
-			const char *url = "";
+			const char *kparm = "";
 
 		public:
 			constexpr SlpClient() {
