@@ -43,26 +43,26 @@
 		class UDJAT_API KernelParameter {
 		private:
 			const char * nm = "";
+			const char * repository = "install";
 			Udjat::String vl;
 
 			enum Type : uint8_t {
 				Invalid,
 				Value,			///< @brief Standard string value.
-				Url,			///< @brief URL.
-				Repository		///< @brief Repository.
+				Url
 			} type = Invalid;
 
 		public:
 			KernelParameter(const pugi::xml_node &node);
 			~KernelParameter();
 
-			void set(const Reinstall::Object &object);
+			void set(const Action &action);
 
 			inline const char * name() const noexcept {
 				return nm;
 			}
 
-			inline const char * value() const noexcept {
+			const char * value() const noexcept {
 				return vl.c_str();
 			}
 

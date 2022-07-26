@@ -21,6 +21,7 @@
  #include <reinstall/action.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
+ #include <udjat/tools/url.h>
 
  using namespace std;
  using namespace Udjat;
@@ -40,8 +41,7 @@
 			const char *name;
 		} args[] = {
 			{ Value, 		"value"			},
-			{ Url, 			"url"			},
-			{ Repository,	"repository"	},
+			{ Url, 			"url"			}
 		};
 
 		type = Invalid;
@@ -66,8 +66,35 @@
 	Action::KernelParameter::~KernelParameter() {
 	}
 
-	void Action::KernelParameter::set(const Reinstall::Object &object) {
-		vl.expand(object,true);
+	void Action::KernelParameter::set(const Action &action) {
+
+		if(type == Url) {
+
+			if(vl.empty() || vl[0] == '/') {
+
+				// Fix URL with repository.
+				URL url(action.repository(repository)->url(false));
+
+				if(!vl.empty()) {
+					vl.expand(action,false);
+					url += vl.c_str();
+				}
+
+				String value{url.c_str()};
+				value.expand(action,true);
+
+				action.info() << "Kernel parameter '" << vl << "' expanded to " << value << endl;
+				vl = value;
+
+			}
+
+		} else {
+
+			vl.expand(action,true);
+
+		}
+
 	}
+
 
  }
