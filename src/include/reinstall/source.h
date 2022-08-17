@@ -35,6 +35,14 @@
 		std::string tempfilename;			///< @brief If not empty, the temporary file name.
 
 	public:
+
+		enum Type {
+			Common,	///< @brief Common source (file or folder).
+			Kernel,	///< @brief Installation kernel.
+			InitRD,	///< @brief InitRD image.
+			DUD,	///< @brief Driver installation disk image.
+		} type = Common;
+
 		const char *url = nullptr;			///< @brief The file URL.
 		const char *repository = nullptr;	///< @brief Repository name.
 		const char *path = nullptr;			///< @brief The path inside the image.
