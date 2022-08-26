@@ -41,8 +41,9 @@
 			path(Quark(p).c_str()) {
 	}
 
-	Source::Source(const pugi::xml_node &node,const char *url,const char *defpath)
+	Source::Source(const pugi::xml_node &node,const Source::Type t,const char *url,const char *defpath)
 		: 	NamedObject(node),
+			type(t),
 			url(Quark(node,"url",url,false).c_str()),
 			repository(Quark(node,"repository","install").c_str()),
 			path(Quark(node,"path",defpath,false).c_str()),

@@ -17,12 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include "private.h"
+ #include <config.h>
  #include <reinstall/action.h>
  #include <reinstall/worker.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/quark.h>
  #include <pugixml.hpp>
+
+ using namespace std;
 
  namespace Reinstall {
 

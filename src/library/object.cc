@@ -17,9 +17,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include "private.h"
+ #include <config.h>
+ #include <reinstall/object.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
+
+ using namespace Udjat;
 
  namespace Reinstall {
 
@@ -88,6 +91,7 @@
 
 	}
 
+	/*
 	Object::Message::Message(const char *tag, const pugi::xml_node &node) : Text(tag,node) {
 
 		auto child = node.child(tag);
@@ -102,6 +106,7 @@
 		notify = getAttribute(child,group,"notify",false);
 
 	}
+	*/
 
  }
 

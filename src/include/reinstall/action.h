@@ -99,6 +99,32 @@
 
 		};
 
+
+		class UDJAT_API Message : Udjat::NamedObject {
+		private:
+			const Action &action;				///< @brief Action for this dialog.
+
+			const char *title = "";				///< @brief Dialog title.
+			const char *icon = "";				///< @brief Dialog icon.
+
+			/// @brief Dialog messages.
+			struct {
+				const char *primary = "";		///< @brief Primary text.
+				const char *secondary = "";		///< @brief Secondary text.
+			} text;
+
+			struct {
+				const char *value = "";			///< @brief URL target.
+				const char *label = "";			///< @brief Label for URL button.
+			} url;
+
+		public:
+			Message(const Action &action, const pugi::xml_node &node);
+
+			bool getProperty(const char *key, std::string &value) const noexcept override;
+
+		};
+
 		std::list<std::shared_ptr<Template>> templates;
 
 	protected:

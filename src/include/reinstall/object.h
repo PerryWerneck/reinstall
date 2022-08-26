@@ -59,6 +59,7 @@
 
 		};
 
+		/*
 		/// @brief Mensagens a apresentar para o usuário (popup)
 		struct Message : public Text {
 
@@ -66,11 +67,12 @@
 			const char * title = "";
 
 			/// @brief Emite notificação se a janela não tiver foco?
-			bool notify = false;
+			//bool notify = false;
 
 			Message(const char *tag, const pugi::xml_node &node);
 
 		};
+		*/
 
 		bool getProperty(const char *key, std::string &value) const noexcept override;
 
@@ -85,7 +87,7 @@
 		/// @brief Subtitle
 		Text subtitle;
 
-		/// @brief Link para o botão de help.
+		/// @brief Help button.
 		Link help;
 
 		Object(const pugi::xml_node &node);

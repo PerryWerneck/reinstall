@@ -64,8 +64,17 @@
  		<option name='opt1' default='yes'>
 
 	 		<attribute name='label' value='Option 1' />
- 		
- 		</option>
+
+			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
+			<dialog name='confirmation' title='Confirmation message' icon='dialog-question' text='Do you confirm?' url='http://google.com' url-label='More info'>
+				This is the secondary text on confirmation message.
+			</dialog>
+
+			<dialog name='sucess' title='Success message' icon='dialog-information' text='Operation complete' url='http://google.com' url-label='More info' allow-reboot='yes'>
+				This is the secondary text of sucess message.
+			</dialog>
+
+		</option>
 
 
 	</group>

@@ -50,13 +50,16 @@
 		const char *filename = nullptr;		///< @brief Nome do arquivo local.
 
 		/// @brief Create a simple source.
+		/// @param url Default URL.
+		/// @param defpath path.
 		Source(const char *name, const char *url, const char *path);
 
 		/// @brief Create new file source.
 		/// @param node XML definitions for this file source.
 		/// @param url Default URL.
 		/// @param defpath Default path.
-		Source(const pugi::xml_node &node, const char *url="", const char *defpath="");
+		Source(const pugi::xml_node &node, const Type type=Common, const char *url="", const char *defpath="");
+
 		virtual ~Source();
 
 		inline bool operator< (const Source &b) const noexcept {
@@ -69,6 +72,10 @@
 
 		bool operator== (const Source &b) const noexcept {
 			return strcasecmp(path,b.path) == 0;
+		}
+
+		bool operator== (const Type b) const noexcept {
+			return type == b;
 		}
 
 		/// @brief Process source based on action properties.

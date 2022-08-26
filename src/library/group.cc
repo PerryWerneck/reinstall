@@ -17,8 +17,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include "private.h"
+ #include <config.h>
  #include <reinstall/controller.h>
+ #include <memory>
+
+ using namespace std;
 
  namespace Reinstall {
 

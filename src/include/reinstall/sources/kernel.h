@@ -19,14 +19,17 @@
 
  #pragma once
 
+ #include <udjat/defs.h>
  #include <reinstall/source.h>
+ #include <pugixml.hpp>
 
  namespace Reinstall {
 
-	/// @brief The linuxrc for the installation.
-	class UDJAT_API InitRD : public Source {
+	/// @brief The source for the installation kernel;
+	class UDJAT_API Kernel : public Source {
 	public:
-		InitRD(const pugi::xml_node &node) : Source(node,Source::InitRD,"","/boot/x86_64/loader/initrd") {
+		Kernel(const pugi::xml_node &node) : Source(node) {
+			type = Source::Kernel;
 		}
 
 	};
