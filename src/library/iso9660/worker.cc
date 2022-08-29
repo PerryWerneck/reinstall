@@ -25,6 +25,7 @@
  #include <udjat/tools/string.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/configuration.h>
+ #include <udjat/tools/intl.h>
 
  #include <sys/stat.h>
  #include <fcntl.h>
@@ -66,7 +67,7 @@
 		IsoBuilderSingleTon::getInstance();
 
 		if(!iso_image_new("name", &image)) {
-			throw runtime_error("Cant create iso image");
+			throw runtime_error(_("Error creating iso image"));
 		}
 
 		iso_image_attach_data(image,this,NULL);
@@ -144,7 +145,7 @@
 
 			if(!*(pos+1)) {
 				cerr << "iso9660\tCan't insert node '" << source.path << "' it's not a FILE name" << endl;
-				throw logic_error("Unexpanded path in source list");
+				throw logic_error(_("Unexpanded path in source list"));
 			}
 
 			// Has path, get iso dir.
@@ -211,13 +212,13 @@
 		}
 
 		if(fd <  0) {
-			throw system_error(errno, system_category(), "Error loading system area");
+			throw system_error(errno, system_category(), _("Error loading system area"));
 		}
 
 		try {
 
 			if(read(fd,data,sizeof(data)) < 1) {
-				throw system_error(errno, system_category(), "Cant read system area definition file");
+				throw system_error(errno, system_category(), _("Cant read system area definition file"));
 			}
 
 			int rc = iso_write_opts_set_system_area(opts,data,2,0);
@@ -405,7 +406,7 @@
 		}
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set("Writing ISO image");
+		progress.set(_("Writing ISO image"));
 
 		try {
 
@@ -439,7 +440,7 @@
 		burn_src->free_data(burn_src);
 		free(burn_src);
 
-		progress.set("Finalizing");
+		progress.set(_("Finalizing"));
 		::fsync(fd);
 
 	}

@@ -18,6 +18,7 @@
  */
 
 
+ #include <config.h>
  #include <reinstall/actions/kernel.h>
  #include <reinstall/actions/initrd.h>
  #include <reinstall/actions/isobuilder.h>
@@ -26,6 +27,7 @@
  #include <reinstall/dialogs.h>
  #include <reinstall/diskimage.h>
  #include <cstdlib>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
 
@@ -182,13 +184,12 @@
 
 	void IsoBuilder::activate() {
 
-		cout << "***************************" << __FILE__ << "(" << __LINE__ << ")" << endl;
 		Reinstall::Dialog::Progress progress(*this);
 
 		// Create and activate worker
 		Reinstall::iso9660::Worker worker;
 
-		progress.set("Building installation image");
+		progress.set(_("Building installation image"));
 
 		// Setup isofs.
 		worker.set_system_area(system_area);

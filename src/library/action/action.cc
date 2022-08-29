@@ -22,6 +22,8 @@
  #include <reinstall/worker.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/quark.h>
+ #include <udjat/tools/url.h>
+ #include <udjat/tools/intl.h>
  #include <pugixml.hpp>
 
  using namespace std;
@@ -34,10 +36,32 @@
 		if(defaction) {
 			return *defaction;
 		}
-		throw runtime_error("No default action");
+		throw runtime_error(_("No default action"));
 	}
 
-	Action::Action(const pugi::xml_node &node) : Object(node) {
+	static bool OptionFactory(const pugi::xml_node &node, const char *attrname, bool def) {
+
+		auto attribute = node.attribute(attrname);
+
+		if(!attribute) {
+			return def;
+		}
+
+		const char * str = attribute.as_string();
+		if(strstr(str,"://")) {
+			// It's an URL, test it.
+			return Udjat::URL(str).test() == 200;
+		}
+
+		return attribute.as_bool(def);
+	}
+
+	Action::Option::Option(const pugi::xml_node &node)
+		: enabled(OptionFactory(node,"enabled",true)), visible(OptionFactory(node,"visible",true)) {
+
+	}
+
+	Action::Action(const pugi::xml_node &node) : Object(node), options(node) {
 
 		scan(node, "source", [this](const pugi::xml_node &node){
 			push_back(make_shared<Source>(node));
@@ -77,11 +101,11 @@
 
 	void Action::activate() {
 		error() << "No activation code" << endl;
-		throw runtime_error("Action is not available");
+		throw runtime_error(_("Action is not available"));
 	}
 
 	const char * Action::install() {
-		throw runtime_error("No instalattion media");
+		throw runtime_error(_("No installation media"));
 	}
 
 	void Action::for_each(const std::function<void (Source &source)> &call) {
@@ -121,13 +145,13 @@
 	void Action::activate(Worker &worker) {
 
 		{
-			Dialog::Progress::getInstance().set("Initializing");
+			Dialog::Progress::getInstance().set(_("Initializing"));
 			worker.pre(*this);
 		}
 
 		// Update kernel parameters.
 		{
-			Dialog::Progress::getInstance().set("Getting installation parameters");
+			Dialog::Progress::getInstance().set(_("Getting installation parameters"));
 			for(KernelParameter &kparm : kparms) {
 				kparm.set(*this);
 			}
@@ -142,12 +166,12 @@
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
-		progress.set("Updating file sources");
+		progress.set(_("Updating file sources"));
 		for(auto source : sources) {
 			source->set(*this);
 		}
 
-		progress.set("Getting file list");
+		progress.set(_("Getting file list"));
 		{
 			std::vector<std::shared_ptr<Source>> contents;
 
@@ -174,7 +198,7 @@
 		if(!strcasecmp(key,"kernel-parameters")) {
 
 			if(kparms.empty()) {
-				warning() << "The kernel parameters list is empty" << endl;
+				warning() << _("The kernel parameters list is empty") << endl;
 				value.clear();
 			} else {
 
@@ -182,7 +206,7 @@
 
 					const char * name = kparm.name();
 					if(!(name && *name)) {
-						error() << "Unnamed kernel parameter, possible misconfiguration" << endl;
+						error() << _("Unnamed kernel parameter, possible misconfiguration") << endl;
 						continue;
 					}
 
@@ -208,7 +232,7 @@
 	void Action::applyTemplates() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set("Applying templates");
+		progress.set(_("Applying templates"));
 
 		for(auto tmpl : templates) {
 
@@ -239,7 +263,7 @@
 	std::shared_ptr<Repository> Action::repository(const char *name) const {
 
 		if(repositories.empty()) {
-			throw runtime_error("No repositories on this action");
+			throw runtime_error(_("No repositories on this action"));
 		}
 
 		cout << "searching for repository '" << name << "' in " << repositories.size() << " repos" << endl;

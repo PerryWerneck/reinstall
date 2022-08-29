@@ -129,6 +129,15 @@
 
 	protected:
 
+		const struct Option {
+
+			bool enabled = true;	/// @brief True if the action is enabled.
+			bool visible = true;	/// @brief True if the action is visible.
+
+			Option(const pugi::xml_node &node);
+
+		} options;
+
 		/// @brief Kernel parameters.
 		std::vector<KernelParameter> kparms;
 

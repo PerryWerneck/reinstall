@@ -19,6 +19,7 @@
 
  #include <config.h>
  #include <stdexcept>
+ #include <udjat/tools/intl.h>
  #include <reinstall/dialogs.h>
 
  using namespace std;
@@ -38,7 +39,7 @@
 
 		Window::~Window() {
 			if(current != this) {
-				runtime_error("Window order mismatch");
+				runtime_error(_("Window order mismatch"));
 			}
 			current = parent;
 			if(current) {
@@ -48,7 +49,7 @@
 
 		Window * Window::getInstance() {
 			if(!current) {
-				throw runtime_error("No active window");
+				throw runtime_error(_("No active window"));
 			}
 			return current;
 		}

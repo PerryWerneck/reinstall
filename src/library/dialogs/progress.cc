@@ -19,6 +19,7 @@
 
  #include <config.h>
  #include <reinstall/dialogs.h>
+ #include <udjat/tools/intl.h>
  #include <iostream>
 
  using namespace std;
@@ -42,7 +43,7 @@
 		Progress & Progress::getInstance() {
 			Progress *instance = dynamic_cast<Progress *>(Window::getInstance());
 			if(!instance) {
-				throw runtime_error("No progress dialog available");
+				throw runtime_error(_("No progress dialog available"));
 			}
 			return *instance;
 		}
