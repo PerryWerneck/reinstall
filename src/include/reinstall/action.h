@@ -129,12 +129,12 @@
 
 	protected:
 
-		const struct Option {
+		const struct Options {
 
-			bool enabled = true;	/// @brief True if the action is enabled.
-			bool visible = true;	/// @brief True if the action is visible.
+			bool enabled : 1;	/// @brief True if the action is enabled.
+			bool visible : 1;	/// @brief True if the action is visible.
 
-			Option(const pugi::xml_node &node);
+			Options(const pugi::xml_node &node);
 
 		} options;
 
@@ -175,6 +175,14 @@
 		unsigned short id;
 
 		static Action & getDefault();
+
+		inline bool enabled() const noexcept {
+			return options.enabled;
+		}
+
+		inline bool visible() const noexcept {
+			return options.visible;
+		}
 
 		/// @brief Get repository.
 		std::shared_ptr<Repository> repository(const char *name = "install") const;

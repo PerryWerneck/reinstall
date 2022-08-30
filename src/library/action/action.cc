@@ -27,6 +27,7 @@
  #include <pugixml.hpp>
 
  using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
@@ -49,14 +50,26 @@
 
 		const char * str = attribute.as_string();
 		if(strstr(str,"://")) {
+
 			// It's an URL, test it.
-			return Udjat::URL(str).test() == 200;
+			try {
+
+				return URL(str).test() == 200;
+
+			} catch(const exception &e) {
+
+				cerr << "option\t" << str << ": " << e.what() << endl;
+
+			}
+
+			return false;
+
 		}
 
 		return attribute.as_bool(def);
 	}
 
-	Action::Option::Option(const pugi::xml_node &node)
+	Action::Options::Options(const pugi::xml_node &node)
 		: enabled(OptionFactory(node,"enabled",true)), visible(OptionFactory(node,"visible",true)) {
 
 	}
