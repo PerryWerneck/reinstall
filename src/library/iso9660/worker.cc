@@ -419,7 +419,7 @@
 			while(burn_src->read_xt(burn_src, buffer, BUFLEN) == BUFLEN) {
 
 				if(write(fd,buffer,BUFLEN) != BUFLEN) {
-					throw system_error(errno, system_category(),"I/O error writing image");
+					throw system_error(errno, system_category(),_("I/O error writing image"));
 				}
 
 				current += BUFLEN;

@@ -22,6 +22,7 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
  #include <udjat/tools/url.h>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
  using namespace Udjat;
@@ -31,7 +32,7 @@
 	Action::KernelParameter::KernelParameter(const pugi::xml_node &node) : nm(Quark(node.attribute("name").as_string()).c_str()) {
 
 		if(!name()[0]) {
-			throw runtime_error("Unnamed kernel parameter");
+			throw runtime_error(_("Unnamed kernel parameter"));
 		}
 
 		pugi::xml_attribute attribute;
@@ -58,7 +59,7 @@
 		}
 
 		if(type == Invalid) {
-			throw runtime_error("Invalid kernel parameter value type");
+			throw runtime_error(_("Invalid kernel parameter value type"));
 		}
 
 	}

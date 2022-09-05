@@ -30,6 +30,7 @@
 
  namespace Reinstall {
 
+	/*
 	struct Disk::Image::Handler {
 
 		guestfs_h *g;
@@ -78,6 +79,7 @@
 	void Disk::Image::forEach(const std::function<void (const char *filename)> &call) {
 
 	}
+	*/
 
  }
 

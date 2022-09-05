@@ -22,11 +22,13 @@
  #include <reinstall/actions/kernel.h>
  #include <reinstall/actions/initrd.h>
  #include <reinstall/actions/isobuilder.h>
+ #include <udjat/tools/subprocess.h>
  #include <udjat/tools/string.h>
  #include <iostream>
  #include <reinstall/dialogs.h>
  #include <reinstall/diskimage.h>
  #include <cstdlib>
+ #include <udjat/tools/intl.h>
  #include <udjat/tools/intl.h>
 
  using namespace std;
@@ -40,7 +42,7 @@
 			push_back(make_shared<Reinstall::Kernel>(node));
 			return true;
 		})) {
-			throw runtime_error("Missing required entry <kernel> with the URL for installation kernel");
+			throw runtime_error(_("Missing required entry <kernel> with the URL for installation kernel"));
 		}
 
 		// Get URL for installation init.
@@ -48,7 +50,7 @@
 			push_back(make_shared<Reinstall::InitRD>(node));
 			return true;
 		})) {
-			throw runtime_error("Missing required entry <init> with the URL for the linuxrc program");
+			throw runtime_error(_("Missing required entry <init> with the URL for the linuxrc program"));
 		}
 
 		// Get post scripts.
@@ -146,8 +148,8 @@
 
 			cout << "isobuilder\tRunning '" << cmdline << "'" << endl;
 
-			if(system(cmdline.c_str()) != 0) {
-				throw runtime_error("Error on post-script");
+			if(Udjat::SubProcess(cmdline.c_str()).run() != 0) {
+				throw runtime_error(_("Error on post-script"));
 			}
 
 			cout << "isobuilder\tScript '" << cmdline << "' is complete" << endl;
@@ -212,7 +214,7 @@
 			// Search to confirm presence of the boot_image.
 			const char *filename = source(eltorito.boot_image)->filename;
 			if(!(filename && *filename)) {
-				throw runtime_error("Unexpected filename on el-torito boot image");
+				throw runtime_error(_("Unexpected filename on el-torito boot image"));
 			}
 
 			worker.set_el_torito_boot_image(
@@ -228,7 +230,7 @@
 
 			auto source = this->source(efi.boot_image);
 			if(!(source->filename && *source->filename)) {
-				throw runtime_error("Unexpected filename on EFI boot image");
+				throw runtime_error(_("Unexpected filename on EFI boot image"));
 			}
 
 			// Apply templates on EFI boot image.

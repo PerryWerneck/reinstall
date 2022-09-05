@@ -23,6 +23,7 @@
  #include <reinstall/worker.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/protocol.h>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
  using namespace Udjat;
@@ -33,7 +34,7 @@
 
 		if(!this->url[0]) {
 			error() << "Cant save source with empty URL" << endl;
-			throw runtime_error("Unable to get source with an empty URL");
+			throw runtime_error(_("Unable to get source with an empty URL"));
 		}
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();

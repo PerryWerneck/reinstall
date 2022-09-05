@@ -29,6 +29,7 @@
  #include <sys/stat.h>
  #include <fcntl.h>
  #include <unistd.h>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
  using namespace Udjat;
@@ -92,7 +93,7 @@
 	void Action::Template::replace(const char *path) const {
 
 		if(filename.empty()) {
-			throw runtime_error("Template was not loaded");
+			throw runtime_error(_("Template was not loaded"));
 		}
 
 		Udjat::File::copy(filename.c_str(),path);

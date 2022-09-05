@@ -21,6 +21,9 @@
  #include <reinstall/source.h>
  #include <udjat/tools/protocol.h>
  #include <reinstall/dialogs.h>
+ #include <udjat/tools/intl.h>
+ #include <udjat/tools/logger.h>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
  using namespace Udjat;
@@ -33,7 +36,7 @@
 		string index = Protocol::WorkerFactory(url)->get();
 
 		if(index.empty()) {
-			throw runtime_error(string{"Empty response from "} + url);
+			throw runtime_error(Logger::Message(_("Empty response from {}"),url));
 		}
 
 		for(auto href = index.find("<a href=\""); href != string::npos; href = index.find("<a href=\"",href)) {
@@ -41,7 +44,7 @@
 			auto from = href+9;
 			href = index.find("\"",from);
 			if(href == string::npos) {
-				throw runtime_error(string{"Unable to parse file list from "} + url);
+				throw runtime_error(Logger::Message(_("Unable to parse file list from {}"),url));
 			}
 
 			string link = index.substr(from,href-from);

@@ -30,6 +30,7 @@
  #include <sys/ioctl.h>
  #include <sys/mount.h>
  #include <dirent.h>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
  using namespace Udjat;
@@ -90,7 +91,7 @@
 
 			if (loop.devnr == -1) {
 				close(loop.ctl);
-				throw system_error(errno, system_category(),"Can't get an available loop device");
+				throw system_error(errno, system_category(),_("Can't get an available loop device"));
 			}
 
 			//
@@ -132,7 +133,7 @@
 				close(image.fd);
 				close(loop.fd);
 				close(loop.ctl);
-				throw system_error(errno, system_category(),"Can't get loop device status");
+				throw system_error(errno, system_category(),_("Can't get loop device status"));
 			}
 
 			loopinfo.lo_flags |= LO_FLAGS_AUTOCLEAR;
@@ -141,7 +142,7 @@
 				close(image.fd);
 				close(loop.fd);
 				close(loop.ctl);
-				throw system_error(errno, system_category(),"Can't update loop device status");
+				throw system_error(errno, system_category(),_("Can't update loop device status"));
 			}
 
 		}
