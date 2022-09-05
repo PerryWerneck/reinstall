@@ -46,7 +46,7 @@
 			controller.push_back(rc);
 		}
 
-		rc->load(node);
+		rc->setup(node);
 
 		return rc;
 	}
