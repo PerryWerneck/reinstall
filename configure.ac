@@ -193,7 +193,7 @@ dnl ---------------------------------------------------------------------------
 
 GLIB_GSETTINGS
 
-PKG_CHECK_MODULES( [GTK], [gtkmm-3.0], AC_DEFINE(HAVE_GTK,,[ "Do we have GTK++?" ]), AC_MSG_ERROR([GTK++ not present.]))
+PKG_CHECK_MODULES( [GTK], [gtkmm-3.0], AC_DEFINE(HAVE_GTK,,[ "Do we have GTK++?" ]), AC_MSG_ERROR([GTK3++ not present.]))
 
 AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
@@ -244,6 +244,7 @@ dnl Configure which files to generate.
 dnl ---------------------------------------------------------------------------
 
 AC_CONFIG_FILES(src/library/Makefile)
+AC_CONFIG_FILES(Makefile)
 
 dnl ---------------------------------------------------------------------------
 dnl Output the generated config.status script.
