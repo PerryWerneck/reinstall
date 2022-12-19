@@ -6,8 +6,13 @@ LIBRARY_NAME="lib@PACKAGE_NAME@"
 SONAME=@SONAME@
 
 LIBRARY_SOURCES= \
-	$(wildcard src/library/*.cc) \
-	$(wildcard src/library/os/@OSNAME@/*.cc)
+    $(wildcard src/library/*.cc) \
+    $(wildcard src/library/iso9660/*.cc) \
+    $(wildcard src/library/action/*.cc) \
+    $(wildcard src/library/dialogs/*.cc) \
+    $(wildcard src/library/repository/*.cc) \
+    $(wildcard src/library/source/*.cc) \
+    $(wildcard src/library/os/@OSNAME@/*.cc)
 
 GUI_SOURCES= \
 	$(wildcard src/gui/*.cc) \
@@ -67,7 +72,8 @@ CFLAGS= \
 	-DLOCALEDIR=$(localedir) \
 	@UDJAT_CFLAGS@ \
 	@PUGIXML_CFLAGS@ \
-	@ISOFS_CFLAGS@
+	@ISOFS_CFLAGS@ \
+	@GTK_CFLAGS@
 
 LDFLAGS=\
 	@LDFLAGS@
@@ -226,12 +232,11 @@ install-windows: \
 #---[ Debug Targets ]--------------------------------------------------------------------
 
 Debug: \
-	$(BINDBG)/$(SONAME)
+	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
 
 $(BINDBG)/$(PACKAGE_NAME)@EXEEXT@: \
-	$(BINDBG)/$(PACKAGE_NAME)@LIBEXT@ \
-	$(BINDBG)/$(SONAME) \
-	$(foreach SRC, $(basename $(GUI_SOURCES)), $(OBJDBG)/$(SRC).o)
+	$(foreach SRC, $(basename $(GUI_SOURCES)), $(OBJDBG)/$(SRC).o) \
+	$(BINDBG)/$(SONAME)
 
 	@$(MKDIR) $(@D)
 	@echo $< ...
@@ -241,7 +246,8 @@ $(BINDBG)/$(PACKAGE_NAME)@EXEEXT@: \
 		-L$(BINDBG) \
 		-Wl,-rpath,$(BINDBG) \
 		$(LDFLAGS) \
-		$(LIBS)
+		$(LIBS) \
+		@GTK_LIBS@
 
 
 $(BINDBG)/$(SONAME): \
@@ -264,14 +270,14 @@ run: \
 ifeq ($(VALGRIND),no)
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
-		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@ -f
+		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
 
 else
 	@touch valgrind.suppression
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
 		$(VALGRIND) --leak-check=full --track-origins=yes --gen-suppressions=all --suppressions=valgrind.suppression \
-		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@ -f
+		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
 endif
 
 #---[ Clean Targets ]--------------------------------------------------------------------
