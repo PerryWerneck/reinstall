@@ -28,6 +28,7 @@
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/application.h>
  #include <reinstall/controller.h>
+ #include <reinstall/group.h>
 
  using namespace Gtk;
  using namespace std;
@@ -49,6 +50,14 @@
 
 			set_title(PACKAGE_STRING);
 			set_default_size(600, 400);
+
+			// Add separator
+			gtk_box_pack_start(
+					GTK_BOX(hbox.gobj()),
+					gtk_separator_new(GTK_ORIENTATION_VERTICAL),
+					FALSE,
+					FALSE,
+					0);
 
 			// https://developer-old.gnome.org/gtkmm-tutorial/stable/sec-clipboard-examples.html.en
 			// http://transit.iut2.upmf-grenoble.fr/doc/gtkmm-3.0/tutorial/html/sec-helloworld.html
@@ -105,6 +114,16 @@
 
 				dialog.run();
 			}
+
+			// Create groups.
+			Reinstall::Controller::getInstance().for_each([this](std::shared_ptr<Reinstall::Group> group){
+
+				debug(group->label," - ",group->title);
+
+
+
+				return false;
+			});
 
 		}
 	};
