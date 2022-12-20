@@ -66,4 +66,17 @@
 	return true;
  }
 
+ void Dialog::Progress::set_parent(Gtk::Window &window) {
+	set_modal(true);
+	set_transient_for(window);
 
+ }
+
+ bool Dialog::Progress::on_dismiss(int response_id) {
+ 	response(response_id);
+ 	return false;
+ }
+
+ void Dialog::Progress::dismiss(int response_id) {
+	Glib::signal_idle().connect(sigc::bind<1>( sigc::mem_fun(this,&::Dialog::Progress::on_dismiss),response_id) );
+ }

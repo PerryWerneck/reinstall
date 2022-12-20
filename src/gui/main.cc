@@ -22,9 +22,14 @@
  #include <glibmm/i18n.h>
  #include <iostream>
  #include <private/dialogs.h>
+ #include <udjat/tools/quark.h>
+ #include <memory>
+ #include <udjat/tools/threadpool.h>
+ #include <reinstall/controller.h>
 
  using namespace Gtk;
  using namespace std;
+ using namespace Udjat;
 
  int main(int argc, char* argv[]) {
 
@@ -72,16 +77,43 @@
 			add(hbox);
 			show_all();
 
+			// Initialize
+			{
+				Dialog::Progress dialog;
+
+				dialog.set_title(get_title());
+				dialog.set_parent(*this);
+				dialog.sub_title() = _("Wait, initializing application...");
+				dialog.show();
+
+				ThreadPool::getInstance().push([&dialog](){
+
+					cout << "Initializing" << endl;
+
+					// First get controller to construct the factories.
+					Reinstall::Controller::getInstance();
+
+					sleep(5);
+
+					cout << "Initialized" << endl;
+					dialog.dismiss();
+				});
+
+				dialog.run();
+			}
+
 		}
 	};
+
+	Udjat::Quark::init(argc,argv);
 
 	auto app = Application::create("br.com.bb.reinstall");
 
 	MainWindow window;
 	window.set_default_size(200, 200);
 
-	Dialog::Progress progress;
-	progress.show();
+	// Dialog::Progress progress;
+	// progress.show();
 
 	return app->run(window);
  }

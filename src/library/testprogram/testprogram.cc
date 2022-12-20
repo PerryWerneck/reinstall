@@ -55,7 +55,6 @@
  int main(int argc, char **argv) {
 
 	setlocale( LC_ALL, "" );
-
 	Udjat::Quark::init(argc,argv);
 
 	// First get controller to construct the factories.

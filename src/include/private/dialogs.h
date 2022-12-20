@@ -26,6 +26,19 @@
 
 	/// @brief Standar progress dialog.
 	class Progress : public Gtk::Dialog {
+	public:
+		class Label : public Gtk::Label {
+		public:
+			Label(const char *text, Gtk::Align halign = Gtk::ALIGN_START, Gtk::Align valign=Gtk::ALIGN_CENTER) : Gtk::Label(text,halign,valign) {
+			}
+
+			inline Label & operator = (const char *value) {
+				set_text(value);
+				return *this;
+			}
+
+		};
+
 	private:
 
 		struct {
@@ -34,19 +47,46 @@
 		} timer;
 
 		struct {
-			Gtk::Label title{ "title", Gtk::ALIGN_START };
-			Gtk::Label action{ "action", Gtk::ALIGN_START };
-			Gtk::Label message{ "message", Gtk::ALIGN_CENTER };
-			Gtk::Label step{ "step", Gtk::ALIGN_END };
+			Label title{ "title" };
+			Label action{ "action", Gtk::ALIGN_START };
+			Label message{ "message", Gtk::ALIGN_CENTER };
+			Label step{ "step", Gtk::ALIGN_END };
+
 			Gtk::Image icon;
 			Gtk::ProgressBar progress;
 			Gtk::Box footer{Gtk::ORIENTATION_HORIZONTAL};
+
 		} widgets;
 
 		bool on_timeout(int timer_number);
+		bool on_dismiss(int response_id);
 
 	public:
 		Progress();
+
+		void set_parent(Gtk::Window &window);
+
+		inline Label & sub_title() {
+			return widgets.title;
+		}
+
+		inline Label & action() {
+			return widgets.action;
+		}
+
+		inline Label & message() {
+			return widgets.message;
+		}
+
+		inline Label & step() {
+			return widgets.step;
+		}
+
+		inline Gtk::Image & icon() {
+			return widgets.icon;
+		}
+
+		void dismiss(int response_id = -1);
 
 	};
 
