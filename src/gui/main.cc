@@ -34,6 +34,35 @@
  using namespace std;
  using namespace Udjat;
 
+ static void g_syslog(const gchar *domain, GLogLevelFlags level, const gchar *message, gpointer G_GNUC_UNUSED(user_data)) {
+
+ 	static const struct Type {
+ 		GLogLevelFlags	level;
+ 		Logger::Level	lvl;
+ 	} types[] =
+ 	{
+		{ G_LOG_FLAG_RECURSION,	Logger::Info		},
+		{ G_LOG_FLAG_FATAL,		Logger::Error		},
+
+		/* GLib log levels */
+		{ G_LOG_LEVEL_ERROR,	Logger::Error		},
+		{ G_LOG_LEVEL_CRITICAL,	Logger::Error		},
+		{ G_LOG_LEVEL_WARNING,	Logger::Warning		},
+		{ G_LOG_LEVEL_MESSAGE,	Logger::Info		},
+		{ G_LOG_LEVEL_INFO,		Logger::Info		},
+		{ G_LOG_LEVEL_DEBUG,	Logger::Debug		},
+ 	};
+
+	for(size_t ix=0; ix < G_N_ELEMENTS(types);ix++) {
+		if(types[ix].level == level) {
+			Logger::String{message}.write(types[ix].lvl,domain);
+			return;
+		}
+	}
+
+	cerr << message << endl;
+ }
+
  int main(int argc, char* argv[]) {
 
 	class MainWindow : public Window {
@@ -94,7 +123,8 @@
 
 				dialog.set_title(get_title());
 				dialog.set_parent(*this);
-				dialog.sub_title() = _("Wait, initializing application...");
+				dialog.sub_title() = _("Getting configuration");
+				dialog.icon().hide();
 				dialog.footer(false);
 				dialog.show();
 
@@ -109,6 +139,7 @@
 					#error TODO!
 #endif // DEBUG
 
+					sleep(5);
 					dialog.dismiss();
 				});
 
@@ -131,6 +162,7 @@
 	Udjat::Quark::init(argc,argv);
 
 	Udjat::Logger::redirect();
+	g_log_set_default_handler(g_syslog,NULL);
 
 	auto app = Gtk::Application::create("br.com.bb.reinstall");
 

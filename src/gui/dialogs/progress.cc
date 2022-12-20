@@ -28,6 +28,9 @@
 
 	Gtk::Box &content_area = *get_content_area();
 
+	set_decorated(false);
+	set_default_size(400,-1);
+
 	content_area.set_border_width(12);
 	content_area.set_spacing(12);
 
