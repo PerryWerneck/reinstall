@@ -16,6 +16,7 @@ LIBRARY_SOURCES= \
 
 GUI_SOURCES= \
 	$(wildcard src/gui/*.cc) \
+	$(wildcard src/gui/dialogs/*.cc) \
 	$(wildcard src/gui/os/@OSNAME@/*.cc)
 
 #---[ Tools ]----------------------------------------------------------------------------
@@ -263,6 +264,11 @@ $(BINDBG)/$(SONAME): \
 		$^ \
 		$(LIBS) \
 		@ISOFS_LIBS@
+
+inspect: \
+	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+
+	@GTK_DEBUG=interactive $(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
 
 run: \
 	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
