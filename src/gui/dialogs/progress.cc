@@ -66,6 +66,14 @@
 	return true;
  }
 
+ void Dialog::Progress::footer(bool enable) {
+	if(enable) {
+		widgets.footer.show_all();
+	} else {
+		widgets.footer.hide();
+	}
+ }
+
  void Dialog::Progress::set_parent(Gtk::Window &window) {
 	set_modal(true);
 	set_transient_for(window);

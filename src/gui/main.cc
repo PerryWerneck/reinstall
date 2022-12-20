@@ -23,8 +23,10 @@
  #include <iostream>
  #include <private/dialogs.h>
  #include <udjat/tools/quark.h>
+ #include <udjat/tools/logger.h>
  #include <memory>
  #include <udjat/tools/threadpool.h>
+ #include <udjat/tools/application.h>
  #include <reinstall/controller.h>
 
  using namespace Gtk;
@@ -84,18 +86,20 @@
 				dialog.set_title(get_title());
 				dialog.set_parent(*this);
 				dialog.sub_title() = _("Wait, initializing application...");
+				dialog.footer(false);
 				dialog.show();
 
 				ThreadPool::getInstance().push([&dialog](){
 
-					cout << "Initializing" << endl;
-
 					// First get controller to construct the factories.
 					Reinstall::Controller::getInstance();
 
-					sleep(5);
+#ifdef DEBUG
+					Udjat::Application::setup("./xml.d",true);
+#else
+					#error TODO!
+#endif // DEBUG
 
-					cout << "Initialized" << endl;
 					dialog.dismiss();
 				});
 
@@ -107,7 +111,9 @@
 
 	Udjat::Quark::init(argc,argv);
 
-	auto app = Application::create("br.com.bb.reinstall");
+	Udjat::Logger::redirect();
+
+	auto app = Gtk::Application::create("br.com.bb.reinstall");
 
 	MainWindow window;
 	window.set_default_size(200, 200);

@@ -86,6 +86,8 @@
 			return widgets.icon;
 		}
 
+		void footer(bool enable = true);
+
 		void dismiss(int response_id = -1);
 
 	};
