@@ -23,8 +23,10 @@
  using namespace Gtk;
  using namespace std;
 
- Group::Group(const Reinstall::Group &group) {
+ namespace Widget {
 
-	GtkGrid *grid = GTK_GRID(gobj());
+	 Group::Group(std::shared_ptr<Reinstall::Group> group) {
+
+	 }
 
  }

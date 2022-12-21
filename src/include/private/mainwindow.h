@@ -20,16 +20,25 @@
  #pragma once
 
  #include <config.h>
+ #include <udjat/defs.h>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
- #include <reinstall/group.h>
 
- namespace Widget {
+ class UDJAT_PRIVATE MainWindow : public Gtk::Window {
+ private:
 
-	class Group : public Gtk::Box {
-	public:
-		Group(const std::shared_ptr<Reinstall::Group> group);
+ 	struct {
+		Gtk::Label title{ _( "Select option" ), Gtk::ALIGN_START };
+		Gtk::Box hbox, vbox{Gtk::ORIENTATION_VERTICAL}, view{Gtk::ORIENTATION_VERTICAL};
+		Gtk::ScrolledWindow swindow;
+		Gtk::ButtonBox bbox;
+		Gtk::Button apply{_("_Apply"), true}, cancel{_("_Cancel"), true};
+ 	} layout;
 
-	};
+	void on_show() override;
 
- }
+ public:
+	MainWindow();
+
+ };
+

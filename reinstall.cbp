@@ -35,8 +35,10 @@
 		<Unit filename="src/gui/dialogs/progress.cc" />
 		<Unit filename="src/gui/main.cc" />
 		<Unit filename="src/gui/widgets/group.cc" />
+		<Unit filename="src/gui/widgets/mainwindow.cc" />
 		<Unit filename="src/include/config.h" />
 		<Unit filename="src/include/private/dialogs.h" />
+		<Unit filename="src/include/private/mainwindow.h" />
 		<Unit filename="src/include/private/widgets.h" />
 		<Unit filename="src/include/reinstall/action.h" />
 		<Unit filename="src/include/reinstall/actions/initrd.h" />
