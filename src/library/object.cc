@@ -26,31 +26,55 @@
 
  namespace Reinstall {
 
-	Object::Object(const pugi::xml_node &node) :
-		Udjat::NamedObject(node),
-		subtitle("sub-title",node),
-		help("help-button",node) {
+	Object::Label::Label(const pugi::xml_node &node, const char *attrname) : Gtk::Label{getAttribute(node,attrname,""), Gtk::ALIGN_START, Gtk::ALIGN_CENTER} {
 
-		label = getAttribute(node,"label",label);
-		title = getAttribute(node,"title",title);
+		const char *tooltip = getAttribute(node,"tooltip","");
+		if(tooltip && *tooltip) {
+			set_tooltip_text(tooltip);
+		}
+
+	}
+
+	/*
+	Object::Link::Link(const pugi::xml_node &node) : Gtk::LinkButton{getAttribute(node,"url","")} {
+
+		const char *text;
+
+		text = getAttribute(node,"icon-name","");
+		if(text && *text) {
+			// set_icon_name(text); FIX-ME
+		} else {
+			text = getAttribute(node,"label","");
+			if(text) {
+				set_label(text);
+			}
+		}
+
+		text = getAttribute(node,"tooltip","");
+		if(text && *text) {
+			set_tooltip_text(text);
+		}
+
+	}
+	*/
+
+	Object::Object(const pugi::xml_node &node) :
+		Udjat::NamedObject{node},
+		title{node,"title"},
+		subtitle(node,"sub-title") {
 
 	}
 
 	bool Object::getProperty(const char *key, std::string &value) const noexcept {
 
-		if(!strcasecmp(key,"label")) {
+		if(!strcasecmp(key,"title")) {
 
-			value = label;
-			return true;
-
-		} else if(!strcasecmp(key,"title")) {
-
-			value = title;
+			value = title.c_str();
 			return true;
 
 		} else if(!strcasecmp(key,"sub-title")) {
 
-			value = subtitle.body;
+			value = subtitle.c_str();
 			return true;
 
 		}
@@ -58,7 +82,7 @@
 		return Udjat::NamedObject::getProperty(key,value);
 	}
 
-
+	/*
 	Object::Link::Link(const char *tagname, const pugi::xml_node &node) {
 
 		const pugi::xml_node & child = node.child(tagname);
@@ -90,6 +114,7 @@
 		body = Quark(Udjat::String(text_node.child_value()).expand(text_node)).c_str();
 
 	}
+	*/
 
 	/*
 	Object::Message::Message(const char *tag, const pugi::xml_node &node) : Text(tag,node) {

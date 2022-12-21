@@ -30,6 +30,14 @@
 
 	Action::Action(const pugi::xml_node &node) : Reinstall::Action(node) {
 
+		if(title) {
+			title.get_style_context()->add_class("action-title");
+		}
+
+		if(subtitle) {
+			subtitle.get_style_context()->add_class("action-subtitle");
+		}
+
 		// Get URL for installation kernel.
 		if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
 			push_back(make_shared<Kernel>(node));

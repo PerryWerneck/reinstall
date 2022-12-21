@@ -23,7 +23,6 @@
  #include <reinstall/dialogs.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/url.h>
- #include <udjat/tools/intl.h>
  #include <pugixml.hpp>
 
  using namespace std;

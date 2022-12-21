@@ -25,7 +25,7 @@
 
  namespace Reinstall {
 
-	class UDJAT_API Group : public Reinstall::Object {
+	class UDJAT_API Group : public Reinstall::Object, public Gtk::Box {
 	private:
 		std::list<Action *> actions;
 

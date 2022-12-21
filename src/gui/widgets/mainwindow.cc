@@ -23,6 +23,9 @@
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/application.h>
  #include <reinstall/controller.h>
+ #include <udjat/tools/logger.h>
+
+ using namespace Udjat;
 
  MainWindow::MainWindow() {
 
@@ -78,26 +81,44 @@
 
 	Gtk::Window::on_show();
 
-	Dialog::Progress dialog;
-	dialog.set_title(get_title());
-	dialog.set_parent(*this);
-	dialog.sub_title() = _("Getting configuration");
-	dialog.icon().hide();
-	dialog.footer(false);
-	dialog.show();
+	// Load options
+	{
+		Dialog::Progress dialog;
+		dialog.set_title(get_title());
+		dialog.set_parent(*this);
+		dialog.sub_title() = _("Getting configuration");
+		dialog.icon().hide();
+		dialog.footer(false);
+		dialog.show();
 
-	Udjat::ThreadPool::getInstance().push([&dialog](){
+		Udjat::ThreadPool::getInstance().push([&dialog](){
 
-		// First get controller to construct the factories.
-		Reinstall::Controller::getInstance();
+			// First get controller to construct the factories.
+			Reinstall::Controller::getInstance();
 
-		Udjat::Application::setup("./xml.d",true);
+			// Load image definitions.
+			Udjat::Application::setup("./xml.d",true);
 
-		sleep(5);
-		dialog.dismiss();
+			// And dismiss dialog.
+			dialog.dismiss();
 
+		});
+
+		dialog.run();
+	}
+
+	// Create groups.
+	Reinstall::Controller::getInstance().for_each([this](std::shared_ptr<Reinstall::Group> group){
+
+		layout.view.pack_start(group->title,false,false,0);
+		if(group->subtitle) {
+			layout.view.pack_start(group->subtitle,false,false,0);
+		}
+
+
+		return false;
 	});
 
-	dialog.run();
+	layout.view.show_all();
 
  }

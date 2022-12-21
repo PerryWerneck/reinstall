@@ -88,9 +88,19 @@
 
 	}
 
-	Group::Group(const pugi::xml_node &node) : Object(node) {
+	Group::Group(const pugi::xml_node &node) : Reinstall::Object(node) {
+
 		static unsigned short id = 0;
 		this->id = ++id;
+
+		if(title) {
+			title.get_style_context()->add_class("group-title");
+		}
+
+		if(subtitle) {
+			subtitle.get_style_context()->add_class("group-subtitle");
+		}
+
 		info() << "Group initialized with id " << this->id << endl;
 	}
 

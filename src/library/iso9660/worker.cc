@@ -25,7 +25,6 @@
  #include <udjat/tools/string.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/configuration.h>
- #include <udjat/tools/intl.h>
 
  #include <sys/stat.h>
  #include <fcntl.h>

@@ -17,6 +17,7 @@ LIBRARY_SOURCES= \
 GUI_SOURCES= \
 	$(wildcard src/gui/*.cc) \
 	$(wildcard src/gui/dialogs/*.cc) \
+	$(wildcard src/gui/widgets/*.cc) \
 	$(wildcard src/gui/os/@OSNAME@/*.cc)
 
 #---[ Tools ]----------------------------------------------------------------------------
@@ -82,7 +83,8 @@ LDFLAGS=\
 LIBS= \
 	@LIBS@ \
 	@UDJAT_LIBS@ \
-	@PUGIXML_LIBS@
+	@PUGIXML_LIBS@ \
+	@GTK_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 
@@ -247,8 +249,7 @@ $(BINDBG)/$(PACKAGE_NAME)@EXEEXT@: \
 		-L$(BINDBG) \
 		-Wl,-rpath,$(BINDBG) \
 		$(LDFLAGS) \
-		$(LIBS) \
-		@GTK_LIBS@
+		$(LIBS)
 
 
 $(BINDBG)/$(SONAME): \

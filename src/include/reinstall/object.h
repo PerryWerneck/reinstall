@@ -23,11 +23,63 @@
  #include <udjat/defs.h>
  #include <udjat/tools/object.h>
  #include <cstring>
+ #include <gtkmm.h>
+ #include <glibmm/i18n.h>
 
  namespace Reinstall {
 
 	class UDJAT_API Object : public Udjat::NamedObject {
+	public:
+		class UDJAT_API Label : public Gtk::Label {
+		public:
+			Label(const pugi::xml_node &node, const char *attrname);
+
+			inline const char * c_str() const {
+				return get_text().c_str();
+			}
+
+			inline bool empty() const {
+				return get_text().empty();
+			}
+
+			inline operator bool() const {
+				return !get_text().empty();
+			}
+
+		};
+
+		/// @brief Title of the container.
+		Label title;
+
+		/// @brief Subtitle
+		Label subtitle;
+
+		/*
+		class UDJAT_API Link : public Gtk::LinkButton {
+		public:
+			Link(const pugi::xml_node &node);
+
+			inline const char * c_str() const {
+				return get_uri().c_str();
+			}
+
+			inline bool empty() const {
+				return get_uri().empty();
+			}
+
+			inline operator bool() const {
+				return !get_uri().empty();
+			}
+		};
+
+		/// @brief Help button.
+		Link help;
+
+		*/
+
 	protected:
+
+		/*
 		struct Link {
 			/// @brief URL para o link.
 			const char *url = "";
@@ -44,6 +96,7 @@
 			constexpr Link() { }
 			Link(const char *tagname, const pugi::xml_node &node);
 		};
+		*/
 
 		/// @brief Texto longo.
 		struct Text {
@@ -78,20 +131,7 @@
 
 	public:
 
-		/// @brief Label (for menu)
-		const char *label = "";
-
-		/// @brief Title of the container.
-		const char *title = "";
-
-		/// @brief Subtitle
-		Text subtitle;
-
-		/// @brief Help button.
-		Link help;
-
 		Object(const pugi::xml_node &node);
-
 
 	};
 

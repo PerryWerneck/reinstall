@@ -19,7 +19,6 @@
 
  #include <config.h>
  #include <stdexcept>
- #include <udjat/tools/intl.h>
  #include <reinstall/dialogs.h>
 
  using namespace std;
