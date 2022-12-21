@@ -34,7 +34,7 @@
 			Window();
 			virtual ~Window();
 
-			static Window * getInstance();
+			static Window & getInstance();
 
 			virtual void show();
 			virtual void hide();
@@ -45,31 +45,29 @@
 
 		/// @brief Proxy for progress dialog.
 		class UDJAT_API Progress : public Window {
-		private:
-
-			// The real progress dialog.
-			Progress * worker = nullptr;
-
 		public:
 			Progress(const Progress &) = delete;
 			Progress(const Progress *) = delete;
 
-			Progress(const Action &action);
+			Progress() : Window() {
+			}
+
 			~Progress();
 
 			static Progress & getInstance();
 
+			virtual void set(const Action &action);
 			virtual void set(const char *message);
-
-			inline void set(const std::string &message) {
-				set(message.c_str());
-			}
 
 			/// @brief Update counters.
 			virtual void count(size_t count, size_t total);
 
 			/// @brief Update current operation.
 			virtual void update(double current, double total);
+
+			inline void set(const std::string &message) {
+				set(message.c_str());
+			}
 
 		};
 

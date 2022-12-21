@@ -27,10 +27,7 @@
 
 	namespace Dialog {
 
-		Progress::Progress(const Action &action) : Window() {
-#ifdef DEBUG
-			cout << "progress\tProgress dialog " << hex << this << dec << " constructed" << endl;
-#endif // DEBUG
+		void Progress::set(const Action &action) {
 		}
 
 		Progress::~Progress() {
@@ -40,7 +37,7 @@
 		}
 
 		Progress & Progress::getInstance() {
-			Progress *instance = dynamic_cast<Progress *>(Window::getInstance());
+			Progress *instance = dynamic_cast<Progress *>(&Window::getInstance());
 			if(!instance) {
 				throw runtime_error(_("No progress dialog available"));
 			}

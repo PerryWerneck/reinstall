@@ -21,11 +21,12 @@
 
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
+ #include <reinstall/dialogs.h>
 
  namespace Dialog {
 
 	/// @brief Standar progress dialog.
-	class Progress : public Gtk::Dialog {
+	class Progress : public Reinstall::Dialog::Progress, public Gtk::Dialog {
 	public:
 		class Label : public Gtk::Label {
 		public:
@@ -45,6 +46,14 @@
 			unsigned int idle = (unsigned int) -1;
 			sigc::connection connection;
 		} timer;
+
+		struct Worker {
+			virtual void work(Progress &dialog) const = 0;
+		};
+
+		int on_worker(std::shared_ptr<Worker> worker) noexcept;
+
+		void enqueue(std::shared_ptr<Worker> worker) noexcept;
 
 		struct {
 			Label title{ "title" };
@@ -89,6 +98,13 @@
 		void footer(bool enable = true);
 
 		void dismiss(int response_id = -1);
+
+		// Interface with libreinstall.
+		void show() override;
+		void hide() override;
+		void set(const char *message) override;
+		void count(size_t count, size_t total) override;
+		void update(double current, double total) override;
 
 	};
 

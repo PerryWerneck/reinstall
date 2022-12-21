@@ -38,7 +38,7 @@
 
 		Window::~Window() {
 			if(current != this) {
-				runtime_error(_("Window order mismatch"));
+				runtime_error(_("Window stack mismatch"));
 			}
 			current = parent;
 			if(current) {
@@ -46,11 +46,11 @@
 			}
 		}
 
-		Window * Window::getInstance() {
+		Window & Window::getInstance() {
 			if(!current) {
 				throw runtime_error(_("No active window"));
 			}
-			return current;
+			return *current;
 		}
 
 		void Window::set(const Object &object) {

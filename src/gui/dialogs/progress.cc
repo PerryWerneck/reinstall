@@ -91,3 +91,90 @@
  void Dialog::Progress::dismiss(int response_id) {
 	Glib::signal_idle().connect(sigc::bind<1>( sigc::mem_fun(this,&::Dialog::Progress::on_dismiss),response_id) );
  }
+
+ int Dialog::Progress::on_worker(std::shared_ptr<Worker> worker) noexcept {
+	worker->work(*this);
+	return 0;
+ }
+
+ void Dialog::Progress::enqueue(std::shared_ptr<Worker> worker) noexcept {
+	Glib::signal_idle().connect(sigc::bind<1>( sigc::mem_fun(this,&::Dialog::Progress::on_worker),worker) );
+ }
+
+ void Dialog::Progress::show() {
+
+	class Show : public Worker {
+		void work(Progress &dialog) const override {
+			dialog.Gtk::Dialog::show();
+		}
+	};
+
+	enqueue(make_shared<Show>());
+
+ }
+
+ void Dialog::Progress::hide() {
+
+	class Hide : public Worker {
+	public:
+		void work(Progress &dialog) const override {
+			dialog.Gtk::Dialog::hide();
+		}
+	};
+
+	enqueue(make_shared<Hide>());
+
+ }
+
+ void Dialog::Progress::set(const char *message)  {
+
+	class SetMessage : public Worker, public string {
+	public:
+		SetMessage(const char *msg) : string{msg} {
+		}
+
+		void work(Progress &dialog) const override {
+			dialog.message().set_text(c_str());
+		}
+
+	};
+
+	enqueue(make_shared<SetMessage>(message));
+
+ }
+
+ void Dialog::Progress::count(size_t count, size_t total)  {
+
+	class SetCount : public Worker {
+	public:
+		size_t count, total;
+
+		SetCount(size_t c, size_t t) : count{c}, total{t} {
+		}
+
+		void work(Progress &dialog) const override {
+		}
+
+	};
+
+	enqueue(make_shared<SetCount>(count,total));
+
+ }
+
+ void Dialog::Progress::update(double current, double total)  {
+
+	class Update : public Worker {
+	public:
+		float current, total;
+
+		Update(float c, float t) : current{c}, total{t} {
+		}
+
+		void work(Progress &dialog) const override {
+		}
+
+	};
+
+	enqueue(make_shared<Update>(current,total));
+
+ }

@@ -33,6 +33,9 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="../include/config.h" />
+		<Unit filename="../include/private/dialogs.h" />
+		<Unit filename="../include/private/mainwindow.h" />
+		<Unit filename="../include/private/widgets.h" />
 		<Unit filename="../include/reinstall/action.h" />
 		<Unit filename="../include/reinstall/actions/initrd.h" />
 		<Unit filename="../include/reinstall/actions/isobuilder.h" />

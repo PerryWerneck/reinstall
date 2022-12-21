@@ -186,7 +186,8 @@
 
 	void IsoBuilder::activate() {
 
-		Reinstall::Dialog::Progress progress(*this);
+		Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
+		progress.set(*this);
 
 		// Create and activate worker
 		Reinstall::iso9660::Worker worker;
