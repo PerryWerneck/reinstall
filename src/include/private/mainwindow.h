@@ -39,6 +39,7 @@
 
  public:
 	MainWindow();
+	virtual ~MainWindow();
 
  };
 

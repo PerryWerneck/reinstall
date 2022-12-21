@@ -70,6 +70,10 @@
 
  }
 
+ MainWindow::~MainWindow() {
+	Udjat::Application::finalize();
+ }
+
  void MainWindow::on_show() {
 
 	Gtk::Window::on_show();
