@@ -45,7 +45,7 @@
 
 		};
 
-		Reinstall::Group::find(node)->push_back(new Action(node));
+		Reinstall::Group::find(node)->push_back(make_shared<Action>(node));
 
 		return true;
 	}

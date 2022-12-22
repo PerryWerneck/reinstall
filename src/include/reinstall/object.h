@@ -25,6 +25,7 @@
  #include <cstring>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
+ #include <string>
 
  namespace Reinstall {
 
@@ -33,10 +34,6 @@
 		class UDJAT_API Label : public Gtk::Label {
 		public:
 			Label(const pugi::xml_node &node, const char *attrname);
-
-			inline const char * c_str() const {
-				return get_text().c_str();
-			}
 
 			inline bool empty() const {
 				return get_text().empty();
@@ -136,3 +133,16 @@
 	};
 
  }
+
+ namespace std {
+
+	inline string to_string(const Reinstall::Object::Label &label) {
+		return string{label.get_text()};
+	}
+
+	inline ostream& operator<< (ostream& os, const Reinstall::Object::Label &label) {
+			return os << to_string(label);
+	}
+
+ }
+

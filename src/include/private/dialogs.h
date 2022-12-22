@@ -105,6 +105,7 @@
 		void set(const char *message) override;
 		void count(size_t count, size_t total) override;
 		void update(double current, double total) override;
+		void set(const Reinstall::Object &object) override;
 
 	};
 

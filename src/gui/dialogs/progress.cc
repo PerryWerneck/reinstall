@@ -178,3 +178,22 @@
 	enqueue(make_shared<Update>(current,total));
 
  }
+
+ void Dialog::Progress::set(const Reinstall::Object &object) {
+
+	class ObjectSet : public Worker {
+	public:
+		const Reinstall::Object &object;
+
+		ObjectSet(const Reinstall::Object &o) : object{o} {
+		}
+
+		void work(Progress &dialog) const override {
+		}
+
+	};
+
+	enqueue(make_shared<ObjectSet>(object));
+
+ }
+

@@ -69,12 +69,12 @@
 
 		if(!strcasecmp(key,"title")) {
 
-			value = title.c_str();
+			value = title.get_text();
 			return true;
 
 		} else if(!strcasecmp(key,"sub-title")) {
 
-			value = subtitle.c_str();
+			value = subtitle.get_text();
 			return true;
 
 		}

@@ -19,6 +19,7 @@
 
  #include <config.h>
  #include <reinstall/controller.h>
+ #include <udjat/tools/logger.h>
  #include <memory>
 
  using namespace std;
@@ -101,13 +102,11 @@
 			subtitle.get_style_context()->add_class("group-subtitle");
 		}
 
-		info() << "Group initialized with id " << this->id << endl;
+		Udjat::Logger::String{"Group '",name(),"' initialized with id ",this->id}.trace("group");
+
 	}
 
 	Group::~Group() {
-		for(auto action : actions) {
-			delete action;
-		}
 	}
 
 	bool Controller::for_each(const std::function<bool (std::shared_ptr<Group> group)> &call) const {
@@ -121,9 +120,21 @@
 
 	}
 
-	void Group::push_back(Action *action) {
+	void Group::push_back(std::shared_ptr<Action> action) {
 		actions.push_back(action);
-		info() << "Action " << c_str() << "/" << action->c_str() << " initialized with id " << id << "." << action->id << endl;
+		Udjat::Logger::String{"Action '",name(),"/",action->name(),"' initialized with id ",id,".",action->id}.trace("group");
+	}
+
+	bool Group::for_each(const std::function<bool (std::shared_ptr<Action> action)> &call) const {
+
+		for(auto action : actions) {
+			if(call(action)) {
+				return true;
+			}
+		}
+
+		return false;
+
 	}
 
  }

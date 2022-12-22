@@ -23,12 +23,26 @@
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
  #include <reinstall/group.h>
+ #include <reinstall/action.h>
 
  namespace Widget {
 
 	class Group : public Gtk::Box {
 	public:
 		Group(const std::shared_ptr<Reinstall::Group> group);
+
+	};
+
+	class Action : public Gtk::RadioButton {
+	private:
+		static Gtk::RadioButton::Group group;
+
+		struct {
+			Gtk::Box hbox;
+		} layout;
+
+	public:
+		Action(std::shared_ptr<Reinstall::Action> action);
 
 	};
 

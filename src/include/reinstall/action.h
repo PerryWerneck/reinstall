@@ -31,6 +31,8 @@
  #include <memory>
  #include <cstring>
  #include <functional>
+ #include <gtkmm.h>
+ #include <glibmm/i18n.h>
 
  namespace Reinstall {
 

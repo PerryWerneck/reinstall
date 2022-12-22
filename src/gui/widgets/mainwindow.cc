@@ -20,10 +20,12 @@
  #include <config.h>
  #include <private/mainwindow.h>
  #include <private/dialogs.h>
+ #include <reinstall/object.h>
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/application.h>
  #include <reinstall/controller.h>
  #include <udjat/tools/logger.h>
+ #include <private/widgets.h>
 
  using namespace Udjat;
 
@@ -110,11 +112,20 @@
 	// Create groups.
 	Reinstall::Controller::getInstance().for_each([this](std::shared_ptr<Reinstall::Group> group){
 
+		debug("Adding option ",std::to_string(group->title));
 		layout.view.pack_start(group->title,false,false,0);
 		if(group->subtitle) {
 			layout.view.pack_start(group->subtitle,false,false,0);
 		}
 
+		group->for_each([this,group](std::shared_ptr<Reinstall::Action> action) {
+
+			debug("Adding option ",std::to_string(group->title),"/",std::to_string(action->title));
+			::Widget::Action *button = new ::Widget::Action(action);
+			layout.view.pack_start(*button);
+			return false;
+
+		});
 
 		return false;
 	});

@@ -27,7 +27,7 @@
 
 	class UDJAT_API Group : public Reinstall::Object, public Gtk::Box {
 	private:
-		std::list<Action *> actions;
+		std::list<std::shared_ptr<Action>> actions;
 
 	public:
 
@@ -36,7 +36,10 @@
 		Group(const pugi::xml_node &node);
 		virtual ~Group();
 
-		void push_back(Action *action);
+		void push_back(std::shared_ptr<Action> action);
+
+		/// @brief Navigate from groups.
+		bool for_each(const std::function<bool (std::shared_ptr<Action> action)> &call) const;
 
 		static std::shared_ptr<Group> find(const pugi::xml_node &node);
 		static std::shared_ptr<Group> factory(const pugi::xml_node &node);

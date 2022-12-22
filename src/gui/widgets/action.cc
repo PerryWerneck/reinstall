@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- /*
+ #include <config.h>
+
  #include <config.h>
  #include <private/widgets.h>
 
@@ -26,9 +27,23 @@
 
  namespace Widget {
 
-	 Group::Group(std::shared_ptr<Reinstall::Group> group) {
+	Gtk::RadioButton::Group Widget::Action::group;
 
-	 }
+	Action::Action(std::shared_ptr<Reinstall::Action> action) {
+
+		get_style_context()->add_class("action-checkbox");
+		layout.hbox.get_style_context()->add_class("action-container");
+
+		action->title.get_style_context()->add_class("action-title");
+
+		layout.hbox.pack_start(action->title,false,false,0);
+
+		if(action->subtitle) {
+			action->subtitle.get_style_context()->add_class("action-subtitle");
+			layout.hbox.pack_start(action->subtitle,false,false,0);
+		}
+
+	}
+
 
  }
- */
