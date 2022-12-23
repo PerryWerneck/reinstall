@@ -67,9 +67,22 @@
 	layout.swindow.add(layout.view);
 	layout.vbox.add(layout.swindow);
 
+	buttons.apply.set_sensitive(false);
+	buttons.apply.signal_clicked().connect([&]() {
+
+		// Activate selected action.
+
+
+
+    });
+
+	buttons.cancel.signal_clicked().connect([&]() {
+		close();
+    });
+
 	layout.bbox.set_layout(Gtk::BUTTONBOX_END);
-	layout.bbox.add(layout.cancel);
-	layout.bbox.add(layout.apply);
+	layout.bbox.add(buttons.cancel);
+	layout.bbox.add(buttons.apply);
 	layout.bbox.set_hexpand(true);
 	layout.vbox.add(layout.bbox);
 
@@ -91,8 +104,6 @@
 
  void MainWindow::on_show() {
 
-	Gtk::Window::on_show();
-
 	// Load options
 	{
 		Dialog::Progress dialog;
@@ -101,6 +112,8 @@
 		dialog.sub_title() = _("Getting configuration");
 		dialog.icon().hide();
 		dialog.footer(false);
+		dialog.set_decorated(true);
+		dialog.set_deletable(false);
 		dialog.show();
 
 		Udjat::ThreadPool::getInstance().push([&dialog](){
@@ -148,6 +161,17 @@
 			debug("Adding option ",std::to_string(group->title),"/",std::to_string(action->title));
 			::Widget::Action *button = new ::Widget::Action(action);
 			box->pack_start(*button,false,true,0);
+
+			button->signal_toggled().connect([&,button,action]() {
+
+				if(button->get_active()) {
+					selected = action;
+					debug("Action '",std::to_string(selected->title),"' is now enabled");
+					buttons.apply.set_sensitive(true);
+				}
+
+			});
+
 			return false;
 
 		});
@@ -157,5 +181,7 @@
 	});
 
 	layout.view.show_all();
+
+	Gtk::Window::on_show();
 
  }

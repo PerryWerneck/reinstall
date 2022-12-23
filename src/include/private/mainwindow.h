@@ -23,6 +23,7 @@
  #include <udjat/defs.h>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
+ #include <reinstall/action.h>
 
  class UDJAT_PRIVATE MainWindow : public Gtk::Window {
  private:
@@ -32,8 +33,13 @@
 		Gtk::Box hbox, vbox{Gtk::ORIENTATION_VERTICAL}, view{Gtk::ORIENTATION_VERTICAL};
 		Gtk::ScrolledWindow swindow;
 		Gtk::ButtonBox bbox;
-		Gtk::Button apply{_("_Apply"), true}, cancel{_("_Cancel"), true};
  	} layout;
+
+ 	struct {
+		Gtk::Button apply{_("_Apply"), true}, cancel{_("_Cancel"), true};
+ 	} buttons;
+
+ 	std::shared_ptr<Reinstall::Action> selected;
 
 	void on_show() override;
 
