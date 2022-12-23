@@ -26,6 +26,7 @@
  #include <reinstall/controller.h>
  #include <udjat/tools/logger.h>
  #include <private/widgets.h>
+ #include <udjat/module.h>
 
  using namespace Udjat;
 
@@ -97,6 +98,11 @@
 
 			// First get controller to construct the factories.
 			Reinstall::Controller::getInstance();
+
+			// Load application modules
+#ifdef DEBUG
+			Udjat::Module::load(".bin/Debug/modules");
+#endif // DEBUG
 
 			// Load image definitions.
 			Udjat::Application::setup("./xml.d",true);

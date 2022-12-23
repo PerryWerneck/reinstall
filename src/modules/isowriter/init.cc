@@ -24,6 +24,7 @@
  #include <reinstall/actions/isobuilder.h>
  #include <reinstall/group.h>
  #include <udjat/tools/quark.h>
+ #include <udjat/tools/logger.h>
 
  using namespace std;
  using namespace Udjat;
@@ -34,7 +35,7 @@
 
 	class Module : public Udjat::Module, public Udjat::Factory {
 	public:
-		Module() : Udjat::Module("IsoWriter", moduleinfo), Udjat::Factory("isowriter",moduleinfo) {
+		Module() : Udjat::Module("IsoWriter", moduleinfo), Udjat::Factory("iso-writer",moduleinfo) {
 		}
 
 		bool push_back(const pugi::xml_node &node) override {
@@ -45,6 +46,8 @@
 
 			public:
 				Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node), path{Quark{node,"iso-filename"}.c_str()} {
+
+					debug("Creating iso-writer action '",name(),"'");
 
 					if(!(path && *path)) {
 						throw runtime_error("Required attribute 'iso-filename' is missing");
