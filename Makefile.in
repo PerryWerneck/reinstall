@@ -13,6 +13,9 @@ LIBRARY_SOURCES= \
     $(wildcard src/library/repository/*.cc) \
     $(wildcard src/library/source/*.cc) \
     $(wildcard src/library/os/@OSNAME@/*.cc)
+    
+ISOWRITER_SOURCES= \
+    $(wildcard src/modules/isowriter/*.cc)
 
 GUI_SOURCES= \
 	$(wildcard src/gui/*.cc) \
@@ -171,11 +174,11 @@ install-%: \
 #---[ Release Targets ]------------------------------------------------------------------
 
 all: \
-	$(BINRLS)/$(PACKAGE_NAME)@LIBEXT@ \
+	$(BINRLS)/$(PACKAGE_NAME)@DLLEXT@ \
 	locale/$(PACKAGE_NAME).pot
 
 Release: \
-	$(BINRLS)/$(PACKAGE_NAME)@LIBEXT@
+	$(BINRLS)/$(PACKAGE_NAME)@DLLEXT@
 
 locale/$(PACKAGE_NAME).pot: \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(POTDIR)/$(SRC).pot)
@@ -235,7 +238,8 @@ install-windows: \
 #---[ Debug Targets ]--------------------------------------------------------------------
 
 Debug: \
-	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINDBG)/modules/isowriter@DLLEXT@
 
 $(BINDBG)/$(PACKAGE_NAME)@EXEEXT@: \
 	$(foreach SRC, $(basename $(GUI_SOURCES)), $(OBJDBG)/$(SRC).o) \
@@ -251,6 +255,20 @@ $(BINDBG)/$(PACKAGE_NAME)@EXEEXT@: \
 		$(LDFLAGS) \
 		$(LIBS)
 
+$(BINDBG)/modules/isowriter@DLLEXT@: \
+	$(foreach SRC, $(basename $(ISOWRITER_SOURCES)), $(OBJDBG)/$(SRC).o) \
+	$(BINDBG)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		$(DLL_LDFLAGS) \
+		-o $@ \
+		$^ \
+		-L$(BINDBG) \
+		-Wl,-rpath,$(BINDBG) \
+		$(LDFLAGS) \
+		$(LIBS)
 
 $(BINDBG)/$(SONAME): \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(OBJDBG)/$(SRC).o)
@@ -263,8 +281,9 @@ $(BINDBG)/$(SONAME): \
 		-o $@ \
 		$(LDFLAGS) \
 		$^ \
-		$(LIBS) \
-		@ISOFS_LIBS@
+		@ISOFS_LIBS@ \
+		$(LIBS)
+		
 
 inspect: \
 	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@

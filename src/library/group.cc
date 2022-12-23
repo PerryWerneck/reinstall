@@ -19,6 +19,7 @@
 
  #include <config.h>
  #include <reinstall/controller.h>
+ #include <reinstall/group.h>
  #include <udjat/tools/logger.h>
  #include <memory>
 
@@ -47,6 +48,7 @@
 			controller.push_back(rc);
 		}
 
+		// Setup udjat::NamedObject
 		rc->setup(node);
 
 		return rc;

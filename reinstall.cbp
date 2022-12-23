@@ -81,6 +81,7 @@
 		<Unit filename="src/library/testprogram/testprogram.cc" />
 		<Unit filename="src/library/value.cc" />
 		<Unit filename="src/library/worker.cc" />
+		<Unit filename="src/modules/isowriter/init.cc" />
 		<Unit filename="src/modules/netinstall/action.cc" />
 		<Unit filename="src/modules/netinstall/init.cc" />
 		<Unit filename="src/modules/netinstall/private.h" />
