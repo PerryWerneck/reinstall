@@ -48,7 +48,7 @@
 
 	for(size_t ix=0; ix < G_N_ELEMENTS(types);ix++) {
 		if(types[ix].level == level) {
-			Logger::String{message}.write(types[ix].lvl,domain);
+			Logger::String{message}.write(types[ix].lvl,domain ? domain : "gtk");
 			return;
 		}
 	}

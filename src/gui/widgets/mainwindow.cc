@@ -70,9 +70,7 @@
 	buttons.apply.set_sensitive(false);
 	buttons.apply.signal_clicked().connect([&]() {
 
-		// Activate selected action.
-
-
+		apply();
 
     });
 
@@ -184,4 +182,35 @@
 
 	Gtk::Window::on_show();
 
+ }
+
+ void MainWindow::apply() {
+
+ 	g_message("Apply '%s' action",std::to_string(selected->title).c_str());
+	buttons.apply.set_sensitive(false);
+	buttons.cancel.set_sensitive(false);
+	layout.view.set_sensitive(false);
+
+	// Execute action
+	{
+		Dialog::Progress dialog;
+		dialog.set_parent(*this);
+		dialog.set_decorated(false);
+		dialog.set_deletable(false);
+		dialog.show();
+
+		Udjat::ThreadPool::getInstance().push([&dialog,this](){
+
+
+			sleep(5);
+			dialog.dismiss();
+
+		});
+
+		dialog.run();
+	}
+
+	buttons.apply.set_sensitive(true);
+	buttons.cancel.set_sensitive(true);
+	layout.view.set_sensitive(true);
  }

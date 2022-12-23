@@ -43,6 +43,8 @@
 
 	void on_show() override;
 
+	void apply();
+
  public:
 	MainWindow();
 	virtual ~MainWindow();
