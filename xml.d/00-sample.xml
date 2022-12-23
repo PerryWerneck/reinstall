@@ -75,7 +75,14 @@
 			</dialog>
 
 		</iso-writer>
+		
+		<iso-writer name='netinstall' default='yes' iso-filename='/tmp/test.iso'>
+	 		<attribute name='title' value='Option 2' />
+		</iso-writer>
 
+		<iso-writer name='netinstall' default='yes' iso-filename='/tmp/test.iso'>
+	 		<attribute name='title' value='Option 3' />
+		</iso-writer>
 
 	</group>
 

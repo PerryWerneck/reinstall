@@ -29,9 +29,14 @@
 
 	Gtk::RadioButton::Group Widget::Action::group;
 
-	Action::Action(std::shared_ptr<Reinstall::Action> action) {
+	Action::Action(std::shared_ptr<Reinstall::Action> action) : Gtk::RadioButton(group) {
 
-		get_style_context()->add_class("action-checkbox");
+		set_hexpand(true);
+		set_vexpand(false);
+		set_valign(ALIGN_START);
+		set_halign(ALIGN_START);
+
+		get_style_context()->add_class("action-button");
 		layout.hbox.get_style_context()->add_class("action-container");
 
 		action->title.get_style_context()->add_class("action-title");
@@ -43,6 +48,8 @@
 			layout.hbox.pack_start(action->subtitle,false,false,0);
 		}
 
+		add(layout.hbox);
+		show_all();
 	}
 
 

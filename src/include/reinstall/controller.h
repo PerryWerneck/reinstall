@@ -37,6 +37,10 @@
 
 		static Controller & getInstance();
 
+		inline void clear() {
+			groups.clear();
+		}
+
 		/// @brief Factory a new group from XML node.
 		/// @param XML definition for the new element.
 		/// @return true if the node whas inserted.

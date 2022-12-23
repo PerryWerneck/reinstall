@@ -77,6 +77,7 @@
  }
 
  MainWindow::~MainWindow() {
+ 	Reinstall::Controller::getInstance().clear();
 	Udjat::Application::finalize();
  }
 
@@ -128,7 +129,7 @@
 
 			debug("Adding option ",std::to_string(group->title),"/",std::to_string(action->title));
 			::Widget::Action *button = new ::Widget::Action(action);
-			layout.view.pack_start(*button);
+			layout.view.add(*button); //,false,false,0);
 			return false;
 
 		});
