@@ -32,6 +32,12 @@
 
  MainWindow::MainWindow() {
 
+ 	{
+		auto css = Gtk::CssProvider::create();
+		css->load_from_path("./stylesheet.css");
+		get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+ 	}
+
 	set_title(_("System reinstallattion"));
 	set_default_size(600, 400);
 
@@ -51,8 +57,10 @@
 	layout.vbox.set_border_width(6);
 
 	// A wide variety of style classes may be applied to labels, such as .title, .subtitle, .dim-label, etc
-	layout.title.get_style_context()->add_class("maintitle");
+	layout.title.get_style_context()->add_class("main-title");
 	layout.vbox.pack_start(layout.title,false,false,3);
+
+	layout.view.get_style_context()->add_class("main-view");
 
 	layout.swindow.set_hexpand(true);
 	layout.swindow.set_vexpand(true);
@@ -119,21 +127,32 @@
 	// Create groups.
 	Reinstall::Controller::getInstance().for_each([this](std::shared_ptr<Reinstall::Group> group){
 
+		auto box = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
+		box->get_style_context()->add_class("group-box");
+
 		debug("Adding option ",std::to_string(group->title));
-		layout.view.pack_start(group->title,false,false,0);
+
+		auto grid = new Gtk::Grid();
+		grid->get_style_context()->add_class("group-title-box");
+
+		group->title.get_style_context()->add_class("group-title");
+		grid->attach(group->title,0,0,1,1);
 		if(group->subtitle) {
-			layout.view.pack_start(group->subtitle,false,false,0);
+			grid->attach(group->subtitle,0,1,1,1);
 		}
 
-		group->for_each([this,group](std::shared_ptr<Reinstall::Action> action) {
+		box->add(*grid);
+
+		group->for_each([this,group,box](std::shared_ptr<Reinstall::Action> action) {
 
 			debug("Adding option ",std::to_string(group->title),"/",std::to_string(action->title));
 			::Widget::Action *button = new ::Widget::Action(action);
-			layout.view.add(*button); //,false,false,0);
+			box->pack_start(*button,false,true,0);
 			return false;
 
 		});
 
+		layout.view.pack_start(*box,false,false,0);
 		return false;
 	});
 

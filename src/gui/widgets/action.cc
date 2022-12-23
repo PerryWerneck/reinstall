@@ -40,12 +40,11 @@
 		layout.hbox.get_style_context()->add_class("action-container");
 
 		action->title.get_style_context()->add_class("action-title");
-
-		layout.hbox.pack_start(action->title,false,false,0);
+		layout.hbox.pack_start(action->title,false,true,0);
 
 		if(action->subtitle) {
 			action->subtitle.get_style_context()->add_class("action-subtitle");
-			layout.hbox.pack_start(action->subtitle,false,false,0);
+			layout.hbox.pack_start(action->subtitle,false,true,0);
 		}
 
 		add(layout.hbox);
