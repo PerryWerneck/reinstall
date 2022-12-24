@@ -161,6 +161,7 @@
 			::Widget::Action *button = new ::Widget::Action(action);
 
 			button->set_halign(Gtk::ALIGN_FILL);
+			button->set_mode(false);
 			button->get_style_context()->add_class("action-inactive");
 			box->pack_start(*button,true,true,0);
 
