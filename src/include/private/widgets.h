@@ -38,7 +38,8 @@
 		static Gtk::RadioButton::Group group;
 
 		struct {
-			Gtk::Box hbox;
+			Gtk::Box hbox{Gtk::ORIENTATION_HORIZONTAL};
+			Gtk::Box vbox{Gtk::ORIENTATION_VERTICAL};
 		} layout;
 
 	public:

@@ -149,6 +149,7 @@
 		group->title.get_style_context()->add_class("group-title");
 		grid->attach(group->title,0,0,1,1);
 		if(group->subtitle) {
+			group->subtitle.get_style_context()->add_class("group-subtitle");
 			grid->attach(group->subtitle,0,1,1,1);
 		}
 
@@ -158,7 +159,12 @@
 
 			debug("Adding option ",std::to_string(group->title),"/",std::to_string(action->title));
 			::Widget::Action *button = new ::Widget::Action(action);
-			box->pack_start(*button,false,true,0);
+
+			button->set_halign(Gtk::ALIGN_FILL);
+			button->get_style_context()->add_class("action-inactive");
+			box->pack_start(*button,true,true,0);
+
+			button->get_style_context()->add_class(button->get_active() ? "action-active" : "action-inactive");
 
 			button->signal_toggled().connect([&,button,action]() {
 
@@ -166,6 +172,11 @@
 					selected = action;
 					debug("Action '",std::to_string(selected->title),"' is now enabled");
 					buttons.apply.set_sensitive(true);
+					button->get_style_context()->remove_class("action-inactive");
+					button->get_style_context()->add_class("action-active");
+				} else {
+					button->get_style_context()->remove_class("action-active");
+					button->get_style_context()->add_class("action-inactive");
 				}
 
 			});

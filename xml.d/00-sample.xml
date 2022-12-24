@@ -60,10 +60,12 @@
 
 		<!-- Nome que aparece na opção de menu -->
  		<attribute name='title' value='OpenSUSE Leap 15.4' />
+ 		<attribute name='sub-title' value='Testing group sub title' />
  		
  		<iso-writer name='netinstall' default='yes' iso-filename='/tmp/test.iso'>
 
 	 		<attribute name='title' value='Create USB drive for net install' />
+	 		<attribute name='sub-title' value='Testing option sub title' />
 
 			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
 			<dialog name='confirmation' title='Confirmation message' icon='dialog-question' text='Do you confirm?' url='http://google.com' url-label='More info'>

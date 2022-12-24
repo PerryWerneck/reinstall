@@ -36,18 +36,23 @@
 		set_valign(ALIGN_START);
 		set_halign(ALIGN_START);
 
+		layout.vbox.set_hexpand(true);
+		layout.vbox.set_vexpand(false);
+
 		get_style_context()->add_class("action-button");
-		layout.hbox.get_style_context()->add_class("action-container");
+		layout.vbox.get_style_context()->add_class("action-container");
 
 		action->title.get_style_context()->add_class("action-title");
 		layout.hbox.pack_start(action->title,false,true,0);
+		layout.vbox.add(layout.hbox);
 
 		if(action->subtitle) {
 			action->subtitle.get_style_context()->add_class("action-subtitle");
-			layout.hbox.pack_start(action->subtitle,false,true,0);
+			layout.vbox.pack_start(action->subtitle,false,true,0);
 		}
 
-		add(layout.hbox);
+		add(layout.vbox);
+
 		show_all();
 	}
 
