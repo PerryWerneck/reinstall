@@ -37,10 +37,14 @@
 	private:
 		static Gtk::RadioButton::Group group;
 
+		Gtk::Grid grid;
+
+		/*
 		struct {
 			Gtk::Box hbox{Gtk::ORIENTATION_HORIZONTAL};
 			Gtk::Box vbox{Gtk::ORIENTATION_VERTICAL};
 		} layout;
+		*/
 
 	public:
 		Action(std::shared_ptr<Reinstall::Action> action);

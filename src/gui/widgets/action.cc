@@ -36,22 +36,18 @@
 		set_valign(ALIGN_START);
 		set_halign(ALIGN_START);
 
-		layout.vbox.set_hexpand(true);
-		layout.vbox.set_vexpand(false);
-
 		get_style_context()->add_class("action-button");
-		layout.vbox.get_style_context()->add_class("action-container");
+		grid.get_style_context()->add_class("action-container");
 
 		action->title.get_style_context()->add_class("action-title");
-		layout.hbox.pack_start(action->title,false,true,0);
-		layout.vbox.add(layout.hbox);
 
+		grid.attach(action->title,1,1,1,1);
 		if(action->subtitle) {
 			action->subtitle.get_style_context()->add_class("action-subtitle");
-			layout.vbox.pack_start(action->subtitle,false,true,0);
+			grid.attach(action->subtitle,1,2,2,1);
 		}
 
-		add(layout.vbox);
+		add(grid);
 
 		show_all();
 	}
