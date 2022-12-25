@@ -41,6 +41,10 @@
 	border-radius: 6px;
 }
 
+.logo {
+	opacity: 1;
+}
+
 .group-title-box {
 	margin-bottom: 6px;
 }

@@ -48,6 +48,7 @@
 
 		box->set_hexpand(false);
 		box->set_vexpand(true);
+		box->add(logo);
 
 		layout.hbox.add(*box);
 	}

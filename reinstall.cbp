@@ -35,6 +35,7 @@
 		<Unit filename="src/gui/dialogs/progress.cc" />
 		<Unit filename="src/gui/main.cc" />
 		<Unit filename="src/gui/os/linux/icon.cc" />
+		<Unit filename="src/gui/os/linux/logo.cc" />
 		<Unit filename="src/gui/widgets/action.cc" />
 		<Unit filename="src/gui/widgets/group.cc" />
 		<Unit filename="src/gui/widgets/mainwindow.cc" />

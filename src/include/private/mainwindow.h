@@ -28,6 +28,13 @@
  class UDJAT_PRIVATE MainWindow : public Gtk::Window {
  private:
 
+ 	class Logo : public Gtk::Image {
+	public:
+		Logo();
+ 	};
+
+	Logo logo;
+
  	struct {
 		Gtk::Label title{ _( "Select option" ), Gtk::ALIGN_START };
 		Gtk::Box hbox, vbox{Gtk::ORIENTATION_VERTICAL}, view{Gtk::ORIENTATION_VERTICAL};
