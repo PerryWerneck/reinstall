@@ -53,6 +53,11 @@
 						throw runtime_error("Required attribute 'iso-filename' is missing");
 					}
 
+					if(!icon) {
+						// https://specifications.freedesktop.org/icon-naming-spec/latest/
+						// drive-removable-media
+						icon = "document-save-as";
+					}
 				}
 
 				virtual ~Action() {

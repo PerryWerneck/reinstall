@@ -48,8 +48,11 @@
 		/// @brief Title of the container.
 		Label title;
 
-		/// @brief Subtitle
+		/// @brief Subtitle.
 		Label subtitle;
+
+		/// @brief icon name.
+		const char *icon = nullptr;
 
 		/*
 		class UDJAT_API Link : public Gtk::LinkButton {

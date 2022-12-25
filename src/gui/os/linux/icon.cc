@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,37 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
-
  #include <config.h>
- #include <gtkmm.h>
- #include <glibmm/i18n.h>
- #include <reinstall/group.h>
- #include <reinstall/action.h>
+ #include <private/widgets.h>
 
  namespace Widget {
 
- 	class Icon : public Gtk::Image {
-	public:
-		Icon(const char *name, const Gtk::IconSize iconsize = Gtk::ICON_SIZE_BUTTON);
+	Icon::Icon(const char *name, const Gtk::IconSize iconsize) {
 
- 	};
+		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
 
-	class Group : public Gtk::Box {
-	public:
-		Group(const std::shared_ptr<Reinstall::Group> group);
+		set_from_icon_name(name, iconsize);
 
-	};
-
-	class Action : public Gtk::RadioButton {
-	private:
-		static Gtk::RadioButton::Group group;
-
-		Gtk::Grid grid;
-
-	public:
-		Action(std::shared_ptr<Reinstall::Action> action);
-
-	};
+	}
 
  }
+

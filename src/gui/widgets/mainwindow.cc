@@ -41,24 +41,26 @@
 	set_title(_("System reinstallattion"));
 	set_default_size(600, 400);
 
-	// Add separator
-	gtk_box_pack_start(
-			GTK_BOX(layout.hbox.gobj()),
-			gtk_separator_new(GTK_ORIENTATION_VERTICAL),
-			FALSE,
-			FALSE,
-			0);
+	// Left box
+	{
+		Gtk::Box * box = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
+		box->get_style_context()->add_class("sidebar");
+
+		box->set_hexpand(false);
+		box->set_vexpand(true);
+
+		layout.hbox.add(*box);
+	}
 
 	// https://developer-old.gnome.org/gtkmm-tutorial/stable/sec-clipboard-examples.html.en
 	// http://transit.iut2.upmf-grenoble.fr/doc/gtkmm-3.0/tutorial/html/sec-helloworld.html
 
 	layout.vbox.set_hexpand(true);
 	layout.vbox.set_vexpand(true);
-	layout.vbox.set_border_width(6);
 
 	// A wide variety of style classes may be applied to labels, such as .title, .subtitle, .dim-label, etc
 	layout.title.get_style_context()->add_class("main-title");
-	layout.vbox.pack_start(layout.title,false,false,3);
+	layout.vbox.pack_start(layout.title,false,false,0);
 
 	layout.view.get_style_context()->add_class("main-view");
 
@@ -90,6 +92,7 @@
 	layout.hbox.set_vexpand(true);
 	layout.hbox.add(layout.vbox);
 
+	layout.hbox.get_style_context()->add_class("main-window");
 	add(layout.hbox);
 	layout.hbox.show_all();
 

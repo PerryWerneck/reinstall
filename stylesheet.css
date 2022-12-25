@@ -23,9 +23,22 @@
 	
 */
 
+
 .main-title {
 	font-size: 140%;
 	font-weight: bolder;
+}
+
+.main-window {
+	padding: 12px;
+}
+
+.sidebar {
+	min-width: 150px;
+	margin-right: 6px;
+	background-color: #000;
+	opacity: 0.3;
+	border-radius: 6px;
 }
 
 .group-title-box {
