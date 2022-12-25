@@ -67,6 +67,10 @@
 	opacity: 0.9;
 }
 
+.action-icon {
+	margin-right: 6px;
+}
+
 .action-container {
 	margin: 3px;
 }

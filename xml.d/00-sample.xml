@@ -64,7 +64,7 @@
  		
  		<iso-writer name='netinstall' default='yes' iso-filename='/tmp/test.iso'>
 
-	 		<attribute name='title' value='Create USB drive for net install' />
+	 		<attribute name='title' value='Create USB drive using net install image' />
 	 		<attribute name='sub-title' value='Testing option sub title' />
 
 			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
@@ -78,12 +78,9 @@
 
 		</iso-writer>
 		
-		<iso-writer name='netinstall' default='yes' iso-filename='/tmp/test.iso'>
-	 		<attribute name='title' value='Option 2' />
-		</iso-writer>
-
-		<iso-writer name='netinstall' default='yes' iso-filename='/tmp/test.iso'>
-	 		<attribute name='title' value='Option 3' />
+		<iso-writer name='fullinstall' default='yes' iso-filename='/tmp/test.iso'>
+	 		<attribute name='title' value='Create USB drive using full install image' />
+	 		<attribute name='sub-title' value='Testing option sub title' />
 		</iso-writer>
 
 	</group>

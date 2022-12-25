@@ -19,7 +19,6 @@
 
  #include <config.h>
 
- #include <config.h>
  #include <private/widgets.h>
 
  using namespace Gtk;
@@ -41,10 +40,18 @@
 
 		action->title.get_style_context()->add_class("action-title");
 
-		grid.attach(action->title,1,1,1,1);
+		if(action->icon && *action->icon) {
+			::Widget::Icon *icon = new ::Widget::Icon(action->icon,Gtk::ICON_SIZE_DND);
+			icon->get_style_context()->add_class("action-icon");
+			icon->set_valign(ALIGN_CENTER);
+			icon->set_halign(ALIGN_CENTER);
+			grid.attach(*icon,0,0,1,2);
+		}
+
+		grid.attach(action->title,1,0,1,1);
 		if(action->subtitle) {
 			action->subtitle.get_style_context()->add_class("action-subtitle");
-			grid.attach(action->subtitle,1,2,2,1);
+			grid.attach(action->subtitle,1,1,2,1);
 		}
 
 		add(grid);
