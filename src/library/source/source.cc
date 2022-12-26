@@ -19,6 +19,7 @@
 
  #include <config.h>
  #include <udjat/defs.h>
+ #include <udjat/version.h>
  #include <reinstall/source.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/protocol.h>
@@ -28,6 +29,7 @@
  #include <udjat/tools/string.h>
  #include <udjat/tools/configuration.h>
  #include <reinstall/dialogs.h>
+ #include <udjat/tools/logger.h>
 
  using namespace std;
  using namespace Udjat;
@@ -73,12 +75,13 @@
 			// Expand URL based on repository path
 			URL url(action.repository(repository)->url(true));
 			url += path;
+#if UDJAT_CORE_BUILD > 22122511
+			url.expand();
+#endif
 			this->url = Quark(url.c_str()).c_str();
 		}
 
-#ifdef DEBUG
-		cout << "URL=" << this->url << endl;
-#endif // DEBUG
+		debug("URL=",this->url);
 
 	}
 

@@ -48,10 +48,10 @@
 	<kernel-parameter name='install' url='' repository='install' />
 
 	<!-- Replace every 'grub.cfg' file with template -->
-	<template name='grub.cfg' url='file://../../templates/grub.cfg' />
+	<template name='grub.cfg' url='file://./templates/grub.cfg' />
 	
 	<!-- Replace every 'isolinux.cfg' file with template -->
-	<template name='isolinux.cfg' url='file://../../templates/isolinux.cfg' />
+	<template name='isolinux.cfg' url='file://./templates/isolinux.cfg' />
 	
 	<!-- Image post processing -->
 	<!-- image-post name='iso-hybrid' cmdline='/usr/bin/isohybrid -u ${devname}' / -->
@@ -78,7 +78,7 @@
 
 		</iso-writer>
 		
-		<iso-writer name='fullinstall' default='yes' iso-filename='/tmp/test.iso'>
+		<iso-writer name='fullinstall' default='no' iso-filename='/tmp/test.iso'>
 	 		<attribute name='title' value='Create USB drive using full install image' />
 	 		<attribute name='sub-title' value='Testing option sub title' />
 		</iso-writer>

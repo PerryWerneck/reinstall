@@ -20,7 +20,9 @@
  #include <config.h>
  #include <private/dialogs.h>
  #include <iostream>
+ #include <udjat/tools/logger.h>
 
+ using namespace Udjat;
  using namespace Gtk;
  using namespace std;
 
@@ -31,6 +33,7 @@
 	set_decorated(false);
 	set_default_size(400,-1);
 
+	content_area.get_style_context()->add_class("dialog-contents");
 	content_area.set_border_width(12);
 	content_area.set_spacing(12);
 
@@ -104,7 +107,7 @@
  void Dialog::Progress::show() {
 
 	class Show : public Worker {
-		void work(Progress &dialog) const override {
+		void work(Progress &dialog) const noexcept override {
 			dialog.Gtk::Dialog::show();
 		}
 	};
@@ -117,7 +120,7 @@
 
 	class Hide : public Worker {
 	public:
-		void work(Progress &dialog) const override {
+		void work(Progress &dialog) const noexcept override {
 			dialog.Gtk::Dialog::hide();
 		}
 	};
@@ -133,8 +136,8 @@
 		SetMessage(const char *msg) : string{msg} {
 		}
 
-		void work(Progress &dialog) const override {
-			dialog.message().set_text(c_str());
+		void work(Progress &dialog) const noexcept override {
+			dialog.widgets.title.set_text(c_str());
 		}
 
 	};
@@ -152,7 +155,7 @@
 		SetCount(size_t c, size_t t) : count{c}, total{t} {
 		}
 
-		void work(Progress &dialog) const override {
+		void work(Progress &dialog) const noexcept override {
 		}
 
 	};
@@ -170,7 +173,16 @@
 		Update(float c, float t) : current{c}, total{t} {
 		}
 
-		void work(Progress &dialog) const override {
+		void work(Progress &dialog) const noexcept override {
+
+			if(total > current && total > 1) {
+				dialog.timer.idle = 0;
+				gdouble fraction = ((gdouble) current) / ((gdouble) total);
+				dialog.widgets.progress.set_fraction(fraction);
+			} else {
+				dialog.widgets.step.set_text("");
+			}
+
 		}
 
 	};
@@ -188,7 +200,27 @@
 		ObjectSet(const Reinstall::Object &o) : object{o} {
 		}
 
-		void work(Progress &dialog) const override {
+		void work(Progress &dialog) const noexcept override {
+
+			dialog.set_title(object.title.get_text());
+			dialog.sub_title().set_text(_("Initializing"));
+			dialog.action().set_text("");
+			dialog.message().set_text("");
+			dialog.step().set_text("");
+
+			dialog.timer.idle = -1;
+
+			if(object.icon && *object.icon) {
+
+				// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
+				dialog.icon().set_from_icon_name(object.icon,Gtk::ICON_SIZE_DND);
+				dialog.icon().show();
+
+			} else {
+
+				dialog.icon().hide();
+
+			}
 		}
 
 	};

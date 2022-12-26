@@ -48,7 +48,7 @@
 		} timer;
 
 		struct Worker {
-			virtual void work(Progress &dialog) const = 0;
+			virtual void work(Progress &dialog) const noexcept = 0;
 		};
 
 		int on_worker(std::shared_ptr<Worker> worker) noexcept;

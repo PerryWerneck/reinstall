@@ -27,14 +27,20 @@
  #include <udjat/tools/logger.h>
  #include <private/widgets.h>
  #include <udjat/module.h>
+ #include <iostream>
 
+ using namespace std;
  using namespace Udjat;
 
  MainWindow::MainWindow() {
 
  	{
 		auto css = Gtk::CssProvider::create();
+#ifdef DEBUG
 		css->load_from_path("./stylesheet.css");
+#else
+		css->load_from_path(Application::DataFile("stylesheet.css").c_str());
+#endif // DEBUG
 		get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
  	}
 
@@ -164,12 +170,20 @@
 			debug("Adding option ",std::to_string(group->title),"/",std::to_string(action->title));
 			::Widget::Action *button = new ::Widget::Action(action);
 
+			button->set_inconsistent();
 			button->set_halign(Gtk::ALIGN_FILL);
 			button->set_mode(false);
-			button->get_style_context()->add_class("action-inactive");
 			box->pack_start(*button,true,true,0);
 
-			button->get_style_context()->add_class(button->get_active() ? "action-active" : "action-inactive");
+			button->set_active(action->is_default());
+
+			if(button->get_active()) {
+				button->get_style_context()->add_class("action-active");
+				selected = action;
+				buttons.apply.set_sensitive(true);
+			} else {
+				button->get_style_context()->add_class("action-inactive");
+			}
 
 			button->signal_toggled().connect([&,button,action]() {
 
@@ -180,11 +194,13 @@
 					button->get_style_context()->remove_class("action-inactive");
 					button->get_style_context()->add_class("action-active");
 				} else {
+					selected = nullptr;
 					button->get_style_context()->remove_class("action-active");
 					button->get_style_context()->add_class("action-inactive");
 				}
 
 			});
+
 
 			return false;
 
@@ -202,6 +218,11 @@
 
  void MainWindow::apply() {
 
+	if(!selected) {
+		cerr << "Apply with no selected action" << endl;
+		return;
+	}
+
  	g_message("Apply '%s' action",std::to_string(selected->title).c_str());
 	buttons.apply.set_sensitive(false);
 	buttons.cancel.set_sensitive(false);
@@ -213,10 +234,20 @@
 		dialog.set_parent(*this);
 		dialog.set_decorated(false);
 		dialog.set_deletable(false);
+		dialog.set(*selected);
 		dialog.show();
 
 		Udjat::ThreadPool::getInstance().push([&dialog,this](){
 
+			try {
+
+				selected->activate();
+
+			} catch(const std::exception &e) {
+
+				cerr << e.what() << endl;
+
+			}
 
 			sleep(5);
 			dialog.dismiss();

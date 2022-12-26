@@ -178,6 +178,10 @@
 
 		static Action & getDefault();
 
+		inline bool is_default() const noexcept {
+			return defaction == this;
+		}
+
 		inline bool enabled() const noexcept {
 			return options.enabled;
 		}
