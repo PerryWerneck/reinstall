@@ -5,7 +5,17 @@ PACKAGE_NAME=@PACKAGE_NAME@
 LIBRARY_NAME="lib@PACKAGE_NAME@"
 SONAME=@SONAME@
 
-c    $(wildcard src/modules/isowriter/*.cc)
+LIBRARY_SOURCES = \
+	$(wildcard src/library/*.cc) \
+	$(wildcard src/library/iso9660/*.cc) \
+	$(wildcard src/library/action/*.cc) \
+	$(wildcard src/library/dialogs/*.cc) \
+	$(wildcard src/library/repository/*.cc) \
+	$(wildcard src/library/source/*.cc) \
+	$(wildcard src/library/os/@OSNAME@/*.cc)
+
+ISOWRITER_SOURCES = \
+		$(wildcard src/modules/isowriter/*.cc)
 
 GUI_SOURCES= \
 	$(wildcard src/gui/*.cc) \
@@ -281,6 +291,13 @@ inspect: \
 	@GTK_DEBUG=interactive $(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
 
 run: \
+	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINDBG)/modules/isowriter@DLLEXT@
+
+	@LD_LIBRARY_PATH=$(BINDBG) \
+		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+
+memcheck: \
 	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
 
 ifeq ($(VALGRIND),no)
