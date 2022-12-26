@@ -31,6 +31,13 @@
 		set_secondary_text(settings.secondary);
 	}
 
+	if(settings.url) {
+		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1LinkButton.html
+		auto button = new Gtk::LinkButton{settings.url.link,settings.url.label};
+		button->get_style_context()->add_class("popup-button");
+		get_message_area()->add(*button);
+	}
+
 	show_all();
  }
 
