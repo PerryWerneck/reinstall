@@ -18,9 +18,11 @@
  */
 
  #include <config.h>
+ #include <udjat/tools/object.h>
  #include <reinstall/object.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
+ #include <udjat/tools/logger.h>
  #include <iostream>
 
  using namespace std;
@@ -28,42 +30,79 @@
 
  namespace Reinstall {
 
-	Object::Label::Label(const pugi::xml_node &node, const char *attrname) : Gtk::Label{getAttribute(node,attrname,""), Gtk::ALIGN_START, Gtk::ALIGN_CENTER} {
+	pugi::xml_node find(const pugi::xml_node &node, const char *attrname) {
 
-		const char *tooltip = getAttribute(node,"tooltip","");
-		if(tooltip && *tooltip) {
-			set_tooltip_text(tooltip);
-		}
-
-	}
-
-	/*
-	Object::Link::Link(const pugi::xml_node &node) : Gtk::LinkButton{getAttribute(node,"url","")} {
-
-		const char *text;
-
-		text = getAttribute(node,"icon-name","");
-		if(text && *text) {
-			// set_icon_name(text); FIX-ME
-		} else {
-			text = getAttribute(node,"label","");
-			if(text) {
-				set_label(text);
+		for(pugi::xml_node child = node.child("attribute"); child; child = child.next_sibling("attribute")) {
+			const char *name = child.attribute("name").as_string("");
+			if(!strcasecmp(name,attrname)) {
+				return child;
 			}
 		}
 
-		text = getAttribute(node,"tooltip","");
-		if(text && *text) {
-			set_tooltip_text(text);
+		Logger::String{"Cant find attribute '",attrname,"'"}.trace("xmlnode");
+
+		return pugi::xml_node();
+	}
+
+	Object::Label::Label(const pugi::xml_node &nd, const char *attrname) : Gtk::Label{"", Gtk::ALIGN_START, Gtk::ALIGN_START} {
+
+		auto node = find(nd,attrname);
+		if(!node) {
+			debug("Cant find attribute '",attrname,"' for node ",nd.attribute("name").as_string());
+			return;
+		}
+
+		set_text(Quark{node,"value"}.c_str());
+
+		const char *tooltip = node.attribute("tooltip").as_string();
+		if(tooltip && *tooltip) {
+			set_tooltip_text(Quark{tooltip}.c_str());
 		}
 
 	}
-	*/
+
+	Object::Link::Link(const pugi::xml_node &nd, const char *attrname) {
+
+		auto node = find(nd,attrname);
+		if(!node) {
+			valid = false;
+			debug("Cant find attribute '",attrname,"' for node ",nd.attribute("name").as_string());
+			return;
+		}
+
+		valid = true;
+
+		set_relief(Gtk::RELIEF_NONE);
+		set_focus_on_click(false);
+
+		set_image_from_icon_name(node.attribute("icon-name").as_string("help-contents"));
+
+/*
+               GtkWidget *button = gtk_button_new_from_icon_name(link.icon_name.c_str(),GTK_ICON_SIZE_BUTTON);
+                gtk_button_set_relief(GTK_BUTTON(button),GTK_RELIEF_NONE);
+                gtk_widget_set_focus_on_click(button,FALSE);
+
+                gtk_widget_set_tooltip_text(button,(link.tooltip.empty() ? link.url : link.tooltip).c_str());
+
+                g_signal_connect(button,"clicked",G_CALLBACK(url_clicked),(gpointer) gdk_atom_intern(link.url.c_str(),FALSE));
+
+                gtk_box_pack_start(GTK_BOX(box),GTK_WIDGET(button),FALSE,FALSE,0);
+
+*/
+
+		const char *tooltip = node.attribute("tooltip").as_string();
+		if(tooltip && *tooltip) {
+			set_tooltip_text(Quark{tooltip}.c_str());
+		}
+
+	}
+
 
 	Object::Object(const pugi::xml_node &node) :
 		Udjat::NamedObject{node},
 		title{node,"title"},
-		subtitle(node,"sub-title") {
+		subtitle(node,"sub-title"),
+		help(node,"help-url") {
 
 		for(pugi::xml_node parent = node; parent; parent = parent.parent()) {
 

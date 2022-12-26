@@ -243,40 +243,37 @@
 	if(response == Gtk::RESPONSE_YES) {
 
 		std::string error_message;
+		Dialog::Progress dialog;
 
-		{
-			Dialog::Progress dialog;
-			dialog.set_parent(*this);
-			dialog.set_decorated(false);
-			dialog.set_deletable(false);
-			dialog.set(*selected);
-			dialog.show();
+		dialog.set_parent(*this);
+		dialog.set_decorated(false);
+		dialog.set_deletable(false);
+		dialog.set(*selected);
+		dialog.show();
 
+		Udjat::ThreadPool::getInstance().push([&dialog,&error_message,this](){
 
-			Udjat::ThreadPool::getInstance().push([&dialog,&error_message,this](){
+			try {
 
-				try {
+				selected->activate();
 
-					selected->activate();
+#ifdef DEBUG
+				sleep(5);
+#endif // DEBUG
 
-	#ifdef DEBUG
-					sleep(5);
-	#endif // DEBUG
+			} catch(const std::exception &e) {
 
-				} catch(const std::exception &e) {
+				error_message = e.what();
+				cerr << e.what() << endl;
 
-					error_message = e.what();
-					cerr << e.what() << endl;
+			}
 
-				}
+			dialog.dismiss();
 
-				dialog.dismiss();
+		});
 
-			});
-
-			dialog.run();
-
-		}
+		dialog.run();
+		dialog.hide(); // Just hide to wait for all enqueued state changes to run.
 
 		if(!error_message.empty()) {
 

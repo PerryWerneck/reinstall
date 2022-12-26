@@ -55,14 +55,6 @@
 			sigc::connection connection;
 		} timer;
 
-		struct Worker {
-			virtual void work(Progress &dialog) const noexcept = 0;
-		};
-
-		int on_worker(std::shared_ptr<Worker> worker) noexcept;
-
-		void enqueue(std::shared_ptr<Worker> worker) noexcept;
-
 		struct {
 			Label title{ "title" };
 			Label action{ "action", Gtk::ALIGN_START };

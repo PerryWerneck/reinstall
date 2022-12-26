@@ -90,78 +90,22 @@
 
 		Popup confirmation, success, failed;
 
-		/*
-		class UDJAT_API Link : public Gtk::LinkButton {
+		class UDJAT_API Link : public Gtk::Button {
+		private:
+			bool valid = false;
+
 		public:
-			Link(const pugi::xml_node &node);
+			Link(const pugi::xml_node &node, const char *attrname);
 
-			inline const char * c_str() const {
-				return get_uri().c_str();
+			inline operator bool() const noexcept {
+				return valid;
 			}
 
-			inline bool empty() const {
-				return get_uri().empty();
-			}
-
-			inline operator bool() const {
-				return !get_uri().empty();
-			}
 		};
 
-		/// @brief Help button.
 		Link help;
 
-		*/
-
 	protected:
-
-		/*
-		struct Link {
-			/// @brief URL para o link.
-			const char *url = "";
-
-			/// @brief Label para o ícone.
-			const char *label = "";
-
-			/// @brief Ícone para o link
-			const char *icon_name = "";
-
-			/// @brief Tooltip
-			const char *tooltip = "";
-
-			constexpr Link() { }
-			Link(const char *tagname, const pugi::xml_node &node);
-		};
-		*/
-
-		/// @brief Texto longo.
-		struct Text {
-
-			/// @brief Texto
-			const char *body = "";
-
-			/// @brief Tooltip
-			const char *tooltip = "";
-
-			constexpr Text() {}
-			Text(const char *tagname, const pugi::xml_node &node);
-
-		};
-
-		/*
-		/// @brief Mensagens a apresentar para o usuário (popup)
-		struct Message : public Text {
-
-			/// @brief Título da janela
-			const char * title = "";
-
-			/// @brief Emite notificação se a janela não tiver foco?
-			//bool notify = false;
-
-			Message(const char *tag, const pugi::xml_node &node);
-
-		};
-		*/
 
 		bool getProperty(const char *key, std::string &value) const noexcept override;
 

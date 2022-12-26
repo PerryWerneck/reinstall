@@ -95,137 +95,89 @@
 	Glib::signal_idle().connect(sigc::bind<1>( sigc::mem_fun(this,&::Dialog::Progress::on_dismiss),response_id) );
  }
 
- int Dialog::Progress::on_worker(std::shared_ptr<Worker> worker) noexcept {
-	worker->work(*this);
-	return 0;
- }
-
- void Dialog::Progress::enqueue(std::shared_ptr<Worker> worker) noexcept {
-	Glib::signal_idle().connect(sigc::bind<1>( sigc::mem_fun(this,&::Dialog::Progress::on_worker),worker) );
- }
-
  void Dialog::Progress::show() {
 
-	class Show : public Worker {
-		void work(Progress &dialog) const noexcept override {
-			dialog.Gtk::Dialog::show();
-		}
-	};
-
-	enqueue(make_shared<Show>());
+ 	Glib::signal_idle().connect([this](){
+		Gtk::Dialog::show();
+		return 0;
+ 	});
 
  }
 
  void Dialog::Progress::hide() {
 
-	class Hide : public Worker {
-	public:
-		void work(Progress &dialog) const noexcept override {
-			dialog.Gtk::Dialog::hide();
-		}
-	};
-
-	enqueue(make_shared<Hide>());
+ 	Glib::signal_idle().connect([this](){
+		Gtk::Dialog::hide();
+		return 0;
+ 	});
 
  }
 
  void Dialog::Progress::set(const char *message)  {
 
-	class SetMessage : public Worker, public string {
-	public:
-		SetMessage(const char *msg) : string{msg} {
-		}
+	auto str = make_shared<string>(message);
 
-		void work(Progress &dialog) const noexcept override {
-			dialog.widgets.title.set_text(c_str());
-		}
-
-	};
-
-	enqueue(make_shared<SetMessage>(message));
+ 	Glib::signal_idle().connect([this,str](){
+		widgets.title.set_text(str->c_str());
+		return 0;
+ 	});
 
  }
 
  void Dialog::Progress::count(size_t count, size_t total)  {
 
-	class SetCount : public Worker {
-	public:
-		size_t count, total;
+ 	Glib::signal_idle().connect([this,count,total](){
 
-		SetCount(size_t c, size_t t) : count{c}, total{t} {
-		}
-
-		void work(Progress &dialog) const noexcept override {
-		}
-
-	};
-
-	enqueue(make_shared<SetCount>(count,total));
+		return 0;
+ 	});
 
  }
 
  void Dialog::Progress::update(double current, double total)  {
 
-	class Update : public Worker {
-	public:
-		float current, total;
+ 	Glib::signal_idle().connect([this,current,total](){
 
-		Update(float c, float t) : current{c}, total{t} {
+		if(total > current && total > 1) {
+			timer.idle = 0;
+			gdouble fraction = ((gdouble) current) / ((gdouble) total);
+			widgets.progress.set_fraction(fraction);
+		} else {
+			widgets.step.set_text("");
 		}
 
-		void work(Progress &dialog) const noexcept override {
+		return 0;
 
-			if(total > current && total > 1) {
-				dialog.timer.idle = 0;
-				gdouble fraction = ((gdouble) current) / ((gdouble) total);
-				dialog.widgets.progress.set_fraction(fraction);
-			} else {
-				dialog.widgets.step.set_text("");
-			}
-
-		}
-
-	};
-
-	enqueue(make_shared<Update>(current,total));
+ 	});
 
  }
 
  void Dialog::Progress::set(const Reinstall::Object &object) {
 
-	class ObjectSet : public Worker {
-	public:
-		const Reinstall::Object &object;
+ 	Glib::signal_idle().connect([this,&object](){
 
-		ObjectSet(const Reinstall::Object &o) : object{o} {
+		object.set_dialog(*this);
+		sub_title().set_text(_("Initializing"));
+		action().set_text("");
+		message().set_text("");
+		step().set_text("");
+
+		timer.idle = -1;
+
+		if(object.icon && *object.icon) {
+
+			// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
+			icon().set_from_icon_name(object.icon,Gtk::ICON_SIZE_DND);
+			icon().show_all();
+
+		} else {
+
+			icon().hide();
+
 		}
 
-		void work(Progress &dialog) const noexcept override {
+		return 0;
 
-			object.set_dialog(dialog);
-			dialog.sub_title().set_text(_("Initializing"));
-			dialog.action().set_text("");
-			dialog.message().set_text("");
-			dialog.step().set_text("");
-
-			dialog.timer.idle = -1;
-
-			if(object.icon && *object.icon) {
-
-				// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
-				dialog.icon().set_from_icon_name(object.icon,Gtk::ICON_SIZE_DND);
-				dialog.icon().show();
-
-			} else {
-
-				dialog.icon().hide();
-
-			}
-		}
-
-	};
-
-	enqueue(make_shared<ObjectSet>(object));
+ 	});
 
  }
 
