@@ -5,17 +5,7 @@ PACKAGE_NAME=@PACKAGE_NAME@
 LIBRARY_NAME="lib@PACKAGE_NAME@"
 SONAME=@SONAME@
 
-LIBRARY_SOURCES= \
-    $(wildcard src/library/*.cc) \
-    $(wildcard src/library/iso9660/*.cc) \
-    $(wildcard src/library/action/*.cc) \
-    $(wildcard src/library/dialogs/*.cc) \
-    $(wildcard src/library/repository/*.cc) \
-    $(wildcard src/library/source/*.cc) \
-    $(wildcard src/library/os/@OSNAME@/*.cc)
-    
-ISOWRITER_SOURCES= \
-    $(wildcard src/modules/isowriter/*.cc)
+c    $(wildcard src/modules/isowriter/*.cc)
 
 GUI_SOURCES= \
 	$(wildcard src/gui/*.cc) \
@@ -326,7 +316,6 @@ clean: \
 	cleanDebug \
 	cleanRelease
 
--include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES)), $(OBJDBG)/$(SRC).d)
--include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES)), $(OBJRLS)/$(SRC).d)
-
+-include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES)), $(OBJDBG)/$(SRC).d)
+-include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES)), $(OBJRLS)/$(SRC).d)
 

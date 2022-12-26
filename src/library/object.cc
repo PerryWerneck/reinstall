@@ -21,7 +21,9 @@
  #include <reinstall/object.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
+ #include <iostream>
 
+ using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
@@ -63,6 +65,34 @@
 		title{node,"title"},
 		subtitle(node,"sub-title") {
 
+		for(pugi::xml_node parent = node; parent; parent = parent.parent()) {
+
+			for(auto child = parent.child("dialog"); child; child = child.next_sibling("dialog")) {
+
+				switch(String{child,"name"}.select("confirmation","success","failed",nullptr)) {
+				case 0: // confirmation.
+					if(!confirmation) {
+						confirmation.setup(child);
+					}
+					break;
+				case 1: // success
+					if(!success) {
+						success.setup(child);
+					}
+					break;
+				case 2: // failed
+					if(!failed) {
+						failed.setup(child);
+					}
+					break;
+				default:
+					warning() << "Unexpected dialog name '" << String{child,"name"} << "'" << endl;
+				}
+
+			}
+
+		}
+
 	}
 
 	bool Object::getProperty(const char *key, std::string &value) const noexcept {
@@ -88,6 +118,25 @@
 		if(icon && *icon) {
 			window.set_icon_name(icon);
 		}
+	}
+
+	void Object::Popup::setup(const pugi::xml_node &node) {
+
+		const char *group = node.attribute("settings-from").as_string("popup-defaults");
+
+		message = getAttribute(node,group,"message","");
+		url.link = getAttribute(node,group,"url","");
+		url.label = getAttribute(node,group,"url-label",_("More info"));
+
+		{
+			Udjat::String text{node.child_value()};
+			text.expand(node,group);
+			text.strip();
+			if(!text.empty()) {
+				secondary = text.as_quark();
+			}
+		}
+
 	}
 
 	/*

@@ -22,10 +22,18 @@
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
  #include <reinstall/dialogs.h>
+ #include <reinstall/object.h>
 
  namespace Dialog {
 
-	/// @brief Standar progress dialog.
+	/// @brief Popup dialog.
+	class Popup : public Gtk::MessageDialog  {
+	public:
+		Popup(Gtk::Window &parent, const Reinstall::Object &object, const Reinstall::Object::Popup &settings, Gtk::MessageType = Gtk::MESSAGE_INFO, Gtk::ButtonsType buttons = Gtk::BUTTONS_OK);
+
+	};
+
+	/// @brief Standard progress dialog.
 	class Progress : public Reinstall::Dialog::Progress, public Gtk::Dialog {
 	public:
 		class Label : public Gtk::Label {

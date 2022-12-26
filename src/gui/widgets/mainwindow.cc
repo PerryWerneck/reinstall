@@ -228,58 +228,102 @@
 	buttons.cancel.set_sensitive(false);
 	layout.view.set_sensitive(false);
 
+	Gtk::ResponseType response = Gtk::RESPONSE_YES;
+	if(selected->confirmation) {
+		response = (Gtk::ResponseType) Dialog::Popup{
+						*this,
+						*selected,
+						selected->confirmation,
+						Gtk::MESSAGE_QUESTION,
+						Gtk::BUTTONS_YES_NO
+					}.run();
+	}
+
 	// Execute action
-	std::string error_message;
+	if(response == Gtk::RESPONSE_YES) {
 
-	{
-		Dialog::Progress dialog;
-		dialog.set_parent(*this);
-		dialog.set_decorated(false);
-		dialog.set_deletable(false);
-		dialog.set(*selected);
-		dialog.show();
+		std::string error_message;
+
+		{
+			Dialog::Progress dialog;
+			dialog.set_parent(*this);
+			dialog.set_decorated(false);
+			dialog.set_deletable(false);
+			dialog.set(*selected);
+			dialog.show();
 
 
-		Udjat::ThreadPool::getInstance().push([&dialog,&error_message,this](){
+			Udjat::ThreadPool::getInstance().push([&dialog,&error_message,this](){
 
-			try {
+				try {
 
-				selected->activate();
+					selected->activate();
 
-#ifdef DEBUG
-				sleep(5);
-#endif // DEBUG
+	#ifdef DEBUG
+					sleep(5);
+	#endif // DEBUG
 
-			} catch(const std::exception &e) {
+				} catch(const std::exception &e) {
 
-				error_message = e.what();
-				cerr << e.what() << endl;
+					error_message = e.what();
+					cerr << e.what() << endl;
+
+				}
+
+				dialog.dismiss();
+
+			});
+
+			dialog.run();
+
+		}
+
+		if(!error_message.empty()) {
+
+			if(selected->failed) {
+
+				Dialog::Popup dialog_fail{
+					*this,
+					*selected,
+					selected->failed,
+					Gtk::MESSAGE_ERROR,
+					Gtk::BUTTONS_CLOSE
+				};
+
+				if(!selected->failed.has_secondary()) {
+					dialog_fail.set_secondary_text(error_message);
+				}
+				dialog_fail.run();
+
+			} else {
+
+				Gtk::MessageDialog dialog_fail{
+					*this, // Gtk::Window& parent,
+					_("Action has failed"), // const Glib::ustring& message,
+					false,	// bool use_markup = false,
+					Gtk::MESSAGE_ERROR, // MessageType type =
+					Gtk::BUTTONS_CLOSE, // ButtonsType buttons = BUTTONS_OK,
+					true
+				};
+
+				selected->set_dialog(dialog_fail);
+				dialog_fail.set_secondary_text(error_message);
+				dialog_fail.show();
+				dialog_fail.run();
 
 			}
 
-			dialog.dismiss();
+		} else if(selected->success) {
 
-		});
+			Dialog::Popup{
+				*this,
+				*selected,
+				selected->success,
+				Gtk::MESSAGE_INFO,
+				Gtk::BUTTONS_OK
+			}.run();
 
-		dialog.run();
-
-	}
-
-	if(!error_message.empty()) {
-
-		Gtk::MessageDialog dialog_fail{
-			*this, // Gtk::Window& parent,
-			_("Action has failed"), // const Glib::ustring& message,
-			false,	// bool use_markup = false,
-			Gtk::MESSAGE_ERROR, // MessageType type =
-			Gtk::BUTTONS_OK, // ButtonsType buttons = BUTTONS_OK,
-			true
-		};
-
-		selected->set_dialog(dialog_fail);
-		dialog_fail.set_secondary_text(error_message);
-		dialog_fail.show();
-		dialog_fail.run();
+		}
 
 	}
 

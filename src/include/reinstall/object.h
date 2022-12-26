@@ -57,6 +57,39 @@
 		/// @brief Setup window from object properties.
 		void set_dialog(Gtk::Window &window) const;
 
+		/// @brief Dialog box from XML.
+		class UDJAT_API Popup {
+		public:
+			const char *message = "";
+			const char *secondary = "";
+
+			struct {
+				const char *link = "";
+				const char *label = "";
+
+				inline operator bool() const {
+					return (link && *link);
+				}
+
+			} url;
+
+			Popup() = default;
+
+			void setup(const pugi::xml_node &node);
+
+			inline operator bool() const noexcept {
+				return (message && *message);
+			}
+
+			inline bool has_secondary() const noexcept {
+				return secondary && *secondary;
+			}
+
+
+		};
+
+		Popup confirmation, success, failed;
+
 		/*
 		class UDJAT_API Link : public Gtk::LinkButton {
 		public:
