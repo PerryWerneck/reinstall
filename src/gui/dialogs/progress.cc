@@ -31,8 +31,10 @@
 	Gtk::Box &content_area = *get_content_area();
 
 	set_decorated(false);
+
 	set_default_size(400,-1);
 
+	get_style_context()->add_class("dialog-progress");
 	content_area.get_style_context()->add_class("dialog-contents");
 	content_area.set_border_width(12);
 	content_area.set_spacing(12);
@@ -46,7 +48,11 @@
 	content_area.pack_start(widgets.progress,true,true,0);
 
 	widgets.footer.pack_start(widgets.action,false,false,3);
+
+	widgets.message.set_line_wrap(false);
+	widgets.message.set_ellipsize(Pango::ELLIPSIZE_START);
 	widgets.footer.pack_start(widgets.message,true,true,3);
+
 	widgets.footer.pack_end(widgets.step,false,false,3);
 
 	content_area.pack_end(widgets.footer,false,false,0);

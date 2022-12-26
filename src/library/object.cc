@@ -104,6 +104,9 @@
 		subtitle(node,"sub-title"),
 		help(node,"help-url") {
 
+		subtitle.set_line_wrap(true);
+		// subtitle.wrap_mode(Pango::WRAP_WORD);
+
 		for(pugi::xml_node parent = node; parent; parent = parent.parent()) {
 
 			for(auto child = parent.child("dialog"); child; child = child.next_sibling("dialog")) {

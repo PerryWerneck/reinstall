@@ -184,7 +184,7 @@
 
 	}
 
-	void IsoBuilder::activate() {
+	void IsoBuilder::prepare() {
 
 		Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
 		progress.set(*this);
@@ -202,7 +202,7 @@
 		worker.set_system_id(system_id);
 		worker.set_application_id(application_id);
 
-		Reinstall::Action::activate(worker);
+		Reinstall::Action::prepare(worker);
 
 		// Finalize
 		//worker.set_iso_level();

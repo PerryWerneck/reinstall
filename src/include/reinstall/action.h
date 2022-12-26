@@ -159,8 +159,8 @@
 		/// @return true if the 'call' has returned true.
 		bool scan(const pugi::xml_node &node, const char *tagname, const std::function<bool(const pugi::xml_node &node)> &call);
 
-		/// @brief Activate with worker.
-		virtual void activate(Reinstall::Worker &worker);
+		/// @brief Run first step with worker.
+		virtual void prepare(Reinstall::Worker &worker);
 
 		/// @brief Get first folder.
 		// std::shared_ptr<Source> folder();
@@ -193,7 +193,8 @@
 		/// @brief Get repository.
 		std::shared_ptr<Repository> repository(const char *name = "install") const;
 
-		virtual void activate();
+		/// @brief Run first step.
+		virtual void prepare();
 
 		/// @brief Load folders.
 		void load();

@@ -255,11 +255,7 @@
 
 			try {
 
-				selected->activate();
-
-#ifdef DEBUG
-				sleep(5);
-#endif // DEBUG
+				selected->prepare();
 
 			} catch(const std::exception &e) {
 

@@ -56,10 +56,10 @@
 		} timer;
 
 		struct {
-			Label title{ "title" };
-			Label action{ "action", Gtk::ALIGN_START };
-			Label message{ "message", Gtk::ALIGN_CENTER };
-			Label step{ "step", Gtk::ALIGN_END };
+			Label title{ "" };
+			Label action{ "", Gtk::ALIGN_START };
+			Label message{ "", Gtk::ALIGN_CENTER };
+			Label step{ "", Gtk::ALIGN_END };
 
 			Gtk::Image icon;
 			Gtk::ProgressBar progress;

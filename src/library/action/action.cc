@@ -111,9 +111,8 @@
 		}
 	}
 
-	void Action::activate() {
-		error() << "No activation code" << endl;
-		throw runtime_error(_("Action is not available"));
+	void Action::prepare() {
+		warning() << "Dummy first step" << endl;
 	}
 
 	const char * Action::install() {
@@ -154,7 +153,7 @@
 		return true;
 	}
 
-	void Action::activate(Worker &worker) {
+	void Action::prepare(Worker &worker) {
 
 		{
 			Dialog::Progress::getInstance().set(_("Initializing"));
