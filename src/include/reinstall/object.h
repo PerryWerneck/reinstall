@@ -54,6 +54,9 @@
 		/// @brief icon name.
 		const char *icon = nullptr;
 
+		/// @brief Setup window from object properties.
+		void set_dialog(Gtk::Window &window) const;
+
 		/*
 		class UDJAT_API Link : public Gtk::LinkButton {
 		public:

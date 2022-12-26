@@ -82,6 +82,14 @@
 		return Udjat::NamedObject::getProperty(key,value);
 	}
 
+	void Object::set_dialog(Gtk::Window &window) const {
+		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Window.html
+		window.set_title(title.get_text());
+		if(icon && *icon) {
+			window.set_icon_name(icon);
+		}
+	}
+
 	/*
 	Object::Link::Link(const char *tagname, const pugi::xml_node &node) {
 

@@ -202,7 +202,7 @@
 
 		void work(Progress &dialog) const noexcept override {
 
-			dialog.set_title(object.title.get_text());
+			object.set_dialog(dialog);
 			dialog.sub_title().set_text(_("Initializing"));
 			dialog.action().set_text("");
 			dialog.message().set_text("");

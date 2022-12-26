@@ -229,6 +229,8 @@
 	layout.view.set_sensitive(false);
 
 	// Execute action
+	std::string error_message;
+
 	{
 		Dialog::Progress dialog;
 		dialog.set_parent(*this);
@@ -237,24 +239,48 @@
 		dialog.set(*selected);
 		dialog.show();
 
-		Udjat::ThreadPool::getInstance().push([&dialog,this](){
+
+		Udjat::ThreadPool::getInstance().push([&dialog,&error_message,this](){
 
 			try {
 
 				selected->activate();
 
+#ifdef DEBUG
+				sleep(5);
+#endif // DEBUG
+
 			} catch(const std::exception &e) {
 
+				error_message = e.what();
 				cerr << e.what() << endl;
 
 			}
 
-			sleep(5);
 			dialog.dismiss();
 
 		});
 
 		dialog.run();
+
+	}
+
+	if(!error_message.empty()) {
+
+		Gtk::MessageDialog dialog_fail{
+			*this, // Gtk::Window& parent,
+			_("Action has failed"), // const Glib::ustring& message,
+			false,	// bool use_markup = false,
+			Gtk::MESSAGE_ERROR, // MessageType type =
+			Gtk::BUTTONS_OK, // ButtonsType buttons = BUTTONS_OK,
+			true
+		};
+
+		selected->set_dialog(dialog_fail);
+		dialog_fail.set_secondary_text(error_message);
+		dialog_fail.show();
+		dialog_fail.run();
+
 	}
 
 	buttons.apply.set_sensitive(true);
