@@ -161,7 +161,7 @@
  	auto group = make_shared<::Widget::Group>(node);
 
  	Glib::signal_idle().connect([this,group](){
-		layout.view.pack_start(*group,false,false,0);
+		layout.view.pack_start(*group,true,true,0);
 		return 0;
  	});
 

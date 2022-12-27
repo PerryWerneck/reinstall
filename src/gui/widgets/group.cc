@@ -30,12 +30,13 @@
 	 Group::Group(const pugi::xml_node &node) : label{node,"title"}, body{node,"sub-title"}, icon{node,"icon",Gtk::ICON_SIZE_DND} {
 
 		set_hexpand(true);
-		set_vexpand(false);
-		set_valign(ALIGN_START);
-		set_halign(ALIGN_START);
+		set_halign(ALIGN_FILL);
 
-		actions.set_hexpand(true);
-		actions.set_vexpand(false);
+		set_vexpand(true);
+		set_valign(ALIGN_START);
+
+		label.set_hexpand(true);
+		body.set_hexpand(true);
 
 		get_style_context()->add_class("group-box");
 		label.get_style_context()->add_class("group-title");
@@ -83,7 +84,8 @@
 				}
 			});
 
-			actions.pack_start(*widget,true,true,0);
+			// actions.pack_start(*widget,true,true,0);
+			actions.add(*widget);
 			return 0;
 		});
 

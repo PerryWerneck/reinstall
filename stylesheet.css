@@ -68,6 +68,11 @@
 	opacity: 0.9;
 }
 
+.group-actions {
+	margin-top: 6px;
+	margin-left: 6px;
+}
+
 .action-subtitle {
 	font-size: 70%;
 	opacity: 0.9;
@@ -78,10 +83,11 @@
 }
 
 .action-container {
-	margin: 3px;
+	padding: 6px;
 }
 
 .action-button {
+	margin-bottom: 3px;
 	background-position: top;
 }
 
