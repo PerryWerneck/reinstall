@@ -25,7 +25,8 @@
  Dialog::Popup::Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Popup &settings, Gtk::MessageType type, Gtk::ButtonsType buttons)
 	: Gtk::MessageDialog{parent,settings.message,false,type,buttons,true} {
 
-	//object.set_dialog(*this);
+	set_default_size(500, -1);
+	set_title(object.get_label());
 
 	if(settings.secondary) {
 		set_secondary_text(settings.secondary);

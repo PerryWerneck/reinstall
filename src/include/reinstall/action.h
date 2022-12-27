@@ -209,6 +209,10 @@
 			return item;
 		}
 
+		inline std::string get_label() const {
+			return item->get_label();
+		}
+
 		/// @brief Get repository.
 		std::shared_ptr<Repository> repository(const char *name = "install") const;
 

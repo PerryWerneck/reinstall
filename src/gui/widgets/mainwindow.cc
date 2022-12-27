@@ -253,7 +253,8 @@
 					true
 				};
 
-				//action->set_dialog(dialog_fail);
+				dialog_fail.set_default_size(500, -1);
+				dialog_fail.set_title(action->get_label());
 				dialog_fail.set_secondary_text(error_message);
 				dialog_fail.show();
 				dialog_fail.run();

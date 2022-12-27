@@ -167,6 +167,10 @@
 		message().set_text("");
 		step().set_text("");
 
+		set_title(object.get_label());
+
+
+
 		timer.idle = -1;
 
 		/*
