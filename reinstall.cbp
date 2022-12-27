@@ -59,6 +59,7 @@
 		<Unit filename="src/include/reinstall/source.h" />
 		<Unit filename="src/include/reinstall/sources/initrd.h" />
 		<Unit filename="src/include/reinstall/sources/kernel.h" />
+		<Unit filename="src/include/reinstall/userinterface.h" />
 		<Unit filename="src/include/reinstall/value.h" />
 		<Unit filename="src/include/reinstall/worker.h" />
 		<Unit filename="src/library/action/action.cc" />
@@ -82,6 +83,7 @@
 		<Unit filename="src/library/template.cc" />
 		<Unit filename="src/library/testprogram/private.h" />
 		<Unit filename="src/library/testprogram/testprogram.cc" />
+		<Unit filename="src/library/userinterface.cc" />
 		<Unit filename="src/library/value.cc" />
 		<Unit filename="src/library/worker.cc" />
 		<Unit filename="src/modules/isowriter/init.cc" />

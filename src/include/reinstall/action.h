@@ -21,6 +21,7 @@
 
  #include <udjat/defs.h>
  #include <pugixml.hpp>
+ #include <udjat/tools/object.h>
  #include <udjat/tools/string.h>
  #include <reinstall/object.h>
  #include <reinstall/repository.h>
@@ -31,14 +32,12 @@
  #include <memory>
  #include <cstring>
  #include <functional>
- #include <gtkmm.h>
- #include <glibmm/i18n.h>
 
  namespace Reinstall {
 
  	class Worker;
 
-	class UDJAT_API Action : public Reinstall::Object {
+	class UDJAT_API Action : public Udjat::NamedObject {
 	public:
 
 		/// @brief Kernel parameters.
@@ -101,7 +100,7 @@
 
 		};
 
-
+		/*
 		class UDJAT_API Message : Udjat::NamedObject {
 		private:
 			const Action &action;				///< @brief Action for this dialog.
@@ -126,6 +125,7 @@
 			bool getProperty(const char *key, std::string &value) const noexcept override;
 
 		};
+		*/
 
 		std::list<std::shared_ptr<Template>> templates;
 
@@ -165,13 +165,17 @@
 		/// @brief Get first folder.
 		// std::shared_ptr<Source> folder();
 
-		bool getProperty(const char *key, std::string &value) const noexcept override;
+		// bool getProperty(const char *key, std::string &value) const noexcept override;
+
+		/// @brief Object with the UI definitions.
+		std::shared_ptr<Abstract::Object> object;
+
+		Action(const pugi::xml_node &node);
 
 	private:
 		static Action * defaction;		///< @brief Default action.
 
 	public:
-		Action(const pugi::xml_node &node);
 		virtual ~Action();
 
 		unsigned short id;

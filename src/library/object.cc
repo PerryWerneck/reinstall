@@ -23,6 +23,7 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
  #include <udjat/tools/logger.h>
+ #include <pugixml.hpp>
  #include <iostream>
 
  using namespace std;
@@ -30,7 +31,7 @@
 
  namespace Reinstall {
 
-	pugi::xml_node find(const pugi::xml_node &node, const char *attrname) {
+	pugi::xml_node Abstract::Object::find(const pugi::xml_node &node, const char *attrname) {
 
 		for(pugi::xml_node child = node.child("attribute"); child; child = child.next_sibling("attribute")) {
 			const char *name = child.attribute("name").as_string("");
@@ -44,6 +45,75 @@
 		return pugi::xml_node();
 	}
 
+	void Abstract::Object::set(const pugi::xml_node &node) {
+
+		Udjat::NamedObject::set(node);
+
+		pugi::xml_node child;
+
+		// Get label
+		child = find(node,"label");
+		if(child) {
+			set_label(Quark{node,"value"}.c_str());
+		}
+
+		// Get sub-title
+		child = find(node,"sub-title");
+		if(child) {
+			set_label(Quark{node,"value"}.c_str());
+		}
+
+		// Get dialogs
+		for(pugi::xml_node parent = node; parent; parent = parent.parent()) {
+
+			for(auto child = parent.child("dialog"); child; child = child.next_sibling("dialog")) {
+
+				switch(String{child,"name"}.select("confirmation","success","failed",nullptr)) {
+				case 0: // confirmation.
+					if(!dialog.confirmation) {
+						dialog.confirmation.set(child);
+					}
+					break;
+				case 1: // success
+					if(!dialog.success) {
+						dialog.success.set(child);
+					}
+					break;
+				case 2: // failed
+					if(!dialog.failed) {
+						dialog.failed.set(child);
+					}
+					break;
+				default:
+					warning() << "Unexpected dialog name '" << String{child,"name"} << "'" << endl;
+				}
+
+			}
+
+		}
+
+	}
+
+	void Abstract::Popup::set(const pugi::xml_node &node) {
+
+		const char *group = node.attribute("settings-from").as_string("popup-defaults");
+
+		message = Udjat::Object::getAttribute(node,group,"message","");
+		url.link = Udjat::Object::getAttribute(node,group,"url","");
+		url.label = Udjat::Object::getAttribute(node,group,"url-label",_("More info"));
+
+		{
+			Udjat::String text{node.child_value()};
+			text.expand(node,group);
+			text.strip();
+			if(!text.empty()) {
+				secondary = text.as_quark();
+			}
+		}
+
+	}
+
+	/*
 	Object::Label::Label(const pugi::xml_node &nd, const char *attrname) : Gtk::Label{"", Gtk::ALIGN_START, Gtk::ALIGN_START} {
 
 		auto node = find(nd,attrname);
@@ -77,19 +147,6 @@
 
 		set_image_from_icon_name(node.attribute("icon-name").as_string("help-contents"));
 
-/*
-               GtkWidget *button = gtk_button_new_from_icon_name(link.icon_name.c_str(),GTK_ICON_SIZE_BUTTON);
-                gtk_button_set_relief(GTK_BUTTON(button),GTK_RELIEF_NONE);
-                gtk_widget_set_focus_on_click(button,FALSE);
-
-                gtk_widget_set_tooltip_text(button,(link.tooltip.empty() ? link.url : link.tooltip).c_str());
-
-                g_signal_connect(button,"clicked",G_CALLBACK(url_clicked),(gpointer) gdk_atom_intern(link.url.c_str(),FALSE));
-
-                gtk_box_pack_start(GTK_BOX(box),GTK_WIDGET(button),FALSE,FALSE,0);
-
-*/
-
 		const char *tooltip = node.attribute("tooltip").as_string();
 		if(tooltip && *tooltip) {
 			set_tooltip_text(Quark{tooltip}.c_str());
@@ -107,33 +164,6 @@
 		subtitle.set_line_wrap(true);
 		// subtitle.wrap_mode(Pango::WRAP_WORD);
 
-		for(pugi::xml_node parent = node; parent; parent = parent.parent()) {
-
-			for(auto child = parent.child("dialog"); child; child = child.next_sibling("dialog")) {
-
-				switch(String{child,"name"}.select("confirmation","success","failed",nullptr)) {
-				case 0: // confirmation.
-					if(!confirmation) {
-						confirmation.setup(child);
-					}
-					break;
-				case 1: // success
-					if(!success) {
-						success.setup(child);
-					}
-					break;
-				case 2: // failed
-					if(!failed) {
-						failed.setup(child);
-					}
-					break;
-				default:
-					warning() << "Unexpected dialog name '" << String{child,"name"} << "'" << endl;
-				}
-
-			}
-
-		}
 
 	}
 
@@ -162,74 +192,6 @@
 		}
 	}
 
-	void Object::Popup::setup(const pugi::xml_node &node) {
-
-		const char *group = node.attribute("settings-from").as_string("popup-defaults");
-
-		message = getAttribute(node,group,"message","");
-		url.link = getAttribute(node,group,"url","");
-		url.label = getAttribute(node,group,"url-label",_("More info"));
-
-		{
-			Udjat::String text{node.child_value()};
-			text.expand(node,group);
-			text.strip();
-			if(!text.empty()) {
-				secondary = text.as_quark();
-			}
-		}
-
-	}
-
-	/*
-	Object::Link::Link(const char *tagname, const pugi::xml_node &node) {
-
-		const pugi::xml_node & child = node.child(tagname);
-		if(!child) {
-			return;
-		}
-
-		// Obtém grupo do arquivo de configuração para os defaults.
-		const char *group = child.attribute("settings-from").as_string("link-defaults");
-
-		url = getAttribute(child,group,"url",url);
-		label = getAttribute(child,group,"label",label);
-		icon_name = getAttribute(child,group,"icon",icon_name);
-		tooltip = getAttribute(child,group,"tooltip",tooltip);
-
-	}
-
-	Object::Text::Text(const char *tag, const pugi::xml_node &node) {
-
-		auto text_node = node.child(tag);
-		if(!text_node) {
-			// TODO: Upsearch
-			return;
-		}
-
-		// Obtém grupo do arquivo de configuração para os defaults.
-		// const char *group = node.attribute("settings-from").as_string("message-defaults");
-
-		body = Quark(Udjat::String(text_node.child_value()).expand(text_node)).c_str();
-
-	}
-	*/
-
-	/*
-	Object::Message::Message(const char *tag, const pugi::xml_node &node) : Text(tag,node) {
-
-		auto child = node.child(tag);
-		if(!child) {
-			return;
-		}
-
-		// Obtém grupo do arquivo de configuração para os defaults.
-		const char *group = child.attribute("settings-from").as_string("message-defaults");
-
-		title = getAttribute(child,group,"title",title);
-		notify = getAttribute(child,group,"notify",false);
-
-	}
 	*/
 
  }

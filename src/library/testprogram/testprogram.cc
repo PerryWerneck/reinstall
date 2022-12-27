@@ -12,6 +12,7 @@
 
  #include <reinstall/actions/kernel.h>
  #include <reinstall/actions/initrd.h>
+ #include <reinstall/userinterface.h>
 
  #include <udjat/moduleinfo.h>
 
@@ -45,7 +46,7 @@
 
 		};
 
-		Reinstall::Group::find(node)->push_back(make_shared<Action>(node));
+		Reinstall::Abstract::Group::find(node)->push_back(make_shared<Action>(node));
 
 		return true;
 	}
@@ -75,7 +76,7 @@
 		// Initialize application, load xml definitions.
 		Udjat::Application::init(argc,argv,"./test.xml");
 
-		Reinstall::Action::getDefault().activate();
+		Reinstall::Action::getDefault().prepare();
 	}
 
 	// Finalize application.

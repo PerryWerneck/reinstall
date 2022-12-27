@@ -21,19 +21,20 @@
  #include <reinstall/controller.h>
  #include <reinstall/group.h>
  #include <udjat/tools/logger.h>
+ #include <reinstall/userinterface.h>
  #include <memory>
 
  using namespace std;
 
  namespace Reinstall {
 
-	std::shared_ptr<Group> Group::factory(const pugi::xml_node &node) {
+	std::shared_ptr<Abstract::Group> Abstract::Group::factory(const pugi::xml_node &node) {
 
-		std::shared_ptr<Group> rc;
+		std::shared_ptr<Abstract::Group> rc;
 		const char *name = node.attribute("name").as_string("default");
 		Controller &controller = Controller::getInstance();
 
-		controller.for_each([&rc,name](std::shared_ptr<Group> group){
+		controller.for_each([&rc,name](std::shared_ptr<Abstract::Group> group){
 
 			if(*group == name) {
 				rc = group;
@@ -44,19 +45,19 @@
 		});
 
 		if(!rc) {
-			rc = make_shared<Group>(node);
+			rc = UserInterface::getInstance().GroupFactory(node);
 			controller.push_back(rc);
 		}
 
-		// Setup udjat::NamedObject
-		rc->setup(node);
+		// Setup
+		rc->set(node);
 
 		return rc;
 	}
 
-	std::shared_ptr<Group> Group::find(const pugi::xml_node &node) {
+	std::shared_ptr<Abstract::Group> Abstract::Group::find(const pugi::xml_node &node) {
 
-		std::shared_ptr<Group> rc;
+		std::shared_ptr<Abstract::Group> rc;
 		const char *name = node.attribute("group-name").as_string("");
 		Controller &controller = controller.getInstance();
 
@@ -91,27 +92,18 @@
 
 	}
 
-	Group::Group(const pugi::xml_node &node) : Reinstall::Object(node) {
+	Abstract::Group::Group() {
 
 		static unsigned short id = 0;
 		this->id = ++id;
-
-		if(title) {
-			title.get_style_context()->add_class("group-title");
-		}
-
-		if(subtitle) {
-			subtitle.get_style_context()->add_class("group-subtitle");
-		}
-
 		Udjat::Logger::String{"Group '",name(),"' initialized with id ",this->id}.trace("group");
 
 	}
 
-	Group::~Group() {
+	Abstract::Group::~Group() {
 	}
 
-	bool Controller::for_each(const std::function<bool (std::shared_ptr<Group> group)> &call) const {
+	bool Controller::for_each(const std::function<bool (std::shared_ptr<Abstract::Group> group)> &call) const {
 
 		for(auto group : groups) {
 			if(call(group)) {
@@ -122,12 +114,12 @@
 
 	}
 
-	void Group::push_back(std::shared_ptr<Action> action) {
+	void Abstract::Group::push_back(std::shared_ptr<Action> action) {
 		actions.push_back(action);
 		Udjat::Logger::String{"Action '",name(),"/",action->name(),"' initialized with id ",id,".",action->id}.trace("group");
 	}
 
-	bool Group::for_each(const std::function<bool (std::shared_ptr<Action> action)> &call) const {
+	bool Abstract::Group::for_each(const std::function<bool (std::shared_ptr<Action> action)> &call) const {
 
 		for(auto action : actions) {
 			if(call(action)) {

@@ -35,7 +35,7 @@
 	}
 
 	bool Controller::push_back(const pugi::xml_node &node) {
-		Group::factory(node);
+		Abstract::Group::factory(node);
 		return true;
 	}
 

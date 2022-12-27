@@ -25,25 +25,29 @@
 
  namespace Reinstall {
 
-	class UDJAT_API Group : public Reinstall::Object, public Gtk::Box {
-	private:
-		std::list<std::shared_ptr<Action>> actions;
+	namespace Abstract {
 
-	public:
+		class UDJAT_API Group : public Reinstall::Abstract::Object {
+		private:
+			std::list<std::shared_ptr<Action>> actions;
 
-		unsigned short id;
+		public:
 
-		Group(const pugi::xml_node &node);
-		virtual ~Group();
+			unsigned short id;
 
-		void push_back(std::shared_ptr<Action> action);
+			Group();
+			virtual ~Group();
 
-		/// @brief Navigate from groups.
-		bool for_each(const std::function<bool (std::shared_ptr<Action> action)> &call) const;
+			void push_back(std::shared_ptr<Action> action);
 
-		static std::shared_ptr<Group> find(const pugi::xml_node &node);
-		static std::shared_ptr<Group> factory(const pugi::xml_node &node);
+			/// @brief Navigate from groups.
+			bool for_each(const std::function<bool (std::shared_ptr<Action> action)> &call) const;
 
-	};
+			static std::shared_ptr<Group> find(const pugi::xml_node &node);
+			static std::shared_ptr<Group> factory(const pugi::xml_node &node);
+
+		};
+
+	}
 
  }

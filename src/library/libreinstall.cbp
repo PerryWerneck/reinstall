@@ -51,6 +51,7 @@
 		<Unit filename="../include/reinstall/source.h" />
 		<Unit filename="../include/reinstall/sources/initrd.h" />
 		<Unit filename="../include/reinstall/sources/kernel.h" />
+		<Unit filename="../include/reinstall/userinterface.h" />
 		<Unit filename="../include/reinstall/value.h" />
 		<Unit filename="../include/reinstall/worker.h" />
 		<Unit filename="../modules/netinstall/action.cc" />
@@ -78,6 +79,7 @@
 		<Unit filename="template.cc" />
 		<Unit filename="testprogram/private.h" />
 		<Unit filename="testprogram/testprogram.cc" />
+		<Unit filename="userinterface.cc" />
 		<Unit filename="value.cc" />
 		<Unit filename="worker.cc" />
 		<Extensions />

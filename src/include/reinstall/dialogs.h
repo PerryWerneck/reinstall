@@ -39,7 +39,7 @@
 			virtual void show();
 			virtual void hide();
 
-			virtual void set(const Object &object);
+			virtual void set(const Abstract::Object &object);
 
 		};
 

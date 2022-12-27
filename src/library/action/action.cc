@@ -21,6 +21,7 @@
  #include <reinstall/action.h>
  #include <reinstall/worker.h>
  #include <reinstall/dialogs.h>
+ #include <reinstall/userinterface.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/url.h>
  #include <pugixml.hpp>
@@ -73,7 +74,7 @@
 
 	}
 
-	Action::Action(const pugi::xml_node &node) : Object(node), options(node) {
+	Action::Action(const pugi::xml_node &node) : Udjat::NamedObject(node), options{node}, object{UserInterface::getInstance().ObjectFactory(node)} {
 
 		scan(node, "source", [this](const pugi::xml_node &node){
 			push_back(make_shared<Source>(node));
@@ -204,6 +205,7 @@
 
 	}
 
+	/*
 	bool Action::getProperty(const char *key, std::string &value) const noexcept {
 
 		if(!strcasecmp(key,"kernel-parameters")) {
@@ -239,6 +241,7 @@
 
 		return Object::getProperty(key,value);
 	}
+	*/
 
 	void Action::applyTemplates() {
 
