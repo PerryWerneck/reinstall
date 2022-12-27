@@ -38,7 +38,7 @@
 			Group();
 			virtual ~Group();
 
-			void push_back(std::shared_ptr<Action> action);
+			virtual void push_back(std::shared_ptr<Action> action);
 
 			/// @brief Navigate from groups.
 			bool for_each(const std::function<bool (std::shared_ptr<Action> action)> &call) const;

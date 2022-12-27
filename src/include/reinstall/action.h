@@ -199,7 +199,7 @@
 		}
 
 		/// @brief Get UI Object.
-		inline std::shared_ptr<Abstract::Object> get_button() const {
+		inline std::shared_ptr<Abstract::Object> get_button() {
 			return item;
 		}
 

@@ -48,9 +48,12 @@
 	private:
 		Label label, body;
 		Icon icon;
+		Gtk::Box actions{Gtk::ORIENTATION_VERTICAL};
 
 	public:
 		Group(const pugi::xml_node &node);
+
+		void push_back(std::shared_ptr<Reinstall::Action> action) override;
 
 		std::string get_label() const override;
 	};

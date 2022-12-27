@@ -51,20 +51,14 @@
 		set_hexpand(true);
 		set_vexpand(false);
 		set_valign(ALIGN_START);
-		set_halign(ALIGN_START);
+		set_halign(ALIGN_FILL);
+
+		set_inconsistent();
+		set_mode(false);
 
 		get_style_context()->add_class("action-button");
 		grid.get_style_context()->add_class("action-container");
 		label.get_style_context()->add_class("action-title");
-
-		/*
-		if(icon) {
-			icon.get_style_context()->add_class("action-icon");
-			icon.set_valign(ALIGN_CENTER);
-			icon.set_halign(ALIGN_CENTER);
-			grid.attach(icon,0,0,1,2);
-		}
-		*/
 
 		grid.attach(label,1,0,1,1);
 		if(body) {
@@ -75,6 +69,24 @@
 		add(grid);
 
 		set(node);
+
+		if(get_active()) {
+			get_style_context()->add_class("action-active");
+		} else {
+			get_style_context()->add_class("action-inactive");
+		}
+
+		signal_toggled().connect([&]() {
+
+			if(get_active()) {
+				get_style_context()->remove_class("action-inactive");
+				get_style_context()->add_class("action-active");
+			} else {
+				get_style_context()->remove_class("action-active");
+				get_style_context()->add_class("action-inactive");
+			}
+
+		});
 
 		show_all();
 	}
