@@ -54,6 +54,9 @@
 		void Progress::set_title(const char *title) {
 		}
 
+		void Progress::set_sub_title(const char *sub_title) {
+		}
+
 		void Progress::set_step(const char *step) {
 		}
 

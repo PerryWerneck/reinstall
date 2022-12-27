@@ -57,11 +57,12 @@
 
 		struct {
 			Label title{ "" };
+			Label subtitle{ "" };
 			Label action{ "", Gtk::ALIGN_START };
 			Label message{ "", Gtk::ALIGN_CENTER };
 			Label step{ "", Gtk::ALIGN_END };
 
-			Gtk::Box header{Gtk::ORIENTATION_HORIZONTAL};
+			Gtk::Grid header;
 			Gtk::Image icon;
 			Gtk::ProgressBar progress;
 			Gtk::Box footer{Gtk::ORIENTATION_HORIZONTAL};
@@ -76,7 +77,7 @@
 
 		void set_parent(Gtk::Window &window);
 
-		inline Label & sub_title() {
+		inline Label & title() {
 			return widgets.title;
 		}
 
@@ -104,6 +105,7 @@
 		void show() override;
 		void hide() override;
 		void set_title(const char *title) override;
+		void set_sub_title(const char *title) override;
 		void set_step(const char *step) override;
 		void set_icon_name(const char *icon_name) override;
 		void count(size_t count, size_t total) override;

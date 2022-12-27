@@ -56,7 +56,7 @@
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 		auto worker = Udjat::Protocol::WorkerFactory(this->url);
 
-		progress.set_title(worker->url().c_str());
+		progress.set_sub_title(worker->url().c_str());
 		Udjat::String contents = worker->get([&progress](double current, double total){
 			progress.update(current,total);
 			return true;

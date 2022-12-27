@@ -112,12 +112,28 @@
 
  void MainWindow::on_show() {
 
+#ifdef DEBUG
+	{
+		Dialog::Progress dialog;
+		dialog.Gtk::Window::set_title(get_title());
+		dialog.set_parent(*this);
+		dialog.set_title(_("Getting configuration"));
+		dialog.set_sub_title("http://www.google.com");
+		dialog.set_icon_name("dialog-information");
+		dialog.footer(true);
+		dialog.set_decorated(true);
+		dialog.set_deletable(true);
+		dialog.show();
+		dialog.run();
+	}
+#endif // DEBUG
+
 	// Load options
 	{
 		Dialog::Progress dialog;
 		dialog.Gtk::Window::set_title(get_title());
 		dialog.set_parent(*this);
-		dialog.sub_title() = _("Getting configuration");
+		dialog.set_title(_("Getting configuration"));
 		dialog.set_icon_name("");
 		dialog.footer(false);
 		dialog.set_decorated(true);

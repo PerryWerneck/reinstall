@@ -43,12 +43,23 @@
 	content_area.set_orientation(ORIENTATION_VERTICAL);
 
 	widgets.title.get_style_context()->add_class("dialog-title");
+	widgets.title.set_hexpand(true);
+	widgets.title.set_vexpand(false);
 	widgets.title.set_line_wrap(false);
 	widgets.title.set_ellipsize(Pango::ELLIPSIZE_START);
-	widgets.header.pack_start(widgets.title,true,true,0);
+	widgets.header.attach(widgets.title,0,0,1,1);
+
+	widgets.subtitle.get_style_context()->add_class("dialog-subtitle");
+	widgets.subtitle.set_hexpand(true);
+	widgets.subtitle.set_vexpand(false);
+	widgets.subtitle.set_line_wrap(false);
+	widgets.subtitle.set_ellipsize(Pango::ELLIPSIZE_START);
+	widgets.header.attach(widgets.subtitle,0,1,1,1);
 
 	widgets.icon.get_style_context()->add_class("dialog-icon");
-	widgets.header.pack_end(widgets.icon,false,false,0);
+	widgets.icon.set_hexpand(false);
+	widgets.icon.set_vexpand(false);
+	widgets.header.attach(widgets.icon,1,0,2,2);
 
 	content_area.pack_start(widgets.header,false,false,0);
 
@@ -137,6 +148,22 @@
 
  }
 
+ void Dialog::Progress::set_sub_title(const char *sub_title)  {
+
+	auto str = make_shared<string>(sub_title);
+
+ 	Glib::signal_idle().connect([this,str](){
+		if(str->empty()) {
+			widgets.subtitle.hide();
+		} else {
+			widgets.subtitle.set_text(str->c_str());
+			widgets.subtitle.show();
+		}
+		return 0;
+ 	});
+
+ }
+
  void Dialog::Progress::set_step(const char *step)  {
 
 	auto str = make_shared<string>(step);
@@ -198,7 +225,9 @@
  	Glib::signal_idle().connect([this,&object](){
 
 		// object.set_dialog(*this);
-		sub_title().set_text(_("Initializing"));
+		set_title(object.get_label().c_str());
+		set_sub_title(_("Initializing"));
+
 		action().set_text("");
 		message().set_text("");
 		step().set_text("");
