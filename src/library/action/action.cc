@@ -190,13 +190,13 @@
 	void Action::prepare(Worker &worker) {
 
 		{
-			Dialog::Progress::getInstance().set(_("Initializing"));
+			Dialog::Progress::getInstance().set_title(_("Initializing"));
 			worker.pre(*this);
 		}
 
 		// Update kernel parameters.
 		{
-			Dialog::Progress::getInstance().set(_("Getting installation parameters"));
+			Dialog::Progress::getInstance().set_title(_("Getting installation parameters"));
 			for(KernelParameter &kparm : kparms) {
 				kparm.set(*this);
 			}
@@ -211,12 +211,13 @@
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
-		progress.set(_("Updating file sources"));
+		progress.set_title("Downloading required files");
+		progress.set_step(_("Updating file sources"));
 		for(auto source : sources) {
 			source->set(*this);
 		}
 
-		progress.set(_("Getting file list"));
+		progress.set_step(_("Getting file list"));
 		{
 			std::vector<std::shared_ptr<Source>> contents;
 
@@ -279,7 +280,7 @@
 	void Action::applyTemplates() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set(_("Applying templates"));
+		progress.set_title(_("Applying templates"));
 
 		for(auto tmpl : templates) {
 

@@ -406,7 +406,7 @@
 		}
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set(_("Writing ISO image"));
+		progress.set_title(_("Writing ISO image"));
 
 		try {
 
@@ -440,7 +440,7 @@
 		burn_src->free_data(burn_src);
 		free(burn_src);
 
-		progress.set(_("Finalizing"));
+		progress.set_title(_("Finalizing"));
 		::fsync(fd);
 
 	}

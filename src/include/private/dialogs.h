@@ -102,7 +102,8 @@
 		// Interface with libreinstall.
 		void show() override;
 		void hide() override;
-		void set(const char *message) override;
+		void set_title(const char *title) override;
+		void set_step(const char *step) override;
 		void count(size_t count, size_t total) override;
 		void update(double current, double total) override;
 		void set(const Reinstall::Abstract::Object &object) override;

@@ -192,7 +192,7 @@
 		// Create and activate worker
 		Reinstall::iso9660::Worker worker;
 
-		progress.set(_("Building installation image"));
+		progress.set_title(_("Building installation image"));
 
 		// Setup isofs.
 		worker.set_system_area(system_area);

@@ -28,7 +28,7 @@
 
  namespace Widget {
 
- 	class Icon : public Gtk::Image {
+ 	class Icon : public Gtk::Image, public Reinstall::Abstract::Icon {
 	public:
 		Icon(const pugi::xml_node &node, const char *attrname, const Gtk::IconSize iconsize = Gtk::ICON_SIZE_BUTTON);
 

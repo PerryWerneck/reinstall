@@ -32,7 +32,7 @@
 
 	set_decorated(false);
 
-	set_default_size(400,-1);
+	set_default_size(500,-1);
 
 	get_style_context()->add_class("dialog-progress");
 	content_area.get_style_context()->add_class("dialog-contents");
@@ -42,6 +42,9 @@
 	content_area.set_homogeneous(false);
 	content_area.set_orientation(ORIENTATION_VERTICAL);
 
+	widgets.title.set_line_wrap(false);
+	//widgets.title.set_max_width_chars(100);
+	widgets.title.set_ellipsize(Pango::ELLIPSIZE_START);
 	content_area.pack_start(widgets.title,false,false,0);
 
 	widgets.progress.set_valign(ALIGN_CENTER);
@@ -49,8 +52,7 @@
 
 	widgets.footer.pack_start(widgets.action,false,false,3);
 
-	widgets.message.set_line_wrap(false);
-	widgets.message.set_ellipsize(Pango::ELLIPSIZE_START);
+	widgets.message.set_ellipsize(Pango::ELLIPSIZE_END);
 	widgets.footer.pack_start(widgets.message,true,true,3);
 
 	widgets.footer.pack_end(widgets.step,false,false,3);
@@ -65,7 +67,7 @@
 
  }
 
- bool Dialog::Progress::on_timeout(int timer_number) {
+ bool Dialog::Progress::on_timeout(int UDJAT_UNUSED(timer_number)) {
 
 	if(is_visible()) {
 		if(timer.idle >= 100) {
@@ -119,12 +121,23 @@
 
  }
 
- void Dialog::Progress::set(const char *message)  {
+ void Dialog::Progress::set_title(const char *title)  {
 
-	auto str = make_shared<string>(message);
+	auto str = make_shared<string>(title);
 
  	Glib::signal_idle().connect([this,str](){
 		widgets.title.set_text(str->c_str());
+		return 0;
+ 	});
+
+ }
+
+ void Dialog::Progress::set_step(const char *step)  {
+
+	auto str = make_shared<string>(step);
+
+ 	Glib::signal_idle().connect([this,str](){
+		widgets.message.set_text(str->c_str());
 		return 0;
  	});
 
@@ -167,8 +180,7 @@
 		message().set_text("");
 		step().set_text("");
 
-		set_title(object.get_label());
-
+		Gtk::Window::set_title(object.get_label());
 
 
 		timer.idle = -1;

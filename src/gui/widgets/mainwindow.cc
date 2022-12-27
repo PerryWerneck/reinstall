@@ -115,7 +115,7 @@
 	// Load options
 	{
 		Dialog::Progress dialog;
-		dialog.set_title(get_title());
+		dialog.Gtk::Window::set_title(get_title());
 		dialog.set_parent(*this);
 		dialog.sub_title() = _("Getting configuration");
 		dialog.icon().hide();

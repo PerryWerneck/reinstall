@@ -51,7 +51,10 @@
 		void Progress::count(size_t count, size_t total) {
 		}
 
-		void Progress::set(const char *message) {
+		void Progress::set_title(const char *title) {
+		}
+
+		void Progress::set_step(const char *step) {
 		}
 
 	}
