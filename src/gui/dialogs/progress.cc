@@ -42,20 +42,25 @@
 	content_area.set_homogeneous(false);
 	content_area.set_orientation(ORIENTATION_VERTICAL);
 
+	widgets.title.get_style_context()->add_class("dialog-title");
 	widgets.title.set_line_wrap(false);
-	//widgets.title.set_max_width_chars(100);
 	widgets.title.set_ellipsize(Pango::ELLIPSIZE_START);
-	content_area.pack_start(widgets.title,false,false,0);
+	widgets.header.pack_start(widgets.title,true,true,0);
+
+	widgets.icon.get_style_context()->add_class("dialog-icon");
+	widgets.header.pack_end(widgets.icon,false,false,0);
+
+	content_area.pack_start(widgets.header,false,false,0);
 
 	widgets.progress.set_valign(ALIGN_CENTER);
 	content_area.pack_start(widgets.progress,true,true,0);
 
-	widgets.footer.pack_start(widgets.action,false,false,3);
+	widgets.footer.pack_start(widgets.action,false,false,0);
 
 	widgets.message.set_ellipsize(Pango::ELLIPSIZE_END);
-	widgets.footer.pack_start(widgets.message,true,true,3);
+	widgets.footer.pack_start(widgets.message,true,true,0);
 
-	widgets.footer.pack_end(widgets.step,false,false,3);
+	widgets.footer.pack_end(widgets.step,false,false,0);
 
 	content_area.pack_end(widgets.footer,false,false,0);
 
@@ -138,6 +143,24 @@
 
  	Glib::signal_idle().connect([this,str](){
 		widgets.message.set_text(str->c_str());
+		return 0;
+ 	});
+
+ }
+
+ void Dialog::Progress::set_icon_name(const char *icon_name) {
+
+	auto str = make_shared<string>(icon_name);
+
+ 	Glib::signal_idle().connect([this,str](){
+
+		if(str->empty()) {
+			widgets.icon.hide();
+		} else {
+			widgets.icon.set_from_icon_name(str->c_str(),Gtk::ICON_SIZE_DIALOG);
+			widgets.icon.show();
+		}
+
 		return 0;
  	});
 

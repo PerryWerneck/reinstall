@@ -59,6 +59,7 @@
 			virtual void set(const Action &action);
 			virtual void set_title(const char *title);
 			virtual void set_step(const char *step);
+			virtual void set_icon_name(const char *icon_name);
 
 			/// @brief Update counters.
 			virtual void count(size_t count, size_t total);

@@ -100,33 +100,6 @@
 
 		};
 
-		/*
-		class UDJAT_API Message : Udjat::NamedObject {
-		private:
-			const Action &action;				///< @brief Action for this dialog.
-
-			const char *title = "";				///< @brief Dialog title.
-			const char *icon = "";				///< @brief Dialog icon.
-
-			/// @brief Dialog messages.
-			struct {
-				const char *primary = "";		///< @brief Primary text.
-				const char *secondary = "";		///< @brief Secondary text.
-			} text;
-
-			struct {
-				const char *value = "";			///< @brief URL target.
-				const char *label = "";			///< @brief Label for URL button.
-			} url;
-
-		public:
-			Message(const Action &action, const pugi::xml_node &node);
-
-			bool getProperty(const char *key, std::string &value) const noexcept override;
-
-		};
-		*/
-
 		std::list<std::shared_ptr<Template>> templates;
 
 	protected:
@@ -162,16 +135,12 @@
 		/// @brief Run first step with worker.
 		virtual void prepare(Reinstall::Worker &worker);
 
-		/// @brief Get first folder.
-		// std::shared_ptr<Source> folder();
-
-		// bool getProperty(const char *key, std::string &value) const noexcept override;
-
 		/// @brief Object with the UI definitions.
 		std::shared_ptr<Abstract::Object> item;
 
 		Action(const pugi::xml_node &node);
 
+		/// @brief Icon name (for dialogs and menus).
 		const char *icon_name = "";
 
 	private:

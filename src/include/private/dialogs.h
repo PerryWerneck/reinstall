@@ -61,6 +61,7 @@
 			Label message{ "", Gtk::ALIGN_CENTER };
 			Label step{ "", Gtk::ALIGN_END };
 
+			Gtk::Box header{Gtk::ORIENTATION_HORIZONTAL};
 			Gtk::Image icon;
 			Gtk::ProgressBar progress;
 			Gtk::Box footer{Gtk::ORIENTATION_HORIZONTAL};
@@ -104,6 +105,7 @@
 		void hide() override;
 		void set_title(const char *title) override;
 		void set_step(const char *step) override;
+		void set_icon_name(const char *icon_name) override;
 		void count(size_t count, size_t total) override;
 		void update(double current, double total) override;
 		void set(const Reinstall::Abstract::Object &object) override;

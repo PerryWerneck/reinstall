@@ -29,12 +29,12 @@
 	namespace Dialog {
 
 		void Progress::set(const Action &action) {
+			set_icon_name(action.get_icon_name());
+			set_title(action.get_label().c_str());
+			set_step("");
 		}
 
 		Progress::~Progress() {
-#ifdef DEBUG
-			cout << "progress\tProgress dialog " << hex << this << dec << " deleted" << endl;
-#endif // DEBUG
 		}
 
 		Progress & Progress::getInstance() {
@@ -57,6 +57,8 @@
 		void Progress::set_step(const char *step) {
 		}
 
-	}
+		void Progress::set_icon_name(const char *icon_name) {
+		}
 
+	}
  }

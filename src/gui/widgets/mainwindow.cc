@@ -118,7 +118,7 @@
 		dialog.Gtk::Window::set_title(get_title());
 		dialog.set_parent(*this);
 		dialog.sub_title() = _("Getting configuration");
-		dialog.icon().hide();
+		dialog.set_icon_name("");
 		dialog.footer(false);
 		dialog.set_decorated(true);
 		dialog.set_deletable(false);
