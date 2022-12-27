@@ -39,6 +39,15 @@
 .dialog-contents {
 }
 
+.dialog-title {
+	font-weight: bold;
+}
+
+.dialog-subtitle {
+	font-size: 70%;
+	opacity: 0.9;
+}
+
 .sidebar {
 	min-width: 150px;
 	margin-right: 6px;

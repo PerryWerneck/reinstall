@@ -45,6 +45,7 @@
 	widgets.title.get_style_context()->add_class("dialog-title");
 	widgets.title.set_hexpand(true);
 	widgets.title.set_vexpand(false);
+	widgets.title.set_valign(ALIGN_START);
 	widgets.title.set_line_wrap(false);
 	widgets.title.set_ellipsize(Pango::ELLIPSIZE_START);
 	widgets.header.attach(widgets.title,0,0,1,1);
@@ -52,6 +53,7 @@
 	widgets.subtitle.get_style_context()->add_class("dialog-subtitle");
 	widgets.subtitle.set_hexpand(true);
 	widgets.subtitle.set_vexpand(false);
+	widgets.subtitle.set_valign(ALIGN_START);
 	widgets.subtitle.set_line_wrap(false);
 	widgets.subtitle.set_ellipsize(Pango::ELLIPSIZE_START);
 	widgets.header.attach(widgets.subtitle,0,1,1,1);
