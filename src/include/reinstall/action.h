@@ -172,6 +172,8 @@
 
 		Action(const pugi::xml_node &node);
 
+		const char *icon_name = "";
+
 	private:
 		static Action * selected;		///< @brief Selected action.
 
@@ -202,6 +204,10 @@
 
 		inline bool visible() const noexcept {
 			return options.visible;
+		}
+
+		inline const char * get_icon_name() const noexcept {
+			return icon_name;
 		}
 
 		/// @brief Get UI Object.
