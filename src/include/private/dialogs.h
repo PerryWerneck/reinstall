@@ -29,7 +29,7 @@
 	/// @brief Popup dialog.
 	class Popup : public Gtk::MessageDialog  {
 	public:
-		Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Abstract::Popup &settings, Gtk::MessageType = Gtk::MESSAGE_INFO, Gtk::ButtonsType buttons = Gtk::BUTTONS_OK);
+		Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Popup &settings, Gtk::MessageType = Gtk::MESSAGE_INFO, Gtk::ButtonsType buttons = Gtk::BUTTONS_OK);
 
 	};
 

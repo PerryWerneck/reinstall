@@ -145,72 +145,7 @@
 		dialog.run();
 	}
 
-	/*
-	// Create groups.
-	Reinstall::Controller::getInstance().for_each([this](std::shared_ptr<Reinstall::Abstract::Group> group){
-
-		auto box = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
-		box->get_style_context()->add_class("group-box");
-
-		debug("Adding option ",std::to_string(group->title));
-
-		auto grid = new Gtk::Grid();
-		grid->get_style_context()->add_class("group-title-box");
-
-		group->title.get_style_context()->add_class("group-title");
-		grid->attach(group->title,0,0,1,1);
-		if(group->subtitle) {
-			group->subtitle.get_style_context()->add_class("group-subtitle");
-			grid->attach(group->subtitle,0,1,1,1);
-		}
-
-		box->add(*grid);
-
-		group->for_each([this,group,box](std::shared_ptr<Reinstall::Action> action) {
-
-			debug("Adding option ",std::to_string(group->title),"/",std::to_string(action->title));
-			::Widget::Action *button = new ::Widget::Action(action);
-
-			button->set_inconsistent();
-			button->set_halign(Gtk::ALIGN_FILL);
-			button->set_mode(false);
-			box->pack_start(*button,true,true,0);
-
-			button->set_active(action->is_default());
-
-			if(button->get_active()) {
-				button->get_style_context()->add_class("action-active");
-				selected = action;
-				buttons.apply.set_sensitive(true);
-			} else {
-				button->get_style_context()->add_class("action-inactive");
-			}
-
-			button->signal_toggled().connect([&,button,action]() {
-
-				if(button->get_active()) {
-					selected = action;
-					debug("Action '",std::to_string(selected->title),"' is now enabled");
-					buttons.apply.set_sensitive(true);
-					button->get_style_context()->remove_class("action-inactive");
-					button->get_style_context()->add_class("action-active");
-				} else {
-					selected = nullptr;
-					button->get_style_context()->remove_class("action-active");
-					button->get_style_context()->add_class("action-inactive");
-				}
-
-			});
-
-
-			return false;
-
-		});
-
-		layout.view.pack_start(*box,false,false,0);
-		return false;
-	});
-	*/
+	buttons.apply.set_sensitive(Reinstall::Action::get_selected() != nullptr);
 
 	layout.view.show_all();
 
@@ -242,18 +177,17 @@
 		return;
 	}
 
-	/*
- 	g_message("Apply '%s' action",std::to_string(action->title).c_str());
+ 	g_message("Apply '%s'",std::to_string(*action).c_str());
 	buttons.apply.set_sensitive(false);
 	buttons.cancel.set_sensitive(false);
 	layout.view.set_sensitive(false);
 
 	Gtk::ResponseType response = Gtk::RESPONSE_YES;
-	if(selected->confirmation) {
+	if(action->confirmation()) {
 		response = (Gtk::ResponseType) Dialog::Popup{
 						*this,
-						*selected,
-						selected->confirmation,
+						*action->get_button(),
+						action->confirmation(),
 						Gtk::MESSAGE_QUESTION,
 						Gtk::BUTTONS_YES_NO
 					}.run();
@@ -268,7 +202,7 @@
 		dialog.set_parent(*this);
 		dialog.set_decorated(false);
 		dialog.set_deletable(false);
-		dialog.set(*action);
+		dialog.set(*action->get_button());
 		dialog.show();
 
 		Udjat::ThreadPool::getInstance().push([&dialog,action,&error_message,this](){
@@ -293,17 +227,17 @@
 
 		if(!error_message.empty()) {
 
-			if(action->failed) {
+			if(action->failed()) {
 
 				Dialog::Popup dialog_fail{
 					*this,
-					*action,
-					action->failed,
+					*action->get_button(),
+					action->failed(),
 					Gtk::MESSAGE_ERROR,
 					Gtk::BUTTONS_CLOSE
 				};
 
-				if(!selected->failed.has_secondary()) {
+				if(!action->failed().has_secondary()) {
 					dialog_fail.set_secondary_text(error_message);
 				}
 				dialog_fail.run();
@@ -319,19 +253,19 @@
 					true
 				};
 
-				action->set_dialog(dialog_fail);
+				//action->set_dialog(dialog_fail);
 				dialog_fail.set_secondary_text(error_message);
 				dialog_fail.show();
 				dialog_fail.run();
 
 			}
 
-		} else if(action->success) {
+		} else if(action->success()) {
 
 			Dialog::Popup{
 				*this,
-				*action,
-				action->success,
+				*action->get_button(),
+				action->success(),
 				Gtk::MESSAGE_INFO,
 				Gtk::BUTTONS_OK
 			}.run();
@@ -343,5 +277,5 @@
 	buttons.apply.set_sensitive(true);
 	buttons.cancel.set_sensitive(true);
 	layout.view.set_sensitive(true);
-	*/
+
  }

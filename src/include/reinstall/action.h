@@ -175,6 +175,12 @@
 	private:
 		static Action * selected;		///< @brief Selected action.
 
+		struct {
+			Popup confirmation;
+			Popup success;
+			Popup failed;
+		} dialog;
+
 	public:
 		virtual ~Action();
 
@@ -223,6 +229,18 @@
 
 		void for_each(const std::function<void (Source &source)> &call);
 		void for_each(const std::function<void (std::shared_ptr<Source> &source)> &call);
+
+		inline const Popup & confirmation() const {
+			return dialog.confirmation;
+		}
+
+		inline const Popup & success() const {
+			return dialog.success;
+		}
+
+		inline const Popup & failed() const {
+			return dialog.failed;
+		}
 
 	};
 

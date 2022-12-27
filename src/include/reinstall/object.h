@@ -27,48 +27,40 @@
 
  namespace Reinstall {
 
+	/// @brief Dialog box from XML.
+	class UDJAT_API Popup {
+	public:
+		const char *message = "";
+		const char *secondary = "";
+
+		struct {
+			const char *link = "";
+			const char *label = "";
+
+			inline operator bool() const {
+				return (link && *link);
+			}
+
+		} url;
+
+		Popup() = default;
+
+		void set(const pugi::xml_node &node);
+
+		inline operator bool() const noexcept {
+			return (message && *message);
+		}
+
+		inline bool has_secondary() const noexcept {
+			return secondary && *secondary;
+		}
+
+
+	};
+
 	namespace Abstract {
 
-		/// @brief Dialog box from XML.
-		class UDJAT_API Popup {
-		public:
-			const char *message = "";
-			const char *secondary = "";
-
-			struct {
-				const char *link = "";
-				const char *label = "";
-
-				inline operator bool() const {
-					return (link && *link);
-				}
-
-			} url;
-
-			Popup() = default;
-
-			void set(const pugi::xml_node &node);
-
-			inline operator bool() const noexcept {
-				return (message && *message);
-			}
-
-			inline bool has_secondary() const noexcept {
-				return secondary && *secondary;
-			}
-
-
-		};
-
 		class UDJAT_API Object : public Udjat::NamedObject {
-		private:
-
-			struct {
-				Popup confirmation;
-				Popup success;
-				Popup failed;
-			} dialog;
-
 		public:
 
 			static const char * get_text(const pugi::xml_node &node, const char *attrname);

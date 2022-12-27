@@ -50,35 +50,6 @@
 
 		Udjat::NamedObject::set(node);
 
-		// Get dialogs
-		for(pugi::xml_node parent = node; parent; parent = parent.parent()) {
-
-			for(auto child = parent.child("dialog"); child; child = child.next_sibling("dialog")) {
-
-				switch(String{child,"name"}.select("confirmation","success","failed",nullptr)) {
-				case 0: // confirmation.
-					if(!dialog.confirmation) {
-						dialog.confirmation.set(child);
-					}
-					break;
-				case 1: // success
-					if(!dialog.success) {
-						dialog.success.set(child);
-					}
-					break;
-				case 2: // failed
-					if(!dialog.failed) {
-						dialog.failed.set(child);
-					}
-					break;
-				default:
-					warning() << "Unexpected dialog name '" << String{child,"name"} << "'" << endl;
-				}
-
-			}
-
-		}
-
 	}
 
 	const char * Abstract::Object::get_text(const pugi::xml_node &node, const char *attrname) {
@@ -95,7 +66,7 @@
 
 	}
 
-	void Abstract::Popup::set(const pugi::xml_node &node) {
+	void Popup::set(const pugi::xml_node &node) {
 
 		const char *group = node.attribute("settings-from").as_string("popup-defaults");
 

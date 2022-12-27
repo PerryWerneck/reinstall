@@ -22,7 +22,7 @@
  #include <glibmm/i18n.h>
  #include <private/dialogs.h>
 
- Dialog::Popup::Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Abstract::Popup &settings, Gtk::MessageType type, Gtk::ButtonsType buttons)
+ Dialog::Popup::Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Popup &settings, Gtk::MessageType type, Gtk::ButtonsType buttons)
 	: Gtk::MessageDialog{parent,settings.message,false,type,buttons,true} {
 
 	//object.set_dialog(*this);

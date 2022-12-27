@@ -76,13 +76,41 @@
 
 	Action::Options::Options(const pugi::xml_node &node)
 		: enabled(OptionFactory(node,"enabled",true)), visible(OptionFactory(node,"visible",true)) {
-
 	}
 
 	Action::Action(const pugi::xml_node &node) : Udjat::NamedObject(node), options{node}, item{UserInterface::getInstance().ActionFactory(node)} {
 
 		if(node.attribute("default").as_bool(false) || !selected) {
 			selected = this;
+		}
+
+		// Get dialogs
+		for(pugi::xml_node parent = node; parent; parent = parent.parent()) {
+
+			for(auto child = parent.child("dialog"); child; child = child.next_sibling("dialog")) {
+
+				switch(String{child,"name"}.select("confirmation","success","failed",nullptr)) {
+				case 0: // confirmation.
+					if(!dialog.confirmation) {
+						dialog.confirmation.set(child);
+					}
+					break;
+				case 1: // success
+					if(!dialog.success) {
+						dialog.success.set(child);
+					}
+					break;
+				case 2: // failed
+					if(!dialog.failed) {
+						dialog.failed.set(child);
+					}
+					break;
+				default:
+					warning() << "Unexpected dialog name '" << String{child,"name"} << "'" << endl;
+				}
+
+			}
+
 		}
 
 		scan(node, "source", [this](const pugi::xml_node &node){
