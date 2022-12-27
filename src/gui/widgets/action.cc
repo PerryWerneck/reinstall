@@ -30,22 +30,6 @@
 
 	Gtk::RadioButton::Group Widget::Action::group;
 
-	Widget::Label::Label(const pugi::xml_node &node, const char *attrname, Gtk::Align halign, Gtk::Align valign) : Gtk::Label("",halign,valign) {
-
-		const char *text = Reinstall::Abstract::Object::get_text(node,attrname);
-
-		if(*text) {
-
-			set_text(text);
-
-			const char *tooltip = Reinstall::Abstract::Object::get_text(node,"tooltip");
-			if(*tooltip) {
-				set_tooltip_text(tooltip);
-			}
-
-		}
-	}
-
 	Action::Action(const pugi::xml_node &node) : Gtk::RadioButton{group}, label{node,"title"}, body{node,"sub-title"}, icon{node,"icon",Gtk::ICON_SIZE_DND} {
 
 		set_hexpand(true);
