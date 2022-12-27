@@ -68,12 +68,11 @@
 	widgets.progress.set_valign(ALIGN_CENTER);
 	content_area.pack_start(widgets.progress,true,true,0);
 
-	widgets.footer.pack_start(widgets.action,false,false,0);
-
-	widgets.message.set_ellipsize(Pango::ELLIPSIZE_END);
-	widgets.footer.pack_start(widgets.message,true,true,0);
-
-	widgets.footer.pack_end(widgets.step,false,false,0);
+	widgets.footer.get_style_context()->add_class("dialog-footer");
+	widgets.action.get_style_context()->add_class("dialog-action");
+	widgets.step.get_style_context()->add_class("dialog-step");
+	widgets.footer.pack_start(widgets.action,true,true,0);
+	widgets.footer.pack_end(widgets.step,true,true,0);
 
 	content_area.pack_end(widgets.footer,false,false,0);
 
@@ -171,7 +170,7 @@
 	auto str = make_shared<string>(step);
 
  	Glib::signal_idle().connect([this,str](){
-		widgets.message.set_text(str->c_str());
+		widgets.step.set_text(str->c_str());
 		return 0;
  	});
 
@@ -230,12 +229,15 @@
 		set_title(object.get_label().c_str());
 		set_sub_title(_("Initializing"));
 
+#ifdef DEBUG
+		action().set_text("action");
+		step().set_text("step");
+#else
 		action().set_text("");
-		message().set_text("");
 		step().set_text("");
+#endif // DEBUG
 
 		Gtk::Window::set_title(object.get_label());
-
 
 		timer.idle = -1;
 

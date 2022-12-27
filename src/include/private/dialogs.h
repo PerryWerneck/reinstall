@@ -58,9 +58,8 @@
 		struct {
 			Label title{ "" };
 			Label subtitle{ "" };
-			Label action{ "", Gtk::ALIGN_START };
-			Label message{ "", Gtk::ALIGN_CENTER };
-			Label step{ "", Gtk::ALIGN_END };
+			Label action{ "T1", Gtk::ALIGN_START };
+			Label step{ "T2", Gtk::ALIGN_END };
 
 			Gtk::Grid header;
 			Gtk::Image icon;
@@ -83,10 +82,6 @@
 
 		inline Label & action() {
 			return widgets.action;
-		}
-
-		inline Label & message() {
-			return widgets.message;
 		}
 
 		inline Label & step() {

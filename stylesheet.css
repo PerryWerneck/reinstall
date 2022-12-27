@@ -45,7 +45,13 @@
 
 .dialog-subtitle {
 	font-size: 70%;
-	opacity: 0.9;
+	font-weight: 400;
+}
+
+.dialog-footer {
+	font-size: 70%;
+	font-weight: 400;
+	font-style: italic;
 }
 
 .sidebar {
