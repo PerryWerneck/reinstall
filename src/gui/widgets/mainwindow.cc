@@ -112,6 +112,7 @@
 
  void MainWindow::on_show() {
 
+ /*
 #ifdef DEBUG
 	{
 		Dialog::Progress dialog;
@@ -127,6 +128,7 @@
 		dialog.run();
 	}
 #endif // DEBUG
+*/
 
 	// Load options
 	{
@@ -134,6 +136,7 @@
 		dialog.Gtk::Window::set_title(get_title());
 		dialog.set_parent(*this);
 		dialog.set_title(_("Getting configuration"));
+		dialog.set_sub_title(_("Loading option list"));
 		dialog.set_icon_name("");
 		dialog.footer(false);
 		dialog.set_decorated(true);
@@ -152,6 +155,8 @@
 
 			// Load image definitions.
 			Udjat::Application::setup("./xml.d",true);
+
+			sleep(5);
 
 			// And dismiss dialog.
 			dialog.dismiss();
