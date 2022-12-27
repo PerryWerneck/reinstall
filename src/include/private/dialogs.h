@@ -29,7 +29,7 @@
 	/// @brief Popup dialog.
 	class Popup : public Gtk::MessageDialog  {
 	public:
-		Popup(Gtk::Window &parent, const Reinstall::Object &object, const Reinstall::Object::Popup &settings, Gtk::MessageType = Gtk::MESSAGE_INFO, Gtk::ButtonsType buttons = Gtk::BUTTONS_OK);
+		Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Abstract::Popup &settings, Gtk::MessageType = Gtk::MESSAGE_INFO, Gtk::ButtonsType buttons = Gtk::BUTTONS_OK);
 
 	};
 
@@ -105,7 +105,7 @@
 		void set(const char *message) override;
 		void count(size_t count, size_t total) override;
 		void update(double current, double total) override;
-		void set(const Reinstall::Object &object) override;
+		void set(const Reinstall::Abstract::Object &object) override;
 
 	};
 

@@ -59,19 +59,15 @@
 
 		public:
 			Object(const pugi::xml_node &node) {
+
+				label = get_text(node,"label");
+				body = get_text(node,"sub-title");
 				set(node);
+
 			}
 
-			void set_label(const char *label) override {
-				this->label = label;
-			}
-
-			const char * get_label() const override {
+			std::string get_label() const override {
 				return label;
-			}
-
-			void set_body(const char *body) override {
-				this->body = body;
 			}
 
 		};
@@ -89,19 +85,15 @@
 
 		public:
 			Group(const pugi::xml_node &node) {
+
+				label = get_text(node,"label");
+				body = get_text(node,"sub-title");
 				set(node);
+
 			}
 
-			void set_label(const char *label) override {
-				this->label = label;
-			}
-
-			const char * get_label() const override {
+			std::string get_label() const override {
 				return label;
-			}
-
-			void set_body(const char *body) override {
-				this->body = body;
 			}
 
 		};

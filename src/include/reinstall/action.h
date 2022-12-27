@@ -173,17 +173,21 @@
 		Action(const pugi::xml_node &node);
 
 	private:
-		static Action * defaction;		///< @brief Default action.
+		static Action * selected;		///< @brief Selected action.
 
 	public:
 		virtual ~Action();
 
 		unsigned short id;
 
-		static Action & getDefault();
+		static Action * get_selected();
 
-		inline bool is_default() const noexcept {
-			return defaction == this;
+		inline void set_selected() noexcept {
+			selected = this;
+		}
+
+		inline bool is_selected() const noexcept {
+			return selected == this;
 		}
 
 		inline bool enabled() const noexcept {
@@ -195,7 +199,7 @@
 		}
 
 		/// @brief Get UI Object.
-		inline std::shared_ptr<Abstract::Object> getButton() const {
+		inline std::shared_ptr<Abstract::Object> get_button() const {
 			return item;
 		}
 
@@ -221,5 +225,7 @@
 		void for_each(const std::function<void (std::shared_ptr<Source> &source)> &call);
 
 	};
+
+	UDJAT_API void push_back(const pugi::xml_node &node, std::shared_ptr<Action> action);
 
  }

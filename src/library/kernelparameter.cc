@@ -22,6 +22,7 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
  #include <udjat/tools/url.h>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
  using namespace Udjat;

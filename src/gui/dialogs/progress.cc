@@ -157,11 +157,11 @@
 
  }
 
- void Dialog::Progress::set(const Reinstall::Object &object) {
+ void Dialog::Progress::set(const Reinstall::Abstract::Object &object) {
 
  	Glib::signal_idle().connect([this,&object](){
 
-		object.set_dialog(*this);
+		// object.set_dialog(*this);
 		sub_title().set_text(_("Initializing"));
 		action().set_text("");
 		message().set_text("");
@@ -169,6 +169,7 @@
 
 		timer.idle = -1;
 
+		/*
 		if(object.icon && *object.icon) {
 
 			// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
@@ -180,6 +181,7 @@
 			icon().hide();
 
 		}
+		*/
 
 		return 0;
 

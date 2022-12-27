@@ -22,11 +22,11 @@
 
  namespace Widget {
 
-	Icon::Icon(const char *name, const Gtk::IconSize iconsize) {
+	Icon::Icon(const pugi::xml_node &node, const char *attrname, const Gtk::IconSize iconsize) {
 
 		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
 
-		set_from_icon_name(name, iconsize);
+		// set_from_icon_name(name, iconsize);
 
 	}
 

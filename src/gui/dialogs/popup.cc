@@ -22,10 +22,10 @@
  #include <glibmm/i18n.h>
  #include <private/dialogs.h>
 
- Dialog::Popup::Popup(Gtk::Window &parent, const Reinstall::Object &object, const Reinstall::Object::Popup &settings, Gtk::MessageType type, Gtk::ButtonsType buttons)
+ Dialog::Popup::Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Abstract::Popup &settings, Gtk::MessageType type, Gtk::ButtonsType buttons)
 	: Gtk::MessageDialog{parent,settings.message,false,type,buttons,true} {
 
-	object.set_dialog(*this);
+	//object.set_dialog(*this);
 
 	if(settings.secondary) {
 		set_secondary_text(settings.secondary);

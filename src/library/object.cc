@@ -24,6 +24,7 @@
  #include <udjat/tools/string.h>
  #include <udjat/tools/logger.h>
  #include <pugixml.hpp>
+ #include <udjat/tools/intl.h>
  #include <iostream>
 
  using namespace std;
@@ -48,24 +49,6 @@
 	void Abstract::Object::set(const pugi::xml_node &node) {
 
 		Udjat::NamedObject::set(node);
-
-		pugi::xml_node child;
-
-		// Get label
-		child = find(node,"label");
-		if(child) {
-			String label{child};
-			debug("label=",label.c_str());
-			set_label(label.as_quark());
-		}
-
-		// Get sub-title
-		child = find(node,"sub-title");
-		if(child) {
-			String body{child};
-			debug("body=",body.c_str());
-			set_body(body.as_quark());
-		}
 
 		// Get dialogs
 		for(pugi::xml_node parent = node; parent; parent = parent.parent()) {
@@ -95,6 +78,20 @@
 			}
 
 		}
+
+	}
+
+	const char * Abstract::Object::get_text(const pugi::xml_node &node, const char *attrname) {
+
+		pugi::xml_node child = find(node,attrname);
+		if(!child) {
+			return "";
+		}
+
+		String value{child};
+		value.expand(node,child.attribute("settings-from").as_string("widget-defaults"));
+
+		return value.as_quark();
 
 	}
 

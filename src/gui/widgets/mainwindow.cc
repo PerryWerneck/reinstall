@@ -145,8 +145,9 @@
 		dialog.run();
 	}
 
+	/*
 	// Create groups.
-	Reinstall::Controller::getInstance().for_each([this](std::shared_ptr<Reinstall::Group> group){
+	Reinstall::Controller::getInstance().for_each([this](std::shared_ptr<Reinstall::Abstract::Group> group){
 
 		auto box = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
 		box->get_style_context()->add_class("group-box");
@@ -209,6 +210,7 @@
 		layout.view.pack_start(*box,false,false,0);
 		return false;
 	});
+	*/
 
 	layout.view.show_all();
 
@@ -216,14 +218,32 @@
 
  }
 
+ std::shared_ptr<Reinstall::Abstract::Object> MainWindow::ActionFactory(const pugi::xml_node &node) {
+	return make_shared<::Widget::Action>(node);
+ }
+
+ std::shared_ptr<Reinstall::Abstract::Group> MainWindow::GroupFactory(const pugi::xml_node &node) {
+ 	auto group = make_shared<::Widget::Group>(node);
+
+ 	Glib::signal_idle().connect([this,group](){
+		layout.view.pack_start(*group,false,false,0);
+		return 0;
+ 	});
+
+	return group;
+ }
+
  void MainWindow::apply() {
 
-	if(!selected) {
+	Reinstall::Action *action = Reinstall::Action::get_selected();
+
+	if(!action) {
 		cerr << "Apply with no selected action" << endl;
 		return;
 	}
 
- 	g_message("Apply '%s' action",std::to_string(selected->title).c_str());
+	/*
+ 	g_message("Apply '%s' action",std::to_string(action->title).c_str());
 	buttons.apply.set_sensitive(false);
 	buttons.cancel.set_sensitive(false);
 	layout.view.set_sensitive(false);
@@ -248,14 +268,14 @@
 		dialog.set_parent(*this);
 		dialog.set_decorated(false);
 		dialog.set_deletable(false);
-		dialog.set(*selected);
+		dialog.set(*action);
 		dialog.show();
 
-		Udjat::ThreadPool::getInstance().push([&dialog,&error_message,this](){
+		Udjat::ThreadPool::getInstance().push([&dialog,action,&error_message,this](){
 
 			try {
 
-				selected->prepare();
+				action->prepare();
 
 			} catch(const std::exception &e) {
 
@@ -273,12 +293,12 @@
 
 		if(!error_message.empty()) {
 
-			if(selected->failed) {
+			if(action->failed) {
 
 				Dialog::Popup dialog_fail{
 					*this,
-					*selected,
-					selected->failed,
+					*action,
+					action->failed,
 					Gtk::MESSAGE_ERROR,
 					Gtk::BUTTONS_CLOSE
 				};
@@ -299,19 +319,19 @@
 					true
 				};
 
-				selected->set_dialog(dialog_fail);
+				action->set_dialog(dialog_fail);
 				dialog_fail.set_secondary_text(error_message);
 				dialog_fail.show();
 				dialog_fail.run();
 
 			}
 
-		} else if(selected->success) {
+		} else if(action->success) {
 
 			Dialog::Popup{
 				*this,
-				*selected,
-				selected->success,
+				*action,
+				action->success,
 				Gtk::MESSAGE_INFO,
 				Gtk::BUTTONS_OK
 			}.run();
@@ -323,4 +343,5 @@
 	buttons.apply.set_sensitive(true);
 	buttons.cancel.set_sensitive(true);
 	layout.view.set_sensitive(true);
+	*/
  }

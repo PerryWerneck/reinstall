@@ -80,7 +80,10 @@
 		// Initialize application, load xml definitions.
 		Udjat::Application::init(argc,argv,"./test.xml");
 
-		Reinstall::Action::getDefault().prepare();
+		Reinstall::Dialog::Progress progress;
+
+		Reinstall::Action &action = Reinstall::Action::getDefault();
+		action.prepare();
 	}
 
 	// Finalize application.

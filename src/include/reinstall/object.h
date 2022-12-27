@@ -23,8 +23,6 @@
  #include <udjat/defs.h>
  #include <udjat/tools/object.h>
  #include <cstring>
- #include <gtkmm.h>
- #include <glibmm/i18n.h>
  #include <string>
 
  namespace Reinstall {
@@ -71,24 +69,18 @@
 				Popup failed;
 			} dialog;
 
-		protected:
+		public:
 
+			static const char * get_text(const pugi::xml_node &node, const char *attrname);
 			static pugi::xml_node find(const pugi::xml_node &node, const char *attrname);
 
-			/// @brief Set object label.
-			virtual void set_label(const char *label) = 0;
-
-			/// @brief Set object body (subtitle).
-			virtual void set_body(const char *body) = 0;
-
-		public:
 			Object() = default;
 
 			virtual void set(const pugi::xml_node &node);
 
 			// bool getProperty(const char *key, std::string &value) const noexcept override;
 
-			virtual const char * get_label() const = 0;
+			virtual std::string get_label() const = 0;
 
 		};
 
@@ -154,7 +146,7 @@
 
  namespace std {
 
-	inline const char * to_string(const Reinstall::Abstract::Object &object) {
+	inline std::string to_string(const Reinstall::Abstract::Object &object) {
 		return object.get_label();
 	}
 

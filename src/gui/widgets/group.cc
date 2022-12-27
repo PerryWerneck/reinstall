@@ -17,7 +17,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- /*
  #include <config.h>
  #include <private/widgets.h>
 
@@ -26,9 +25,39 @@
 
  namespace Widget {
 
-	 Group::Group(std::shared_ptr<Reinstall::Group> group) {
+	 Group::Group(const pugi::xml_node &node) : label{node,"title"}, body{node,"sub-title"}, icon{node,"icon",Gtk::ICON_SIZE_DND} {
+
+		set_hexpand(true);
+		set_vexpand(false);
+		set_valign(ALIGN_START);
+		set_halign(ALIGN_START);
+
+		get_style_context()->add_class("group-box");
+		label.get_style_context()->add_class("group-title");
+
+		/*
+		if(icon) {
+			icon.get_style_context()->add_class("action-icon");
+			icon.set_valign(ALIGN_CENTER);
+			icon.set_halign(ALIGN_CENTER);
+			attach(icon,0,0,1,2);
+		}
+		*/
+
+		attach(label,1,0,1,1);
+		if(body) {
+			body.get_style_context()->add_class("group-subtitle");
+			attach(body,1,1,2,1);
+		}
+
+		set(node);
+
+		show_all();
 
 	 }
 
+	std::string Group::get_label() const {
+		return label.get_text().c_str();
+	}
+
  }
- */

@@ -23,30 +23,49 @@
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
  #include <reinstall/group.h>
+ #include <reinstall/object.h>
  #include <reinstall/action.h>
 
  namespace Widget {
 
  	class Icon : public Gtk::Image {
 	public:
-		Icon(const char *name, const Gtk::IconSize iconsize = Gtk::ICON_SIZE_BUTTON);
+		Icon(const pugi::xml_node &node, const char *attrname, const Gtk::IconSize iconsize = Gtk::ICON_SIZE_BUTTON);
 
  	};
 
-	class Group : public Gtk::Box {
+ 	class Label : public Gtk::Label {
 	public:
-		Group(const std::shared_ptr<Reinstall::Group> group);
+		Label(const pugi::xml_node &node, const char *attrname, Gtk::Align halign = Gtk::ALIGN_START, Gtk::Align valign=Gtk::ALIGN_START);
+
+		operator bool() const {
+			return get_text()[0] != 0;
+		}
 
 	};
 
-	class Action : public Gtk::RadioButton {
+	class Group : public Gtk::Grid, public Reinstall::Abstract::Group {
 	private:
-		static Gtk::RadioButton::Group group;
-
-		Gtk::Grid grid;
+		Label label, body;
+		Icon icon;
 
 	public:
-		Action(std::shared_ptr<Reinstall::Action> action);
+		Group(const pugi::xml_node &node);
+
+		std::string get_label() const override;
+	};
+
+	class Action : public Gtk::RadioButton, public Reinstall::Abstract::Object {
+	private:
+		static Gtk::RadioButton::Group group;
+		Gtk::Grid grid;
+		Label label, body;
+		Icon icon;
+
+	public:
+		Action(const pugi::xml_node &node);
+
+		std::string get_label() const override;
 
 	};
 

@@ -25,19 +25,24 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/url.h>
  #include <pugixml.hpp>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	Action *Action::defaction = nullptr;
+	UDJAT_API void push_back(const pugi::xml_node &node, std::shared_ptr<Action> action) {
+		Reinstall::Abstract::Group::find(node)->push_back(action);
+	}
 
-	Action & Action::getDefault() {
-		if(defaction) {
-			return *defaction;
+	Action *Action::selected = nullptr;
+
+	Action * Action::get_selected() {
+		if(selected) {
+			return selected;
 		}
-		throw runtime_error(_("No default action"));
+		throw runtime_error(_("No action"));
 	}
 
 	static bool OptionFactory(const pugi::xml_node &node, const char *attrname, bool def) {
@@ -76,9 +81,8 @@
 
 	Action::Action(const pugi::xml_node &node) : Udjat::NamedObject(node), options{node}, item{UserInterface::getInstance().ActionFactory(node)} {
 
-		if(node.attribute("default").as_bool(false) || !defaction) {
-			defaction = this;
-			info() << "'" << *item << "' is now the default action" << endl;
+		if(node.attribute("default").as_bool(false) || !selected) {
+			selected = this;
 		}
 
 		scan(node, "source", [this](const pugi::xml_node &node){
@@ -101,10 +105,6 @@
 			return false;
 		});
 
-		if(node.attribute("default").as_bool(false)) {
-			defaction = this;
-		}
-
 		// Create action id
 		static unsigned short id = 0;
 		this->id = ++id;
@@ -112,8 +112,8 @@
 	}
 
 	Action::~Action() {
-		if(defaction == this) {
-			defaction = nullptr;
+		if(selected == this) {
+			selected = nullptr;
 		}
 	}
 
