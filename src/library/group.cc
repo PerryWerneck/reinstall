@@ -51,6 +51,9 @@
 
 		// Setup
 		rc->set(node);
+		rc->setup(node);
+
+		Udjat::Logger::String{"Group '",std::to_string(*rc),"' initialized with id ",rc->id}.trace("group");
 
 		return rc;
 	}
@@ -96,7 +99,6 @@
 
 		static unsigned short id = 0;
 		this->id = ++id;
-		Udjat::Logger::String{"Group '",name(),"' initialized with id ",this->id}.trace("group");
 
 	}
 

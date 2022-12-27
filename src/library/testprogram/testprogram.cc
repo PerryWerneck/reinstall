@@ -46,6 +46,7 @@
 
 		};
 
+		debug("Constructing action '",node.attribute("name").as_string(),"'");
 		Reinstall::Abstract::Group::find(node)->push_back(make_shared<Action>(node));
 
 		return true;
@@ -57,6 +58,9 @@
 
 	setlocale( LC_ALL, "" );
 	Udjat::Quark::init(argc,argv);
+
+	// Get default UI
+	Reinstall::UserInterface interface;
 
 	// First get controller to construct the factories.
 	Reinstall::Controller::getInstance();

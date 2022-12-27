@@ -2,7 +2,7 @@
 <config>
 
 	<!-- System version -->
-	<!-- attribute name='osversion' value='15.4' / -->
+	<attribute name='osversion' value='15.4' />
 
 	<!-- HTTP is required for downloading files -->
 	<module name='http' required='yes' />
@@ -59,7 +59,7 @@
 	<group name='OpenSUSE'>
 
 		<!-- Nome que aparece na opção de menu -->
- 		<attribute name='label' value='OpenSUSE ${suseversion}' />
+ 		<attribute name='label' value='OpenSUSE ${osversion}' />
  		
  		<option name='opt1' default='yes'>
 

@@ -168,7 +168,7 @@
 		// bool getProperty(const char *key, std::string &value) const noexcept override;
 
 		/// @brief Object with the UI definitions.
-		std::shared_ptr<Abstract::Object> object;
+		std::shared_ptr<Abstract::Object> item;
 
 		Action(const pugi::xml_node &node);
 
@@ -192,6 +192,11 @@
 
 		inline bool visible() const noexcept {
 			return options.visible;
+		}
+
+		/// @brief Get UI Object.
+		inline std::shared_ptr<Abstract::Object> getButton() const {
+			return item;
 		}
 
 		/// @brief Get repository.

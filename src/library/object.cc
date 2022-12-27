@@ -54,13 +54,17 @@
 		// Get label
 		child = find(node,"label");
 		if(child) {
-			set_label(Quark{node,"value"}.c_str());
+			String label{child};
+			debug("label=",label.c_str());
+			set_label(label.as_quark());
 		}
 
 		// Get sub-title
 		child = find(node,"sub-title");
 		if(child) {
-			set_label(Quark{node,"value"}.c_str());
+			String body{child};
+			debug("body=",body.c_str());
+			set_body(body.as_quark());
 		}
 
 		// Get dialogs

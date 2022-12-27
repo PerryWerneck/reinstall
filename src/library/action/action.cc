@@ -74,7 +74,12 @@
 
 	}
 
-	Action::Action(const pugi::xml_node &node) : Udjat::NamedObject(node), options{node}, object{UserInterface::getInstance().ObjectFactory(node)} {
+	Action::Action(const pugi::xml_node &node) : Udjat::NamedObject(node), options{node}, item{UserInterface::getInstance().ActionFactory(node)} {
+
+		if(node.attribute("default").as_bool(false) || !defaction) {
+			defaction = this;
+			info() << "'" << *item << "' is now the default action" << endl;
+		}
 
 		scan(node, "source", [this](const pugi::xml_node &node){
 			push_back(make_shared<Source>(node));
