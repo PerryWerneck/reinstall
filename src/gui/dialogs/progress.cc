@@ -69,6 +69,7 @@
 	content_area.pack_start(widgets.progress,true,true,0);
 
 	widgets.footer.get_style_context()->add_class("dialog-footer");
+	widgets.footer.set_homogeneous(true);
 	widgets.action.get_style_context()->add_class("dialog-action");
 	widgets.step.get_style_context()->add_class("dialog-step");
 	widgets.footer.pack_start(widgets.action,true,true,0);
