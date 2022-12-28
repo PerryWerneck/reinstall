@@ -32,6 +32,8 @@
 
 	Action::Action(const pugi::xml_node &node, const char *icon_name) : Gtk::RadioButton{group}, label{node,"title"}, body{node,"sub-title"}, icon{node,"icon",Gtk::ICON_SIZE_DND,icon_name} {
 
+		const char *group = node.attribute("settings-from").as_string("action-defaults");
+
 		set_hexpand(true);
 		set_vexpand(false);
 		set_valign(ALIGN_START);
@@ -52,9 +54,12 @@
 
 		grid.show_all();
 
-		if(icon) {
+		if(icon && Udjat::Object::getAttribute(node,group,"icon-button-visible",true)) {
 			icon.get_style_context()->add_class("action-icon");
 			grid.attach(icon,0,0,1,2);
+			icon.show();
+		} else {
+			icon.hide();
 		}
 
 		add(grid);
@@ -79,7 +84,7 @@
 
 		});
 
-		show_all();
+		show();
 	}
 
 	std::string Action::get_label() const {
