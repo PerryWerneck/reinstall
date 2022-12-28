@@ -60,7 +60,7 @@
 		IsoBuilder(const pugi::xml_node &node);
 		virtual ~IsoBuilder();
 
-		/// @brief First step, build image.
+		/// @brief Build and write image.
 		void prepare() override;
 
 	};

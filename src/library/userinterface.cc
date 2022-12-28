@@ -50,6 +50,10 @@
 		}
 	}
 
+	std::string UserInterface::FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save) {
+		throw system_error(ENOTSUP,system_category(),"Cant get filename");
+	}
+
 	std::shared_ptr<Abstract::Object> UserInterface::ActionFactory(const pugi::xml_node &node) {
 
 		class Object : public Reinstall::Abstract::Object {

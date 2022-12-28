@@ -35,6 +35,9 @@
 
 		static UserInterface & getInstance();
 
+		/// @brief Get filename (gui thread).
+		virtual std::string FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save);
+
 		/// @brief Construct an action button.
 		virtual std::shared_ptr<Abstract::Object> ActionFactory(const pugi::xml_node &node);
 

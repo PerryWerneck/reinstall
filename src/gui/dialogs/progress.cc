@@ -114,7 +114,6 @@
  void Dialog::Progress::set_parent(Gtk::Window &window) {
 	set_modal(true);
 	set_transient_for(window);
-
  }
 
  bool Dialog::Progress::on_dismiss(int response_id) {

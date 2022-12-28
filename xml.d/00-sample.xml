@@ -63,7 +63,7 @@
  		<attribute name='sub-title' value='Testing group sub title' />
  		<attribute name='help' value='http://google.com' />
  		
- 		<iso-writer name='netinstall' default='yes' iso-filename='/tmp/test.iso'>
+ 		<iso-writer name='netinstall' default='yes' filename='/tmp/test.iso'>
 
 	 		<attribute name='title' value='Create USB drive using net install image' tooltip='Tooltip for first option'/>
 	 		<attribute name='sub-title' value='First option sub title' />
@@ -79,7 +79,7 @@
 
 		</iso-writer>
 		
-		<iso-writer name='netinstall' default='no' iso-filename='/tmp/test.iso'>
+		<iso-writer name='netinstall' default='no' filename='/tmp/test.iso'>
 	 		<attribute name='title' value='Second option' />
 	 		<attribute name='sub-title' value='Second option sub title' />
 		</iso-writer>

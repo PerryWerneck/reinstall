@@ -262,7 +262,7 @@
 		}
 
 		// Write image to destination.
-		write(worker);
+		// write(worker);
 
 	}
 

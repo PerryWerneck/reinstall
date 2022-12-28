@@ -146,7 +146,13 @@
 	}
 
 	void Action::prepare() {
-		warning() << "Dummy first step" << endl;
+	}
+
+	bool Action::interact() {
+		return true;
+	}
+
+	void Action::burn() {
 	}
 
 	const char * Action::install() {

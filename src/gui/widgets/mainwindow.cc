@@ -18,6 +18,7 @@
  */
 
  #include <config.h>
+ #include <udjat/version.h>
  #include <private/mainwindow.h>
  #include <private/dialogs.h>
  #include <reinstall/object.h>
@@ -25,6 +26,7 @@
  #include <udjat/tools/application.h>
  #include <reinstall/controller.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/file.h>
  #include <private/widgets.h>
  #include <udjat/module.h>
  #include <iostream>
@@ -176,6 +178,110 @@
 	return make_shared<::Widget::Action>(node);
  }
 
+ static bool check_file(const Gtk::Entry &entry, bool save) {
+
+		Udjat::File::Path file{entry.get_text()};
+
+		if(file.empty() || file.dir()) {
+			return false;
+		}
+
+#if UDJAT_CORE_BUILD >= 22122800
+		if(save || file.regular()) {
+			return true;
+		}
+		return false;
+#else
+		return true;
+#endif
+}
+
+ std::string MainWindow::FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save) {
+
+	Gtk::Entry entry;
+	Gtk::Box box{Gtk::ORIENTATION_HORIZONTAL,6};
+	Gtk::Label label{ label_text, Gtk::ALIGN_END };
+	Gtk::Dialog dialog{title,true};
+
+	dialog.set_default_size(600, -1);
+
+	dialog.set_modal(true);
+	dialog.set_transient_for(*this);
+
+	entry.set_hexpand(true);
+	entry.set_activates_default(true);
+	entry.set_icon_from_icon_name(save ? "document-save-as" : "document-open",Gtk::ENTRY_ICON_SECONDARY);
+	entry.set_icon_activatable(true);
+
+	if(filename && *filename) {
+
+		Udjat::String path{filename};
+		path.expand(); // resolve ${variable}
+
+#ifdef _WIN32
+		if(path[0] == '\\') {
+			entry.set_text(path.c_str());
+		} else {
+			entry.set_text(std::string{Glib::get_user_special_dir(Glib::USER_DIRECTORY_DOCUMENTS)} + "\\" + path);
+		}
+#else
+		if(*filename == '/') {
+			entry.set_text(path.c_str());
+		} else {
+			entry.set_text(std::string{Glib::get_user_special_dir(Glib::USER_DIRECTORY_DOCUMENTS)} + "/" + path);
+		}
+#endif // _WIN32
+
+	}
+
+	entry.signal_icon_press().connect([&dialog,&entry,save,title](Gtk::EntryIconPosition, const GdkEventButton *) {
+
+		Gtk::FileChooserDialog filechooser{
+			dialog,
+			title,
+			(save ? Gtk::FILE_CHOOSER_ACTION_SAVE : Gtk::FILE_CHOOSER_ACTION_OPEN)
+		};
+
+		filechooser.set_filename(entry.get_text());
+		if(filechooser.run() == Gtk::RESPONSE_ACCEPT) {
+			entry.set_text(filechooser.get_filename());
+		}
+
+    });
+
+
+	{
+		Gtk::Box &carea = *dialog.get_content_area();
+		carea.set_border_width(12);
+		carea.set_spacing(6);
+		carea.add(box);
+	}
+
+	{
+		box.set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+		box.add(label);
+		box.add(entry);
+	}
+
+	dialog.add_button(_("_Cancel"),Gtk::RESPONSE_CANCEL);
+
+	Gtk::Button &apply_button = *dialog.add_button(apply, Gtk::RESPONSE_APPLY);
+
+	dialog.set_default(apply_button);
+	apply_button.set_sensitive(check_file(entry,save));
+
+	entry.signal_changed().connect([&entry,save,&apply_button]() {
+		apply_button.set_sensitive(check_file(entry,save));
+	});
+
+	dialog.show_all();
+	if(dialog.run() == Gtk::RESPONSE_APPLY) {
+		return entry.get_text();
+	}
+
+	return "";
+ }
+
  std::shared_ptr<Reinstall::Abstract::Group> MainWindow::GroupFactory(const pugi::xml_node &node) {
  	auto group = make_shared<::Widget::Group>(node);
 
@@ -201,6 +307,41 @@
 	buttons.cancel.set_sensitive(false);
 	layout.view.set_sensitive(false);
 
+	//
+	// Interact with user.
+	//
+	try {
+
+		if(!action->interact()) {
+			buttons.apply.set_sensitive(true);
+			buttons.cancel.set_sensitive(true);
+			layout.view.set_sensitive(true);
+			return;
+		}
+
+	} catch(const std::exception &e) {
+
+		Gtk::MessageDialog dialog_fail{
+			*this,
+			_("First step has failed"),
+			false,
+			Gtk::MESSAGE_ERROR,
+			Gtk::BUTTONS_CLOSE,
+			true
+		};
+
+		dialog_fail.set_default_size(500, -1);
+		dialog_fail.set_title(action->get_label());
+		dialog_fail.set_secondary_text(e.what());
+		dialog_fail.show();
+		dialog_fail.run();
+
+		return;
+	}
+
+	//
+	// Ask for confirmation.
+	//
 	Gtk::ResponseType response = Gtk::RESPONSE_YES;
 	if(action->confirmation()) {
 		response = (Gtk::ResponseType) Dialog::Popup{
@@ -212,9 +353,10 @@
 					}.run();
 	}
 
-	// Execute action
 	if(response == Gtk::RESPONSE_YES) {
-
+		//
+		// Build and burn image.
+		//
 		std::string error_message;
 		Dialog::Progress dialog;
 
@@ -224,11 +366,12 @@
 		dialog.set(*action->get_button());
 		dialog.show();
 
-		Udjat::ThreadPool::getInstance().push([&dialog,action,&error_message,this](){
+		Udjat::ThreadPool::getInstance().push([&dialog,action,&error_message](){
 
 			try {
 
 				action->prepare();
+				action->burn();
 
 			} catch(const std::exception &e) {
 

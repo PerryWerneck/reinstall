@@ -191,8 +191,15 @@
 		/// @brief Get repository.
 		std::shared_ptr<Repository> repository(const char *name = "install") const;
 
-		/// @brief Run first step.
+		/// @brief Get parameters from user (first step, gui thread).
+		/// @return false to cancel action.
+		virtual bool interact();
+
+		/// @brief Create image (second step, work thread).
 		virtual void prepare();
+
+		/// @brief Burn image (last step, work thread).
+		virtual void burn();
 
 		/// @brief Load folders.
 		void load();
