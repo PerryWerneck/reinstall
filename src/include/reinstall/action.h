@@ -106,8 +106,9 @@
 
 		const struct Options {
 
-			bool enabled : 1;	/// @brief True if the action is enabled.
-			bool visible : 1;	/// @brief True if the action is visible.
+			bool enabled 	: 1;	/// @brief True if the action is enabled.
+			bool visible	: 1;	/// @brief True if the action is visible.
+			bool reboot		: 1;	/// @brief True if the action will request reboot.
 
 			Options(const pugi::xml_node &node);
 
@@ -173,6 +174,10 @@
 
 		inline bool visible() const noexcept {
 			return options.visible;
+		}
+
+		inline bool reboot() const noexcept {
+			return options.reboot;
 		}
 
 		inline const char * get_icon_name() const noexcept {

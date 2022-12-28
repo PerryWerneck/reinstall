@@ -402,7 +402,7 @@
 						*action->get_button(),
 						action->success(),
 						Gtk::MESSAGE_INFO,
-						Gtk::BUTTONS_OK
+						Gtk::BUTTONS_CLOSE
 					);
 
 				} else {
@@ -415,13 +415,25 @@
 						_("Action completed"),
 						false,
 						Gtk::MESSAGE_INFO,
-						Gtk::BUTTONS_OK,
+						Gtk::BUTTONS_CLOSE,
 						true
 					);
 
 				}
 
 				// Add extra buttons.
+				if(action->reboot()) {
+
+					// Close button is the suggested action.
+					auto close = popup->get_widget_for_response(Gtk::RESPONSE_CLOSE);
+					close->get_style_context()->add_class("suggested-action");
+					popup->set_default_response(Gtk::RESPONSE_CLOSE);
+
+					// Reboot button is destructive.
+					auto reboot = popup->add_button(_("Reboot"),Gtk::RESPONSE_APPLY);
+					reboot->get_style_context()->add_class("destructive-action");
+
+				}
 
 			} else if(action->failed()) {
 
