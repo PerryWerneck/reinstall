@@ -28,9 +28,12 @@
 
  namespace Widget {
 
- 	class Icon : public Gtk::Image, public Reinstall::Abstract::Icon {
+ 	class Icon : public Gtk::Image {
 	public:
-		Icon(const pugi::xml_node &node, const char *attrname, const Gtk::IconSize iconsize = Gtk::ICON_SIZE_BUTTON);
+		Icon(const pugi::xml_node &node, const char *attrname, const Gtk::IconSize iconsize = Gtk::ICON_SIZE_BUTTON, const char *def = "");
+		operator bool() const;
+
+		void set_name(const char *name);
 
  	};
 
@@ -66,7 +69,7 @@
 		Icon icon;
 
 	public:
-		Action(const pugi::xml_node &node);
+		Action(const pugi::xml_node &node, const char *icon_name);
 
 		std::string get_label() const override;
 

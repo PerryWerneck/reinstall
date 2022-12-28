@@ -179,8 +179,8 @@
 
  }
 
- std::shared_ptr<Reinstall::Abstract::Object> MainWindow::ActionFactory(const pugi::xml_node &node) {
-	return make_shared<::Widget::Action>(node);
+ std::shared_ptr<Reinstall::Abstract::Object> MainWindow::ActionFactory(const pugi::xml_node &node, const char *icon_name) {
+	return make_shared<::Widget::Action>(node,icon_name);
  }
 
  static bool check_file(const Gtk::Entry &entry, bool save) {
@@ -301,11 +301,6 @@
  void MainWindow::apply() {
 
 	Reinstall::Action &action = Reinstall::Action::get_selected();
-
-	if(!&action) {
-		cerr << "Apply with no selected action" << endl;
-		return;
-	}
 
  	g_message("Apply '%s'",std::to_string(action).c_str());
 	buttons.apply.set_sensitive(false);

@@ -54,7 +54,7 @@
 		void post(const char *isoname);
 
 	public:
-		IsoBuilder(const pugi::xml_node &node);
+		IsoBuilder(const pugi::xml_node &node, const char *icon_name = "");
 		virtual ~IsoBuilder();
 
 		/// @brief Build image.

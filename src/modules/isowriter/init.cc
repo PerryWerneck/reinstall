@@ -50,15 +50,9 @@
 				std::string isoname;
 
 			public:
-				Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node), filename{getAttribute(node,"filename","")} {
+				Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node,"document-save-as"), filename{getAttribute(node,"filename","")} {
 
 					debug("Creating iso-writer action '",name(),"'");
-
-					if(!(icon_name && *icon_name)) {
-						// https://specifications.freedesktop.org/icon-naming-spec/latest/
-						// drive-removable-media
-						icon_name = "document-save-as";
-					}
 
 				}
 

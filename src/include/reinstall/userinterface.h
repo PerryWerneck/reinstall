@@ -39,7 +39,9 @@
 		virtual std::string FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save);
 
 		/// @brief Construct an action button.
-		virtual std::shared_ptr<Abstract::Object> ActionFactory(const pugi::xml_node &node);
+		/// @param node The xml node with action definitions.
+		/// @param icon_name The default icon name.
+		virtual std::shared_ptr<Abstract::Object> ActionFactory(const pugi::xml_node &node, const char *icon_name = "");
 
 		/// @brief Construct a group box.
 		virtual std::shared_ptr<Abstract::Group> GroupFactory(const pugi::xml_node &node);

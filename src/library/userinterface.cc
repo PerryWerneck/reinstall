@@ -54,7 +54,7 @@
 		throw system_error(ENOTSUP,system_category(),"Cant get filename");
 	}
 
-	std::shared_ptr<Abstract::Object> UserInterface::ActionFactory(const pugi::xml_node &node) {
+	std::shared_ptr<Abstract::Object> UserInterface::ActionFactory(const pugi::xml_node &node, const char *icon_name) {
 
 		class Object : public Reinstall::Abstract::Object {
 		private:

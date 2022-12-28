@@ -35,7 +35,7 @@
 
  namespace Reinstall {
 
-	IsoBuilder::IsoBuilder(const pugi::xml_node &node) : Reinstall::Action(node) {
+	IsoBuilder::IsoBuilder(const pugi::xml_node &node, const char *icon_name) : Reinstall::Action(node,icon_name) {
 
 		// Get URL for installation kernel.
 		if(!scan(node,"kernel",[this](const pugi::xml_node &node) {

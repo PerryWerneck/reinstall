@@ -62,6 +62,7 @@
  		<attribute name='title' value='OpenSUSE Leap 15.4' />
  		<attribute name='sub-title' value='Testing group sub title' />
  		<attribute name='help' value='http://google.com' />
+ 		<!-- attribute name='icon' value='document-save' / -->
  		
  		<iso-writer name='netinstall' default='yes' filename='/tmp/test.iso'>
 

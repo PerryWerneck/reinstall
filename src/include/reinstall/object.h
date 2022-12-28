@@ -60,17 +60,6 @@
 
 	namespace Abstract {
 
-		class UDJAT_API Icon {
-		protected:
-			bool valid = false;
-
-		public:
-			operator bool() const noexcept {
-				return valid;
-			}
-
-		};
-
 		class UDJAT_API Object : public Udjat::NamedObject {
 		public:
 

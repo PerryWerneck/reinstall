@@ -144,7 +144,7 @@
 		/// @brief Object with the UI definitions.
 		std::shared_ptr<Abstract::Object> item;
 
-		Action(const pugi::xml_node &node);
+		Action(const pugi::xml_node &node, const char *icon_name = "");
 
 		/// @brief Icon name (for dialogs and menus).
 		const char *icon_name = "";

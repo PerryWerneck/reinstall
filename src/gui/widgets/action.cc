@@ -30,7 +30,7 @@
 
 	Gtk::RadioButton::Group Widget::Action::group;
 
-	Action::Action(const pugi::xml_node &node) : Gtk::RadioButton{group}, label{node,"title"}, body{node,"sub-title"}, icon{node,"icon",Gtk::ICON_SIZE_DND} {
+	Action::Action(const pugi::xml_node &node, const char *icon_name) : Gtk::RadioButton{group}, label{node,"title"}, body{node,"sub-title"}, icon{node,"icon",Gtk::ICON_SIZE_DND,icon_name} {
 
 		set_hexpand(true);
 		set_vexpand(false);
@@ -48,6 +48,13 @@
 		if(body) {
 			body.get_style_context()->add_class("action-subtitle");
 			grid.attach(body,1,1,2,1);
+		}
+
+		grid.show_all();
+
+		if(icon) {
+			icon.get_style_context()->add_class("action-icon");
+			grid.attach(icon,0,0,1,2);
 		}
 
 		add(grid);

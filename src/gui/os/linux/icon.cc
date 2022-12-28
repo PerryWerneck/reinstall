@@ -19,15 +19,34 @@
 
  #include <config.h>
  #include <private/widgets.h>
+ #include <reinstall/action.h>
+ #include <cstring>
+ #include <udjat/tools/logger.h>
+ #include <udjat/tools/object.h>
+
+ using namespace Udjat;
 
  namespace Widget {
 
-	Icon::Icon(const pugi::xml_node &node, const char *attrname, const Gtk::IconSize iconsize) {
+	Icon::Icon(const pugi::xml_node &node, const char *attrname, const Gtk::IconSize iconsize, const char *def) {
+
+		const char *name = Udjat::Object::getAttribute(node, attrname, false).as_string(def);
+
+		debug("----------------> ",attrname,"=",name);
 
 		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
 
-		// set_from_icon_name(name, iconsize);
+		if(name && *name && strcasecmp(name,"none")) {
+			set_from_icon_name(name, iconsize);
+			show();
+		} else {
+			hide();
+		}
 
+	}
+
+	Icon::operator bool() const {
+		return get_storage_type() != Gtk::IMAGE_EMPTY;
 	}
 
  }

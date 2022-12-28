@@ -58,7 +58,7 @@
 	virtual ~MainWindow();
 
 	/// @brief Construct an action button.
-	std::shared_ptr<Reinstall::Abstract::Object> ActionFactory(const pugi::xml_node &node) override;
+	std::shared_ptr<Reinstall::Abstract::Object> ActionFactory(const pugi::xml_node &node, const char *icon_name) override;
 
 	/// @brief Construct a filename (gui thread).
 	std::string FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save) override;
