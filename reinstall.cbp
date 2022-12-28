@@ -60,6 +60,7 @@
 		<Unit filename="src/include/reinstall/source.h" />
 		<Unit filename="src/include/reinstall/sources/initrd.h" />
 		<Unit filename="src/include/reinstall/sources/kernel.h" />
+		<Unit filename="src/include/reinstall/tools.h" />
 		<Unit filename="src/include/reinstall/userinterface.h" />
 		<Unit filename="src/include/reinstall/value.h" />
 		<Unit filename="src/include/reinstall/worker.h" />
@@ -74,6 +75,7 @@
 		<Unit filename="src/library/object.cc" />
 		<Unit filename="src/library/os/linux/disk_image.cc" />
 		<Unit filename="src/library/os/linux/libguestfs.cc" />
+		<Unit filename="src/library/os/linux/reboot.cc" />
 		<Unit filename="src/library/parameters.cc" />
 		<Unit filename="src/library/repository/construct.cc" />
 		<Unit filename="src/library/repository/slpclient.cc" />

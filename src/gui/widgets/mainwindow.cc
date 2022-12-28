@@ -25,6 +25,7 @@
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/application.h>
  #include <reinstall/controller.h>
+ #include <reinstall/tools.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/file.h>
  #include <private/widgets.h>
@@ -326,7 +327,7 @@
 			_("First step has failed"),
 			false,
 			Gtk::MESSAGE_ERROR,
-			Gtk::BUTTONS_CLOSE,
+			Gtk::BUTTONS_OK,
 			true
 		};
 
@@ -402,7 +403,7 @@
 						*action->get_button(),
 						action->success(),
 						Gtk::MESSAGE_INFO,
-						Gtk::BUTTONS_CLOSE
+						Gtk::BUTTONS_OK
 					);
 
 				} else {
@@ -415,7 +416,7 @@
 						_("Action completed"),
 						false,
 						Gtk::MESSAGE_INFO,
-						Gtk::BUTTONS_CLOSE,
+						Gtk::BUTTONS_OK,
 						true
 					);
 
@@ -444,7 +445,7 @@
 					*action->get_button(),
 					action->failed(),
 					Gtk::MESSAGE_ERROR,
-					Gtk::BUTTONS_CLOSE
+					Gtk::BUTTONS_OK
 				);
 
 				if(!action->failed().has_secondary()) {
@@ -460,7 +461,7 @@
 					_("Action has failed"),
 					false,
 					Gtk::MESSAGE_ERROR,
-					Gtk::BUTTONS_CLOSE,
+					Gtk::BUTTONS_OK,
 					true
 				);
 
@@ -468,10 +469,29 @@
 
 			}
 
+			{
+				auto cancel = popup->add_button(_("Quit application"),Gtk::RESPONSE_CANCEL);
+				if(!action->reboot() && error_message.empty()) {
+					cancel->get_style_context()->add_class("suggested-action");
+					popup->set_default_response(Gtk::RESPONSE_CANCEL);
+				}
+			}
+	
 			popup->set_title(action->get_label());
 			popup->set_default_size(500, -1);
 			popup->show();
-			popup->run();
+			switch(popup->run()) {
+			case Gtk::RESPONSE_APPLY:
+				cout << "MainWindow\tRebooting by user request" << endl;
+				Reinstall::reboot();
+				Gtk::Application::get_default()->quit();
+				break;
+
+			case Gtk::RESPONSE_CANCEL:
+				Gtk::Application::get_default()->quit();
+				break;
+			}
+
 
 		}
 	}
