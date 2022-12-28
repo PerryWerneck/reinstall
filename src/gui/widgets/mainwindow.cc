@@ -387,54 +387,81 @@
 		dialog.run();
 		dialog.hide(); // Just hide to wait for all enqueued state changes to run.
 
-		if(!error_message.empty()) {
+		{
+			std::shared_ptr<Gtk::MessageDialog> popup;
 
-			if(action->failed()) {
+			if(error_message.empty()) {
 
-				Dialog::Popup dialog_fail{
+				if(action->success()) {
+
+					// Customized success dialog.
+
+					cout << "MainWindow\tShowing action 'success' dialog" << endl;
+					popup = make_shared<Dialog::Popup>(
+						*this,
+						*action->get_button(),
+						action->success(),
+						Gtk::MESSAGE_INFO,
+						Gtk::BUTTONS_OK
+					);
+
+				} else {
+
+					// Standard success dialog.
+
+					cout << "MainWindow\tShowing default 'success' dialog" << endl;
+					popup = make_shared<Gtk::MessageDialog>(
+						*this,
+						_("Action completed"),
+						false,
+						Gtk::MESSAGE_INFO,
+						Gtk::BUTTONS_OK,
+						true
+					);
+
+				}
+
+				// Add extra buttons.
+
+			} else if(action->failed()) {
+
+				// Customized error dialog.
+
+				popup = make_shared<Dialog::Popup>(
 					*this,
 					*action->get_button(),
 					action->failed(),
 					Gtk::MESSAGE_ERROR,
 					Gtk::BUTTONS_CLOSE
-				};
+				);
 
 				if(!action->failed().has_secondary()) {
-					dialog_fail.set_secondary_text(error_message);
+					popup->set_secondary_text(error_message);
 				}
-				dialog_fail.run();
 
 			} else {
 
-				Gtk::MessageDialog dialog_fail{
-					*this, // Gtk::Window& parent,
-					_("Action has failed"), // const Glib::ustring& message,
-					false,	// bool use_markup = false,
-					Gtk::MESSAGE_ERROR, // MessageType type =
-					Gtk::BUTTONS_CLOSE, // ButtonsType buttons = BUTTONS_OK,
-					true
-				};
+				// Standard error dialog.
 
-				dialog_fail.set_default_size(500, -1);
-				dialog_fail.set_title(action->get_label());
-				dialog_fail.set_secondary_text(error_message);
-				dialog_fail.show();
-				dialog_fail.run();
+				popup = make_shared<Gtk::MessageDialog>(
+					*this,
+					_("Action has failed"),
+					false,
+					Gtk::MESSAGE_ERROR,
+					Gtk::BUTTONS_CLOSE,
+					true
+				);
+
+				popup->set_secondary_text(error_message);
 
 			}
 
-		} else if(action->success()) {
-
-			Dialog::Popup{
-				*this,
-				*action->get_button(),
-				action->success(),
-				Gtk::MESSAGE_INFO,
-				Gtk::BUTTONS_OK
-			}.run();
+			popup->set_title(action->get_label());
+			popup->set_default_size(500, -1);
+			popup->show();
+			popup->run();
 
 		}
-
 	}
 
 	buttons.apply.set_sensitive(true);
