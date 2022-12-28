@@ -109,8 +109,12 @@
 			bool enabled 	: 1;	/// @brief True if the action is enabled.
 			bool visible	: 1;	/// @brief True if the action is visible.
 			bool reboot		: 1;	/// @brief True if the action will request reboot.
+			bool quit		: 1;	/// @brief True if the action will enable 'quit application' button.
 
 			Options(const pugi::xml_node &node);
+
+			/// @brief Construct option from xml node.
+			static bool Factory(const pugi::xml_node &node, const char *attrname, bool def);
 
 		} options;
 
@@ -178,6 +182,10 @@
 
 		inline bool reboot() const noexcept {
 			return options.reboot;
+		}
+
+		inline bool quit() const noexcept {
+			return options.quit;
 		}
 
 		inline const char * get_icon_name() const noexcept {

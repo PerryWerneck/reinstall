@@ -45,7 +45,7 @@
 		throw runtime_error(_("No action"));
 	}
 
-	static bool OptionFactory(const pugi::xml_node &node, const char *attrname, bool def) {
+	bool Action::Options::Factory(const pugi::xml_node &node, const char *attrname, bool def) {
 
 		auto attribute = node.attribute(attrname);
 
@@ -75,7 +75,11 @@
 	}
 
 	Action::Options::Options(const pugi::xml_node &node)
-		: enabled(OptionFactory(node,"enabled",true)), visible(OptionFactory(node,"visible",true)) {
+		: enabled(Factory(node,"enabled",true)),
+		  visible(Factory(node,"visible",true)),
+		  reboot(Factory(node,"visible",false)),
+		  quit(Factory(node,"visible",true))
+		 {
 	}
 
 	Action::Action(const pugi::xml_node &node) : Udjat::NamedObject(node), options{node}, item{UserInterface::getInstance().ActionFactory(node)} {

@@ -167,6 +167,8 @@
 		dialog.run();
 	}
 
+	// TODO: Check for disabled actions.
+
 	buttons.apply.set_sensitive(Reinstall::Action::get_selected() != nullptr);
 
 	layout.view.show_all();
@@ -469,14 +471,14 @@
 
 			}
 
-			{
+			if(action->quit()) {
 				auto cancel = popup->add_button(_("Quit application"),Gtk::RESPONSE_CANCEL);
 				if(!action->reboot() && error_message.empty()) {
 					cancel->get_style_context()->add_class("suggested-action");
 					popup->set_default_response(Gtk::RESPONSE_CANCEL);
 				}
 			}
-	
+
 			popup->set_title(action->get_label());
 			popup->set_default_size(500, -1);
 			popup->show();
