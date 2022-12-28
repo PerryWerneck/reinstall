@@ -35,7 +35,7 @@
 
  namespace Reinstall {
 
-	IsoBuilder::IsoBuilder(const pugi::xml_node &node) : Reinstall::Action(node) {
+	IsoBuilder::IsoBuilder(const pugi::xml_node &node, const char *icon_name) : Reinstall::Action(node,icon_name) {
 
 		// Get URL for installation kernel.
 		if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
@@ -184,31 +184,31 @@
 
 	}
 
-	void IsoBuilder::prepare() {
+	std::shared_ptr<Reinstall::Worker> IsoBuilder::prepare() {
 
 		Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
 		progress.set(*this);
 
 		// Create and activate worker
-		Reinstall::iso9660::Worker worker;
+		auto worker = make_shared<Reinstall::iso9660::Worker>();
 
-		progress.set(_("Building installation image"));
+		progress.set_title(_("Building installation image"));
 
 		// Setup isofs.
-		worker.set_system_area(system_area);
-		worker.set_volume_id(volume_id);
-		worker.set_publisher_id(publisher_id);
-		worker.set_data_preparer_id(data_preparer_id);
-		worker.set_system_id(system_id);
-		worker.set_application_id(application_id);
+		worker->set_system_area(system_area);
+		worker->set_volume_id(volume_id);
+		worker->set_publisher_id(publisher_id);
+		worker->set_data_preparer_id(data_preparer_id);
+		worker->set_system_id(system_id);
+		worker->set_application_id(application_id);
 
-		Reinstall::Action::prepare(worker);
+		Reinstall::Action::prepare(*worker);
 
 		// Finalize
 		//worker.set_iso_level();
-		worker.set_rockridge();
-		worker.set_joliet();
-		worker.set_allow_deep_paths();
+		worker->set_rockridge();
+		worker->set_joliet();
+		worker->set_allow_deep_paths();
 
 		if(eltorito.boot_image && *eltorito.boot_image) {
 
@@ -218,7 +218,7 @@
 				throw runtime_error(_("Unexpected filename on el-torito boot image"));
 			}
 
-			worker.set_el_torito_boot_image(
+			worker->set_el_torito_boot_image(
 				eltorito.boot_image,
 				eltorito.catalog,
 				volume_id
@@ -255,14 +255,13 @@
 			}
 
 			// Add EFI boot image
-			worker.set_efi_boot_image(source->filename);
+			worker->set_efi_boot_image(source->filename);
 
 			cout << "isobuilder\tAdding " << source->path << " as boot image" << endl;
-			worker.add_boot_image(source->path,0xEF);
+			worker->add_boot_image(source->path,0xEF);
 		}
 
-		// Write image to destination.
-		write(worker);
+		return worker;
 
 	}
 

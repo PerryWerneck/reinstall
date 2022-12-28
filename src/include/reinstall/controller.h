@@ -29,7 +29,7 @@
 	private:
 
 		/// @brief Lista de grupos registrados.
-		std::list<std::shared_ptr<Group>> groups;
+		std::list<std::shared_ptr<Abstract::Group>> groups;
 
 		Controller();
 
@@ -47,10 +47,10 @@
 		bool push_back(const pugi::xml_node &node) override;
 
 		/// @brief Navigate from groups.
-		bool for_each(const std::function<bool (std::shared_ptr<Group> group)> &call) const;
+		bool for_each(const std::function<bool (std::shared_ptr<Abstract::Group> group)> &call) const;
 
 		/// @brief Insert new group.
-		inline void push_back(std::shared_ptr<Group> group) {
+		inline void push_back(std::shared_ptr<Abstract::Group> group) {
 			groups.push_back(group);
 		}
 

@@ -17,37 +17,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <config.h>
- #include <private/widgets.h>
+ #pragma once
+
+ #include <udjat/defs.h>
  #include <reinstall/action.h>
- #include <cstring>
- #include <udjat/tools/logger.h>
- #include <udjat/tools/object.h>
+ #include <reinstall/group.h>
 
- using namespace Udjat;
+ namespace Reinstall {
 
- namespace Widget {
+	class UDJAT_API UserInterface {
+	private:
+		static UserInterface *instance;
 
-	Icon::Icon(const pugi::xml_node &node, const char *attrname, const Gtk::IconSize iconsize, const char *def) {
+	public:
+		UserInterface();
+		virtual ~UserInterface();
 
-		const char *name = Udjat::Object::getAttribute(node, attrname, false).as_string(def);
+		static UserInterface & getInstance();
 
-		debug("----------------> ",attrname,"=",name);
+		/// @brief Get filename (gui thread).
+		virtual std::string FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save);
 
-		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
+		/// @brief Construct an action button.
+		/// @param node The xml node with action definitions.
+		/// @param icon_name The default icon name.
+		virtual std::shared_ptr<Abstract::Object> ActionFactory(const pugi::xml_node &node, const char *icon_name = "");
 
-		if(name && *name && strcasecmp(name,"none")) {
-			set_from_icon_name(name, iconsize);
-			show();
-		} else {
-			hide();
-		}
+		/// @brief Construct a group box.
+		virtual std::shared_ptr<Abstract::Group> GroupFactory(const pugi::xml_node &node);
 
-	}
+	};
 
-	Icon::operator bool() const {
-		return get_storage_type() != Gtk::IMAGE_EMPTY;
-	}
 
  }
-

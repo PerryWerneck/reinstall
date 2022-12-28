@@ -20,39 +20,60 @@
  #include <config.h>
  #include <reinstall/dialogs.h>
  #include <iostream>
+ #include <udjat/tools/intl.h>
+ #include <udjat/tools/logger.h>
 
  using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
 	namespace Dialog {
 
 		void Progress::set(const Action &action) {
+			set_icon_name(action.get_icon_name());
+			set_title(action.get_label().c_str());
+			set_step("");
+			set_progress(0.0,0.0);
 		}
 
 		Progress::~Progress() {
-#ifdef DEBUG
-			cout << "progress\tProgress dialog " << hex << this << dec << " deleted" << endl;
-#endif // DEBUG
 		}
 
 		Progress & Progress::getInstance() {
 			Progress *instance = dynamic_cast<Progress *>(&Window::getInstance());
 			if(!instance) {
-				throw runtime_error(_("No progress dialog available"));
+				throw runtime_error(_("No active progress dialog"));
 			}
 			return *instance;
 		}
 
-		void Progress::update(double current, double total) {
+		void Progress::set_progress(double UDJAT_UNUSED(current), double UDJAT_UNUSED(total)) {
 		}
 
-		void Progress::count(size_t count, size_t total) {
+		void Progress::set_count(size_t current, size_t total) {
+			if(total && current) {
+				set_step(Logger::Message{_("{} of {}"),current,total}.c_str());
+			} else {
+				set_step("");
+			}
 		}
 
-		void Progress::set(const char *message) {
+		void Progress::set_title(const char *title) {
+		}
+
+		void Progress::set_sub_title(const char *sub_title) {
+		}
+
+		void Progress::set_url(const char *url) {
+			set_sub_title(url);
+		}
+
+		void Progress::set_step(const char *step) {
+		}
+
+		void Progress::set_icon_name(const char *icon_name) {
 		}
 
 	}
-
  }

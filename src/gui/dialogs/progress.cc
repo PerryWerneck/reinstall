@@ -21,6 +21,8 @@
  #include <private/dialogs.h>
  #include <iostream>
  #include <udjat/tools/logger.h>
+ #include <sstream>
+ #include <iomanip>
 
  using namespace Udjat;
  using namespace Gtk;
@@ -32,7 +34,7 @@
 
 	set_decorated(false);
 
-	set_default_size(400,-1);
+	set_default_size(500,-1);
 
 	get_style_context()->add_class("dialog-progress");
 	content_area.get_style_context()->add_class("dialog-contents");
@@ -42,18 +44,36 @@
 	content_area.set_homogeneous(false);
 	content_area.set_orientation(ORIENTATION_VERTICAL);
 
-	content_area.pack_start(widgets.title,false,false,0);
+	widgets.title.get_style_context()->add_class("dialog-title");
+	widgets.title.set_hexpand(true);
+	widgets.title.set_vexpand(false);
+	widgets.title.set_valign(ALIGN_START);
+	widgets.title.set_line_wrap(false);
+	widgets.title.set_ellipsize(Pango::ELLIPSIZE_START);
+	widgets.header.attach(widgets.title,0,0,1,1);
+
+	widgets.subtitle.get_style_context()->add_class("dialog-subtitle");
+	widgets.subtitle.set_hexpand(true);
+	widgets.subtitle.set_vexpand(false);
+	widgets.subtitle.set_valign(ALIGN_START);
+	widgets.subtitle.set_line_wrap(false);
+	widgets.subtitle.set_ellipsize(Pango::ELLIPSIZE_START);
+	widgets.header.attach(widgets.subtitle,0,1,1,1);
+
+	widgets.icon.get_style_context()->add_class("dialog-icon");
+	widgets.icon.set_hexpand(false);
+	widgets.icon.set_vexpand(false);
+	widgets.header.attach(widgets.icon,1,0,2,2);
+
+	content_area.pack_start(widgets.header,false,false,0);
 
 	widgets.progress.set_valign(ALIGN_CENTER);
 	content_area.pack_start(widgets.progress,true,true,0);
 
-	widgets.footer.pack_start(widgets.action,false,false,3);
-
-	widgets.message.set_line_wrap(false);
-	widgets.message.set_ellipsize(Pango::ELLIPSIZE_START);
-	widgets.footer.pack_start(widgets.message,true,true,3);
-
-	widgets.footer.pack_end(widgets.step,false,false,3);
+	widgets.footer.get_style_context()->add_class("dialog-footer");
+	widgets.footer.set_homogeneous(true);
+	widgets.footer.pack_start(widgets.left,true,true,0);
+	widgets.footer.pack_end(widgets.right,true,true,0);
 
 	content_area.pack_end(widgets.footer,false,false,0);
 
@@ -63,9 +83,14 @@
 
 	this->timer.connection = Glib::signal_timeout().connect(slot,100);
 
+#ifdef DEBUG
+	widgets.left.set_text("left");
+	widgets.right.set_text("right");
+#endif // DEBUG
+
  }
 
- bool Dialog::Progress::on_timeout(int timer_number) {
+ bool Dialog::Progress::on_timeout(int UDJAT_UNUSED(timer_number)) {
 
 	if(is_visible()) {
 		if(timer.idle >= 100) {
@@ -89,7 +114,6 @@
  void Dialog::Progress::set_parent(Gtk::Window &window) {
 	set_modal(true);
 	set_transient_for(window);
-
  }
 
  bool Dialog::Progress::on_dismiss(int response_id) {
@@ -119,9 +143,9 @@
 
  }
 
- void Dialog::Progress::set(const char *message)  {
+ void Dialog::Progress::set_title(const char *title)  {
 
-	auto str = make_shared<string>(message);
+	auto str = make_shared<string>(title);
 
  	Glib::signal_idle().connect([this,str](){
 		widgets.title.set_text(str->c_str());
@@ -130,25 +154,108 @@
 
  }
 
- void Dialog::Progress::count(size_t count, size_t total)  {
+ void Dialog::Progress::set_sub_title(const char *sub_title)  {
 
- 	Glib::signal_idle().connect([this,count,total](){
+	auto str = make_shared<string>(sub_title);
+
+ 	Glib::signal_idle().connect([this,str](){
+		if(str->empty()) {
+			widgets.subtitle.hide();
+		} else {
+			widgets.subtitle.set_text(str->c_str());
+			widgets.subtitle.show();
+		}
+		return 0;
+ 	});
+
+ }
+
+ void Dialog::Progress::set_step(const char *step)  {
+
+	auto str = make_shared<string>(step);
+
+ 	Glib::signal_idle().connect([this,str](){
+
+		debug("-------------> ",str->c_str());
+
+		widgets.left.set_text(str->c_str());
+		return 0;
+ 	});
+
+ }
+
+ void Dialog::Progress::set_icon_name(const char *icon_name) {
+
+	auto str = make_shared<string>(icon_name);
+
+ 	Glib::signal_idle().connect([this,str](){
+
+		if(str->empty()) {
+			widgets.icon.hide();
+		} else {
+			widgets.icon.set_from_icon_name(str->c_str(),Gtk::ICON_SIZE_DIALOG);
+			widgets.icon.show();
+		}
 
 		return 0;
  	});
 
  }
 
- void Dialog::Progress::update(double current, double total)  {
+ static std::string format_size(double value) {
+
+	static const struct {
+		double value;
+		const char *name;
+	} sizes[] = {
+		{ 1073741824.0, "GB" },
+		{    1048576.0, "MB" },
+		{       1024.0, "KB" },
+	};
+
+	double unit_value = 1;
+	const char * unit_name = "";
+
+	for(size_t ix = 0; ix < N_ELEMENTS(sizes); ix++) {
+
+		if(value > sizes[ix].value) {
+			unit_value = sizes[ix].value;
+			unit_name = sizes[ix].name;
+			break;
+		}
+
+	}
+
+	std::stringstream formatted;
+	formatted << std::fixed << std::setprecision(1) << (value/unit_value) << unit_name;
+	return formatted.str();
+
+ }
+
+ void Dialog::Progress::set_progress(double current, double total)  {
 
  	Glib::signal_idle().connect([this,current,total](){
 
 		if(total > current && total > 1) {
+
 			timer.idle = 0;
-			gdouble fraction = ((gdouble) current) / ((gdouble) total);
-			widgets.progress.set_fraction(fraction);
+			widgets.progress.set_fraction(((gdouble) current) / ((gdouble) total));
+
+			string fcurrent{format_size(current)};
+			string ftotal{format_size(total)};
+
+			widgets.right.set_text(
+				Logger::Message{
+					_("{} of {}"),
+					fcurrent,
+					ftotal
+				}.c_str()
+			);
+
 		} else {
-			widgets.step.set_text("");
+
+			widgets.right.set_text("");
+
 		}
 
 		return 0;
@@ -157,18 +264,27 @@
 
  }
 
- void Dialog::Progress::set(const Reinstall::Object &object) {
+ void Dialog::Progress::set(const Reinstall::Abstract::Object &object) {
 
  	Glib::signal_idle().connect([this,&object](){
 
-		object.set_dialog(*this);
-		sub_title().set_text(_("Initializing"));
-		action().set_text("");
-		message().set_text("");
-		step().set_text("");
+		// object.set_dialog(*this);
+		set_title(object.get_label().c_str());
+		set_sub_title(_("Initializing"));
+
+#ifdef DEBUG
+		widgets.left.set_text("left");
+		widgets.right.set_text("right");
+#else
+		widgets.left.set_text("");
+		widgets.left.set_text("");
+#endif // DEBUG
+
+		Gtk::Window::set_title(object.get_label());
 
 		timer.idle = -1;
 
+		/*
 		if(object.icon && *object.icon) {
 
 			// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
@@ -180,6 +296,7 @@
 			icon().hide();
 
 		}
+		*/
 
 		return 0;
 

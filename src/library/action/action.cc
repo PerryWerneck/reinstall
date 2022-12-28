@@ -21,25 +21,32 @@
  #include <reinstall/action.h>
  #include <reinstall/worker.h>
  #include <reinstall/dialogs.h>
+ #include <reinstall/userinterface.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/url.h>
+ #include <udjat/tools/logger.h>
  #include <pugixml.hpp>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	Action *Action::defaction = nullptr;
-
-	Action & Action::getDefault() {
-		if(defaction) {
-			return *defaction;
-		}
-		throw runtime_error(_("No default action"));
+	UDJAT_API void push_back(const pugi::xml_node &node, std::shared_ptr<Action> action) {
+		Reinstall::Abstract::Group::find(node)->push_back(action);
 	}
 
-	static bool OptionFactory(const pugi::xml_node &node, const char *attrname, bool def) {
+	Action *Action::selected = nullptr;
+
+	Action & Action::get_selected() {
+		if(selected) {
+			return *selected;
+		}
+		throw runtime_error(_("No action"));
+	}
+
+	bool Action::Options::Factory(const pugi::xml_node &node, const char *attrname, bool def) {
 
 		auto attribute = node.attribute(attrname);
 
@@ -69,11 +76,49 @@
 	}
 
 	Action::Options::Options(const pugi::xml_node &node)
-		: enabled(OptionFactory(node,"enabled",true)), visible(OptionFactory(node,"visible",true)) {
-
+		: enabled(Factory(node,"enabled",true)),
+		  visible(Factory(node,"visible",true)),
+		  reboot(Factory(node,"visible",false)),
+		  quit(Factory(node,"visible",true))
+		 {
 	}
 
-	Action::Action(const pugi::xml_node &node) : Object(node), options(node) {
+	Action::Action(const pugi::xml_node &node, const char *iname) : Udjat::NamedObject(node), options{node}, item{UserInterface::getInstance().ActionFactory(node,iname)} {
+
+		icon_name = Quark{Udjat::Object::getAttribute(node, "icon", false).as_string(iname)}.c_str();
+
+		if(node.attribute("default").as_bool(false) || !selected) {
+			selected = this;
+		}
+
+		// Get dialogs
+		for(pugi::xml_node parent = node; parent; parent = parent.parent()) {
+
+			for(auto child = parent.child("dialog"); child; child = child.next_sibling("dialog")) {
+
+				switch(String{child,"name"}.select("confirmation","success","failed",nullptr)) {
+				case 0: // confirmation.
+					if(!dialog.confirmation) {
+						dialog.confirmation.set(child);
+					}
+					break;
+				case 1: // success
+					if(!dialog.success) {
+						dialog.success.set(child);
+					}
+					break;
+				case 2: // failed
+					if(!dialog.failed) {
+						dialog.failed.set(child);
+					}
+					break;
+				default:
+					warning() << "Unexpected dialog name '" << String{child,"name"} << "'" << endl;
+				}
+
+			}
+
+		}
 
 		scan(node, "source", [this](const pugi::xml_node &node){
 			push_back(make_shared<Source>(node));
@@ -95,10 +140,6 @@
 			return false;
 		});
 
-		if(node.attribute("default").as_bool(false)) {
-			defaction = this;
-		}
-
 		// Create action id
 		static unsigned short id = 0;
 		this->id = ++id;
@@ -106,13 +147,17 @@
 	}
 
 	Action::~Action() {
-		if(defaction == this) {
-			defaction = nullptr;
+		if(selected == this) {
+			selected = nullptr;
 		}
 	}
 
-	void Action::prepare() {
-		warning() << "Dummy first step" << endl;
+	std::shared_ptr<Reinstall::Worker> Action::prepare() {
+		return make_shared<Reinstall::Worker>();
+	}
+
+	bool Action::interact() {
+		return true;
 	}
 
 	const char * Action::install() {
@@ -156,13 +201,13 @@
 	void Action::prepare(Worker &worker) {
 
 		{
-			Dialog::Progress::getInstance().set(_("Initializing"));
+			Dialog::Progress::getInstance().set_title(_("Initializing"));
 			worker.pre(*this);
 		}
 
 		// Update kernel parameters.
 		{
-			Dialog::Progress::getInstance().set(_("Getting installation parameters"));
+			Dialog::Progress::getInstance().set_title(_("Getting installation parameters"));
 			for(KernelParameter &kparm : kparms) {
 				kparm.set(*this);
 			}
@@ -176,13 +221,12 @@
 	void Action::load() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
+		progress.set_title(_("Getting required files"));
 
-		progress.set(_("Updating file sources"));
 		for(auto source : sources) {
 			source->set(*this);
 		}
 
-		progress.set(_("Getting file list"));
 		{
 			std::vector<std::shared_ptr<Source>> contents;
 
@@ -204,6 +248,7 @@
 
 	}
 
+	/*
 	bool Action::getProperty(const char *key, std::string &value) const noexcept {
 
 		if(!strcasecmp(key,"kernel-parameters")) {
@@ -239,11 +284,9 @@
 
 		return Object::getProperty(key,value);
 	}
+	*/
 
 	void Action::applyTemplates() {
-
-		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set(_("Applying templates"));
 
 		for(auto tmpl : templates) {
 

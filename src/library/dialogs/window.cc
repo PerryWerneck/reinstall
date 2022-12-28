@@ -20,6 +20,7 @@
  #include <config.h>
  #include <stdexcept>
  #include <reinstall/dialogs.h>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
 
@@ -53,7 +54,7 @@
 			return *current;
 		}
 
-		void Window::set(const Object &object) {
+		void Window::set(const Abstract::Object &object) {
 		}
 
 		void Window::show() {

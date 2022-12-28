@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -18,36 +18,37 @@
  */
 
  #pragma once
- #include <reinstall/action.h>
- #include <list>
+ #include <udjat/defs.h>
+ #include <cstddef>
  #include <memory>
- #include <functional>
 
  namespace Reinstall {
 
-	namespace Abstract {
+	/// @brief Image Writer
+	class UDJAT_API Writer {
+	private:
 
-		class UDJAT_API Group : public Reinstall::Abstract::Object {
-		private:
-			std::list<std::shared_ptr<Action>> actions;
+	protected:
+		Writer();
+		virtual ~Writer();
 
-		public:
+	public:
 
-			unsigned short id;
+		/// @brief Open Device for writing
+		virtual void open() = 0;
 
-			Group();
-			virtual ~Group();
+		/// @brief Write data do device.
+		virtual void write(const void *buf, size_t count) = 0;
 
-			virtual void push_back(std::shared_ptr<Action> action);
+		virtual void finalize() = 0;
 
-			/// @brief Navigate from groups.
-			bool for_each(const std::function<bool (std::shared_ptr<Action> action)> &call) const;
+		/// @brief Close Device.
+		virtual void close() = 0;
 
-			static std::shared_ptr<Group> find(const pugi::xml_node &node);
-			static std::shared_ptr<Group> factory(const pugi::xml_node &node);
+		/// @brief Factory file writer.
+		static std::shared_ptr<Writer> FileFactory(const char *filename);
 
-		};
-
-	}
+	};
 
  }
+

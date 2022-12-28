@@ -20,44 +20,70 @@
  #include <config.h>
 
  #include <private/widgets.h>
+ #include <udjat/tools/quark.h>
 
  using namespace Gtk;
  using namespace std;
+ using namespace Udjat;
 
  namespace Widget {
 
 	Gtk::RadioButton::Group Widget::Action::group;
 
-	Action::Action(std::shared_ptr<Reinstall::Action> action) : Gtk::RadioButton(group) {
+	Action::Action(const pugi::xml_node &node, const char *icon_name) : Gtk::RadioButton{group}, label{node,"title"}, body{node,"sub-title"}, icon{node,"icon",Gtk::ICON_SIZE_DND,icon_name} {
 
 		set_hexpand(true);
 		set_vexpand(false);
 		set_valign(ALIGN_START);
-		set_halign(ALIGN_START);
+		set_halign(ALIGN_FILL);
+
+		set_inconsistent();
+		set_mode(false);
 
 		get_style_context()->add_class("action-button");
 		grid.get_style_context()->add_class("action-container");
+		label.get_style_context()->add_class("action-title");
 
-		action->title.get_style_context()->add_class("action-title");
-
-		if(action->icon && *action->icon) {
-			::Widget::Icon *icon = new ::Widget::Icon(action->icon,Gtk::ICON_SIZE_DND);
-			icon->get_style_context()->add_class("action-icon");
-			icon->set_valign(ALIGN_CENTER);
-			icon->set_halign(ALIGN_CENTER);
-			grid.attach(*icon,0,0,1,2);
+		grid.attach(label,1,0,1,1);
+		if(body) {
+			body.get_style_context()->add_class("action-subtitle");
+			grid.attach(body,1,1,2,1);
 		}
 
-		grid.attach(action->title,1,0,1,1);
-		if(action->subtitle) {
-			action->subtitle.get_style_context()->add_class("action-subtitle");
-			grid.attach(action->subtitle,1,1,2,1);
+		grid.show_all();
+
+		if(icon) {
+			icon.get_style_context()->add_class("action-icon");
+			grid.attach(icon,0,0,1,2);
 		}
 
 		add(grid);
 
+		set(node);
+
+		if(get_active()) {
+			get_style_context()->add_class("action-active");
+		} else {
+			get_style_context()->add_class("action-inactive");
+		}
+
+		signal_toggled().connect([&]() {
+
+			if(get_active()) {
+				get_style_context()->remove_class("action-inactive");
+				get_style_context()->add_class("action-active");
+			} else {
+				get_style_context()->remove_class("action-active");
+				get_style_context()->add_class("action-inactive");
+			}
+
+		});
+
 		show_all();
 	}
 
+	std::string Action::get_label() const {
+		return label.get_text().c_str();
+	}
 
  }

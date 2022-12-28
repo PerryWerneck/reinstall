@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,37 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
- #include <reinstall/action.h>
- #include <list>
- #include <memory>
- #include <functional>
+ #include <config.h>
+ #include <udjat/defs.h>
+ #include <reinstall/writer.h>
+
+ using namespace std;
 
  namespace Reinstall {
 
-	namespace Abstract {
+	Writer::Writer() {
+	}
 
-		class UDJAT_API Group : public Reinstall::Abstract::Object {
-		private:
-			std::list<std::shared_ptr<Action>> actions;
-
-		public:
-
-			unsigned short id;
-
-			Group();
-			virtual ~Group();
-
-			virtual void push_back(std::shared_ptr<Action> action);
-
-			/// @brief Navigate from groups.
-			bool for_each(const std::function<bool (std::shared_ptr<Action> action)> &call) const;
-
-			static std::shared_ptr<Group> find(const pugi::xml_node &node);
-			static std::shared_ptr<Group> factory(const pugi::xml_node &node);
-
-		};
-
+	Writer::~Writer() {
 	}
 
  }

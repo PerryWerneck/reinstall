@@ -18,13 +18,18 @@
  */
 
  #include <config.h>
+ #include <udjat/version.h>
  #include <private/mainwindow.h>
  #include <private/dialogs.h>
  #include <reinstall/object.h>
+ #include <reinstall/worker.h>
+ #include <reinstall/writer.h>
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/application.h>
  #include <reinstall/controller.h>
+ #include <reinstall/tools.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/file.h>
  #include <private/widgets.h>
  #include <udjat/module.h>
  #include <iostream>
@@ -112,13 +117,32 @@
 
  void MainWindow::on_show() {
 
+ /*
+#ifdef DEBUG
+	{
+		Dialog::Progress dialog;
+		dialog.Gtk::Window::set_title(get_title());
+		dialog.set_parent(*this);
+		dialog.set_title(_("Getting configuration"));
+		dialog.set_url("http://www.google.com");
+		dialog.set_icon_name("dialog-information");
+		dialog.footer(true);
+		dialog.set_decorated(true);
+		dialog.set_deletable(true);
+		dialog.show();
+		dialog.run();
+	}
+#endif // DEBUG
+*/
+
 	// Load options
 	{
 		Dialog::Progress dialog;
-		dialog.set_title(get_title());
+		dialog.Gtk::Window::set_title(get_title());
 		dialog.set_parent(*this);
-		dialog.sub_title() = _("Getting configuration");
-		dialog.icon().hide();
+		dialog.set_title(_("Getting configuration"));
+		dialog.set_sub_title(_("Loading option list"));
+		dialog.set_icon_name("");
 		dialog.footer(false);
 		dialog.set_decorated(true);
 		dialog.set_deletable(false);
@@ -145,70 +169,9 @@
 		dialog.run();
 	}
 
-	// Create groups.
-	Reinstall::Controller::getInstance().for_each([this](std::shared_ptr<Reinstall::Group> group){
+	// TODO: Check for disabled actions.
 
-		auto box = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
-		box->get_style_context()->add_class("group-box");
-
-		debug("Adding option ",std::to_string(group->title));
-
-		auto grid = new Gtk::Grid();
-		grid->get_style_context()->add_class("group-title-box");
-
-		group->title.get_style_context()->add_class("group-title");
-		grid->attach(group->title,0,0,1,1);
-		if(group->subtitle) {
-			group->subtitle.get_style_context()->add_class("group-subtitle");
-			grid->attach(group->subtitle,0,1,1,1);
-		}
-
-		box->add(*grid);
-
-		group->for_each([this,group,box](std::shared_ptr<Reinstall::Action> action) {
-
-			debug("Adding option ",std::to_string(group->title),"/",std::to_string(action->title));
-			::Widget::Action *button = new ::Widget::Action(action);
-
-			button->set_inconsistent();
-			button->set_halign(Gtk::ALIGN_FILL);
-			button->set_mode(false);
-			box->pack_start(*button,true,true,0);
-
-			button->set_active(action->is_default());
-
-			if(button->get_active()) {
-				button->get_style_context()->add_class("action-active");
-				selected = action;
-				buttons.apply.set_sensitive(true);
-			} else {
-				button->get_style_context()->add_class("action-inactive");
-			}
-
-			button->signal_toggled().connect([&,button,action]() {
-
-				if(button->get_active()) {
-					selected = action;
-					debug("Action '",std::to_string(selected->title),"' is now enabled");
-					buttons.apply.set_sensitive(true);
-					button->get_style_context()->remove_class("action-inactive");
-					button->get_style_context()->add_class("action-active");
-				} else {
-					selected = nullptr;
-					button->get_style_context()->remove_class("action-active");
-					button->get_style_context()->add_class("action-inactive");
-				}
-
-			});
-
-
-			return false;
-
-		});
-
-		layout.view.pack_start(*box,false,false,0);
-		return false;
-	});
+	buttons.apply.set_sensitive( &Reinstall::Action::get_selected() != nullptr);
 
 	layout.view.show_all();
 
@@ -216,46 +179,201 @@
 
  }
 
- void MainWindow::apply() {
+ std::shared_ptr<Reinstall::Abstract::Object> MainWindow::ActionFactory(const pugi::xml_node &node, const char *icon_name) {
+	return make_shared<::Widget::Action>(node,icon_name);
+ }
 
-	if(!selected) {
-		cerr << "Apply with no selected action" << endl;
-		return;
+ static bool check_file(const Gtk::Entry &entry, bool save) {
+
+		Udjat::File::Path file{entry.get_text()};
+
+		if(file.empty() || file.dir()) {
+			return false;
+		}
+
+#if UDJAT_CORE_BUILD >= 22122800
+		if(save || file.regular()) {
+			return true;
+		}
+		return false;
+#else
+		return true;
+#endif
+}
+
+ std::string MainWindow::FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save) {
+
+	Gtk::Entry entry;
+	Gtk::Box box{Gtk::ORIENTATION_HORIZONTAL,6};
+	Gtk::Label label{ label_text, Gtk::ALIGN_END };
+	Gtk::Dialog dialog{title,true};
+
+	dialog.set_default_size(600, -1);
+
+	dialog.set_modal(true);
+	dialog.set_transient_for(*this);
+
+	entry.set_hexpand(true);
+	entry.set_activates_default(true);
+	entry.set_icon_from_icon_name(save ? "document-save-as" : "document-open",Gtk::ENTRY_ICON_SECONDARY);
+	entry.set_icon_activatable(true);
+
+	if(filename && *filename) {
+
+		Udjat::String path{filename};
+		path.expand(); // resolve ${variable}
+
+#ifdef _WIN32
+		if(path[0] == '\\') {
+			entry.set_text(path.c_str());
+		} else {
+			entry.set_text(std::string{Glib::get_user_special_dir(Glib::USER_DIRECTORY_DOCUMENTS)} + "\\" + path);
+		}
+#else
+		if(*filename == '/') {
+			entry.set_text(path.c_str());
+		} else {
+			entry.set_text(std::string{Glib::get_user_special_dir(Glib::USER_DIRECTORY_DOCUMENTS)} + "/" + path);
+		}
+#endif // _WIN32
+
 	}
 
- 	g_message("Apply '%s' action",std::to_string(selected->title).c_str());
+	entry.signal_icon_press().connect([&dialog,&entry,save,title](Gtk::EntryIconPosition, const GdkEventButton *) {
+
+		Gtk::FileChooserDialog filechooser{
+			dialog,
+			title,
+			(save ? Gtk::FILE_CHOOSER_ACTION_SAVE : Gtk::FILE_CHOOSER_ACTION_OPEN)
+		};
+
+		filechooser.set_filename(entry.get_text());
+		if(filechooser.run() == Gtk::RESPONSE_ACCEPT) {
+			entry.set_text(filechooser.get_filename());
+		}
+
+    });
+
+
+	{
+		Gtk::Box &carea = *dialog.get_content_area();
+		carea.set_border_width(12);
+		carea.set_spacing(6);
+		carea.add(box);
+	}
+
+	{
+		box.set_orientation(Gtk::ORIENTATION_HORIZONTAL);
+		box.add(label);
+		box.add(entry);
+	}
+
+	dialog.add_button(_("_Cancel"),Gtk::RESPONSE_CANCEL);
+
+	Gtk::Button &apply_button = *dialog.add_button(apply, Gtk::RESPONSE_APPLY);
+
+	dialog.set_default(apply_button);
+	apply_button.set_sensitive(check_file(entry,save));
+
+	entry.signal_changed().connect([&entry,save,&apply_button]() {
+		apply_button.set_sensitive(check_file(entry,save));
+	});
+
+	dialog.show_all();
+	if(dialog.run() == Gtk::RESPONSE_APPLY) {
+		return entry.get_text();
+	}
+
+	return "";
+ }
+
+ std::shared_ptr<Reinstall::Abstract::Group> MainWindow::GroupFactory(const pugi::xml_node &node) {
+ 	auto group = make_shared<::Widget::Group>(node);
+
+ 	Glib::signal_idle().connect([this,group](){
+		layout.view.pack_start(*group,true,true,0);
+		return 0;
+ 	});
+
+	return group;
+ }
+
+ void MainWindow::apply() {
+
+	Reinstall::Action &action = Reinstall::Action::get_selected();
+
+ 	g_message("Apply '%s'",std::to_string(action).c_str());
 	buttons.apply.set_sensitive(false);
 	buttons.cancel.set_sensitive(false);
 	layout.view.set_sensitive(false);
 
+	//
+	// Interact with user.
+	//
+	try {
+
+		if(!action.interact()) {
+			buttons.apply.set_sensitive(true);
+			buttons.cancel.set_sensitive(true);
+			layout.view.set_sensitive(true);
+			return;
+		}
+
+	} catch(const std::exception &e) {
+
+		Gtk::MessageDialog dialog_fail{
+			*this,
+			_("First step has failed"),
+			false,
+			Gtk::MESSAGE_ERROR,
+			Gtk::BUTTONS_OK,
+			true
+		};
+
+		dialog_fail.set_default_size(500, -1);
+		dialog_fail.set_title(action.get_label());
+		dialog_fail.set_secondary_text(e.what());
+		dialog_fail.show();
+		dialog_fail.run();
+
+		return;
+	}
+
+	//
+	// Ask for confirmation.
+	//
 	Gtk::ResponseType response = Gtk::RESPONSE_YES;
-	if(selected->confirmation) {
+	if(action.confirmation()) {
 		response = (Gtk::ResponseType) Dialog::Popup{
 						*this,
-						*selected,
-						selected->confirmation,
+						*action.get_button(),
+						action.confirmation(),
 						Gtk::MESSAGE_QUESTION,
 						Gtk::BUTTONS_YES_NO
 					}.run();
 	}
 
-	// Execute action
 	if(response == Gtk::RESPONSE_YES) {
-
+		//
+		// Build and burn image.
+		//
 		std::string error_message;
 		Dialog::Progress dialog;
+
+		std::shared_ptr<Reinstall::Worker> worker;
+		std::shared_ptr<Reinstall::Writer> writer;
 
 		dialog.set_parent(*this);
 		dialog.set_decorated(false);
 		dialog.set_deletable(false);
-		dialog.set(*selected);
+		dialog.set(*action.get_button());
 		dialog.show();
 
-		Udjat::ThreadPool::getInstance().push([&dialog,&error_message,this](){
+		Udjat::ThreadPool::getInstance().push([&dialog,&action,&worker,&error_message](){
 
 			try {
 
-				selected->prepare();
+				worker = action.prepare();
 
 			} catch(const std::exception &e) {
 
@@ -271,56 +389,163 @@
 		dialog.run();
 		dialog.hide(); // Just hide to wait for all enqueued state changes to run.
 
-		if(!error_message.empty()) {
+		//
+		// Get action writer.
+		//
+		if(error_message.empty()) {
 
-			if(selected->failed) {
+			try {
 
-				Dialog::Popup dialog_fail{
-					*this,
-					*selected,
-					selected->failed,
-					Gtk::MESSAGE_ERROR,
-					Gtk::BUTTONS_CLOSE
-				};
+				writer = action.WriterFactory();
 
-				if(!selected->failed.has_secondary()) {
-					dialog_fail.set_secondary_text(error_message);
-				}
-				dialog_fail.run();
+			} catch(const std::exception &e) {
 
-			} else {
-
-				Gtk::MessageDialog dialog_fail{
-					*this, // Gtk::Window& parent,
-					_("Action has failed"), // const Glib::ustring& message,
-					false,	// bool use_markup = false,
-					Gtk::MESSAGE_ERROR, // MessageType type =
-					Gtk::BUTTONS_CLOSE, // ButtonsType buttons = BUTTONS_OK,
-					true
-				};
-
-				selected->set_dialog(dialog_fail);
-				dialog_fail.set_secondary_text(error_message);
-				dialog_fail.show();
-				dialog_fail.run();
+				error_message = e.what();
+				cerr << e.what() << endl;
 
 			}
 
-		} else if(selected->success) {
+		}
 
-			Dialog::Popup{
-				*this,
-				*selected,
-				selected->success,
-				Gtk::MESSAGE_INFO,
-				Gtk::BUTTONS_OK
-			}.run();
+		//
+		// Burn image
+		//
+		if(error_message.empty()) {
+
+			dialog.show();
+
+			Udjat::ThreadPool::getInstance().push([&dialog,writer,worker,&error_message](){
+
+				try {
+
+					worker->burn(writer);
+
+				} catch(const std::exception &e) {
+
+					error_message = e.what();
+					cerr << e.what() << endl;
+
+				}
+
+				dialog.dismiss();
+			});
+
+			dialog.run();
+			dialog.hide();
 
 		}
 
+		// Show last dialogs.
+		{
+			std::shared_ptr<Gtk::MessageDialog> popup;
+
+			if(error_message.empty()) {
+
+				if(action.success()) {
+
+					// Customized success dialog.
+
+					cout << "MainWindow\tShowing action 'success' dialog" << endl;
+					popup = make_shared<Dialog::Popup>(
+						*this,
+						*action.get_button(),
+						action.success(),
+						Gtk::MESSAGE_INFO,
+						Gtk::BUTTONS_OK
+					);
+
+				} else {
+
+					// Standard success dialog.
+
+					cout << "MainWindow\tShowing default 'success' dialog" << endl;
+					popup = make_shared<Gtk::MessageDialog>(
+						*this,
+						_("Action completed"),
+						false,
+						Gtk::MESSAGE_INFO,
+						Gtk::BUTTONS_OK,
+						true
+					);
+
+				}
+
+				// Add extra buttons.
+				if(action.reboot()) {
+
+					// Close button is the suggested action.
+					auto close = popup->get_widget_for_response(Gtk::RESPONSE_CLOSE);
+					close->get_style_context()->add_class("suggested-action");
+					popup->set_default_response(Gtk::RESPONSE_CLOSE);
+
+					// Reboot button is destructive.
+					auto reboot = popup->add_button(_("Reboot"),Gtk::RESPONSE_APPLY);
+					reboot->get_style_context()->add_class("destructive-action");
+
+				}
+
+			} else if(action.failed()) {
+
+				// Customized error dialog.
+
+				popup = make_shared<Dialog::Popup>(
+					*this,
+					*action.get_button(),
+					action.failed(),
+					Gtk::MESSAGE_ERROR,
+					Gtk::BUTTONS_OK
+				);
+
+				if(!action.failed().has_secondary()) {
+					popup->set_secondary_text(error_message);
+				}
+
+			} else {
+
+				// Standard error dialog.
+
+				popup = make_shared<Gtk::MessageDialog>(
+					*this,
+					_("Action has failed"),
+					false,
+					Gtk::MESSAGE_ERROR,
+					Gtk::BUTTONS_OK,
+					true
+				);
+
+				popup->set_secondary_text(error_message);
+
+			}
+
+			if(action.quit()) {
+				auto cancel = popup->add_button(_("Quit application"),Gtk::RESPONSE_CANCEL);
+				if(!action.reboot() && error_message.empty()) {
+					cancel->get_style_context()->add_class("suggested-action");
+					popup->set_default_response(Gtk::RESPONSE_CANCEL);
+				}
+			}
+
+			popup->set_title(action.get_label());
+			popup->set_default_size(500, -1);
+			popup->show();
+			switch(popup->run()) {
+			case Gtk::RESPONSE_APPLY:
+				cout << "MainWindow\tRebooting by user request" << endl;
+				Reinstall::reboot();
+				Gtk::Application::get_default()->quit();
+				break;
+
+			case Gtk::RESPONSE_CANCEL:
+				Gtk::Application::get_default()->quit();
+				break;
+			}
+
+
+		}
 	}
 
 	buttons.apply.set_sensitive(true);
 	buttons.cancel.set_sensitive(true);
 	layout.view.set_sensitive(true);
+
  }

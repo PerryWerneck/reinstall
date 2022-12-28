@@ -41,17 +41,13 @@
 
 		auto worker = Protocol::WorkerFactory(this->url);
 
-		if(message && *message) {
-			progress.set(message);
-		} else {
-			progress.set(worker->url().c_str());
-		}
+		progress.set_url(worker->url().c_str());
 
 		if(filename) {
 
 			// Download URL to 'filename'
 			worker->save(filename,[&progress](double current, double total){
-				progress.update(current,total);
+				progress.set_progress(current,total);
 				return true;
 			});
 
@@ -61,7 +57,7 @@
 
 			// Download to temporary file.
 			tempfilename = worker->save([&progress](double current, double total){
-				progress.update(current,total);
+				progress.set_progress(current,total);
 				return true;
 			});
 

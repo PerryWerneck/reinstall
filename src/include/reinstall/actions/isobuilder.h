@@ -45,9 +45,6 @@
 			const char *boot_image = "/boot/x86_64/efi";
 		} efi;
 
-		/// @brief Write ISO image.
-		virtual void write(iso9660::Worker &worker) = 0;
-
 	protected:
 
 		/// brief Post scripts.
@@ -57,11 +54,12 @@
 		void post(const char *isoname);
 
 	public:
-		IsoBuilder(const pugi::xml_node &node);
+		IsoBuilder(const pugi::xml_node &node, const char *icon_name = "");
 		virtual ~IsoBuilder();
 
-		/// @brief First step, build image.
-		void prepare() override;
+		/// @brief Build image.
+		/// @return Pointer to prepared iso image.
+		std::shared_ptr<Reinstall::Worker> prepare() override;
 
 	};
 

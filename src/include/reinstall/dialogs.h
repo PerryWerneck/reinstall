@@ -39,7 +39,7 @@
 			virtual void show();
 			virtual void hide();
 
-			virtual void set(const Object &object);
+			virtual void set(const Abstract::Object &object);
 
 		};
 
@@ -57,16 +57,21 @@
 			static Progress & getInstance();
 
 			virtual void set(const Action &action);
-			virtual void set(const char *message);
+			virtual void set_title(const char *title);
+			virtual void set_sub_title(const char *subtitle);
+			virtual void set_step(const char *step);
+			virtual void set_icon_name(const char *icon_name);
 
-			/// @brief Update counters.
-			virtual void count(size_t count, size_t total);
+			// Extends Udjat::Protocol::Watcher.
+			virtual void set_url(const char *url);
+			virtual void set_progress(double current, double total);
 
-			/// @brief Update current operation.
-			virtual void update(double current, double total);
+			/// @brief Update count of downloaded files.
+			virtual void set_count(size_t current, size_t total);
 
-			inline void set(const std::string &message) {
-				set(message.c_str());
+			/// @brief Set progress title (not the window title).
+			inline void set_title(const std::string &message) {
+				set_title(message.c_str());
 			}
 
 		};

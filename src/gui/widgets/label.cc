@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,37 +17,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
- #include <reinstall/action.h>
- #include <list>
- #include <memory>
- #include <functional>
+ #include <config.h>
+ #include <private/widgets.h>
+ #include <udjat/tools/quark.h>
 
- namespace Reinstall {
+ using namespace Gtk;
+ using namespace std;
+ using namespace Udjat;
 
-	namespace Abstract {
+ namespace Widget {
 
-		class UDJAT_API Group : public Reinstall::Abstract::Object {
-		private:
-			std::list<std::shared_ptr<Action>> actions;
+	Widget::Label::Label(const pugi::xml_node &node, const char *attrname, Gtk::Align halign, Gtk::Align valign) : Gtk::Label("",halign,valign) {
 
-		public:
+		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Label.html
 
-			unsigned short id;
+		const char *text = Reinstall::Abstract::Object::get_text(node,attrname);
 
-			Group();
-			virtual ~Group();
+		set_justify(Gtk::JUSTIFY_LEFT);
 
-			virtual void push_back(std::shared_ptr<Action> action);
+		if(*text) {
 
-			/// @brief Navigate from groups.
-			bool for_each(const std::function<bool (std::shared_ptr<Action> action)> &call) const;
+			set_text(text);
 
-			static std::shared_ptr<Group> find(const pugi::xml_node &node);
-			static std::shared_ptr<Group> factory(const pugi::xml_node &node);
+			const char *tooltip = Reinstall::Abstract::Object::get_text(node,"tooltip");
+			if(*tooltip) {
+				set_tooltip_text(tooltip);
+			}
 
-		};
-
+		}
 	}
 
  }
+

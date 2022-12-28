@@ -2,7 +2,7 @@
 <config>
 
 	<!-- System version -->
-	<!-- attribute name='osversion' value='15.4' / -->
+	<attribute name='osversion' value='15.4' />
 
 	<!-- HTTP is required for downloading files -->
 	<module name='http' required='yes' />
@@ -21,7 +21,7 @@
 			* slp-url: The URL for the kernel parameter when SLP is available.
 		
 	-->
-	<repository name='install' url='http://localhost/~perry/openSUSE-Leap-15.3-NET-x86_64' 
+	<repository name='install' url='http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64' 
 		slp-service-type='service:install.suse' 
 		slp-scope-list='' 
 		slp-filter='' 
@@ -59,7 +59,7 @@
 	<group name='OpenSUSE'>
 
 		<!-- Nome que aparece na opção de menu -->
- 		<attribute name='label' value='OpenSUSE ${suseversion}' />
+ 		<attribute name='label' value='OpenSUSE ${osversion}' />
  		
  		<option name='opt1' default='yes'>
 

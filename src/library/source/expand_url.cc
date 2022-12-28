@@ -81,7 +81,7 @@
 
 	}
 
-	bool Source::contents(const Action &action, std::vector<std::shared_ptr<Source>> &contents) {
+	bool Source::contents(const Action UDJAT_UNUSED(&action), std::vector<std::shared_ptr<Source>> &contents) {
 
 		if( *(url + strlen(url) - 1) != '/') {
 			return false;
@@ -92,7 +92,7 @@
 		}
 
 		if(message && *message) {
-			Dialog::Progress::getInstance().set(message);
+			Dialog::Progress::getInstance().set_title(message);
 		}
 
 		mirror(name(),path,url,contents);

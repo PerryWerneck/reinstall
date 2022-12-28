@@ -23,12 +23,62 @@
  #include <udjat/defs.h>
  #include <udjat/tools/object.h>
  #include <cstring>
- #include <gtkmm.h>
- #include <glibmm/i18n.h>
  #include <string>
 
  namespace Reinstall {
 
+	/// @brief Dialog box from XML.
+	class UDJAT_API Popup {
+	public:
+		const char *message = "";
+		const char *secondary = "";
+
+		struct {
+			const char *link = "";
+			const char *label = "";
+
+			inline operator bool() const {
+				return (link && *link);
+			}
+
+		} url;
+
+		Popup() = default;
+
+		void set(const pugi::xml_node &node);
+
+		inline operator bool() const noexcept {
+			return (message && *message);
+		}
+
+		inline bool has_secondary() const noexcept {
+			return secondary && *secondary;
+		}
+
+
+	};
+
+	namespace Abstract {
+
+		class UDJAT_API Object : public Udjat::NamedObject {
+		public:
+
+			static const char * get_text(const pugi::xml_node &node, const char *attrname);
+			static pugi::xml_node find(const pugi::xml_node &node, const char *attrname);
+
+			Object() = default;
+
+			virtual void set(const pugi::xml_node &node);
+
+			// bool getProperty(const char *key, std::string &value) const noexcept override;
+
+			virtual std::string get_label() const = 0;
+
+		};
+
+	}
+
+	/*
 	class UDJAT_API Object : public Udjat::NamedObject {
 	public:
 		class UDJAT_API Label : public Gtk::Label {
@@ -57,38 +107,7 @@
 		/// @brief Setup window from object properties.
 		void set_dialog(Gtk::Window &window) const;
 
-		/// @brief Dialog box from XML.
-		class UDJAT_API Popup {
-		public:
-			const char *message = "";
-			const char *secondary = "";
 
-			struct {
-				const char *link = "";
-				const char *label = "";
-
-				inline operator bool() const {
-					return (link && *link);
-				}
-
-			} url;
-
-			Popup() = default;
-
-			void setup(const pugi::xml_node &node);
-
-			inline operator bool() const noexcept {
-				return (message && *message);
-			}
-
-			inline bool has_secondary() const noexcept {
-				return secondary && *secondary;
-			}
-
-
-		};
-
-		Popup confirmation, success, failed;
 
 		class UDJAT_API Link : public Gtk::Button {
 		private:
@@ -107,24 +126,24 @@
 
 	protected:
 
-		bool getProperty(const char *key, std::string &value) const noexcept override;
 
 	public:
 
 		Object(const pugi::xml_node &node);
 
 	};
+	*/
 
  }
 
  namespace std {
 
-	inline string to_string(const Reinstall::Object::Label &label) {
-		return string{label.get_text()};
+	inline std::string to_string(const Reinstall::Abstract::Object &object) {
+		return object.get_label();
 	}
 
-	inline ostream& operator<< (ostream& os, const Reinstall::Object::Label &label) {
-			return os << to_string(label);
+	inline ostream& operator<< (ostream& os, const Reinstall::Abstract::Object &object) {
+			return os << object.get_label();
 	}
 
  }

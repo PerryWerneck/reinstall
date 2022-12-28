@@ -12,6 +12,7 @@ LIBRARY_SOURCES = \
 	$(wildcard src/library/dialogs/*.cc) \
 	$(wildcard src/library/repository/*.cc) \
 	$(wildcard src/library/source/*.cc) \
+	$(wildcard src/library/writers/*.cc) \
 	$(wildcard src/library/os/@OSNAME@/*.cc)
 
 ISOWRITER_SOURCES = \

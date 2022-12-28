@@ -20,11 +20,15 @@
  #include <config.h>
  #include <udjat/module.h>
  #include <udjat/factory.h>
+ #include <udjat/tools/object.h>
  #include <stdexcept>
  #include <reinstall/actions/isobuilder.h>
+ #include <reinstall/userinterface.h>
+ #include <reinstall/writer.h>
  #include <reinstall/group.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/intl.h>
 
  using namespace std;
  using namespace Udjat;
@@ -42,35 +46,40 @@
 
 			class Action : public Reinstall::IsoBuilder {
 			private:
-				const char *path = nullptr;
+				const char *filename;
+				std::string isoname;
 
 			public:
-				Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node), path{Quark{node,"iso-filename"}.c_str()} {
+				Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node,"document-save-as"), filename{getAttribute(node,"filename","")} {
 
 					debug("Creating iso-writer action '",name(),"'");
 
-					if(!(path && *path)) {
-						throw runtime_error("Required attribute 'iso-filename' is missing");
-					}
-
-					if(!icon) {
-						// https://specifications.freedesktop.org/icon-naming-spec/latest/
-						// drive-removable-media
-						icon = "document-save-as";
-					}
 				}
 
 				virtual ~Action() {
 				}
 
-				void write(Reinstall::iso9660::Worker &worker) override {
-					worker.save(path);
-					post(path);
+				bool interact() override {
+
+					isoname = Reinstall::UserInterface::getInstance().FilenameFactory(
+						_("Select target image file"),
+						_("Image file name"),
+						_("_Save"),
+						filename,
+						true
+					);
+
+					return !isoname.empty();
+				}
+
+				std::shared_ptr<Reinstall::Writer> WriterFactory() override {
+					info() << "Saving '" << filename << "'" << endl;
+					return Reinstall::Writer::FileFactory(isoname.c_str());
 				}
 
 			};
 
-			Reinstall::Group::find(node)->push_back(make_shared<Action>(node));
+			Reinstall::push_back(node,make_shared<Action>(node));
 
 			return true;
 		}

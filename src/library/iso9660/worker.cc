@@ -25,6 +25,8 @@
  #include <udjat/tools/string.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/configuration.h>
+ #include <udjat/tools/intl.h>
+ #include <udjat/tools/logger.h>
 
  #include <sys/stat.h>
  #include <fcntl.h>
@@ -172,27 +174,6 @@
 		if(rc < 0) {
 			cerr << "iso9660\tError '" << iso_error_to_msg(rc) << "' adding node" << endl;
 			throw runtime_error(iso_error_to_msg(rc));
-		}
-
-	}
-
-	void iso9660::Worker::save(const char *filename) {
-
-		int fd = open(filename,O_CREAT|O_TRUNC|O_APPEND|O_WRONLY,0666);
-		if(fd < 0) {
-			throw system_error(errno,system_category(),filename);
-		}
-
-		try {
-
-			save(fd);
-
-		} catch(...) {
-
-			::close(fd);
-			remove(filename);
-			throw;
-
 		}
 
 	}
@@ -386,9 +367,14 @@
 
 	}
 
-	void iso9660::Worker::save(int fd) {
+	void iso9660::Worker::burn(std::shared_ptr<Writer> writer) {
+
+		debug("Burning ISO image");
 
 		int rc;
+
+		Dialog::Progress &progress = Dialog::Progress::getInstance();
+		progress.set_title(_("Creating ISO Image"));
 
 		rc = iso_image_update_sizes(image);
 		if (rc < 0) {
@@ -404,9 +390,9 @@
 			throw runtime_error(iso_error_to_msg(rc));
 		}
 
-		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set(_("Writing ISO image"));
+		writer->open();
 
+		progress.set_sub_title(_("Writing data"));
 		try {
 
 			#define BUFLEN 2048
@@ -417,13 +403,11 @@
 
 			while(burn_src->read_xt(burn_src, buffer, BUFLEN) == BUFLEN) {
 
-				if(write(fd,buffer,BUFLEN) != BUFLEN) {
-					throw system_error(errno, system_category(),_("I/O error writing image"));
-				}
+				writer->write(buffer,BUFLEN);
 
 				current += BUFLEN;
 				if(total) {
-					progress.update(current,total);
+					progress.set_progress(current,total);
 				}
 
 			}
@@ -439,8 +423,12 @@
 		burn_src->free_data(burn_src);
 		free(burn_src);
 
-		progress.set(_("Finalizing"));
-		::fsync(fd);
+		progress.set_sub_title(_("Finalizing"));
+		writer->finalize();
+		writer->close();
+
+		progress.set_title(_("ISO image Complete"));
+		progress.set_sub_title("");
 
 	}
 

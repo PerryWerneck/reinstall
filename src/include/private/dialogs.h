@@ -29,7 +29,7 @@
 	/// @brief Popup dialog.
 	class Popup : public Gtk::MessageDialog  {
 	public:
-		Popup(Gtk::Window &parent, const Reinstall::Object &object, const Reinstall::Object::Popup &settings, Gtk::MessageType = Gtk::MESSAGE_INFO, Gtk::ButtonsType buttons = Gtk::BUTTONS_OK);
+		Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Popup &settings, Gtk::MessageType = Gtk::MESSAGE_INFO, Gtk::ButtonsType buttons = Gtk::BUTTONS_OK);
 
 	};
 
@@ -57,10 +57,11 @@
 
 		struct {
 			Label title{ "" };
-			Label action{ "", Gtk::ALIGN_START };
-			Label message{ "", Gtk::ALIGN_CENTER };
-			Label step{ "", Gtk::ALIGN_END };
+			Label subtitle{ "" };
+			Label left{ "", Gtk::ALIGN_START };
+			Label right{ "", Gtk::ALIGN_END };
 
+			Gtk::Grid header;
 			Gtk::Image icon;
 			Gtk::ProgressBar progress;
 			Gtk::Box footer{Gtk::ORIENTATION_HORIZONTAL};
@@ -75,20 +76,8 @@
 
 		void set_parent(Gtk::Window &window);
 
-		inline Label & sub_title() {
+		inline Label & title() {
 			return widgets.title;
-		}
-
-		inline Label & action() {
-			return widgets.action;
-		}
-
-		inline Label & message() {
-			return widgets.message;
-		}
-
-		inline Label & step() {
-			return widgets.step;
 		}
 
 		inline Gtk::Image & icon() {
@@ -102,10 +91,13 @@
 		// Interface with libreinstall.
 		void show() override;
 		void hide() override;
-		void set(const char *message) override;
-		void count(size_t count, size_t total) override;
-		void update(double current, double total) override;
-		void set(const Reinstall::Object &object) override;
+		void set_title(const char *title) override;
+		void set_sub_title(const char *title) override;
+		void set_step(const char *step) override;
+		void set_icon_name(const char *icon_name) override;
+		void set(const Reinstall::Abstract::Object &object) override;
+
+		void set_progress(double current, double total) override;
 
 	};
 

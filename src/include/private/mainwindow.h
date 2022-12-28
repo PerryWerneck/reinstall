@@ -24,8 +24,10 @@
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
  #include <reinstall/action.h>
+ #include <reinstall/userinterface.h>
+ #include <pugixml.hpp>
 
- class UDJAT_PRIVATE MainWindow : public Gtk::Window {
+ class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Reinstall::UserInterface {
  private:
 
  	class Logo : public Gtk::Image {
@@ -46,15 +48,23 @@
 		Gtk::Button apply{_("_Apply"), true}, cancel{_("_Cancel"), true};
  	} buttons;
 
- 	std::shared_ptr<Reinstall::Action> selected;
-
 	void on_show() override;
 
 	void apply();
 
  public:
+
 	MainWindow();
 	virtual ~MainWindow();
+
+	/// @brief Construct an action button.
+	std::shared_ptr<Reinstall::Abstract::Object> ActionFactory(const pugi::xml_node &node, const char *icon_name) override;
+
+	/// @brief Construct a filename (gui thread).
+	std::string FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save) override;
+
+	/// @brief Construct a group box.
+	std::shared_ptr<Reinstall::Abstract::Group> GroupFactory(const pugi::xml_node &node) override;
 
  };
 

@@ -21,24 +21,24 @@
 
  #include <udjat/defs.h>
  #include <pugixml.hpp>
+ #include <udjat/tools/object.h>
  #include <udjat/tools/string.h>
  #include <reinstall/object.h>
  #include <reinstall/repository.h>
  #include <reinstall/value.h>
  #include <reinstall/source.h>
+ #include <reinstall/writer.h>
  #include <list>
  #include <unordered_set>
  #include <memory>
  #include <cstring>
  #include <functional>
- #include <gtkmm.h>
- #include <glibmm/i18n.h>
 
  namespace Reinstall {
 
  	class Worker;
 
-	class UDJAT_API Action : public Reinstall::Object {
+	class UDJAT_API Action : public Udjat::NamedObject {
 	public:
 
 		/// @brief Kernel parameters.
@@ -101,42 +101,21 @@
 
 		};
 
-
-		class UDJAT_API Message : Udjat::NamedObject {
-		private:
-			const Action &action;				///< @brief Action for this dialog.
-
-			const char *title = "";				///< @brief Dialog title.
-			const char *icon = "";				///< @brief Dialog icon.
-
-			/// @brief Dialog messages.
-			struct {
-				const char *primary = "";		///< @brief Primary text.
-				const char *secondary = "";		///< @brief Secondary text.
-			} text;
-
-			struct {
-				const char *value = "";			///< @brief URL target.
-				const char *label = "";			///< @brief Label for URL button.
-			} url;
-
-		public:
-			Message(const Action &action, const pugi::xml_node &node);
-
-			bool getProperty(const char *key, std::string &value) const noexcept override;
-
-		};
-
 		std::list<std::shared_ptr<Template>> templates;
 
 	protected:
 
 		const struct Options {
 
-			bool enabled : 1;	/// @brief True if the action is enabled.
-			bool visible : 1;	/// @brief True if the action is visible.
+			bool enabled 	: 1;	/// @brief True if the action is enabled.
+			bool visible	: 1;	/// @brief True if the action is visible.
+			bool reboot		: 1;	/// @brief True if the action will request reboot.
+			bool quit		: 1;	/// @brief True if the action will enable 'quit application' button.
 
 			Options(const pugi::xml_node &node);
+
+			/// @brief Construct option from xml node.
+			static bool Factory(const pugi::xml_node &node, const char *attrname, bool def);
 
 		} options;
 
@@ -162,24 +141,36 @@
 		/// @brief Run first step with worker.
 		virtual void prepare(Reinstall::Worker &worker);
 
-		/// @brief Get first folder.
-		// std::shared_ptr<Source> folder();
+		/// @brief Object with the UI definitions.
+		std::shared_ptr<Abstract::Object> item;
 
-		bool getProperty(const char *key, std::string &value) const noexcept override;
+		Action(const pugi::xml_node &node, const char *icon_name = "");
+
+		/// @brief Icon name (for dialogs and menus).
+		const char *icon_name = "";
 
 	private:
-		static Action * defaction;		///< @brief Default action.
+		static Action * selected;		///< @brief Selected action.
+
+		struct {
+			Popup confirmation;
+			Popup success;
+			Popup failed;
+		} dialog;
 
 	public:
-		Action(const pugi::xml_node &node);
 		virtual ~Action();
 
 		unsigned short id;
 
-		static Action & getDefault();
+		static Action & get_selected();
 
-		inline bool is_default() const noexcept {
-			return defaction == this;
+		inline void set_selected() noexcept {
+			selected = this;
+		}
+
+		inline bool is_selected() const noexcept {
+			return selected == this;
 		}
 
 		inline bool enabled() const noexcept {
@@ -190,11 +181,40 @@
 			return options.visible;
 		}
 
+		inline bool reboot() const noexcept {
+			return options.reboot;
+		}
+
+		inline bool quit() const noexcept {
+			return options.quit;
+		}
+
+		inline const char * get_icon_name() const noexcept {
+			return icon_name;
+		}
+
+		/// @brief Get UI Object.
+		inline std::shared_ptr<Abstract::Object> get_button() {
+			return item;
+		}
+
+		inline std::string get_label() const {
+			return item->get_label();
+		}
+
 		/// @brief Get repository.
 		std::shared_ptr<Repository> repository(const char *name = "install") const;
 
-		/// @brief Run first step.
-		virtual void prepare();
+		/// @brief Get parameters from user (first step, gui thread).
+		/// @return false to cancel action.
+		virtual bool interact();
+
+		/// @brief Create image (second step, work thread).
+		/// @return Pointer to action worker.
+		virtual std::shared_ptr<Reinstall::Worker> prepare();
+
+		/// @brief Construct file writer (Runs on main thread)
+		virtual std::shared_ptr<Writer> WriterFactory() = 0;
 
 		/// @brief Load folders.
 		void load();
@@ -208,9 +228,27 @@
 		bool push_back(std::shared_ptr<Source> source);
 		bool push_back(std::shared_ptr<Template> tmpl);
 
+		inline size_t source_count() const noexcept {
+			return sources.size();
+		}
+
 		void for_each(const std::function<void (Source &source)> &call);
 		void for_each(const std::function<void (std::shared_ptr<Source> &source)> &call);
 
+		inline const Popup & confirmation() const {
+			return dialog.confirmation;
+		}
+
+		inline const Popup & success() const {
+			return dialog.success;
+		}
+
+		inline const Popup & failed() const {
+			return dialog.failed;
+		}
+
 	};
+
+	UDJAT_API void push_back(const pugi::xml_node &node, std::shared_ptr<Action> action);
 
  }

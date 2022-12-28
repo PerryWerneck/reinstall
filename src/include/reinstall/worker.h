@@ -22,6 +22,7 @@
  #include <pugixml.hpp>
  #include <udjat/defs.h>
  #include <reinstall/action.h>
+ #include <reinstall/writer.h>
 
  namespace Reinstall {
 
@@ -38,6 +39,10 @@
 		virtual void pre(Action &action);
 		virtual void apply(Action &action);
 		virtual void post(Action &action);
+
+		/// @brief Burn image (last step, work thread).
+		/// @param Write prepared image @see Action::WriterFactory
+		virtual void burn(std::shared_ptr<Writer> writer);
 
 	};
 
