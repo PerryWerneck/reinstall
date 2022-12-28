@@ -62,19 +62,18 @@
 			virtual void set_step(const char *step);
 			virtual void set_icon_name(const char *icon_name);
 
-			/// @brief Update counters.
-			virtual void count(size_t count, size_t total);
+			// Extends Udjat::Protocol::Watcher.
+			virtual void set_url(const char *url);
+			virtual void set_progress(double current, double total);
 
-			/// @brief Update current operation.
-			virtual void update(double current, double total);
+			/// @brief Update count of downloaded files.
+			virtual void set_count(size_t current, size_t total);
 
+			/// @brief Set progress title (not the window title).
 			inline void set_title(const std::string &message) {
 				set_title(message.c_str());
 			}
 
-			inline void set_step(const std::string &message) {
-				set_step(message.c_str());
-			}
 		};
 
 	}

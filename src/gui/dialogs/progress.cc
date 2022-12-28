@@ -21,6 +21,8 @@
  #include <private/dialogs.h>
  #include <iostream>
  #include <udjat/tools/logger.h>
+ #include <sstream>
+ #include <iomanip>
 
  using namespace Udjat;
  using namespace Gtk;
@@ -70,10 +72,8 @@
 
 	widgets.footer.get_style_context()->add_class("dialog-footer");
 	widgets.footer.set_homogeneous(true);
-	widgets.action.get_style_context()->add_class("dialog-action");
-	widgets.step.get_style_context()->add_class("dialog-step");
-	widgets.footer.pack_start(widgets.action,true,true,0);
-	widgets.footer.pack_end(widgets.step,true,true,0);
+	widgets.footer.pack_start(widgets.left,true,true,0);
+	widgets.footer.pack_end(widgets.right,true,true,0);
 
 	content_area.pack_end(widgets.footer,false,false,0);
 
@@ -82,6 +82,11 @@
 	sigc::slot<bool()> slot = sigc::bind(sigc::mem_fun(*this, &::Dialog::Progress::on_timeout), 1);
 
 	this->timer.connection = Glib::signal_timeout().connect(slot,100);
+
+#ifdef DEBUG
+	widgets.left.set_text("left");
+	widgets.right.set_text("right");
+#endif // DEBUG
 
  }
 
@@ -171,7 +176,10 @@
 	auto str = make_shared<string>(step);
 
  	Glib::signal_idle().connect([this,str](){
-		widgets.step.set_text(str->c_str());
+
+		debug("-------------> ",str->c_str());
+
+		widgets.left.set_text(str->c_str());
 		return 0;
  	});
 
@@ -195,25 +203,60 @@
 
  }
 
- void Dialog::Progress::count(size_t count, size_t total)  {
+ static std::string format_size(double value) {
 
- 	Glib::signal_idle().connect([this,count,total](){
+	static const struct {
+		double value;
+		const char *name;
+	} sizes[] = {
+		{ 1073741824.0, "GB" },
+		{    1048576.0, "MB" },
+		{       1024.0, "KB" },
+	};
 
-		return 0;
- 	});
+	double unit_value = 1;
+	const char * unit_name = "";
+
+	for(size_t ix = 0; ix < N_ELEMENTS(sizes); ix++) {
+
+		if(value > sizes[ix].value) {
+			unit_value = sizes[ix].value;
+			unit_name = sizes[ix].name;
+			break;
+		}
+
+	}
+
+	std::stringstream formatted;
+	formatted << std::fixed << std::setprecision(1) << (value/unit_value) << unit_name;
+	return formatted.str();
 
  }
 
- void Dialog::Progress::update(double current, double total)  {
+ void Dialog::Progress::set_progress(double current, double total)  {
 
  	Glib::signal_idle().connect([this,current,total](){
 
 		if(total > current && total > 1) {
+
 			timer.idle = 0;
-			gdouble fraction = ((gdouble) current) / ((gdouble) total);
-			widgets.progress.set_fraction(fraction);
+			widgets.progress.set_fraction(((gdouble) current) / ((gdouble) total));
+
+			string fcurrent{format_size(current)};
+			string ftotal{format_size(total)};
+
+			widgets.right.set_text(
+				Logger::Message{
+					_("{} of {}"),
+					fcurrent,
+					ftotal
+				}.c_str()
+			);
+
 		} else {
-			widgets.step.set_text("");
+
+			widgets.right.set_text("");
+
 		}
 
 		return 0;
@@ -231,11 +274,11 @@
 		set_sub_title(_("Initializing"));
 
 #ifdef DEBUG
-		action().set_text("action");
-		step().set_text("step");
+		widgets.left.set_text("left");
+		widgets.right.set_text("right");
 #else
-		action().set_text("");
-		step().set_text("");
+		widgets.left.set_text("");
+		widgets.left.set_text("");
 #endif // DEBUG
 
 		Gtk::Window::set_title(object.get_label());

@@ -119,7 +119,7 @@
 		dialog.Gtk::Window::set_title(get_title());
 		dialog.set_parent(*this);
 		dialog.set_title(_("Getting configuration"));
-		dialog.set_sub_title("http://www.google.com");
+		dialog.set_url("http://www.google.com");
 		dialog.set_icon_name("dialog-information");
 		dialog.footer(true);
 		dialog.set_decorated(true);
@@ -155,8 +155,6 @@
 
 			// Load image definitions.
 			Udjat::Application::setup("./xml.d",true);
-
-			sleep(5);
 
 			// And dismiss dialog.
 			dialog.dismiss();

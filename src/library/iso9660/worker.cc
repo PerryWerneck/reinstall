@@ -424,7 +424,7 @@
 
 				current += BUFLEN;
 				if(total) {
-					progress.update(current,total);
+					progress.set_progress(current,total);
 				}
 
 			}

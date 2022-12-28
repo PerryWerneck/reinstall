@@ -210,14 +210,12 @@
 	void Action::load() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
+		progress.set_title(_("Getting required files"));
 
-		progress.set_title("Downloading required files");
-		progress.set_step(_("Updating file sources"));
 		for(auto source : sources) {
 			source->set(*this);
 		}
 
-		progress.set_step(_("Getting file list"));
 		{
 			std::vector<std::shared_ptr<Source>> contents;
 
@@ -278,9 +276,6 @@
 	*/
 
 	void Action::applyTemplates() {
-
-		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set_title(_("Applying templates"));
 
 		for(auto tmpl : templates) {
 

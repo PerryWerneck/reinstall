@@ -58,8 +58,8 @@
 		struct {
 			Label title{ "" };
 			Label subtitle{ "" };
-			Label action{ "T1", Gtk::ALIGN_START };
-			Label step{ "T2", Gtk::ALIGN_END };
+			Label left{ "", Gtk::ALIGN_START };
+			Label right{ "", Gtk::ALIGN_END };
 
 			Gtk::Grid header;
 			Gtk::Image icon;
@@ -80,14 +80,6 @@
 			return widgets.title;
 		}
 
-		inline Label & action() {
-			return widgets.action;
-		}
-
-		inline Label & step() {
-			return widgets.step;
-		}
-
 		inline Gtk::Image & icon() {
 			return widgets.icon;
 		}
@@ -103,9 +95,9 @@
 		void set_sub_title(const char *title) override;
 		void set_step(const char *step) override;
 		void set_icon_name(const char *icon_name) override;
-		void count(size_t count, size_t total) override;
-		void update(double current, double total) override;
 		void set(const Reinstall::Abstract::Object &object) override;
+
+		void set_progress(double current, double total) override;
 
 	};
 

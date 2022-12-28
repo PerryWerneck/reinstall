@@ -206,6 +206,10 @@
 		bool push_back(std::shared_ptr<Source> source);
 		bool push_back(std::shared_ptr<Template> tmpl);
 
+		inline size_t source_count() const noexcept {
+			return sources.size();
+		}
+
 		void for_each(const std::function<void (Source &source)> &call);
 		void for_each(const std::function<void (std::shared_ptr<Source> &source)> &call);
 
