@@ -54,6 +54,8 @@
 		<Unit filename="../include/reinstall/userinterface.h" />
 		<Unit filename="../include/reinstall/value.h" />
 		<Unit filename="../include/reinstall/worker.h" />
+		<Unit filename="../include/reinstall/writer.h" />
+		<Unit filename="../modules/isowriter/init.cc" />
 		<Unit filename="../modules/netinstall/action.cc" />
 		<Unit filename="../modules/netinstall/init.cc" />
 		<Unit filename="../modules/netinstall/private.h" />
@@ -82,6 +84,8 @@
 		<Unit filename="userinterface.cc" />
 		<Unit filename="value.cc" />
 		<Unit filename="worker.cc" />
+		<Unit filename="writers/abstract.cc" />
+		<Unit filename="writers/file.cc" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

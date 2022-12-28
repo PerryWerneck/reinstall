@@ -3,6 +3,9 @@
 /* Do we have libburn? */
 #undef HAVE_BURN
 
+/* Do we have d-bus? */
+#undef HAVE_DBUS
+
 /* Define to 1 if gmtime_r is available. */
 #undef HAVE_GMTIME_R
 

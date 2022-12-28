@@ -28,11 +28,10 @@
 	Worker::Worker() {
 	}
 
-	void Worker::push_back(Source &source) {
+	void Worker::push_back(Source UDJAT_UNUSED(&source)) {
 	}
 
 	void Worker::pre(Action &action) {
-
 
 		// Get folder contents.
 		Dialog::Progress::getInstance().set_title(_("Getting file lists"));
@@ -58,6 +57,9 @@
 	}
 
 	void Worker::post(Action &action) {
+	}
+
+	void Worker::burn(std::shared_ptr<Reinstall::Writer> UDJAT_UNUSED(writer)) {
 	}
 
  }

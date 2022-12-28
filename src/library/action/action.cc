@@ -24,6 +24,7 @@
  #include <reinstall/userinterface.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/url.h>
+ #include <udjat/tools/logger.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
 
@@ -38,9 +39,9 @@
 
 	Action *Action::selected = nullptr;
 
-	Action * Action::get_selected() {
+	Action & Action::get_selected() {
 		if(selected) {
-			return selected;
+			return *selected;
 		}
 		throw runtime_error(_("No action"));
 	}
@@ -149,14 +150,12 @@
 		}
 	}
 
-	void Action::prepare() {
+	std::shared_ptr<Reinstall::Worker> Action::prepare() {
+		return make_shared<Reinstall::Worker>();
 	}
 
 	bool Action::interact() {
 		return true;
-	}
-
-	void Action::burn() {
 	}
 
 	const char * Action::install() {

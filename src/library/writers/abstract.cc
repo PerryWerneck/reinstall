@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,33 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
-
- #include <pugixml.hpp>
+ #include <config.h>
  #include <udjat/defs.h>
- #include <reinstall/action.h>
  #include <reinstall/writer.h>
+
+ using namespace std;
 
  namespace Reinstall {
 
-	class UDJAT_API Worker {
-	protected:
+	Writer::Writer() {
+	}
 
-		/// @brief Insert source on the target image.
-		virtual void push_back(Source &source);
-
-	public:
-
-		Worker();
-
-		virtual void pre(Action &action);
-		virtual void apply(Action &action);
-		virtual void post(Action &action);
-
-		/// @brief Burn image (last step, work thread).
-		/// @param Write prepared image @see Action::WriterFactory
-		virtual void burn(std::shared_ptr<Writer> writer);
-
-	};
+	Writer::~Writer() {
+	}
 
  }

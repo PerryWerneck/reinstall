@@ -23,6 +23,7 @@
  #include <udjat/defs.h>
  #include <udjat/tools/object.h>
  #include <reinstall/worker.h>
+ #include <reinstall/writer.h>
 
  typedef struct Iso_Image IsoImage;
  typedef struct iso_write_opts IsoWriteOpts;
@@ -45,11 +46,8 @@
 			Worker();
 			~Worker();
 
-			/// @brief Save image to 'fd'.
-			void save(int fd);
-
-			/// @brief Save image to file.
-			void save(const char *filename);
+			/// @brief Save image to and already open writer.
+			void burn(std::shared_ptr<Writer> writer) override;
 
 			void set_system_area(const char *path = nullptr);
 			void set_volume_id(const char *volume_id);

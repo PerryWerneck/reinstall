@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -18,32 +18,37 @@
  */
 
  #pragma once
-
- #include <pugixml.hpp>
  #include <udjat/defs.h>
- #include <reinstall/action.h>
- #include <reinstall/writer.h>
+ #include <cstddef>
+ #include <memory>
 
  namespace Reinstall {
 
-	class UDJAT_API Worker {
-	protected:
+	/// @brief Image Writer
+	class UDJAT_API Writer {
+	private:
 
-		/// @brief Insert source on the target image.
-		virtual void push_back(Source &source);
+	protected:
+		Writer();
+		virtual ~Writer();
 
 	public:
 
-		Worker();
+		/// @brief Open Device for writing
+		virtual void open() = 0;
 
-		virtual void pre(Action &action);
-		virtual void apply(Action &action);
-		virtual void post(Action &action);
+		/// @brief Write data do device.
+		virtual void write(const void *buf, size_t count) = 0;
 
-		/// @brief Burn image (last step, work thread).
-		/// @param Write prepared image @see Action::WriterFactory
-		virtual void burn(std::shared_ptr<Writer> writer);
+		virtual void finalize() = 0;
+
+		/// @brief Close Device.
+		virtual void close() = 0;
+
+		/// @brief Factory file writer.
+		static std::shared_ptr<Writer> FileFactory(const char *filename);
 
 	};
 
  }
+

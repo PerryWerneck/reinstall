@@ -27,6 +27,7 @@
  #include <reinstall/repository.h>
  #include <reinstall/value.h>
  #include <reinstall/source.h>
+ #include <reinstall/writer.h>
  #include <list>
  #include <unordered_set>
  #include <memory>
@@ -162,7 +163,7 @@
 
 		unsigned short id;
 
-		static Action * get_selected();
+		static Action & get_selected();
 
 		inline void set_selected() noexcept {
 			selected = this;
@@ -209,10 +210,11 @@
 		virtual bool interact();
 
 		/// @brief Create image (second step, work thread).
-		virtual void prepare();
+		/// @return Pointer to action worker.
+		virtual std::shared_ptr<Reinstall::Worker> prepare();
 
-		/// @brief Burn image (last step, work thread).
-		virtual void burn();
+		/// @brief Construct file writer (Runs on main thread)
+		virtual std::shared_ptr<Writer> WriterFactory() = 0;
 
 		/// @brief Load folders.
 		void load();

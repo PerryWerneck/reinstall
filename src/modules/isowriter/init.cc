@@ -24,6 +24,7 @@
  #include <stdexcept>
  #include <reinstall/actions/isobuilder.h>
  #include <reinstall/userinterface.h>
+ #include <reinstall/writer.h>
  #include <reinstall/group.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/logger.h>
@@ -77,10 +78,9 @@
 					return !isoname.empty();
 				}
 
-				void write(Reinstall::iso9660::Worker &worker) override {
-					info() << "Saving '" << isoname << "'" << endl;
-					worker.save(isoname.c_str());
-					post(isoname.c_str());
+				std::shared_ptr<Reinstall::Writer> WriterFactory() override {
+					info() << "Saving '" << filename << "'" << endl;
+					return Reinstall::Writer::FileFactory(isoname.c_str());
 				}
 
 			};

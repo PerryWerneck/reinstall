@@ -9,6 +9,7 @@ SOURCES= \
 		$(wildcard iso9660/*.cc) \
 		$(wildcard action/*.cc) \
 		$(wildcard dialogs/*.cc) \
+		$(wildcard writers/*.cc) \
 		$(wildcard repository/*.cc) \
 		$(wildcard source/*.cc) \
 		$(wildcard os/@OSNAME@/*.cc)
@@ -62,7 +63,8 @@ CFLAGS= \
 	-DBUILD_DATE=`date +%Y%m%d` \
 	@UDJAT_CFLAGS@ \
 	@PUGIXML_CFLAGS@ \
-	@ISOFS_CFLAGS@
+	@ISOFS_CFLAGS@ \
+	@DBUS_CFLAGS@
 
 LDFLAGS=\
 	@LDFLAGS@
@@ -72,7 +74,8 @@ LIBS= \
 	@LIBICONV@ \
 	@UDJAT_LIBS@ \
 	@PUGIXML_LIBS@ \
-	@ISOFS_LIBS@
+	@ISOFS_LIBS@ \
+	@DBUS_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 
