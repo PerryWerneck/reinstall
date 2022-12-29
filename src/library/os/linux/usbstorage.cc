@@ -166,9 +166,11 @@
 
 			/// @brief Write data do device.
 			void write(const void *buf, size_t count) override {
+				super::write(fd,buf,count);
 			}
 
 			void finalize() override {
+				super::finalize(fd);
 			}
 
 			/// @brief Close Device.

@@ -29,6 +29,9 @@
 	private:
 
 	protected:
+
+		typedef Reinstall::Writer super;
+
 		Writer();
 		virtual ~Writer();
 
