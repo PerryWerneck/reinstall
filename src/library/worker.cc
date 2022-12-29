@@ -59,6 +59,10 @@
 	void Worker::post(Action &action) {
 	}
 
+	size_t Worker::size() {
+		return 0;
+	}
+
 	void Worker::burn(std::shared_ptr<Reinstall::Writer> UDJAT_UNUSED(writer)) {
 	}
 

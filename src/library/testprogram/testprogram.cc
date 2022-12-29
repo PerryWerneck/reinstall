@@ -91,6 +91,13 @@
 	*/
 
 	{
+
+		Reinstall::Writer::USBStorageFactory();
+
+	}
+
+	/*
+	{
 		// Initialize module.
 		new TestModule();
 
@@ -106,6 +113,7 @@
 		}
 
 	}
+	*/
 
 	// Finalize application.
 	Udjat::Application::finalize();

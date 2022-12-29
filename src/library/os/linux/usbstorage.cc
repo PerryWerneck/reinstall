@@ -29,6 +29,8 @@
  #include <reinstall/dialogs.h>
  #include <sys/inotify.h>
  #include <sys/poll.h>
+ #include <sys/file.h>
+ #include <list>
 
  using namespace std;
  using namespace Udjat;
@@ -38,9 +40,82 @@
 
  namespace Reinstall {
 
-	std::shared_ptr<Writer> Writer::USBStorageFactory() {
+	std::shared_ptr<Writer> Writer::USBStorageFactory(size_t length) {
 
-		int dd = -1;	//< @brief Device descriptor.
+		/// @brief USB storage writer.
+		class Writer : public Reinstall::Writer {
+		public:
+
+			/// @brief Device handler.
+			struct Device {
+
+				std::string name;
+				int fd;
+				bool locked = false;
+
+				Device(Device &src) = delete;
+
+				Device(const char *n) : name{n}, fd{::open((string{"/dev/"}+n).c_str(),O_RDWR)} {
+
+					if(fd == -1) {
+						cerr << "usbstorage\tError '" << strerror(errno) << "' opening " << name << endl;
+					} else {
+						lock();
+					}
+
+				}
+
+				bool lock() {
+					//
+					// These two concepts allow tools such as disk partitioners or
+					// file system formatting tools to safely and easily take exclusive
+					// ownership of a block device while operating: before starting work
+					// on the block device, they should take an LOCK_EX lock on it.
+					//
+					// https://systemd.io/BLOCK_DEVICE_LOCKING/
+					//
+					if(fd == -1 || locked) {
+						return true;
+					}
+					if(::flock(fd, LOCK_EX|LOCK_NB) == 0) {
+						cout << "usbstorage\tGot lock on '" << name << "'" << endl;
+						locked = true;
+					};
+					return locked;
+				}
+
+				~Device() {
+					if(fd != -1) {
+						cout << "usbstorage\tDevice '" << name << "' was released" << endl;
+						::close(fd);
+					}
+				}
+
+			};
+
+			std::list<Device> devices;
+
+			void open() override {
+			}
+
+			/// @brief Write data do device.
+			void write(const void *buf, size_t count) override {
+			}
+
+			void finalize() override {
+			}
+
+			/// @brief Close Device.
+			void close() override {
+				devices.clear();
+			}
+
+		};
+
+		std::shared_ptr<Writer> writer = std::make_shared<Writer>();
+
+		int rc = -1;			//< @brief Callback return code (errno).
+		bool locked = false;	//< @brief All devices are locked?
 
 		//
 		// Watch /dev
@@ -50,7 +125,7 @@
 			throw system_error(errno,system_category(),"Can't initialize inotify");
 		}
 
-		int wd = inotify_add_watch(fd,"/dev",IN_CREATE);
+		int wd = inotify_add_watch(fd,"/dev",IN_CREATE|IN_DELETE);
 		if(fd == -1) {
 			int err = errno;
 			::close(fd);
@@ -73,8 +148,9 @@
 
 			taskrunner->set_title(_("Insert <b>NOW</b> an storage device"));
 			taskrunner->set_sub_title(_("The contents of inserted device will be <b>ALL ERASED</b>! "));
+			taskrunner->allow_continue(false);
 
-			taskrunner->push([taskrunner,&settings,fd,wd,&dd](){
+			rc = taskrunner->push([taskrunner,&settings,fd,wd,&writer,&locked](){
 
 				// Watch for USB storage device to be detected.
 				while(taskrunner->enabled()) {
@@ -84,9 +160,22 @@
 					pfd.events = POLLIN;
 					pfd.revents = 0;
 
-					int pfds = poll(&pfd, 1, 300);
+					int pfds = poll(&pfd, 1,((locked || writer->devices.empty()) ? 500 : 100));
 
-					if(pfds == 1 && (pfd.revents & POLLIN)) {
+					debug(pfds);
+					if(pfds == 0) {
+
+						// Timeout, check for locks.
+						if(!locked) {
+							locked = true;
+							for(Writer::Device & device : writer->devices) {
+								if(!device.lock()) {
+									locked = false;
+								}
+							}
+						}
+
+					} else if(pfds == 1 && (pfd.revents & POLLIN)) {
 
 						// Got response.
 						char buffer[INOTIFY_EVENT_BUF_LEN];
@@ -103,12 +192,29 @@
 									// Get event
 									auto event = (struct inotify_event *) &buffer[bufPtr];
 
-									if(event->wd == wd && (event->mask & IN_CREATE) != 0) {
+									if(event->wd == wd) {
 
-										// Process event
-										string name{event->name,event->len-1};
-										debug("Inotify event on '",name.c_str(),"'");
+										debug("Inotify event on '",event->name,"'");
 
+										if(strncmp(event->name,"sd",2) == 0) {
+
+											if((event->mask & IN_CREATE) != 0) {
+
+												// Device was created.
+												writer->devices.emplace_back(event->name);
+												locked = false;
+
+											} else if((event->mask & IN_DELETE) != 0) {
+
+												cout << "usbstorage\tDevice " << event->name << " was removed" << endl;
+
+												writer->devices.remove_if([event](const Writer::Device &device){
+													return strcmp(device.name.c_str(),event->name) == 0;
+												});
+
+											}
+
+										}
 									}
 
 									// Get next entry
@@ -119,15 +225,16 @@
 
 						}
 
-
 					} else if(pfds < 0) {
 
 						// Error.
 						cerr << "usbstorage\tError '" << strerror(errno) << "' waiting for inotify socket" << endl;
-						break;
+						return errno;
 					}
 
 				}
+
+				return ECANCELED;
 
 			});
 
@@ -142,40 +249,18 @@
 		inotify_rm_watch(fd, wd);
 		::close(fd);
 
+		if(rc) {
+			clog << "usbstorage\tWatcher finished with error '" << strerror(rc) << "' (rc=" << rc << ")" << endl;
+			return std::shared_ptr<Writer>();
+		}
+
+
 		//
 		// Got device
 		//
 
-		/*
-		class Writer : public Reinstall::Writer {
-		private:
 
-		public:
-			Writer() {
-
-
-			}
-
-			virtual ~Writer() {
-			}
-
-			void open() override {
-			}
-
-			void close() override {
-			}
-
-			void finalize() override {
-			}
-
-			void write(const void *buf, size_t length) {
-			}
-
-		};
-
-		return make_shared<Writer>();
-		*/
-
+		return writer;
 	}
 
 

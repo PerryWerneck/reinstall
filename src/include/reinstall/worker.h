@@ -40,6 +40,11 @@
 		virtual void apply(Action &action);
 		virtual void post(Action &action);
 
+		/// @brief Get image length.
+		/// @return Image length in bytes.
+		/// @retval 0 Image length is not available.
+		virtual size_t size();
+
 		/// @brief Burn image (last step, work thread).
 		/// @param Write prepared image @see Action::WriterFactory
 		virtual void burn(std::shared_ptr<Writer> writer);

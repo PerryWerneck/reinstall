@@ -49,7 +49,8 @@
 		static std::shared_ptr<Writer> FileFactory(const char *filename);
 
 		/// @brief Detect USB storage device, create writer for it.
-		static std::shared_ptr<Writer> USBStorageFactory();
+		/// @param length Required device size (0 to ignore it);
+		static std::shared_ptr<Writer> USBStorageFactory(size_t length = 0);
 
 	};
 

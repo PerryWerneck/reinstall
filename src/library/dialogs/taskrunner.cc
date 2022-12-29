@@ -37,8 +37,11 @@
 	Dialog::TaskRunner::~TaskRunner() {
 	}
 
-	void Dialog::TaskRunner::push(const std::function<void()> &callback) {
-		callback();
+	void Dialog::TaskRunner::allow_continue(bool allowed) {
+	}
+
+	int Dialog::TaskRunner::push(const std::function<int()> &callback) {
+		return callback();
 	}
 
 	void Dialog::TaskRunner::set_title(const char *markup) {

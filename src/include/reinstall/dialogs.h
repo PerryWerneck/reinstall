@@ -60,12 +60,15 @@
 				is_enabled = false;
 			}
 
+			/// @brief Allow 'continue' button.
+			virtual void allow_continue(bool allowed);
+
 			virtual void set_title(const char *markup);
 			virtual void set_sub_title(const char *markup);
 
 			virtual void add_button(const char *label, const std::function<void()> &callback);
 
-			virtual void push(const std::function<void()> &callback);
+			virtual int push(const std::function<int()> &callback);
 		};
 
 		/// @brief Proxy for progress dialog.
