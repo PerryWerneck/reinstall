@@ -23,7 +23,7 @@
  using namespace std;
  using namespace Udjat;
 
- static const Udjat::ModuleInfo moduleinfo{"Net install builder"};
+ static const Udjat::ModuleInfo moduleinfo{"Test application"};
 
  class TestModule : public Udjat::Module, public Udjat::Factory {
  public:

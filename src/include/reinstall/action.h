@@ -19,7 +19,7 @@
 
  #pragma once
 
- #include <udjat/defs.h>
+ #include <reinstall/defs.h>
  #include <pugixml.hpp>
  #include <udjat/tools/object.h>
  #include <udjat/tools/string.h>
@@ -28,6 +28,7 @@
  #include <reinstall/value.h>
  #include <reinstall/source.h>
  #include <reinstall/writer.h>
+ #include <reinstall/dialogs/popup.h>
  #include <list>
  #include <unordered_set>
  #include <memory>
@@ -153,9 +154,9 @@
 		static Action * selected;		///< @brief Selected action.
 
 		struct {
-			Popup confirmation;
-			Popup success;
-			Popup failed;
+			Dialog::Popup confirmation;
+			Dialog::Popup success;
+			Dialog::Popup failed;
 		} dialog;
 
 	public:
@@ -235,15 +236,15 @@
 		void for_each(const std::function<void (Source &source)> &call);
 		void for_each(const std::function<void (std::shared_ptr<Source> &source)> &call);
 
-		inline const Popup & confirmation() const {
+		inline const Dialog::Popup & confirmation() const {
 			return dialog.confirmation;
 		}
 
-		inline const Popup & success() const {
+		inline const Dialog::Popup & success() const {
 			return dialog.success;
 		}
 
-		inline const Popup & failed() const {
+		inline const Dialog::Popup & failed() const {
 			return dialog.failed;
 		}
 

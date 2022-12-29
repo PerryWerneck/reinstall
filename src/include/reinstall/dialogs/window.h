@@ -21,7 +21,30 @@
  #include <reinstall/defs.h>
  #include <reinstall/action.h>
  #include <reinstall/dialogs/popup.h>
- #include <reinstall/dialogs/window.h>
- #include <reinstall/dialogs/taskrunner.h>
- #include <reinstall/dialogs/progress.h>
+
+ namespace Reinstall {
+
+	namespace Dialog {
+
+		class UDJAT_API Window {
+		private:
+			static Window * current;
+			Window *parent;
+
+		public:
+			Window();
+			virtual ~Window();
+
+			static Window & getInstance();
+
+			virtual void show();
+			virtual void hide();
+
+			virtual void set(const Abstract::Object &object);
+
+		};
+
+	}
+
+ }
 

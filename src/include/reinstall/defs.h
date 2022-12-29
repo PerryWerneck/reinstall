@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -18,10 +18,17 @@
  */
 
  #pragma once
- #include <reinstall/defs.h>
- #include <reinstall/action.h>
- #include <reinstall/dialogs/popup.h>
- #include <reinstall/dialogs/window.h>
- #include <reinstall/dialogs/taskrunner.h>
- #include <reinstall/dialogs/progress.h>
 
+ #include <udjat/defs.h>
+
+ namespace Reinstall {
+
+	namespace Dialog {
+
+		class Window;
+		class Popup;
+		class TaskRunner;
+
+	}
+
+ }

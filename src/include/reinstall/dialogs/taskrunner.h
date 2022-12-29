@@ -19,9 +19,44 @@
 
  #pragma once
  #include <reinstall/defs.h>
- #include <reinstall/action.h>
- #include <reinstall/dialogs/popup.h>
  #include <reinstall/dialogs/window.h>
- #include <reinstall/dialogs/taskrunner.h>
- #include <reinstall/dialogs/progress.h>
+
+ namespace Reinstall {
+
+	namespace Dialog {
+
+		/// @brief Dialog for background tasks.
+		class UDJAT_API TaskRunner : public Window {
+		protected:
+			bool is_enabled = true;
+
+		public:
+			TaskRunner();
+			virtual ~TaskRunner();
+
+			/// @brief Update dialog with popup definitions.
+			virtual void set(const Popup &popup);
+
+			inline bool enabled() const noexcept {
+				return is_enabled;
+			}
+
+			inline void disable() noexcept {
+				is_enabled = false;
+			}
+
+			/// @brief Allow 'continue' button.
+			virtual void allow_continue(bool allowed);
+
+			virtual void set_title(const char *markup);
+			virtual void set_sub_title(const char *markup);
+
+			virtual void add_button(const char *label, const std::function<void()> &callback);
+
+			virtual int push(const std::function<int()> &callback);
+		};
+
+	}
+
+ }
 

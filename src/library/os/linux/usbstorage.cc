@@ -158,6 +158,7 @@
 			}
 
 			void open() override {
+				debug("Starting image write");
 				detect();
 				if(!detect()) {
 					throw runtime_error(_("Storage device is unavailable"));
@@ -170,11 +171,13 @@
 			}
 
 			void finalize() override {
+				debug("Finalizing");
 				super::finalize(fd);
 			}
 
 			/// @brief Close Device.
 			void close() override {
+				debug("Closing image writer");
 				devices.clear();
 			}
 

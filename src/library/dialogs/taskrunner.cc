@@ -18,7 +18,7 @@
  */
 
  #include <config.h>
- #include <reinstall/dialogs.h>
+ #include <reinstall/dialogs/taskrunner.h>
  #include <reinstall/userinterface.h>
  #include <memory>
  #include <iostream>
@@ -67,6 +67,15 @@
 
 	void Dialog::TaskRunner::set_sub_title(const char *markup) {
 		cout << markup << endl;
+	}
+
+	void Dialog::TaskRunner::set(const Dialog::Popup &popup) {
+		if(popup.message && *popup.message) {
+			set_title(popup.message);
+		}
+		if(popup.secondary && *popup.secondary) {
+			set_sub_title(popup.secondary);
+		}
 	}
 
 	void Dialog::TaskRunner::add_button(const char *label, const std::function<void()> &callback) {

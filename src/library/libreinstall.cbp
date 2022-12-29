@@ -41,7 +41,12 @@
 		<Unit filename="../include/reinstall/actions/isobuilder.h" />
 		<Unit filename="../include/reinstall/actions/kernel.h" />
 		<Unit filename="../include/reinstall/controller.h" />
+		<Unit filename="../include/reinstall/defs.h" />
 		<Unit filename="../include/reinstall/dialogs.h" />
+		<Unit filename="../include/reinstall/dialogs/popup.h" />
+		<Unit filename="../include/reinstall/dialogs/progress.h" />
+		<Unit filename="../include/reinstall/dialogs/taskrunner.h" />
+		<Unit filename="../include/reinstall/dialogs/window.h" />
 		<Unit filename="../include/reinstall/diskimage.h" />
 		<Unit filename="../include/reinstall/group.h" />
 		<Unit filename="../include/reinstall/iso9660.h" />
@@ -51,6 +56,7 @@
 		<Unit filename="../include/reinstall/source.h" />
 		<Unit filename="../include/reinstall/sources/initrd.h" />
 		<Unit filename="../include/reinstall/sources/kernel.h" />
+		<Unit filename="../include/reinstall/tools.h" />
 		<Unit filename="../include/reinstall/userinterface.h" />
 		<Unit filename="../include/reinstall/value.h" />
 		<Unit filename="../include/reinstall/worker.h" />

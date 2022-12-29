@@ -19,9 +19,43 @@
 
  #pragma once
  #include <reinstall/defs.h>
- #include <reinstall/action.h>
- #include <reinstall/dialogs/popup.h>
- #include <reinstall/dialogs/window.h>
- #include <reinstall/dialogs/taskrunner.h>
- #include <reinstall/dialogs/progress.h>
+
+ namespace Reinstall {
+
+	namespace Dialog {
+
+		/// @brief Dialog box from XML.
+		class UDJAT_API Popup {
+		public:
+			const char *message = "";
+			const char *secondary = "";
+
+			struct {
+				const char *link = "";
+				const char *label = "";
+
+				inline operator bool() const {
+					return (link && *link);
+				}
+
+			} url;
+
+			Popup() = default;
+
+			void set(const pugi::xml_node &node);
+
+			inline operator bool() const noexcept {
+				return (message && *message);
+			}
+
+			inline bool has_secondary() const noexcept {
+				return secondary && *secondary;
+			}
+
+
+		};
+
+	}
+
+ }
 

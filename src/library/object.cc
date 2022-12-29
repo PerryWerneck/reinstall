@@ -23,6 +23,7 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
  #include <udjat/tools/logger.h>
+ #include <reinstall/dialogs.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
  #include <iostream>
@@ -66,7 +67,7 @@
 
 	}
 
-	void Popup::set(const pugi::xml_node &node) {
+	void Dialog::Popup::set(const pugi::xml_node &node) {
 
 		const char *group = node.attribute("settings-from").as_string("popup-defaults");
 
