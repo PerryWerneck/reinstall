@@ -81,6 +81,7 @@
 						return true;
 					}
 					if(::flock(fd, LOCK_EX|LOCK_NB) == 0) {
+
 						cout << "usbstorage\tGot lock on '" << name << "'" << endl;
 						locked = true;
 
@@ -90,15 +91,24 @@
 							// Is a block device
 							// https://www.kernel.org/doc/Documentation/admin-guide/devices.txt
 
-							if(major(st.st_rdev) == 8 && (minor(st.st_rdev) & 15) == 0) {
+							if(major(st.st_rdev) == 8) {
 
-								valid = true;
-								cout << "usbstorage\tDevice '" << name << "' detected with id " << major(st.st_rdev) << " " << minor(st.st_rdev) << endl;
+								if((minor(st.st_rdev) & 15) == 0) {
+
+									valid = true;
+									cout << "usbstorage\tDevice '" << name << "' detected with id " << major(st.st_rdev) << " " << minor(st.st_rdev) << endl;
+
+								} else {
+
+									valid = false;
+									cout << "usbstorage\tPartition '" << name << "' detected with id " << major(st.st_rdev) << " " << minor(st.st_rdev) << endl;
+
+								}
 
 							} else {
 
 								valid = false;
-								cout << "usbstorage\tPartition '" << name << "' detected with id " << major(st.st_rdev) << " " << minor(st.st_rdev) << endl;
+								cout << "usbstorage\tNon SCSI device '" << name << "' detected with id " << major(st.st_rdev) << " " << minor(st.st_rdev) << endl;
 
 							}
 
@@ -125,7 +135,33 @@
 
 			int fd = -1;	///< @brief Handle to selected device.
 
+			bool detect() {
+
+				for(Device & device : devices) {
+					if(device.valid) {
+						if(fd != device.fd) {
+							if(fd == -1) {
+								cout << "usbstorage\tChanging device to '" << device.name << "'" << endl;
+							} else {
+								cout << "usbstorage\tSelecting device '" << device.name << "'" << endl;
+							}
+						}
+						fd = device.fd;
+						return true;
+					}
+				}
+				if(fd != -1) {
+					cout << "usbstorage\tThe selected device is no longer available" << endl;
+				}
+				fd = -1;
+				return false;
+			}
+
 			void open() override {
+				detect();
+				if(!detect()) {
+					throw runtime_error(_("Storage device is unavailable"));
+				}
 			}
 
 			/// @brief Write data do device.
@@ -192,7 +228,7 @@
 
 					int pfds = poll(&pfd, 1,((locked || writer->devices.empty()) ? 500 : 100));
 
-					debug(pfds);
+					debug(pfds," fd=",writer->fd);
 					if(pfds == 0) {
 
 						// Timeout, check for locks.
@@ -204,6 +240,8 @@
 								}
 							}
 						}
+
+						writer->detect();
 
 					} else if(pfds == 1 && (pfd.revents & POLLIN)) {
 
@@ -281,14 +319,7 @@
 
 		if(rc) {
 			clog << "usbstorage\tWatcher finished with error '" << strerror(rc) << "' (rc=" << rc << ")" << endl;
-			return std::shared_ptr<Writer>();
 		}
-
-
-		//
-		// Got device
-		//
-
 
 		return writer;
 	}
