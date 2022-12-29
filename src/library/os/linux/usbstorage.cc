@@ -86,14 +86,19 @@
 
 				~Device() {
 					if(fd != -1) {
-						cout << "usbstorage\tDevice '" << name << "' was released" << endl;
 						::close(fd);
+						fd = -1;
+						if(locked) {
+							cout << "usbstorage\tDevice '" << name << "' was unlocked" << endl;
+						}
 					}
 				}
 
 			};
 
 			std::list<Device> devices;
+
+			int fd = -1;	///< @brief Handle to selected device.
 
 			void open() override {
 			}

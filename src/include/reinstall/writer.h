@@ -32,6 +32,13 @@
 		Writer();
 		virtual ~Writer();
 
+#ifndef _WIN32
+
+		void write(int fd, const void *buf, size_t count);
+		void finalize(int fd);
+
+#endif // _WIN32
+
 	public:
 
 		/// @brief Open Device for writing

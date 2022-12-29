@@ -74,15 +74,11 @@
 			}
 
 			void finalize() override {
-				::fsync(fd);
+				Reinstall::Writer::finalize(fd);
 			}
 
 			void write(const void *buf, size_t length) {
-
-				if(::write(fd,buf,length) != (ssize_t) length) {
-					throw system_error(errno, system_category(),_("I/O error writing image"));
-				}
-
+				Reinstall::Writer::write(fd,buf,length);
 			}
 
 		};
