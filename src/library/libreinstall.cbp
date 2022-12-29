@@ -62,6 +62,7 @@
 		<Unit filename="action/action.cc" />
 		<Unit filename="controller.cc" />
 		<Unit filename="dialogs/progress.cc" />
+		<Unit filename="dialogs/taskrunner.cc" />
 		<Unit filename="dialogs/window.cc" />
 		<Unit filename="group.cc" />
 		<Unit filename="iso9660/worker.cc" />
@@ -70,6 +71,8 @@
 		<Unit filename="object.cc" />
 		<Unit filename="os/linux/disk_image.cc" />
 		<Unit filename="os/linux/libguestfs.cc" />
+		<Unit filename="os/linux/reboot.cc" />
+		<Unit filename="os/linux/usbstorage.cc" />
 		<Unit filename="parameters.cc" />
 		<Unit filename="private.h" />
 		<Unit filename="repository/construct.cc" />

@@ -43,6 +43,31 @@
 
 		};
 
+		/// @brief Dialog for background tasks.
+		class UDJAT_API TaskRunner : public Window {
+		protected:
+			bool is_enabled = true;
+
+		public:
+			TaskRunner();
+			virtual ~TaskRunner();
+
+			inline bool enabled() const noexcept {
+				return is_enabled;
+			}
+
+			inline void disable() noexcept {
+				is_enabled = false;
+			}
+
+			virtual void set_title(const char *markup);
+			virtual void set_sub_title(const char *markup);
+
+			virtual void add_button(const char *label, const std::function<void()> &callback);
+
+			virtual void push(const std::function<void()> &callback);
+		};
+
 		/// @brief Proxy for progress dialog.
 		class UDJAT_API Progress : public Window {
 		public:

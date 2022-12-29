@@ -17,41 +17,40 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
- #include <udjat/defs.h>
- #include <cstddef>
+ #include <config.h>
+ #include <reinstall/dialogs.h>
+ #include <reinstall/userinterface.h>
  #include <memory>
+ #include <iostream>
+
+ using namespace std;
 
  namespace Reinstall {
 
-	/// @brief Image Writer
-	class UDJAT_API Writer {
-	private:
+	std::shared_ptr<Dialog::TaskRunner> UserInterface::TaskRunnerFactory() {
+		return make_shared<Dialog::TaskRunner>();
+	}
 
-	protected:
-		Writer();
-		virtual ~Writer();
+	Dialog::TaskRunner::TaskRunner() {
+	}
 
-	public:
+	Dialog::TaskRunner::~TaskRunner() {
+	}
 
-		/// @brief Open Device for writing
-		virtual void open() = 0;
+	void Dialog::TaskRunner::push(const std::function<void()> &callback) {
+		callback();
+	}
 
-		/// @brief Write data do device.
-		virtual void write(const void *buf, size_t count) = 0;
+	void Dialog::TaskRunner::set_title(const char *markup) {
+		cout << markup << endl;
+	}
 
-		virtual void finalize() = 0;
+	void Dialog::TaskRunner::set_sub_title(const char *markup) {
+		cout << markup << endl;
+	}
 
-		/// @brief Close Device.
-		virtual void close() = 0;
+	void Dialog::TaskRunner::add_button(const char *label, const std::function<void()> &callback) {
+	}
 
-		/// @brief Factory file writer.
-		static std::shared_ptr<Writer> FileFactory(const char *filename);
-
-		/// @brief Detect USB storage device, create writer for it.
-		static std::shared_ptr<Writer> USBStorageFactory();
-
-	};
 
  }
-
