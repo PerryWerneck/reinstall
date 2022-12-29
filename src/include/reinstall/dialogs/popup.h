@@ -19,6 +19,7 @@
 
  #pragma once
  #include <reinstall/defs.h>
+ #include <pugixml.hpp>
 
  namespace Reinstall {
 

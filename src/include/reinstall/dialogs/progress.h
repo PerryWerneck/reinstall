@@ -19,6 +19,7 @@
 
  #pragma once
  #include <reinstall/defs.h>
+ #include <reinstall/dialogs/window.h>
 
  namespace Reinstall {
 

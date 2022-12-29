@@ -20,25 +20,36 @@
  #include <config.h>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
+ #include <reinstall/dialogs/popup.h>
  #include <private/dialogs.h>
 
- Dialog::Popup::Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Popup &settings, Gtk::MessageType type, Gtk::ButtonsType buttons)
+ Dialog::Popup::Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Dialog::Popup &settings, Gtk::MessageType type, Gtk::ButtonsType buttons)
 	: Gtk::MessageDialog{parent,settings.message,false,type,buttons,true} {
 
 	set_default_size(500, -1);
 	set_title(object.get_label());
+
+	url.get_style_context()->add_class("popup-button");
+	get_message_area()->add(url);
+
+	show_all();
+
+	set(settings);
+ }
+
+ void Dialog::Popup::set(const Reinstall::Dialog::Popup &settings) {
 
 	if(settings.secondary) {
 		set_secondary_text(settings.secondary);
 	}
 
 	if(settings.url) {
-		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1LinkButton.html
-		auto button = new Gtk::LinkButton{settings.url.link,settings.url.label};
-		button->get_style_context()->add_class("popup-button");
-		get_message_area()->add(*button);
+		url.set_uri(settings.url.link);
+		url.set_label(settings.url.label);
+		url.show();
+	} else {
+		url.hide();
 	}
 
-	show_all();
  }
 
