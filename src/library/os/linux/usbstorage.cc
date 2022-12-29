@@ -31,6 +31,8 @@
  #include <sys/poll.h>
  #include <sys/file.h>
  #include <list>
+ #include <sys/stat.h>
+ #include <sys/sysmacros.h>
 
  using namespace std;
  using namespace Udjat;
@@ -52,6 +54,7 @@
 				std::string name;
 				int fd;
 				bool locked = false;
+				bool valid = false;		///< @brief Is this a valid block device?
 
 				Device(Device &src) = delete;
 
@@ -80,6 +83,28 @@
 					if(::flock(fd, LOCK_EX|LOCK_NB) == 0) {
 						cout << "usbstorage\tGot lock on '" << name << "'" << endl;
 						locked = true;
+
+						struct stat st;
+						if(fstat(fd,&st) == 0 && (st.st_mode & S_IFMT) == S_IFBLK) {
+
+							// Is a block device
+							// https://www.kernel.org/doc/Documentation/admin-guide/devices.txt
+
+							if(major(st.st_rdev) == 8 && (minor(st.st_rdev) & 15) == 0) {
+
+								valid = true;
+								cout << "usbstorage\tDevice '" << name << "' detected with id " << major(st.st_rdev) << " " << minor(st.st_rdev) << endl;
+
+							} else {
+
+								valid = false;
+								cout << "usbstorage\tPartition '" << name << "' detected with id " << major(st.st_rdev) << " " << minor(st.st_rdev) << endl;
+
+							}
+
+
+						}
+
 					};
 					return locked;
 				}
