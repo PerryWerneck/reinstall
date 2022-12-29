@@ -22,13 +22,27 @@
  #include <reinstall/userinterface.h>
  #include <memory>
  #include <iostream>
+ #include <udjat/tools/logger.h>
 
  using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
 	std::shared_ptr<Dialog::TaskRunner> UserInterface::TaskRunnerFactory() {
-		return make_shared<Dialog::TaskRunner>();
+
+		class TaskRunner : public Dialog::TaskRunner {
+		public:
+			TaskRunner() = default;
+
+			void allow_continue(bool allowed) override {
+				Dialog::TaskRunner::allow_continue(allowed);
+				is_enabled = !allowed;
+			}
+
+		};
+
+		return make_shared<TaskRunner>();
 	}
 
 	Dialog::TaskRunner::TaskRunner() {
@@ -38,6 +52,9 @@
 	}
 
 	void Dialog::TaskRunner::allow_continue(bool allowed) {
+		if(allowed) {
+			debug("Taskrunner can continue");
+		}
 	}
 
 	int Dialog::TaskRunner::push(const std::function<int()> &callback) {

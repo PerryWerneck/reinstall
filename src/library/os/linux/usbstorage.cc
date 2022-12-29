@@ -141,9 +141,9 @@
 					if(device.valid) {
 						if(fd != device.fd) {
 							if(fd == -1) {
-								cout << "usbstorage\tChanging device to '" << device.name << "'" << endl;
-							} else {
 								cout << "usbstorage\tSelecting device '" << device.name << "'" << endl;
+							} else {
+								cout << "usbstorage\tChanging device to '" << device.name << "'" << endl;
 							}
 						}
 						fd = device.fd;
@@ -181,6 +181,7 @@
 		std::shared_ptr<Writer> writer = std::make_shared<Writer>();
 
 		int rc = -1;			//< @brief Callback return code (errno).
+		int selected = -1;		//< @brief Selected device (for taskrunner).
 		bool locked = false;	//< @brief All devices are locked?
 
 		//
@@ -216,7 +217,7 @@
 			taskrunner->set_sub_title(_("The contents of inserted device will be <b>ALL ERASED</b>! "));
 			taskrunner->allow_continue(false);
 
-			rc = taskrunner->push([taskrunner,&settings,fd,wd,&writer,&locked](){
+			rc = taskrunner->push([taskrunner,&settings,fd,wd,&writer,&locked,&selected](){
 
 				// Watch for USB storage device to be detected.
 				while(taskrunner->enabled()) {
@@ -242,6 +243,11 @@
 						}
 
 						writer->detect();
+
+						if(writer->fd != selected) {
+							selected = writer->fd;
+							taskrunner->allow_continue(selected != -1);
+						}
 
 					} else if(pfds == 1 && (pfd.revents & POLLIN)) {
 
@@ -317,7 +323,7 @@
 		inotify_rm_watch(fd, wd);
 		::close(fd);
 
-		if(rc) {
+		if(rc && rc != ECANCELED) {
 			clog << "usbstorage\tWatcher finished with error '" << strerror(rc) << "' (rc=" << rc << ")" << endl;
 		}
 
