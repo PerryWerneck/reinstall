@@ -18,6 +18,9 @@ LIBRARY_SOURCES = \
 ISOWRITER_SOURCES = \
 		$(wildcard src/modules/isowriter/*.cc)
 
+NETINSTALL_SOURCES = \
+		$(wildcard src/modules/netinstall/*.cc)
+
 GUI_SOURCES= \
 	$(wildcard src/gui/*.cc) \
 	$(wildcard src/gui/dialogs/*.cc) \
