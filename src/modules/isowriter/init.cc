@@ -61,6 +61,10 @@
 
 				bool interact() override {
 
+					if(isoname.empty()) {
+						return true;
+					}
+
 					isoname = Reinstall::UserInterface::getInstance().FilenameFactory(
 						_("Select target image file"),
 						_("Image file name"),
@@ -70,10 +74,14 @@
 					);
 
 					return !isoname.empty();
+
 				}
 
 				std::shared_ptr<Reinstall::Writer> WriterFactory() override {
 					info() << "Saving '" << filename << "'" << endl;
+					if(isoname.empty()) {
+						return Reinstall::Writer::USBStorageFactory();
+					}
 					return Reinstall::Writer::FileFactory(isoname.c_str());
 				}
 

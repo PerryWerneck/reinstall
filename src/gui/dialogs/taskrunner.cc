@@ -112,6 +112,10 @@
 
 		}
 
+		void enable(bool enabled) override {
+			set_sensitive(enabled);
+		}
+
 		void activate() override {
 
 			try {

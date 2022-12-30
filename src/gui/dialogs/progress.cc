@@ -20,7 +20,9 @@
  #include <config.h>
  #include <private/dialogs.h>
  #include <iostream>
+ #include <udjat/version.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/string.h>
  #include <sstream>
  #include <iomanip>
 
@@ -204,13 +206,19 @@
 
  static std::string format_size(double value) {
 
+#if UDJAT_CORE_BUILD > 22123100
+
+	return Udjat::String{}.set_byte(value,1);
+
+#else
+
 	static const struct {
 		double value;
 		const char *name;
 	} sizes[] = {
-		{ 1073741824.0, "GB" },
-		{    1048576.0, "MB" },
-		{       1024.0, "KB" },
+		{ 1073741824.0, "Gb" },
+		{    1048576.0, "Mb" },
+		{       1024.0, "Kb" },
 	};
 
 	double unit_value = 1;
@@ -227,8 +235,10 @@
 	}
 
 	std::stringstream formatted;
-	formatted << std::fixed << std::setprecision(1) << (value/unit_value) << unit_name;
+	formatted << std::fixed << std::setprecision(1) << (value/unit_value) << " " << unit_name;
 	return formatted.str();
+
+#endif // UDJAT_CORE_BUILD
 
  }
 
