@@ -100,15 +100,15 @@
 		}
 	}
 
-	void Dialog::TaskRunner::Button::enable(bool enabled) {
+	void Dialog::Button::enable(bool enabled) {
 		if(enabled) {
 			activate();
 		}
 	}
 
-	std::shared_ptr<Dialog::TaskRunner::Button> Dialog::TaskRunner::ButtonFactory(const char *label, const std::function<void()> &callback) {
+	std::shared_ptr<Dialog::Button> Dialog::TaskRunner::ButtonFactory(const char *label, const std::function<void()> &callback) {
 
-		class Button : public Dialog::TaskRunner::Button {
+		class Button : public Dialog::Button {
 		private:
 			const std::function<void()> callback;
 

@@ -117,23 +117,15 @@
 
  void MainWindow::on_show() {
 
- /*
 #ifdef DEBUG
 	{
-		Dialog::Progress dialog;
-		dialog.Gtk::Window::set_title(get_title());
-		dialog.set_parent(*this);
-		dialog.set_title(_("Getting configuration"));
-		dialog.set_url("http://www.google.com");
-		dialog.set_icon_name("dialog-information");
-		dialog.footer(true);
-		dialog.set_decorated(true);
-		dialog.set_deletable(true);
-		dialog.show();
+		Dialog::TaskRunner dialog{*this,"Simple test",false};
+
+		dialog.show_all();
 		dialog.run();
+
 	}
 #endif // DEBUG
-*/
 
 	// Load options
 	{

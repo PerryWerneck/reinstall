@@ -25,58 +25,68 @@
  #include <private/dialogs.h>
  #include <udjat/tools/threadpool.h>
  #include <iostream>
+ #include <udjat/tools/logger.h>
 
  using namespace std;
  using namespace Udjat;
 
- Dialog::TaskRunner::TaskRunner() {
+ Dialog::TaskRunner::TaskRunner(Gtk::Window &parent, const char *message, bool markup)
+	: Gtk::MessageDialog{parent,message,markup,Gtk::MESSAGE_INFO,Gtk::BUTTONS_OK,true} {
+ }
+
+ void Dialog::TaskRunner::on_response(int response_id) {
+ 	debug("Response=",response_id);
  }
 
  int Dialog::TaskRunner::push(const std::function<int()> &callback) {
 
-	Udjat::ThreadPool::getInstance().push([this,&callback](){
+	int rc = -1;
 
-		int rc = -1;
+	Udjat::ThreadPool::getInstance().push([this,&callback,&rc](){
+
+		debug("Background task begin");
 
 		try {
 
 			rc = callback();
 
-		} catch((std::exception &e) {
+		} catch(std::exception &e) {
 			cerr << e.what() << endl;
 			rc = -1;
-		} catch(..) {
+		} catch(...) {
 			cerr << "Unexpected error running background task" << endl;
 			rc = -1;
 		}
 
-		Glib::signal_idle().connect([this,rc](){
-			this->response(rc);
-		});
+		debug("Background task end");
 
 	});
 
-	show_all();
-	return (int) run();
+	run();
 
+	return rc;
  }
 
  void dismiss(int response_id);
 
- void Dialog::TaskRunner::set_title(const char *markup) {
+ void Dialog::TaskRunner::set_title(const char *text, bool markup) {
 
- 	auto str = make_shared<string>(markup);
-	Glib::signal_idle().connect([this,str](){
-		this->set_message(str.c_str(),true);
+ 	auto str = make_shared<string>(text);
+	Glib::signal_idle().connect([this,str,markup](){
+		this->set_message(str->c_str(),markup);
+		return 0;
 	});
 
  }
 
- void Dialog::TaskRunner::set_sub_title(const char *markup) {
+ void Dialog::TaskRunner::set_sub_title(const char *text, bool markup) {
 
-	auto str = make_shared<string>(markup);
-	Glib::signal_idle().connect([this,str](){
-		this->set_secondary_text(str.c_str(),true);
+ 	auto str = make_shared<string>(text);
+	Glib::signal_idle().connect([this,str,markup](){
+		this->set_secondary_text(str->c_str(),markup);
+		return 0;
 	});
 
  }
+
+ // void 	add_action_widget (Widget& child, int response_id)

@@ -25,23 +25,24 @@
 
 	namespace Dialog {
 
+		/// @brief Dialog button.
+		class UDJAT_API Button {
+		public:
+			Button() = default;
+
+			/// @brief Enable button, call activate() on 'true' if not overrided.
+			virtual void enable(bool en = true);
+
+			inline void disable() {
+				enable(false);
+			}
+
+			virtual void activate() = 0;
+		};
+
 		/// @brief Dialog for background tasks.
 		class UDJAT_API TaskRunner : public Window {
 		public:
-
-			class UDJAT_API Button {
-			public:
-				Button() = default;
-
-				/// @brief Enable button, call activate() on 'true' if not overrided.
-				virtual void enable(bool en = true);
-
-				inline void disable() {
-					enable(false);
-				}
-
-				virtual void activate() = 0;
-			};
 
 			TaskRunner();
 			virtual ~TaskRunner();
