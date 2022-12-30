@@ -33,6 +33,8 @@
  #include <list>
  #include <sys/stat.h>
  #include <sys/sysmacros.h>
+ #include <linux/fs.h>
+ #include <sys/ioctl.h>
 
  using namespace std;
  using namespace Udjat;
@@ -41,6 +43,20 @@
  #define INOTIFY_EVENT_BUF_LEN ( 1024 * ( INOTIFY_EVENT_SIZE + 16 ) )
 
  namespace Reinstall {
+
+	/*
+	/// @brief Get the size of the device in fd.
+	static unsigned long long devlen(int fd) {
+
+		unsigned long long devlen = 0LL;
+		if(ioctl(fd,BLKGETSIZE64,&device_len) < 0) {
+			cerr << "usbstorage\tUnable to get storage length: " << strerror(errno) << endl;
+			return 0;
+		}
+
+		return devlen;
+	}
+	*/
 
 	std::shared_ptr<Writer> Writer::USBStorageFactory(size_t length) {
 
@@ -54,7 +70,8 @@
 				std::string name;
 				int fd;
 				bool locked = false;
-				bool valid = false;		///< @brief Is this a valid block device?
+				bool valid = false;					///< @brief Is this a valid block device?
+				unsigned long long devlen = 0LL;	///< @brief The device length.
 
 				Device(Device &src) = delete;
 
@@ -88,7 +105,7 @@
 						struct stat st;
 						if(fstat(fd,&st) == 0 && (st.st_mode & S_IFMT) == S_IFBLK) {
 
-							// Is a block device
+							// Is a block device, test if it's a disk or a partition.
 							// https://www.kernel.org/doc/Documentation/admin-guide/devices.txt
 
 							if(major(st.st_rdev) == 8) {
@@ -96,7 +113,12 @@
 								if((minor(st.st_rdev) & 15) == 0) {
 
 									valid = true;
-									cout << "usbstorage\tDevice '" << name << "' detected with id " << major(st.st_rdev) << " " << minor(st.st_rdev) << endl;
+
+									if(ioctl(fd,BLKGETSIZE64,&devlen) < 0) {
+										cerr << "usbstorage\tUnable to get length of '" << name << "': " << strerror(errno) << endl;
+									} else {
+										cout << "usbstorage\tDevice '" << name << "' detected with id " << major(st.st_rdev) << " " << minor(st.st_rdev) << endl;
+									}
 
 								} else {
 
@@ -219,7 +241,7 @@
 			auto taskrunner = UserInterface::getInstance().TaskRunnerFactory();
 
 			taskrunner->set_title(_("Insert <b>NOW</b> an storage device"),true);
-			taskrunner->set_sub_title(_("The contents of inserted device will be <b>ALL ERASED</b>! "),true);
+			taskrunner->set_sub_title(_("This action will <b>DELETE ALL CONTENT</b> on the device."),true);
 
 			int errcode = -1;
 
