@@ -50,6 +50,12 @@
 	int response = -1;
 	auto mainloop = Glib::MainLoop::create();
 
+	ButtonFactory("test",[]{
+		cout << "Test button was clicked" << endl;
+	});
+
+	show_all();
+
 	Udjat::ThreadPool::getInstance().push([this,&callback,&response,mainloop](){
 
 		response = Reinstall::Dialog::TaskRunner::push(callback,false);
@@ -92,4 +98,51 @@
 
  }
 
- // void 	add_action_widget (Widget& child, int response_id)
+ std::shared_ptr<Reinstall::Dialog::Button> Dialog::TaskRunner::ButtonFactory(const char *label, const std::function<void()> &callback) {
+
+	class Button : public Reinstall::Dialog::Button, public Gtk::Button {
+	private:
+		const std::function<void()> callback;
+
+	public:
+		Button(const char *label, const std::function<void()> c) : Gtk::Button(label), callback{c} {
+
+			set_focus_on_click(false);
+			show_all();
+
+		}
+
+		void activate() override {
+
+			try {
+
+				callback();
+
+			} catch(const std::exception &e) {
+
+				cerr << e.what() << endl;
+
+			} catch(...) {
+
+				cerr << "gtk\tUnexpected error activating taskrunner button" << endl;
+
+			}
+
+		}
+
+		void on_clicked() {
+			activate();
+		}
+
+	};
+
+	debug("-----------------------------------------------------------------");
+
+	std::shared_ptr<Button> button = make_shared<Button>(label,callback);
+
+	button->show_all();
+	add_action_widget(*button,0);
+
+	return button;
+
+ }

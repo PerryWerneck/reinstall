@@ -53,7 +53,7 @@
 
 		int push(const std::function<int()> &callback, bool show = true) override;
 
-		// std::shared_ptr<Reinstall::Dialog::Button> ButtonFactory(const char *label, const std::function<void()> &callback) override;
+		std::shared_ptr<Reinstall::Dialog::Button> ButtonFactory(const char *label, const std::function<void()> &callback) override;
 
 	};
 

@@ -29,15 +29,17 @@
 
  namespace Reinstall {
 
-	std::shared_ptr<Dialog::TaskRunner> UserInterface::TaskRunnerFactory() {
+	std::shared_ptr<Dialog::TaskRunner> UserInterface::TaskRunnerFactory(const char *message, bool markup) {
 
 		class TaskRunner : public Dialog::TaskRunner {
 		public:
-			TaskRunner() = default;
+			TaskRunner(const char *message, bool markup) {
+				set_title(message,markup);
+			}
 
 		};
 
-		return make_shared<TaskRunner>();
+		return make_shared<TaskRunner>(message,markup);
 	}
 
 	Dialog::TaskRunner::TaskRunner() {

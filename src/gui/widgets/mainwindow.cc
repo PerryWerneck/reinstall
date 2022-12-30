@@ -117,18 +117,6 @@
 
  void MainWindow::on_show() {
 
-#ifdef DEBUG
-	{
-		Dialog::TaskRunner{*this,"Simple test",false}.push([]{
-
-			sleep(10);
-			return 0;
-
-		});
-
-	}
-#endif // DEBUG
-
 	// Load options
 	{
 		Dialog::Progress dialog;
@@ -175,6 +163,10 @@
 
  std::shared_ptr<Reinstall::Abstract::Object> MainWindow::ActionFactory(const pugi::xml_node &node, const char *icon_name) {
 	return make_shared<::Widget::Action>(node,icon_name);
+ }
+
+ std::shared_ptr<Reinstall::Dialog::TaskRunner> MainWindow::TaskRunnerFactory(const char *message, bool markup) {
+	return make_shared<Dialog::TaskRunner>(*this,message,markup);
  }
 
  static bool check_file(const Gtk::Entry &entry, bool save) {

@@ -66,5 +66,8 @@
 	/// @brief Construct a group box.
 	std::shared_ptr<Reinstall::Abstract::Group> GroupFactory(const pugi::xml_node &node) override;
 
+	/// @brief Construct a wait for task dialog.
+	std::shared_ptr<Reinstall::Dialog::TaskRunner> TaskRunnerFactory(const char *message, bool markup) override;
+
  };
 

@@ -238,9 +238,8 @@
 			//
 			// First wait for an storage device
 			//
-			auto taskrunner = UserInterface::getInstance().TaskRunnerFactory();
+			auto taskrunner = UserInterface::getInstance().TaskRunnerFactory(_("Insert <b>NOW</b> an storage device"),true);
 
-			taskrunner->set_title(_("Insert <b>NOW</b> an storage device"),true);
 			taskrunner->set_sub_title(_("This action will <b>DELETE ALL CONTENT</b> on the device."),true);
 
 			int errcode = -1;
