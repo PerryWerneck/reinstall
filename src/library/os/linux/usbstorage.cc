@@ -220,12 +220,25 @@
 
 			taskrunner->set_title(_("Insert <b>NOW</b> an storage device"));
 			taskrunner->set_sub_title(_("The contents of inserted device will be <b>ALL ERASED</b>! "));
-			taskrunner->allow_continue(false);
 
-			rc = taskrunner->push([taskrunner,&settings,fd,wd,&writer,&locked,&selected](){
+			int errcode = -1;
+
+			auto cancel = taskrunner->ButtonFactory(_("Cancel"),[&errcode]{
+				errcode = ECANCELED;
+			});
+
+			auto apply = taskrunner->ButtonFactory(_("Continue"),[&errcode]{
+				errcode = 0;
+			});
+
+			apply->disable();
+
+			taskrunner->show();
+
+			rc = taskrunner->push([taskrunner,&settings,fd,wd,&writer,&locked,&selected,&errcode,&apply](){
 
 				// Watch for USB storage device to be detected.
-				while(taskrunner->enabled()) {
+				while(errcode == -1) {
 
 					struct pollfd pfd;
 					pfd.fd = fd;
@@ -251,7 +264,7 @@
 
 						if(writer->fd != selected) {
 							selected = writer->fd;
-							taskrunner->allow_continue(selected != -1);
+							apply->enable(selected != -1);
 						}
 
 					} else if(pfds == 1 && (pfd.revents & POLLIN)) {
@@ -313,7 +326,7 @@
 
 				}
 
-				return ECANCELED;
+				return errcode;
 
 			});
 
@@ -328,8 +341,9 @@
 		inotify_rm_watch(fd, wd);
 		::close(fd);
 
-		if(rc && rc != ECANCELED) {
+		if(rc) {
 			clog << "usbstorage\tWatcher finished with error '" << strerror(rc) << "' (rc=" << rc << ")" << endl;
+			writer.reset();
 		}
 
 		return writer;

@@ -34,6 +34,7 @@
 		</Compiler>
 		<Unit filename="src/gui/dialogs/popup.cc" />
 		<Unit filename="src/gui/dialogs/progress.cc" />
+		<Unit filename="src/gui/dialogs/taskrunner.cc" />
 		<Unit filename="src/gui/main.cc" />
 		<Unit filename="src/gui/os/linux/icon.cc" />
 		<Unit filename="src/gui/os/linux/logo.cc" />

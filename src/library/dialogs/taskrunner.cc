@@ -35,11 +35,6 @@
 		public:
 			TaskRunner() = default;
 
-			void allow_continue(bool allowed) override {
-				Dialog::TaskRunner::allow_continue(allowed);
-				is_enabled = !allowed;
-			}
-
 		};
 
 		return make_shared<TaskRunner>();
@@ -51,10 +46,7 @@
 	Dialog::TaskRunner::~TaskRunner() {
 	}
 
-	void Dialog::TaskRunner::allow_continue(bool allowed) {
-		if(allowed) {
-			debug("Taskrunner can continue");
-		}
+	void Dialog::TaskRunner::show() {
 	}
 
 	int Dialog::TaskRunner::push(const std::function<int()> &callback) {
@@ -78,7 +70,30 @@
 		}
 	}
 
-	void Dialog::TaskRunner::add_button(const char *label, const std::function<void()> &callback) {
+	std::shared_ptr<Dialog::TaskRunner::Button> Dialog::TaskRunner::ButtonFactory(const char *label, const std::function<void()> &callback) {
+
+		class Button : public Dialog::TaskRunner::Button {
+		private:
+			const std::function<void()> &callback;
+
+		public:
+			Button(const std::function<void()> &c) : callback{c} {
+			}
+
+			void enable(bool en) override {
+				if(en) {
+					callback();
+				}
+			}
+
+			void activate() override {
+				callback();
+			}
+
+		};
+
+		return make_shared<Button>(callback);
+
 	}
 
 

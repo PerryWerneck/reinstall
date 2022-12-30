@@ -27,31 +27,35 @@
 
 		/// @brief Dialog for background tasks.
 		class UDJAT_API TaskRunner : public Window {
-		protected:
-			bool is_enabled = true;
-
 		public:
+
+			class UDJAT_API Button {
+			public:
+				Button() = default;
+
+				virtual void enable(bool en = true) = 0;
+
+				inline void disable() {
+					enable(false);
+				}
+
+				virtual void activate() = 0;
+			};
+
 			TaskRunner();
 			virtual ~TaskRunner();
+
+			/// @brief Show Dialog.
+			virtual void show();
 
 			/// @brief Update dialog with popup definitions.
 			virtual void set(const Popup &popup);
 
-			inline bool enabled() const noexcept {
-				return is_enabled;
-			}
-
-			inline void disable() noexcept {
-				is_enabled = false;
-			}
-
-			/// @brief Allow 'continue' button.
-			virtual void allow_continue(bool allowed);
-
 			virtual void set_title(const char *markup);
 			virtual void set_sub_title(const char *markup);
 
-			virtual void add_button(const char *label, const std::function<void()> &callback);
+			/// @brief Button factory (not thread safe).
+			virtual std::shared_ptr<Button> ButtonFactory(const char *label, const std::function<void()> &callback);
 
 			virtual int push(const std::function<int()> &callback);
 		};

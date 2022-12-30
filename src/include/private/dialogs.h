@@ -45,8 +45,7 @@
 	public:
 		TaskRunner(Gtk::Window &parent);
 
-		void set(const Reinstall::Dialog::Popup &popup) override;
-		void allow_continue(bool allowed) override;
+		// void allow_continue(bool allowed) override;
 		void set_title(const char *markup) override;
 		void set_sub_title(const char *markup) override;
 		void add_button(const char *label, const std::function<void()> &callback) override;
