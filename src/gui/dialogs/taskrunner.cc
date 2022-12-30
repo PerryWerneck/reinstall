@@ -52,21 +52,8 @@
 
 	Udjat::ThreadPool::getInstance().push([this,&callback,&response,mainloop](){
 
-		debug("Background task begin");
+		response = Reinstall::Dialog::TaskRunner::push(callback,false);
 
-		try {
-
-			response = callback();
-
-		} catch(std::exception &e) {
-			cerr << e.what() << endl;
-			response = -1;
-		} catch(...) {
-			cerr << "Unexpected error running background task" << endl;
-			response = -1;
-		}
-
-		debug("Background task end");
 		Glib::signal_idle().connect([mainloop](){
 			mainloop->quit();
 			return 0;

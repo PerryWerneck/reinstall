@@ -59,6 +59,11 @@
 			/// @brief Button factory.
 			virtual std::shared_ptr<Button> ButtonFactory(const char *label, const std::function<void()> &callback);
 
+			/// @brief Run background task (if available).
+			/// @param callback task to run.
+			/// @param show show dialog after task begin.
+			/// @return Task response or negative errno in case of exception.
+			/// @retval -1 Unexpected exception while running task.
 			virtual int push(const std::function<int()> &callback, bool show = true);
 		};
 

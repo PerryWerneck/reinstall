@@ -49,8 +49,38 @@
 	void Dialog::TaskRunner::show() {
 	}
 
-	int Dialog::TaskRunner::push(const std::function<int()> &callback, bool UDJAT_UNUSED(show)) {
-		return callback();
+	int Dialog::TaskRunner::push(const std::function<int()> &callback, bool s) {
+
+		debug("Background task begin");
+		int response = -1;
+
+		if(s) {
+			show();
+		}
+
+		try {
+
+			response = callback();
+
+		} catch(std::system_error &e) {
+
+			response = - e.code().value();
+			cerr << e.what() << " (rc=" << response << ")" << endl;
+
+		} catch(std::exception &e) {
+
+			response = -1;
+			cerr << e.what() << endl;
+
+		} catch(...) {
+
+			response = -1;
+			cerr << "Unexpected error running background task" << endl;
+		}
+
+		debug("Background task end");
+
+		return response;
 	}
 
 	static void display(const char *str, bool markup) {
