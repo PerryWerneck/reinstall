@@ -50,7 +50,7 @@
  	}
 
 	set_title(_("System reinstallation"));
-	set_default_size(600, 400);
+	set_default_size(800, 600);
 
 	// Left box
 	{

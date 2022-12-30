@@ -35,11 +35,11 @@
 
  Udjat::Module * udjat_module_init() {
 
- 	static const Udjat::ModuleInfo moduleinfo { "IsoWriter module" };
+ 	static const Udjat::ModuleInfo moduleinfo { "Basic remote install image builder" };
 
 	class Module : public Udjat::Module, public Udjat::Factory {
 	public:
-		Module() : Udjat::Module("IsoWriter", moduleinfo), Udjat::Factory("iso-writer",moduleinfo) {
+		Module() : Udjat::Module("remote-installer", moduleinfo), Udjat::Factory("remote-installer",moduleinfo) {
 		}
 
 		bool push_back(const pugi::xml_node &node) override {
@@ -51,9 +51,6 @@
 
 			public:
 				Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node,"drive-removable-media"), filename{getAttribute(node,"filename","")} {
-
-					debug("Creating iso-writer action '",name(),"'");
-
 				}
 
 				virtual ~Action() {
@@ -62,7 +59,7 @@
 				bool interact() override {
 
 					if(!(filename && *filename)) {
-						return true;
+							return true;
 					}
 
 					isoname = Reinstall::UserInterface::getInstance().FilenameFactory(

@@ -64,7 +64,7 @@
  		<attribute name='help' value='http://google.com' />
  		<!-- attribute name='icon' value='document-save' / -->
  		
- 		<iso-writer name='netinstall' default='yes'>
+ 		<remote-installer name='simple' default='yes'>
 
 	 		<attribute name='title' value='Create USB drive using net install image' tooltip='Tooltip for first option'/>
 	 		<attribute name='sub-title' value='First option sub title' />
@@ -78,14 +78,15 @@
 				This is the secondary text of sucess message.
 			</dialog>
 
-		</iso-writer>
+		</remote-installer>
 		
 		<iso-writer name='netinstall' default='no'>
-	 		<attribute name='title' value='Second option' />
-	 		<attribute name='sub-title' value='Second option sub title' />
+	 		<attribute name='title' value='Create USB drive using the original OpenSUSE netinstall' />
+	 		<attribute name='sub-title' value='This will download and write the OpenSUSE net install image ' />
 		</iso-writer>
 
 	</group>
 
 </config>
+
 
