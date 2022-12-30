@@ -53,12 +53,42 @@
 		return callback();
 	}
 
-	void Dialog::TaskRunner::set_title(const char *markup) {
-		cout << markup << endl;
+	static void display(const char *str, bool markup) {
+
+		if(markup) {
+
+			static const struct {
+				const char *from;
+				const char *to;
+			} xlat[] = {
+				{ "<b>", 	"\x1b[1m"	},
+				{ "</b>",	"\x1b[0m"	}
+			};
+
+			string text{str};
+
+			for(size_t ix=0; ix < N_ELEMENTS(xlat); ix++) {
+				const char *ptr = strcasestr(text.c_str(),xlat[ix].from);
+				if(ptr) {
+					text.replace((ptr - text.c_str()),strlen(xlat[ix].from),xlat[ix].to);
+				}
+			}
+
+			cout << text;
+		} else {
+			cout << str;
+		}
+
+		cout << endl;
+
 	}
 
-	void Dialog::TaskRunner::set_sub_title(const char *markup) {
-		cout << markup << endl;
+	void Dialog::TaskRunner::set_title(const char *text, bool markup) {
+		display(text,markup);
+	}
+
+	void Dialog::TaskRunner::set_sub_title(const char *text, bool markup) {
+		display(text,markup);
 	}
 
 	void Dialog::TaskRunner::set(const Dialog::Popup &popup) {
@@ -70,20 +100,20 @@
 		}
 	}
 
+	void Dialog::TaskRunner::Button::enable(bool enabled) {
+		if(enabled) {
+			activate();
+		}
+	}
+
 	std::shared_ptr<Dialog::TaskRunner::Button> Dialog::TaskRunner::ButtonFactory(const char *label, const std::function<void()> &callback) {
 
 		class Button : public Dialog::TaskRunner::Button {
 		private:
-			const std::function<void()> &callback;
+			const std::function<void()> callback;
 
 		public:
 			Button(const std::function<void()> &c) : callback{c} {
-			}
-
-			void enable(bool en) override {
-				if(en) {
-					callback();
-				}
 			}
 
 			void activate() override {

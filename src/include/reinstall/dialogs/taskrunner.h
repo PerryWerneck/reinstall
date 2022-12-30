@@ -33,7 +33,8 @@
 			public:
 				Button() = default;
 
-				virtual void enable(bool en = true) = 0;
+				/// @brief Enable button, call activate() on 'true' if not overrided.
+				virtual void enable(bool en = true);
 
 				inline void disable() {
 					enable(false);
@@ -51,8 +52,8 @@
 			/// @brief Update dialog with popup definitions.
 			virtual void set(const Popup &popup);
 
-			virtual void set_title(const char *markup);
-			virtual void set_sub_title(const char *markup);
+			virtual void set_title(const char *text, bool markup = false);
+			virtual void set_sub_title(const char *text, bool markup = false);
 
 			/// @brief Button factory (not thread safe).
 			virtual std::shared_ptr<Button> ButtonFactory(const char *label, const std::function<void()> &callback);

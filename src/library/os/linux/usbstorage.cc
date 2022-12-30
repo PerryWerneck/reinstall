@@ -218,8 +218,8 @@
 			//
 			auto taskrunner = UserInterface::getInstance().TaskRunnerFactory();
 
-			taskrunner->set_title(_("Insert <b>NOW</b> an storage device"));
-			taskrunner->set_sub_title(_("The contents of inserted device will be <b>ALL ERASED</b>! "));
+			taskrunner->set_title(_("Insert <b>NOW</b> an storage device"),true);
+			taskrunner->set_sub_title(_("The contents of inserted device will be <b>ALL ERASED</b>! "),true);
 
 			int errcode = -1;
 
@@ -247,7 +247,7 @@
 
 					int pfds = poll(&pfd, 1,((locked || writer->devices.empty()) ? 500 : 100));
 
-					debug(pfds," fd=",writer->fd);
+					debug(pfds," fd=",writer->fd," errcode=",errcode);
 					if(pfds == 0) {
 
 						// Timeout, check for locks.
