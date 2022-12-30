@@ -73,6 +73,7 @@
 		<Unit filename="src/include/reinstall/writer.h" />
 		<Unit filename="src/library/action/action.cc" />
 		<Unit filename="src/library/controller.cc" />
+		<Unit filename="src/library/dialogs/button.cc" />
 		<Unit filename="src/library/dialogs/progress.cc" />
 		<Unit filename="src/library/dialogs/taskrunner.cc" />
 		<Unit filename="src/library/dialogs/window.cc" />

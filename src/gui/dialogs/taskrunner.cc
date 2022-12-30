@@ -113,24 +113,44 @@
 		}
 
 		void enable(bool enabled) override {
-			set_sensitive(enabled);
+			Glib::signal_idle().connect([this,enabled](){
+				set_sensitive(enabled);
+				return 0;
+			});
+		}
+
+		void set_destructive() override {
+			Glib::signal_idle().connect([this](){
+				get_style_context()->add_class("destructive-action");
+				return 0;
+			});
+		}
+
+		void set_suggested() override {
+			Glib::signal_idle().connect([this](){
+				get_style_context()->add_class("suggested-action");
+				return 0;
+			});
 		}
 
 		void activate() override {
 
-			try {
+			Glib::signal_idle().connect([this](){
+				try {
 
-				callback();
+					callback();
 
-			} catch(const std::exception &e) {
+				} catch(const std::exception &e) {
 
-				cerr << e.what() << endl;
+					cerr << e.what() << endl;
 
-			} catch(...) {
+				} catch(...) {
 
-				cerr << "gtk\tUnexpected error activating taskrunner button" << endl;
+					cerr << "gtk\tUnexpected error activating taskrunner button" << endl;
 
-			}
+				}
+				return 0;
+			});
 
 		}
 

@@ -37,6 +37,9 @@
 				enable(false);
 			}
 
+			virtual void set_destructive();
+			virtual void set_suggested();
+
 			virtual void activate() = 0;
 		};
 

@@ -49,7 +49,7 @@
 		get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
  	}
 
-	set_title(_("System reinstallattion"));
+	set_title(_("System reinstallation"));
 	set_default_size(600, 400);
 
 	// Left box
