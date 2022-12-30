@@ -49,7 +49,7 @@
 	void Dialog::TaskRunner::show() {
 	}
 
-	int Dialog::TaskRunner::push(const std::function<int()> &callback) {
+	int Dialog::TaskRunner::push(const std::function<int()> &callback, bool UDJAT_UNUSED(show)) {
 		return callback();
 	}
 

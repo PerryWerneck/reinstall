@@ -42,17 +42,16 @@
 
 	/// @brief TaskRunner dialog
 	class TaskRunner : public Gtk::MessageDialog, public Reinstall::Dialog::TaskRunner  {
-	protected:
-		void on_response(int response_id) override;
-
 	public:
 		TaskRunner(Gtk::Window &parent, const char *message, bool markup = false);
+
+		void show() override;
 
 		// void allow_continue(bool allowed) override;
 		void set_title(const char *text, bool markup) override;
 		void set_sub_title(const char *text, bool markup) override;
 
-		int push(const std::function<int()> &callback) override;
+		int push(const std::function<int()> &callback, bool show = true) override;
 
 		// std::shared_ptr<Reinstall::Dialog::Button> ButtonFactory(const char *label, const std::function<void()> &callback) override;
 

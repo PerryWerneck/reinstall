@@ -119,10 +119,12 @@
 
 #ifdef DEBUG
 	{
-		Dialog::TaskRunner dialog{*this,"Simple test",false};
+		Dialog::TaskRunner{*this,"Simple test",false}.push([]{
 
-		dialog.show_all();
-		dialog.run();
+			sleep(10);
+			return 0;
+
+		});
 
 	}
 #endif // DEBUG

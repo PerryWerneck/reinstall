@@ -31,40 +31,56 @@
  using namespace Udjat;
 
  Dialog::TaskRunner::TaskRunner(Gtk::Window &parent, const char *message, bool markup)
-	: Gtk::MessageDialog{parent,message,markup,Gtk::MESSAGE_INFO,Gtk::BUTTONS_OK,true} {
+	: Gtk::MessageDialog{parent,message,markup,Gtk::MESSAGE_INFO,Gtk::BUTTONS_NONE,true} {
+
+	set_deletable(false);
+	Gtk::Window::set_title(parent.get_title());
+
  }
 
- void Dialog::TaskRunner::on_response(int response_id) {
- 	debug("Response=",response_id);
+ void Dialog::TaskRunner::show() {
+  	Glib::signal_idle().connect([this](){
+		Gtk::Window::show();
+		return 0;
+ 	});
  }
 
- int Dialog::TaskRunner::push(const std::function<int()> &callback) {
+ int Dialog::TaskRunner::push(const std::function<int()> &callback, bool s) {
 
-	int rc = -1;
+	int response = -1;
+	auto mainloop = Glib::MainLoop::create();
 
-	Udjat::ThreadPool::getInstance().push([this,&callback,&rc](){
+	Udjat::ThreadPool::getInstance().push([this,&callback,&response,mainloop](){
 
 		debug("Background task begin");
 
 		try {
 
-			rc = callback();
+			response = callback();
 
 		} catch(std::exception &e) {
 			cerr << e.what() << endl;
-			rc = -1;
+			response = -1;
 		} catch(...) {
 			cerr << "Unexpected error running background task" << endl;
-			rc = -1;
+			response = -1;
 		}
 
 		debug("Background task end");
+		Glib::signal_idle().connect([mainloop](){
+			mainloop->quit();
+			return 0;
+		});
 
 	});
 
-	run();
+	if(s) {
+		show();
+	}
 
-	return rc;
+	mainloop->run();
+
+	return response;
  }
 
  void dismiss(int response_id);

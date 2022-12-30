@@ -56,10 +56,10 @@
 			virtual void set_title(const char *text, bool markup = false);
 			virtual void set_sub_title(const char *text, bool markup = false);
 
-			/// @brief Button factory (not thread safe).
+			/// @brief Button factory.
 			virtual std::shared_ptr<Button> ButtonFactory(const char *label, const std::function<void()> &callback);
 
-			virtual int push(const std::function<int()> &callback);
+			virtual int push(const std::function<int()> &callback, bool show = true);
 		};
 
 	}
