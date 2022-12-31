@@ -18,7 +18,7 @@
  */
 
  #include <config.h>
- #include <udjat/defs.h>
+ #include <reinstall/defs.h>
  #include <reinstall/writer.h>
  #include <system_error>
  #include <udjat/tools/intl.h>
@@ -31,7 +31,7 @@
 
  namespace Reinstall {
 
-	Writer::Writer() {
+	Writer::Writer(const Reinstall::Action UDJAT_UNUSED(&action)) {
 	}
 
 	Writer::~Writer() {

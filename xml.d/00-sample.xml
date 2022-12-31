@@ -66,7 +66,7 @@
  		
  		<remote-installer name='simple' default='yes'>
 
-	 		<attribute name='title' value='Create USB drive using net install image' tooltip='Tooltip for first option'/>
+	 		<attribute name='title' value='Build a simple network install image'/>
 	 		<attribute name='sub-title' value='First option sub title' />
 
 			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->

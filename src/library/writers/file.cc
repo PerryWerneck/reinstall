@@ -20,6 +20,7 @@
  #include <config.h>
  #include <udjat/defs.h>
  #include <reinstall/writer.h>
+ #include <reinstall/action.h>
  #include <string>
  #include <sys/types.h>
  #include <sys/stat.h>
@@ -34,7 +35,7 @@
 
  namespace Reinstall {
 
-	std::shared_ptr<Writer> Writer::FileFactory(const char *filename) {
+	std::shared_ptr<Writer> Writer::FileWriterFactory(const Reinstall::Action &action, const char *filename) {
 
 		class Writer : public Reinstall::Writer {
 		private:
@@ -42,7 +43,7 @@
 			string filename;
 
 		public:
-			Writer(const char *fn) : filename{fn} {
+			Writer(const Reinstall::Action &action, const char *fn) : Reinstall::Writer(action), filename{fn} {
 
 				if(filename.empty()) {
 					throw runtime_error("Invalid filename");
@@ -83,7 +84,7 @@
 
 		};
 
-		return make_shared<Writer>(filename);
+		return make_shared<Writer>(action,filename);
 	}
 
 

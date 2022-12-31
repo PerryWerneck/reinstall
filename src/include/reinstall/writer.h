@@ -21,6 +21,7 @@
  #include <udjat/defs.h>
  #include <cstddef>
  #include <memory>
+ #include <reinstall/action.h>
 
  namespace Reinstall {
 
@@ -32,7 +33,7 @@
 
 		typedef Reinstall::Writer super;
 
-		Writer();
+		Writer(const Reinstall::Action &action);
 		virtual ~Writer();
 
 #ifndef _WIN32
@@ -56,11 +57,11 @@
 		virtual void close() = 0;
 
 		/// @brief Factory file writer.
-		static std::shared_ptr<Writer> FileFactory(const char *filename);
+		static std::shared_ptr<Writer> FileWriterFactory(const Reinstall::Action &action, const char *filename);
 
 		/// @brief Detect USB storage device, create writer for it.
 		/// @param length Required device size (0 to ignore it);
-		static std::shared_ptr<Writer> USBStorageFactory(size_t length = 0);
+		static std::shared_ptr<Writer> USBWriterFactory(const Reinstall::Action &action, size_t length = 0);
 
 	};
 

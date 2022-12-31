@@ -58,11 +58,14 @@
 	}
 	*/
 
-	std::shared_ptr<Writer> Writer::USBStorageFactory(size_t length) {
+	std::shared_ptr<Writer> Writer::USBWriterFactory(const Reinstall::Action &action, size_t length) {
 
 		/// @brief USB storage writer.
 		class Writer : public Reinstall::Writer {
 		public:
+
+			Writer(const Reinstall::Action &action) : Reinstall::Writer(action) {
+			}
 
 			/// @brief Device handler.
 			struct Device {
@@ -205,7 +208,7 @@
 
 		};
 
-		std::shared_ptr<Writer> writer = std::make_shared<Writer>();
+		std::shared_ptr<Writer> writer = std::make_shared<Writer>(action);
 
 		int rc = -1;			//< @brief Callback return code (errno).
 		int selected = -1;		//< @brief Selected device (for taskrunner).
@@ -255,6 +258,7 @@
 
 			apply->disable();
 
+			taskrunner->set(action);
 			taskrunner->show();
 
 			rc = taskrunner->push([taskrunner,&settings,fd,wd,&writer,&locked,&selected,&errcode,&apply](){

@@ -28,16 +28,20 @@
 
  namespace Widget {
 
-	Icon::Icon(const pugi::xml_node &node, const char *attrname, const Gtk::IconSize iconsize, const char *def) {
+	Icon::Icon(const pugi::xml_node &node, const Gtk::IconSize iconsize, const char *def, bool symbolic) {
 
-		const char *name = Udjat::Object::getAttribute(node, attrname, false).as_string(def);
-
-		debug("----------------> ",attrname,"=",name);
+		const char *name = Udjat::Object::getAttribute(node, "icon", false).as_string(def);
 
 		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
 
 		if(name && *name && strcasecmp(name,"none")) {
-			set_from_icon_name(name, iconsize);
+
+			if(symbolic) {
+				set_from_icon_name((std::string{name} + "-symbolic").c_str(), iconsize);
+			} else {
+				set_from_icon_name(name, iconsize);
+			}
+
 			show();
 		} else {
 			hide();

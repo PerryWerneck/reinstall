@@ -27,7 +27,6 @@
  #include <reinstall/repository.h>
  #include <reinstall/value.h>
  #include <reinstall/source.h>
- #include <reinstall/writer.h>
  #include <reinstall/dialogs/popup.h>
  #include <list>
  #include <unordered_set>
@@ -120,6 +119,9 @@
 
 		} options;
 
+		/// @brief Output file.
+		const char * output_file = nullptr;
+
 		/// @brief Kernel parameters.
 		std::vector<KernelParameter> kparms;
 
@@ -142,13 +144,13 @@
 		/// @brief Run first step with worker.
 		virtual void prepare(Reinstall::Worker &worker);
 
+		/// @brief Icon name (for dialogs and menus).
+		const char *icon_name = "";
+
 		/// @brief Object with the UI definitions.
 		std::shared_ptr<Abstract::Object> item;
 
 		Action(const pugi::xml_node &node, const char *icon_name = "");
-
-		/// @brief Icon name (for dialogs and menus).
-		const char *icon_name = "";
 
 	private:
 		static Action * selected;		///< @brief Selected action.
@@ -214,8 +216,8 @@
 		/// @return Pointer to action worker.
 		virtual std::shared_ptr<Reinstall::Worker> prepare();
 
-		/// @brief Construct file writer (Runs on main thread)
-		virtual std::shared_ptr<Writer> WriterFactory() = 0;
+		/// @brief Construct file writer (Runs on main thread).
+		virtual std::shared_ptr<Reinstall::Writer> WriterFactory();
 
 		/// @brief Load folders.
 		void load();

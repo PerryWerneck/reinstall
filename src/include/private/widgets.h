@@ -30,7 +30,7 @@
 
  	class Icon : public Gtk::Image {
 	public:
-		Icon(const pugi::xml_node &node, const char *attrname, const Gtk::IconSize iconsize = Gtk::ICON_SIZE_BUTTON, const char *def = "");
+		Icon(const pugi::xml_node &node, const Gtk::IconSize iconsize = Gtk::ICON_SIZE_BUTTON, const char *def = "", const bool symbolic = false);
 		operator bool() const;
 
 		void set_name(const char *name);

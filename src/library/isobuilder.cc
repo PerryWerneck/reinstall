@@ -269,10 +269,10 @@
 	std::shared_ptr<Reinstall::Writer> IsoBuilder::WriterFactory() {
 		if(filename && *filename) {
 			info() << "Saving image to '" << filename << "'" << endl;
-			return Reinstall::Writer::FileFactory(filename);
+			return Reinstall::Writer::FileWriterFactory(*this,filename);
 		}
 		info() << "Asking for USB Storage device" << endl;
-		return Reinstall::Writer::USBStorageFactory();
+		return Reinstall::Writer::USBWriterFactory(*this);
 	}
 
  }

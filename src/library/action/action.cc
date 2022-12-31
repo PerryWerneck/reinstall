@@ -83,9 +83,11 @@
 		 {
 	}
 
-	Action::Action(const pugi::xml_node &node, const char *iname) : Udjat::NamedObject(node), options{node}, item{UserInterface::getInstance().ActionFactory(node,iname)} {
-
-		icon_name = Quark{Udjat::Object::getAttribute(node, "icon", false).as_string(iname)}.c_str();
+	Action::Action(const pugi::xml_node &node, const char *iname)
+		: 	Udjat::NamedObject(node), options{node},
+			output_file{getAttribute(node,"output-file","")},
+			icon_name{getAttribute(node,"icon",iname)},
+			item{UserInterface::getInstance().ActionFactory(node,icon_name)} {
 
 		if(node.attribute("default").as_bool(false) || !selected) {
 			selected = this;
@@ -154,6 +156,13 @@
 
 	std::shared_ptr<Reinstall::Worker> Action::prepare() {
 		return make_shared<Reinstall::Worker>();
+	}
+
+	std::shared_ptr<Reinstall::Writer> Action::WriterFactory() {
+		if(output_file && *output_file) {
+			return Reinstall::Writer::FileWriterFactory(*this,output_file);
+		}
+		return Reinstall::Writer::USBWriterFactory(*this);
 	}
 
 	bool Action::interact() {

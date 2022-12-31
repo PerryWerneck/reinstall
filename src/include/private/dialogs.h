@@ -51,6 +51,8 @@
 		void set_title(const char *text, bool markup) override;
 		void set_sub_title(const char *text, bool markup) override;
 
+		void set(const Reinstall::Action &action) override;
+
 		int push(const std::function<int()> &callback, bool show = true) override;
 
 		std::shared_ptr<Reinstall::Dialog::Button> ButtonFactory(const char *label, const std::function<void()> &callback) override;

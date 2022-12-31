@@ -30,7 +30,8 @@
 
 	Gtk::RadioButton::Group Widget::Action::group;
 
-	Action::Action(const pugi::xml_node &node, const char *icon_name) : Gtk::RadioButton{group}, label{node,"title"}, body{node,"sub-title"}, icon{node,"icon",Gtk::ICON_SIZE_DND,icon_name} {
+	Action::Action(const pugi::xml_node &node, const char *icon_name)
+		: Gtk::RadioButton{group}, label{node,"title"}, body{node,"sub-title"}, icon{node,Gtk::ICON_SIZE_DND,icon_name,true} {
 
 		const char *group = node.attribute("settings-from").as_string("action-defaults");
 

@@ -46,11 +46,10 @@
 
 			class Action : public Reinstall::IsoBuilder {
 			private:
-				const char *filename;
 				std::string isoname;
 
 			public:
-				Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node,"drive-removable-media"), filename{getAttribute(node,"filename","")} {
+				Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node,"drive-removable-media") {
 				}
 
 				virtual ~Action() {
@@ -58,7 +57,7 @@
 
 				bool interact() override {
 
-					if(!(filename && *filename)) {
+					if(!(output_file && *output_file)) {
 							return true;
 					}
 
@@ -66,7 +65,7 @@
 						_("Select target image file"),
 						_("Image file name"),
 						_("_Save"),
-						filename,
+						output_file,
 						true
 					);
 
@@ -75,11 +74,10 @@
 				}
 
 				std::shared_ptr<Reinstall::Writer> WriterFactory() override {
-					info() << "Saving '" << filename << "'" << endl;
 					if(isoname.empty()) {
-						return Reinstall::Writer::USBStorageFactory();
+						return Reinstall::Writer::USBWriterFactory(*this);
 					}
-					return Reinstall::Writer::FileFactory(isoname.c_str());
+					return Reinstall::Writer::FileWriterFactory(*this,isoname.c_str());
 				}
 
 			};

@@ -38,6 +38,10 @@
 
  }
 
+ void Dialog::TaskRunner::set(const Reinstall::Action &action) {
+	Gtk::Window::set_title(action.get_label().c_str());
+ }
+
  void Dialog::TaskRunner::show() {
   	Glib::signal_idle().connect([this](){
 		Gtk::Window::show();

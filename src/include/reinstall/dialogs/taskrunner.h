@@ -56,6 +56,9 @@
 			/// @brief Update dialog with popup definitions.
 			virtual void set(const Popup &popup);
 
+			/// @brief Update dialog with action definitions.
+			virtual void set(const Action &action);
+
 			virtual void set_title(const char *text, bool markup = false);
 			virtual void set_sub_title(const char *text, bool markup = false);
 

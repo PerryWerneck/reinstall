@@ -23,6 +23,8 @@
 
  namespace Reinstall {
 
+	class Writer;
+
 	namespace Dialog {
 
 		class Window;

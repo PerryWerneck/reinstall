@@ -83,9 +83,7 @@
 
 	buttons.apply.set_sensitive(false);
 	buttons.apply.signal_clicked().connect([&]() {
-
 		apply();
-
     });
 
 	buttons.cancel.signal_clicked().connect([&]() {
@@ -383,6 +381,12 @@
 			try {
 
 				writer = action.WriterFactory();
+				if(!writer) {
+					buttons.apply.set_sensitive(true);
+					buttons.cancel.set_sensitive(true);
+					layout.view.set_sensitive(true);
+					return;
+				}
 
 			} catch(const std::exception &e) {
 

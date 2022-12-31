@@ -85,6 +85,9 @@
 		return response;
 	}
 
+	void Dialog::TaskRunner::set(const Action UDJAT_UNUSED(&action)) {
+	}
+
 	static void display(const char *str, bool markup) {
 
 		if(markup) {
