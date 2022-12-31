@@ -54,12 +54,6 @@
 	int response = -1;
 	auto mainloop = Glib::MainLoop::create();
 
-	ButtonFactory("test",[]{
-		cout << "Test button was clicked" << endl;
-	});
-
-	show_all();
-
 	Udjat::ThreadPool::getInstance().push([this,&callback,&response,mainloop](){
 
 		response = Reinstall::Dialog::TaskRunner::push(callback,false);
@@ -79,8 +73,6 @@
 
 	return response;
  }
-
- void dismiss(int response_id);
 
  void Dialog::TaskRunner::set_title(const char *text, bool markup) {
 

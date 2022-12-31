@@ -55,7 +55,7 @@
 
 		grid.show_all();
 
-		if(icon && Udjat::Object::getAttribute(node,group,"icon-button-visible",true)) {
+		if(icon && Udjat::Object::getAttribute(node,group,"show-icon",true)) {
 			icon.get_style_context()->add_class("action-icon");
 			grid.attach(icon,0,0,1,2);
 			icon.show();
