@@ -130,7 +130,7 @@
 			filename = source.filename;
 		}
 
-		cout << "iso9660\t" << source.url << " -> " << source.path << endl;
+		Logger::String{source.url," -> ",source.path}.trace("iso9660");
 
 		if(filename.empty()) {
 
