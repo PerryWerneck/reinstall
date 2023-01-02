@@ -30,6 +30,7 @@
  #include <fcntl.h>
  #include <unistd.h>
  #include <udjat/tools/intl.h>
+ #include <udjat/tools/logger.h>
 
  using namespace std;
  using namespace Udjat;
@@ -65,10 +66,6 @@
 		// Expand ${} values using object.
 		contents.expand(object,true,true);
 
-#ifdef DEBUG
-		object.info() << endl << contents << endl;
-#endif // DEBUG
-
 		// Save to temporary.
 		filename = Udjat::File::save(contents.c_str());
 
@@ -102,7 +99,10 @@
 
 	void Action::Template::apply(Source &source) {
 
-		cout << "templates\tReplacing file '" << source.path << "' with '" << name << "' template" << endl;
+		Logger::String{
+			"Replacing file '", source.path, "' with '", name, "' template"
+		}.trace("templates");
+
 		source.filename = this->filename.c_str();
 
 	}

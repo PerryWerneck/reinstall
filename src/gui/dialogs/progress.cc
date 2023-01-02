@@ -246,25 +246,37 @@
 
  	Glib::signal_idle().connect([this,current,total](){
 
-		if(total > current && total > 1) {
+		try {
 
-			timer.idle = 0;
-			widgets.progress.set_fraction(((gdouble) current) / ((gdouble) total));
+			if(total > current && total > 1.0) {
 
-			string fcurrent{format_size(current)};
-			string ftotal{format_size(total)};
+				timer.idle = 0;
+				widgets.progress.set_fraction(((gdouble) current) / ((gdouble) total));
 
-			widgets.right.set_text(
-				Logger::Message{
-					_("{} of {}"),
-					fcurrent,
-					ftotal
-				}.c_str()
-			);
+				string fcurrent{format_size(current)};
+				string ftotal{format_size(total)};
 
-		} else {
+				widgets.right.set_text(
+					Logger::Message{
+						_("{} of {}"),
+						fcurrent,
+						ftotal
+					}.c_str()
+				);
 
-			widgets.right.set_text("");
+			} else {
+
+				widgets.right.set_text("");
+
+			}
+
+		} catch(const std::exception &e) {
+
+			cerr << "gtk\t" << e.what() << endl;
+
+		} catch(...) {
+
+			cerr << "gtk\tUnexpected error updating progress dialog" << endl;
 
 		}
 
