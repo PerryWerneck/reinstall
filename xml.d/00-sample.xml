@@ -80,7 +80,7 @@
 
 		</remote-installer>
 		
-		<iso-writer name='netinstall' default='no'>
+		<iso-writer name='netinstall' default='no' url='http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Media.iso' cache='yes'>
 	 		<attribute name='title' value='Create USB drive using the original OpenSUSE netinstall' />
 	 		<attribute name='sub-title' value='This will download and write the OpenSUSE net install image ' />
 		</iso-writer>
