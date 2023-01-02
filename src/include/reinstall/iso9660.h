@@ -39,7 +39,7 @@
 			IsoWriteOpts *opts;
 
 		protected:
-			void push_back(Source &source) override;
+			void apply(Source &source) override;
 
 		public:
 

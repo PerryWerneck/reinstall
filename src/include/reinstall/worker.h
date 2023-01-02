@@ -29,15 +29,17 @@
 	class UDJAT_API Worker {
 	protected:
 
-		/// @brief Insert source on the target image.
-		virtual void push_back(Source &source);
-
 	public:
 
 		Worker();
 
+		/// @brief First step, initialize image (before download files.
 		virtual void pre(Action &action);
-		virtual void apply(Action &action);
+
+		/// @brief Second step, insert downloaded file on the target image.
+		virtual void apply(Source &source);
+
+		/// @brief Last step, finalize.
 		virtual void post(Action &action);
 
 		/// @brief Get image length.

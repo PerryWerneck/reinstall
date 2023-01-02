@@ -28,32 +28,10 @@
 	Worker::Worker() {
 	}
 
-	void Worker::push_back(Source UDJAT_UNUSED(&source)) {
+	void Worker::apply(Source UDJAT_UNUSED(&source)) {
 	}
 
 	void Worker::pre(Action &action) {
-
-		// Get folder contents.
-		Dialog::Progress::getInstance().set_title(_("Getting file lists"));
-		action.load();
-
-		// Apply templates.
-		Dialog::Progress::getInstance().set_title(_("Checking for templates"));
-		action.applyTemplates();
-
-		// Download files.
-		Dialog::Progress::getInstance().set_title(_("Getting required files"));
-		size_t total = action.source_count();
-		size_t current = 0;
-		action.for_each([this,&current,total](Source &source) {
-			Dialog::Progress::getInstance().set_count(++current,total);
-			push_back(source);
-		});
-		Dialog::Progress::getInstance().set_count(0,0);
-
-	}
-
-	void Worker::apply(Action &action) {
 	}
 
 	void Worker::post(Action &action) {

@@ -43,7 +43,7 @@
 				const char *url;
 
 			public:
-				Action(const pugi::xml_node &node) : Reinstall::Action(node,"drive-removable-media"), url{getAttribute(node,"iso-image-from","")} {
+				Action(const pugi::xml_node &node) : Reinstall::Action(node,"drive-removable-media"), url{getAttribute(node,"url","")} {
 
 				}
 

@@ -209,20 +209,40 @@
 
 	void Action::prepare(Worker &worker) {
 
+		Dialog::Progress &dialog = Dialog::Progress::getInstance();
+
 		{
-			Dialog::Progress::getInstance().set_title(_("Initializing"));
+			dialog.set_title(_("Initializing"));
 			worker.pre(*this);
+
+			// Get folder contents.
+			dialog.set_title(_("Getting file lists"));
+			load();
+
+			// Apply templates.
+			dialog.set_title(_("Checking for templates"));
+			applyTemplates();
+
+			// Download files.
+			dialog.set_title(_("Getting required files"));
+			size_t total = source_count();
+			size_t current = 0;
+			for_each([this,&current,total,&dialog,&worker](Source &source) {
+				dialog.set_count(++current,total);
+				worker.apply(source);
+			});
+			dialog.set_count(0,0);
+
 		}
 
 		// Update kernel parameters.
 		{
-			Dialog::Progress::getInstance().set_title(_("Getting installation parameters"));
+			dialog.set_title(_("Getting installation parameters"));
 			for(KernelParameter &kparm : kparms) {
 				kparm.set(*this);
 			}
 		}
 
-		worker.apply(*this);
 		worker.post(*this);
 
 	}
