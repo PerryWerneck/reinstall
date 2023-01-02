@@ -24,62 +24,12 @@
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
+ #include <private/mirror.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
-
-	static void mirror(const char *name, const char *path, const char *url, std::vector<std::shared_ptr<Source>> &contents) {
-
-		// Get index and insert folder contents.
-		string index = Protocol::WorkerFactory(url)->get();
-
-		if(index.empty()) {
-			throw runtime_error(Logger::Message(_("Empty response from {}"),url));
-		}
-
-		for(auto href = index.find("<a href=\""); href != string::npos; href = index.find("<a href=\"",href)) {
-
-			auto from = href+9;
-			href = index.find("\"",from);
-			if(href == string::npos) {
-				throw runtime_error(Logger::Message(_("Unable to parse file list from {}"),url));
-			}
-
-			string link = index.substr(from,href-from);
-
-			if(link[0] =='/' || link[0] == '?' || link[0] == '.' || link[0] == '$')
-				continue;
-
-			if(link.size() >= 7 && strncmp(link.c_str(),"http://",7) == 0 ) {
-				continue;
-			}
-
-			if(link.size() >= 8 && strncmp(link.c_str(),"https://",8) == 0 ) {
-				continue;
-			}
-
-			string remote = url + link;
-			string local = path + link;
-
-			if(remote[remote.size()-1] == '/') {
-
-				// Its a folder, expand it.
-				mirror(name,local.c_str(),remote.c_str(),contents);
-
-			} else {
-
-				// Its a file, append in the content list.
-				cout << name << "\t" << remote << " -> " << local << endl;
-				contents.push_back(std::make_shared<Source>(name,remote.c_str(),local.c_str()));
-			}
-
-			href = from+1;
-
-		}
-
-	}
 
 	bool Source::contents(const Action UDJAT_UNUSED(&action), std::vector<std::shared_ptr<Source>> &contents) {
 
@@ -95,7 +45,7 @@
 			Dialog::Progress::getInstance().set_title(message);
 		}
 
-		mirror(name(),path,url,contents);
+		Mirror::apache(name(),path,url,contents);
 
 #ifdef DEBUG
 		cout << endl << endl << "Source " << name() << " contents loaded" << endl << endl;

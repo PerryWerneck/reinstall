@@ -69,6 +69,12 @@
 
 	public:
 
+		/// @brief Repository layout.
+		const enum Layout : uint8_t {
+			ApacheLayout,		///< @brief Repository is a standard apache directory.
+			MirrorCacheLayout,	///< @brief It's a MirrorCache repository;
+		} layout;
+
 		typedef struct {
 			bool operator() (const std::shared_ptr<Repository> a, const std::shared_ptr<Repository> b) const {
 				return strcasecmp(a->name(),b->name()) == 0;

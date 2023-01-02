@@ -37,22 +37,22 @@
  namespace Reinstall {
 
 	Source::Source(const char *n, const char *u, const char *p)
-		:	NamedObject(Quark(n).c_str()),
-			url(Quark(u).c_str()),
-			repository(Quark::getFromStatic("install").c_str()),
-			path(Quark(p).c_str()) {
+		:	NamedObject{Quark(n).c_str()},
+			url{Quark(u).c_str()},
+			repository{Quark::getFromStatic("install").c_str()},
+			path{Quark(p).c_str()} {
 	}
 
 	Source::Source(const pugi::xml_node &node,const Source::Type t,const char *url,const char *defpath)
-		: 	NamedObject(node),
-			type(t),
-			url(Quark(node,"url",url,false).c_str()),
-			repository(Quark(node,"repository","install").c_str()),
-			path(Quark(node,"path",defpath,false).c_str()),
-			message(Quark(node,"download-message","",true).c_str()) {
+		: 	NamedObject{node},
+			type{t},
+			url{Quark{node,"url",url,false}.c_str()},
+			repository{Quark{node,"repository","install"}.c_str()},
+			path{Quark{node,"path",defpath,false}.c_str()},
+			message{Quark{node,"download-message","",true}.c_str()} {
 
 		if(!url[0]) {
-			url = Quark(node,"path").c_str();
+			url = Quark{node,"path"}.c_str();
 		}
 
 		if(!url[0]) {

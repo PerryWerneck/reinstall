@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,35 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ #pragma once
  #include <config.h>
- #include <reinstall/repository.h>
- #include <udjat/tools/quark.h>
-
- using namespace std;
- using namespace Udjat;
+ #include <reinstall/defs.h>
 
  namespace Reinstall {
 
-	static Repository::Layout LayoutFactory(const pugi::xml_node &node) {
-		return Repository::ApacheLayout;
-	}
+	namespace Mirror {
 
-	Repository::Path::Path(const pugi::xml_node &node) : url(Quark(node,"url").c_str()) {
-	}
+		/// @brief Mirror from apache web server.
+		void apache(const char *name, const char *path, const char *url, std::vector<std::shared_ptr<Source>> &contents);
 
-	Repository::Repository(const pugi::xml_node &node) : NamedObject(node), path(node), slp(node), layout{LayoutFactory(node)} {
-	}
-
-	Repository::~Repository() {
-	}
-
-	const char * Repository::url(bool expand) {
-#ifdef HAVE_OPENSLP
-		#error Implement SLP query.
-#else
-		return path.url;
-#endif // HAVE_OPENSLP
 	}
 
  }
+
+
 

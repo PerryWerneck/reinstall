@@ -19,6 +19,7 @@
 			* slp-scope-list: A pointer to a comma separated list of scope names.
 			* slp-filter: A query formulated of attribute pattern matching expressions in the form of an LDAPv3 search filter.
 			* slp-url: The URL for the kernel parameter when SLP is available.
+			* Repository layout (apache/MirrorCache).
 		
 	-->
 	<repository name='install' url='http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64' 
@@ -26,7 +27,8 @@
 		slp-scope-list='' 
 		slp-filter='' 
 		slp-allow-local='no' 
-		slp-kernel-parameter='slp:/' />
+		slp-kernel-parameter='slp:/'
+		layout='apache' />
 
 	<!-- Path for the installation kernel (Full URL or path from repository -->
 	<kernel path='/boot/x86_64/loader/linux' repository='install' />
