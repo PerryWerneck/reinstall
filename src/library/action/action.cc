@@ -154,7 +154,7 @@
 		}
 	}
 
-	std::shared_ptr<Reinstall::Worker> Action::prepare() {
+	std::shared_ptr<Reinstall::Worker> Action::WorkerFactory() {
 		return make_shared<Reinstall::Worker>();
 	}
 

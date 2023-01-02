@@ -185,7 +185,7 @@
 
 	}
 
-	std::shared_ptr<Reinstall::Worker> IsoBuilder::prepare() {
+	std::shared_ptr<Reinstall::Worker> IsoBuilder::WorkerFactory() {
 
 		Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
 		progress.set(*this);

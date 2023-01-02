@@ -214,7 +214,7 @@
 
 		/// @brief Create image (second step, work thread).
 		/// @return Pointer to action worker.
-		virtual std::shared_ptr<Reinstall::Worker> prepare();
+		virtual std::shared_ptr<Reinstall::Worker> WorkerFactory();
 
 		/// @brief Construct file writer (Runs on main thread).
 		virtual std::shared_ptr<Reinstall::Writer> WriterFactory();

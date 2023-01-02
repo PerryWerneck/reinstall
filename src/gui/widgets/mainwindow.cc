@@ -350,14 +350,14 @@
 		dialog.set_parent(*this);
 		dialog.set_decorated(false);
 		dialog.set_deletable(false);
-		dialog.set(*action.get_button());
-		dialog.show();
 
 		Udjat::ThreadPool::getInstance().push([&dialog,&action,&worker,&error_message](){
 
 			try {
 
-				worker = action.prepare();
+				dialog.set(*action.get_button());
+				dialog.show();
+				worker = action.WorkerFactory();
 
 			} catch(const std::exception &e) {
 
