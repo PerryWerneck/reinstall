@@ -64,9 +64,9 @@
  		<attribute name='help' value='http://google.com' />
  		<!-- attribute name='icon' value='document-save' / -->
  		
- 		<iso-writer name='netinstall' default='yes' filename='/tmp/test.iso'>
+ 		<remote-installer name='simple' default='yes'>
 
-	 		<attribute name='title' value='Create USB drive using net install image' tooltip='Tooltip for first option'/>
+	 		<attribute name='title' value='Build a simple network install image'/>
 	 		<attribute name='sub-title' value='First option sub title' />
 
 			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
@@ -78,14 +78,15 @@
 				This is the secondary text of sucess message.
 			</dialog>
 
-		</iso-writer>
+		</remote-installer>
 		
-		<iso-writer name='netinstall' default='no' filename='/tmp/test.iso'>
-	 		<attribute name='title' value='Second option' />
-	 		<attribute name='sub-title' value='Second option sub title' />
+		<iso-writer name='netinstall' default='no' url='http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Media.iso' cache='yes'>
+	 		<attribute name='title' value='Create USB drive using the original OpenSUSE netinstall' />
+	 		<attribute name='sub-title' value='This will download and write the OpenSUSE net install image ' />
 		</iso-writer>
 
 	</group>
 
 </config>
+
 

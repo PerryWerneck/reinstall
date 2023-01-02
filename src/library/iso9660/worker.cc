@@ -117,7 +117,7 @@
 
 	}
 
-	void iso9660::Worker::push_back(Source &source) {
+	void iso9660::Worker::apply(Source &source) {
 
 		if(!(source.path && *source.path)) {
 			// No local path, ignore it.
@@ -366,6 +366,18 @@
 		}
 
 	}
+
+	/*
+	size_t iso9660::Worker::size() {
+
+		rc = iso_image_update_sizes(image);
+		if (rc < 0) {
+			cerr << "iso9660\tError '" << iso_error_to_msg(rc) << "' in iso_image_update_sizes()" << endl;
+			throw runtime_error(iso_error_to_msg(rc));
+		}
+
+	}
+	*/
 
 	void iso9660::Worker::burn(std::shared_ptr<Writer> writer) {
 

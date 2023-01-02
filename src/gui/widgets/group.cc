@@ -27,7 +27,7 @@
 
  namespace Widget {
 
-	 Group::Group(const pugi::xml_node &node) : label{node,"title"}, body{node,"sub-title"}, icon{node,"icon",Gtk::ICON_SIZE_DND} {
+	 Group::Group(const pugi::xml_node &node) : label{node,"title"}, body{node,"sub-title"}, icon{node,Gtk::ICON_SIZE_DND,"",true} {
 
 		set_hexpand(true);
 		set_halign(ALIGN_FILL);

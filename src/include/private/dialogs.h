@@ -21,15 +21,41 @@
 
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
- #include <reinstall/dialogs.h>
+ #include <reinstall/dialogs/popup.h>
+ #include <reinstall/dialogs/progress.h>
+ #include <reinstall/dialogs/taskrunner.h>
  #include <reinstall/object.h>
 
  namespace Dialog {
 
 	/// @brief Popup dialog.
 	class Popup : public Gtk::MessageDialog  {
+	private:
+		Gtk::LinkButton url;
+
 	public:
-		Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Popup &settings, Gtk::MessageType = Gtk::MESSAGE_INFO, Gtk::ButtonsType buttons = Gtk::BUTTONS_OK);
+		Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Dialog::Popup &settings, Gtk::MessageType = Gtk::MESSAGE_INFO, Gtk::ButtonsType buttons = Gtk::BUTTONS_OK);
+
+		void set(const Reinstall::Dialog::Popup &settings);
+
+	};
+
+	/// @brief TaskRunner dialog
+	class TaskRunner : public Gtk::MessageDialog, public Reinstall::Dialog::TaskRunner  {
+	public:
+		TaskRunner(Gtk::Window &parent, const char *message, bool markup = false);
+
+		void show() override;
+
+		// void allow_continue(bool allowed) override;
+		void set_title(const char *text, bool markup) override;
+		void set_sub_title(const char *text, bool markup) override;
+
+		void set(const Reinstall::Action &action) override;
+
+		int push(const std::function<int()> &callback, bool show = true) override;
+
+		std::shared_ptr<Reinstall::Dialog::Button> ButtonFactory(const char *label, const std::function<void()> &callback) override;
 
 	};
 

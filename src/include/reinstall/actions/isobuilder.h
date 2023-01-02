@@ -22,11 +22,15 @@
  #include <reinstall/action.h>
  #include <reinstall/iso9660.h>
  #include <reinstall/script.h>
+ #include <reinstall/writer.h>
  #include <vector>
 
  namespace Reinstall {
 
 	class UDJAT_API IsoBuilder : public Reinstall::Action {
+	private:
+		const char *filename = nullptr;
+
 	protected:
 
 		const char *system_area = nullptr;
@@ -58,8 +62,11 @@
 		virtual ~IsoBuilder();
 
 		/// @brief Build image.
-		/// @return Pointer to prepared iso image.
-		std::shared_ptr<Reinstall::Worker> prepare() override;
+		/// @return Worker with a prepared iso image.
+		std::shared_ptr<Reinstall::Worker> WorkerFactory() override;
+
+		/// @brief Create an image writer.
+		std::shared_ptr<Reinstall::Writer> WriterFactory() override;
 
 	};
 

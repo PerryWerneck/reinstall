@@ -17,38 +17,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <config.h>
- #include <reinstall/defs.h>
- #include <reinstall/writer.h>
- #include <system_error>
- #include <udjat/tools/intl.h>
+ #pragma once
 
-#ifndef _WIN32
- #include <unistd.h>
-#endif // _WIN32
-
- using namespace std;
+ #include <udjat/defs.h>
 
  namespace Reinstall {
 
-	Writer::Writer(const Reinstall::Action UDJAT_UNUSED(&action)) {
+	class Writer;
+
+	namespace Dialog {
+
+		class Window;
+		class Popup;
+		class TaskRunner;
+
 	}
-
-	Writer::~Writer() {
-	}
-
-#ifndef _WIN32
-
-	void Writer::write(int fd, const void *buf, size_t length) {
-		if(::write(fd,buf,length) != (ssize_t) length) {
-			throw system_error(errno, system_category(),_("I/O error writing image"));
-		}
-	}
-
-	void Writer::finalize(int fd) {
-		::fsync(fd);
-	}
-
-#endif // _WIN32
 
  }

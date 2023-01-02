@@ -83,9 +83,11 @@
 		 {
 	}
 
-	Action::Action(const pugi::xml_node &node, const char *iname) : Udjat::NamedObject(node), options{node}, item{UserInterface::getInstance().ActionFactory(node,iname)} {
-
-		icon_name = Quark{Udjat::Object::getAttribute(node, "icon", false).as_string(iname)}.c_str();
+	Action::Action(const pugi::xml_node &node, const char *iname)
+		: 	Udjat::NamedObject(node), options{node},
+			output_file{getAttribute(node,"output-file","")},
+			icon_name{getAttribute(node,"icon",iname)},
+			item{UserInterface::getInstance().ActionFactory(node,icon_name)} {
 
 		if(node.attribute("default").as_bool(false) || !selected) {
 			selected = this;
@@ -152,8 +154,15 @@
 		}
 	}
 
-	std::shared_ptr<Reinstall::Worker> Action::prepare() {
+	std::shared_ptr<Reinstall::Worker> Action::WorkerFactory() {
 		return make_shared<Reinstall::Worker>();
+	}
+
+	std::shared_ptr<Reinstall::Writer> Action::WriterFactory() {
+		if(output_file && *output_file) {
+			return Reinstall::Writer::FileWriterFactory(*this,output_file);
+		}
+		return Reinstall::Writer::USBWriterFactory(*this);
 	}
 
 	bool Action::interact() {
@@ -200,20 +209,40 @@
 
 	void Action::prepare(Worker &worker) {
 
+		Dialog::Progress &dialog = Dialog::Progress::getInstance();
+
 		{
-			Dialog::Progress::getInstance().set_title(_("Initializing"));
+			dialog.set_title(_("Initializing"));
 			worker.pre(*this);
+
+			// Get folder contents.
+			dialog.set_title(_("Getting file lists"));
+			load();
+
+			// Apply templates.
+			dialog.set_title(_("Checking for templates"));
+			applyTemplates();
+
+			// Download files.
+			dialog.set_title(_("Getting required files"));
+			size_t total = source_count();
+			size_t current = 0;
+			for_each([this,&current,total,&dialog,&worker](Source &source) {
+				dialog.set_count(++current,total);
+				worker.apply(source);
+			});
+			dialog.set_count(0,0);
+
 		}
 
 		// Update kernel parameters.
 		{
-			Dialog::Progress::getInstance().set_title(_("Getting installation parameters"));
+			dialog.set_title(_("Getting installation parameters"));
 			for(KernelParameter &kparm : kparms) {
 				kparm.set(*this);
 			}
 		}
 
-		worker.apply(*this);
 		worker.post(*this);
 
 	}

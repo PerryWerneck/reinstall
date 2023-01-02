@@ -18,38 +18,17 @@
  */
 
  #include <config.h>
- #include <gtkmm.h>
- #include <glibmm/i18n.h>
- #include <reinstall/dialogs/popup.h>
- #include <private/dialogs.h>
+ #include <reinstall/defs.h>
+ #include <reinstall/dialogs/taskrunner.h>
 
- Dialog::Popup::Popup(Gtk::Window &parent, const Reinstall::Abstract::Object &object, const Reinstall::Dialog::Popup &settings, Gtk::MessageType type, Gtk::ButtonsType buttons)
-	: Gtk::MessageDialog{parent,settings.message,false,type,buttons,true} {
+ using namespace std;
 
-	set_default_size(500, -1);
-	set_title(object.get_label());
+ namespace Reinstall {
 
-	url.get_style_context()->add_class("popup-button");
-	get_message_area()->add(url);
-
-	show_all();
-
-	set(settings);
- }
-
- void Dialog::Popup::set(const Reinstall::Dialog::Popup &settings) {
-
-	if(settings.secondary) {
-		set_secondary_text(settings.secondary);
+	void Dialog::Button::set_destructive() {
 	}
 
-	if(settings.url) {
-		url.set_uri(settings.url.link);
-		url.set_label(settings.url.label);
-		url.show();
-	} else {
-		url.hide();
+	void Dialog::Button::set_suggested() {
 	}
 
  }
-

@@ -18,65 +18,10 @@
  */
 
  #pragma once
- #include <udjat/defs.h>
+ #include <reinstall/defs.h>
  #include <reinstall/action.h>
-
- namespace Reinstall {
-
-	namespace Dialog {
-
-		class UDJAT_API Window {
-		private:
-			static Window * current;
-			Window *parent;
-
-		public:
-			Window();
-			virtual ~Window();
-
-			static Window & getInstance();
-
-			virtual void show();
-			virtual void hide();
-
-			virtual void set(const Abstract::Object &object);
-
-		};
-
-		/// @brief Proxy for progress dialog.
-		class UDJAT_API Progress : public Window {
-		public:
-			Progress(const Progress &) = delete;
-			Progress(const Progress *) = delete;
-
-			Progress() : Window() {
-			}
-
-			~Progress();
-
-			static Progress & getInstance();
-
-			virtual void set(const Action &action);
-			virtual void set_title(const char *title);
-			virtual void set_sub_title(const char *subtitle);
-			virtual void set_step(const char *step);
-			virtual void set_icon_name(const char *icon_name);
-
-			// Extends Udjat::Protocol::Watcher.
-			virtual void set_url(const char *url);
-			virtual void set_progress(double current, double total);
-
-			/// @brief Update count of downloaded files.
-			virtual void set_count(size_t current, size_t total);
-
-			/// @brief Set progress title (not the window title).
-			inline void set_title(const std::string &message) {
-				set_title(message.c_str());
-			}
-
-		};
-
-	}
-
- }
+ #include <reinstall/dialogs/popup.h>
+ #include <reinstall/dialogs/window.h>
+ #include <reinstall/dialogs/taskrunner.h>
+ #include <reinstall/dialogs/progress.h>
 

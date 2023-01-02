@@ -23,7 +23,7 @@
  using namespace std;
  using namespace Udjat;
 
- static const Udjat::ModuleInfo moduleinfo{"Net install builder"};
+ static const Udjat::ModuleInfo moduleinfo{"Test application"};
 
  class TestModule : public Udjat::Module, public Udjat::Factory {
  public:
@@ -32,39 +32,7 @@
 
 	bool push_back(const pugi::xml_node &node) override {
 
-		class Action : public Reinstall::IsoBuilder {
-		private:
-			const char *filename;
-
-		public:
-			Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node), filename{getAttribute(node,"filename","/tmp/test.iso")} {
-
-				debug("Creating iso-writer action '",name(),"'");
-
-				if(!(icon_name && *icon_name)) {
-					// https://specifications.freedesktop.org/icon-naming-spec/latest/
-					// drive-removable-media
-					icon_name = "document-save-as";
-				}
-
-			}
-
-			virtual ~Action() {
-			}
-
-			bool interact() override {
-				return filename != nullptr;
-			}
-
-			std::shared_ptr<Reinstall::Writer> WriterFactory() override {
-				info() << "Saving '" << filename << "'" << endl;
-				return Reinstall::Writer::FileFactory(filename);
-			};
-
-		};
-
-		Reinstall::push_back(node,make_shared<Action>(node));
-
+		Reinstall::push_back(node,make_shared<Reinstall::IsoBuilder>(node));
 		return true;
 
 	}
@@ -87,6 +55,14 @@
 		Reinstall::Disk::Image("efi.iso","vfat").forEach([](const char *mountpoint, const char *path){
 			cout << mountpoint << " " << path << endl;
 		});
+	}
+	*/
+
+	/*
+	{
+
+		Reinstall::Writer::USBStorageFactory();
+
 	}
 	*/
 

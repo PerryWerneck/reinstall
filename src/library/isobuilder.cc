@@ -35,7 +35,8 @@
 
  namespace Reinstall {
 
-	IsoBuilder::IsoBuilder(const pugi::xml_node &node, const char *icon_name) : Reinstall::Action(node,icon_name) {
+	IsoBuilder::IsoBuilder(const pugi::xml_node &node, const char *icon_name)
+		: Reinstall::Action(node,icon_name), filename{getAttribute(node,"output-file","")} {
 
 		// Get URL for installation kernel.
 		if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
@@ -184,7 +185,7 @@
 
 	}
 
-	std::shared_ptr<Reinstall::Worker> IsoBuilder::prepare() {
+	std::shared_ptr<Reinstall::Worker> IsoBuilder::WorkerFactory() {
 
 		Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
 		progress.set(*this);
@@ -263,6 +264,15 @@
 
 		return worker;
 
+	}
+
+	std::shared_ptr<Reinstall::Writer> IsoBuilder::WriterFactory() {
+		if(filename && *filename) {
+			info() << "Saving image to '" << filename << "'" << endl;
+			return Reinstall::Writer::FileWriterFactory(*this,filename);
+		}
+		info() << "Asking for USB Storage device" << endl;
+		return Reinstall::Writer::USBWriterFactory(*this);
 	}
 
  }

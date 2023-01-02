@@ -20,15 +20,9 @@
  #include <config.h>
  #include <udjat/module.h>
  #include <udjat/factory.h>
- #include <udjat/tools/object.h>
- #include <stdexcept>
- #include <reinstall/actions/isobuilder.h>
- #include <reinstall/userinterface.h>
- #include <reinstall/writer.h>
- #include <reinstall/group.h>
- #include <udjat/tools/quark.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
+ #include <reinstall/action.h>
 
  using namespace std;
  using namespace Udjat;
@@ -44,37 +38,23 @@
 
 		bool push_back(const pugi::xml_node &node) override {
 
-			class Action : public Reinstall::IsoBuilder {
+			class Action : public Reinstall::Action {
 			private:
-				const char *filename;
-				std::string isoname;
+				const char *url;
 
 			public:
-				Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node,"document-save-as"), filename{getAttribute(node,"filename","")} {
-
-					debug("Creating iso-writer action '",name(),"'");
+				Action(const pugi::xml_node &node) : Reinstall::Action(node,"drive-removable-media"), url{getAttribute(node,"url","")} {
 
 				}
 
 				virtual ~Action() {
 				}
 
-				bool interact() override {
+				std::shared_ptr<Reinstall::Worker> prepare() {
 
-					isoname = Reinstall::UserInterface::getInstance().FilenameFactory(
-						_("Select target image file"),
-						_("Image file name"),
-						_("_Save"),
-						filename,
-						true
-					);
+					// Download image.
 
-					return !isoname.empty();
-				}
 
-				std::shared_ptr<Reinstall::Writer> WriterFactory() override {
-					info() << "Saving '" << filename << "'" << endl;
-					return Reinstall::Writer::FileFactory(isoname.c_str());
 				}
 
 			};

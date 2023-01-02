@@ -29,16 +29,23 @@
 	class UDJAT_API Worker {
 	protected:
 
-		/// @brief Insert source on the target image.
-		virtual void push_back(Source &source);
-
 	public:
 
 		Worker();
 
+		/// @brief First step, initialize image (before download files.
 		virtual void pre(Action &action);
-		virtual void apply(Action &action);
+
+		/// @brief Second step, insert downloaded file on the target image.
+		virtual void apply(Source &source);
+
+		/// @brief Last step, finalize.
 		virtual void post(Action &action);
+
+		/// @brief Get image length.
+		/// @return Image length in bytes.
+		/// @retval 0 Image length is not available.
+		virtual size_t size();
 
 		/// @brief Burn image (last step, work thread).
 		/// @param Write prepared image @see Action::WriterFactory

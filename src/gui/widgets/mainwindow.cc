@@ -49,8 +49,8 @@
 		get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
  	}
 
-	set_title(_("System reinstallattion"));
-	set_default_size(600, 400);
+	set_title(_("System reinstallation"));
+	set_default_size(800, 600);
 
 	// Left box
 	{
@@ -83,9 +83,7 @@
 
 	buttons.apply.set_sensitive(false);
 	buttons.apply.signal_clicked().connect([&]() {
-
 		apply();
-
     });
 
 	buttons.cancel.signal_clicked().connect([&]() {
@@ -116,24 +114,6 @@
  }
 
  void MainWindow::on_show() {
-
- /*
-#ifdef DEBUG
-	{
-		Dialog::Progress dialog;
-		dialog.Gtk::Window::set_title(get_title());
-		dialog.set_parent(*this);
-		dialog.set_title(_("Getting configuration"));
-		dialog.set_url("http://www.google.com");
-		dialog.set_icon_name("dialog-information");
-		dialog.footer(true);
-		dialog.set_decorated(true);
-		dialog.set_deletable(true);
-		dialog.show();
-		dialog.run();
-	}
-#endif // DEBUG
-*/
 
 	// Load options
 	{
@@ -181,6 +161,10 @@
 
  std::shared_ptr<Reinstall::Abstract::Object> MainWindow::ActionFactory(const pugi::xml_node &node, const char *icon_name) {
 	return make_shared<::Widget::Action>(node,icon_name);
+ }
+
+ std::shared_ptr<Reinstall::Dialog::TaskRunner> MainWindow::TaskRunnerFactory(const char *message, bool markup) {
+	return make_shared<Dialog::TaskRunner>(*this,message,markup);
  }
 
  static bool check_file(const Gtk::Entry &entry, bool save) {
@@ -366,14 +350,14 @@
 		dialog.set_parent(*this);
 		dialog.set_decorated(false);
 		dialog.set_deletable(false);
-		dialog.set(*action.get_button());
-		dialog.show();
 
 		Udjat::ThreadPool::getInstance().push([&dialog,&action,&worker,&error_message](){
 
 			try {
 
-				worker = action.prepare();
+				dialog.set(*action.get_button());
+				dialog.show();
+				worker = action.WorkerFactory();
 
 			} catch(const std::exception &e) {
 
@@ -397,6 +381,12 @@
 			try {
 
 				writer = action.WriterFactory();
+				if(!writer) {
+					buttons.apply.set_sensitive(true);
+					buttons.cancel.set_sensitive(true);
+					layout.view.set_sensitive(true);
+					return;
+				}
 
 			} catch(const std::exception &e) {
 

@@ -41,7 +41,12 @@
 		<Unit filename="../include/reinstall/actions/isobuilder.h" />
 		<Unit filename="../include/reinstall/actions/kernel.h" />
 		<Unit filename="../include/reinstall/controller.h" />
+		<Unit filename="../include/reinstall/defs.h" />
 		<Unit filename="../include/reinstall/dialogs.h" />
+		<Unit filename="../include/reinstall/dialogs/popup.h" />
+		<Unit filename="../include/reinstall/dialogs/progress.h" />
+		<Unit filename="../include/reinstall/dialogs/taskrunner.h" />
+		<Unit filename="../include/reinstall/dialogs/window.h" />
 		<Unit filename="../include/reinstall/diskimage.h" />
 		<Unit filename="../include/reinstall/group.h" />
 		<Unit filename="../include/reinstall/iso9660.h" />
@@ -51,6 +56,7 @@
 		<Unit filename="../include/reinstall/source.h" />
 		<Unit filename="../include/reinstall/sources/initrd.h" />
 		<Unit filename="../include/reinstall/sources/kernel.h" />
+		<Unit filename="../include/reinstall/tools.h" />
 		<Unit filename="../include/reinstall/userinterface.h" />
 		<Unit filename="../include/reinstall/value.h" />
 		<Unit filename="../include/reinstall/worker.h" />
@@ -62,6 +68,7 @@
 		<Unit filename="action/action.cc" />
 		<Unit filename="controller.cc" />
 		<Unit filename="dialogs/progress.cc" />
+		<Unit filename="dialogs/taskrunner.cc" />
 		<Unit filename="dialogs/window.cc" />
 		<Unit filename="group.cc" />
 		<Unit filename="iso9660/worker.cc" />
@@ -70,6 +77,8 @@
 		<Unit filename="object.cc" />
 		<Unit filename="os/linux/disk_image.cc" />
 		<Unit filename="os/linux/libguestfs.cc" />
+		<Unit filename="os/linux/reboot.cc" />
+		<Unit filename="os/linux/usbstorage.cc" />
 		<Unit filename="parameters.cc" />
 		<Unit filename="private.h" />
 		<Unit filename="repository/construct.cc" />

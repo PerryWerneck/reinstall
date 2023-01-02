@@ -22,6 +22,7 @@
  #include <udjat/defs.h>
  #include <reinstall/action.h>
  #include <reinstall/group.h>
+ #include <reinstall/dialogs.h>
 
  namespace Reinstall {
 
@@ -45,6 +46,9 @@
 
 		/// @brief Construct a group box.
 		virtual std::shared_ptr<Abstract::Group> GroupFactory(const pugi::xml_node &node);
+
+		/// @brief Construct a wait for task dialog.
+		virtual std::shared_ptr<Dialog::TaskRunner> TaskRunnerFactory( const char *message, bool markup = false);
 
 	};
 

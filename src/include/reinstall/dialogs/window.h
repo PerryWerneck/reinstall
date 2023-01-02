@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,38 +17,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <config.h>
+ #pragma once
  #include <reinstall/defs.h>
- #include <reinstall/writer.h>
- #include <system_error>
- #include <udjat/tools/intl.h>
-
-#ifndef _WIN32
- #include <unistd.h>
-#endif // _WIN32
-
- using namespace std;
+ #include <reinstall/action.h>
+ #include <reinstall/dialogs/popup.h>
 
  namespace Reinstall {
 
-	Writer::Writer(const Reinstall::Action UDJAT_UNUSED(&action)) {
+	namespace Dialog {
+
+		class UDJAT_API Window {
+		private:
+			static Window * current;
+			Window *parent;
+
+		public:
+			Window();
+			virtual ~Window();
+
+			static Window & getInstance();
+
+			virtual void show();
+			virtual void hide();
+
+			virtual void set(const Abstract::Object &object);
+
+		};
+
 	}
-
-	Writer::~Writer() {
-	}
-
-#ifndef _WIN32
-
-	void Writer::write(int fd, const void *buf, size_t length) {
-		if(::write(fd,buf,length) != (ssize_t) length) {
-			throw system_error(errno, system_category(),_("I/O error writing image"));
-		}
-	}
-
-	void Writer::finalize(int fd) {
-		::fsync(fd);
-	}
-
-#endif // _WIN32
 
  }
+
