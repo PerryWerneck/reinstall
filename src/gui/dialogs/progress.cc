@@ -276,41 +276,21 @@
 
  void Dialog::Progress::set(const Reinstall::Abstract::Object &object) {
 
- 	Glib::signal_idle().connect([this,&object](){
-
-		// object.set_dialog(*this);
-		set_title(object.get_label().c_str());
-		set_sub_title(_("Initializing"));
+	// object.set_dialog(*this);
+	set_title(object.get_label().c_str());
+	set_sub_title(_("Initializing"));
 
 #ifdef DEBUG
-		widgets.left.set_text("left");
-		widgets.right.set_text("right");
+	widgets.left.set_text("left");
+	widgets.right.set_text("right");
 #else
-		widgets.left.set_text("");
-		widgets.left.set_text("");
+	widgets.left.set_text("");
+	widgets.left.set_text("");
 #endif // DEBUG
 
-		Gtk::Window::set_title(object.get_label());
+	Gtk::Window::set_title(object.get_label());
 
-		timer.idle = -1;
-
-		/*
-		if(object.icon && *object.icon) {
-
-			// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
-			icon().set_from_icon_name(object.icon,Gtk::ICON_SIZE_DND);
-			icon().show_all();
-
-		} else {
-
-			icon().hide();
-
-		}
-		*/
-
-		return 0;
-
- 	});
+	timer.idle = -1;
 
  }
 

@@ -351,12 +351,14 @@
 		dialog.set_decorated(false);
 		dialog.set_deletable(false);
 
+		dialog.set(*action.get_button());
+		dialog.set_icon_name(action.get_icon_name());
+		dialog.show();
+
 		Udjat::ThreadPool::getInstance().push([&dialog,&action,&worker,&error_message](){
 
 			try {
 
-				dialog.set(*action.get_button());
-				dialog.show();
 				worker = action.WorkerFactory();
 
 			} catch(const std::exception &e) {

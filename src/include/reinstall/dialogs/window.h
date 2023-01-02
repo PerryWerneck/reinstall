@@ -40,6 +40,7 @@
 			virtual void show();
 			virtual void hide();
 
+			/// @brief Set window from objects (runs in GUI thread).
 			virtual void set(const Abstract::Object &object);
 
 		};

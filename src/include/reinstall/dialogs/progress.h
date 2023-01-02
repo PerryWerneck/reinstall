@@ -38,7 +38,7 @@
 
 			static Progress & getInstance();
 
-			virtual void set(const Action &action);
+			// virtual void set(const Action &action);
 			virtual void set_title(const char *title);
 			virtual void set_sub_title(const char *subtitle);
 			virtual void set_step(const char *step);

@@ -188,7 +188,6 @@
 	std::shared_ptr<Reinstall::Worker> IsoBuilder::WorkerFactory() {
 
 		Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
-		progress.set(*this);
 
 		// Create and activate worker
 		auto worker = make_shared<Reinstall::iso9660::Worker>();
