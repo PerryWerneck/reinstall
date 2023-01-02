@@ -212,19 +212,19 @@
 		Dialog::Progress &dialog = Dialog::Progress::getInstance();
 
 		{
-			dialog.set_title(_("Initializing"));
+			dialog.set_sub_title(_("Initializing"));
 			worker.pre(*this);
 
 			// Get folder contents.
-			dialog.set_title(_("Getting file lists"));
+			dialog.set_sub_title(_("Getting file lists"));
 			load();
 
 			// Apply templates.
-			dialog.set_title(_("Checking for templates"));
+			dialog.set_sub_title(_("Checking for templates"));
 			applyTemplates();
 
 			// Download files.
-			dialog.set_title(_("Getting required files"));
+			dialog.set_sub_title(_("Getting required files"));
 			size_t total = source_count();
 			size_t current = 0;
 			for_each([this,&current,total,&dialog,&worker](Source &source) {
@@ -250,7 +250,7 @@
 	void Action::load() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set_title(_("Getting required files"));
+		progress.set_sub_title(_("Getting required files"));
 
 		for(auto source : sources) {
 			source->set(*this);

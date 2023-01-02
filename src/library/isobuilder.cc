@@ -192,7 +192,7 @@
 		// Create and activate worker
 		auto worker = make_shared<Reinstall::iso9660::Worker>();
 
-		progress.set_title(_("Building installation image"));
+		progress.set_sub_title(_("Building ISO image"));
 
 		// Setup isofs.
 		worker->set_system_area(system_area);
