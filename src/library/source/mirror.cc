@@ -19,6 +19,7 @@
 
  #include <config.h>
  #include <reinstall/source.h>
+ #include <reinstall/repository.h>
  #include <udjat/tools/protocol.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/intl.h>
@@ -45,11 +46,19 @@
 			Dialog::Progress::getInstance().set_title(message);
 		}
 
-		Mirror::apache(name(),path,url,contents);
+		Repository::Layout layout = Repository::ApacheLayout;
 
-#ifdef DEBUG
-		cout << endl << endl << "Source " << name() << " contents loaded" << endl << endl;
-#endif // DEBUG
+		switch(layout) {
+		case Repository::ApacheLayout:
+			debug("Loading contents from '",url,"' in apache format");
+			Mirror::apache(name(),path,url,contents);
+			break;
+
+		default:
+			throw runtime_error("The repository layout is invalid");
+		}
+
+		debug("Source ",name()," was loaded");
 
 		return true;
 	}

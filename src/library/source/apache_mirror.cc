@@ -72,7 +72,9 @@
 			} else {
 
 				// Its a file, append in the content list.
-				cout << name << "\t" << remote << " -> " << local << endl;
+				Logger::String {
+					remote," -> ",local
+				}.trace(name);
 				contents.push_back(std::make_shared<Source>(name,remote.c_str(),local.c_str()));
 			}
 
