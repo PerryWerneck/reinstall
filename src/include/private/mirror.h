@@ -28,6 +28,7 @@
 		/// @brief Mirror from apache web server.
 		void apache(const char *name, const char *path, const char *url, std::vector<std::shared_ptr<Source>> &contents);
 
+		void mirrorcache(const char *name, const char *path, const char *url, std::vector<std::shared_ptr<Source>> &contents);
 	}
 
  }

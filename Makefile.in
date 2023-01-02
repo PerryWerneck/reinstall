@@ -82,7 +82,8 @@ CFLAGS= \
 	@UDJAT_CFLAGS@ \
 	@PUGIXML_CFLAGS@ \
 	@ISOFS_CFLAGS@ \
-	@GTK_CFLAGS@
+	@GTK_CFLAGS@ \
+	@JSON_CFLAGS@
 
 LDFLAGS=\
 	@LDFLAGS@
@@ -91,7 +92,8 @@ LIBS= \
 	@LIBS@ \
 	@UDJAT_LIBS@ \
 	@PUGIXML_LIBS@ \
-	@GTK_LIBS@
+	@GTK_LIBS@ \
+	@JSON_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 

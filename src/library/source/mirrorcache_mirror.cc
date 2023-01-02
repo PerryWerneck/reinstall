@@ -19,55 +19,66 @@
 
  #include <config.h>
  #include <reinstall/source.h>
- #include <reinstall/repository.h>
  #include <udjat/tools/protocol.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
  #include <private/mirror.h>
+ #include <json/json.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	bool Source::contents(const Action &action, std::vector<std::shared_ptr<Source>> &contents) {
+	void Mirror::mirrorcache(const char *name, const char *path, const char *url, std::vector<std::shared_ptr<Source>> &contents) {
 
-		if( *(url + strlen(url) - 1) != '/') {
-			return false;
+		Json::Value value;
+
+		// Load JSON value.
+		{
+			string table = Protocol::WorkerFactory( (string{url} + "?jsontable").c_str() )->get();
+
+			Json::CharReaderBuilder builder;
+			JSONCPP_STRING err;
+
+			const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+
+			const char *text = table.c_str();
+			if (!reader->parse(text, text+strlen(text), &value, &err)) {
+				throw runtime_error(err);
+			}
 		}
 
-		if(url[0] == '/') {
-			throw runtime_error("URL EXPANSION WAS NOT IMPLEMENTED");
+		for(Json::Value &item : value["data"]) {
+
+			std::string link{item["name"].asCString()};
+
+			if(link.empty()) {
+				continue;
+			}
+
+			string remote = url + link;
+			string local = path + link;
+
+			if(remote[remote.size()-1] == '/') {
+
+				// Its a folder, expand it.
+				mirrorcache(name,local.c_str(),remote.c_str(),contents);
+
+			} else {
+
+				// Its a file, append in the content list.
+				Logger::String {
+					remote," -> ",local
+				}.trace(name);
+
+				contents.push_back(std::make_shared<Source>(name,remote.c_str(),local.c_str()));
+			}
+
 		}
 
-		if(message && *message) {
-			Dialog::Progress::getInstance().set_title(message);
-		}
-
-		Repository::Layout layout = Repository::ApacheLayout;
-		if(repository && *repository) {
-			layout = action.repository(repository)->layout;
-		}
-
-		switch(layout) {
-		case Repository::ApacheLayout:
-			debug("Loading contents from '",url,"' in apache format");
-			Mirror::apache(name(),path,url,contents);
-			break;
-
-		case Repository::MirrorCacheLayout:
-			Mirror::mirrorcache(name(),path,url,contents);
-			break;
-
-		default:
-			throw runtime_error("The repository layout is invalid");
-		}
-
-		debug("Source ",name()," was loaded");
-
-		return true;
 	}
 
  }

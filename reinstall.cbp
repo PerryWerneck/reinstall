@@ -93,6 +93,7 @@
 		<Unit filename="src/library/script.cc" />
 		<Unit filename="src/library/source/apache_mirror.cc" />
 		<Unit filename="src/library/source/mirror.cc" />
+		<Unit filename="src/library/source/mirrorcache_mirror.cc" />
 		<Unit filename="src/library/source/save.cc" />
 		<Unit filename="src/library/source/source.cc" />
 		<Unit filename="src/library/template.cc" />

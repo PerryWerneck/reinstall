@@ -349,7 +349,7 @@
 			throw runtime_error(_("No repositories on this action"));
 		}
 
-		cout << "searching for repository '" << name << "' in " << repositories.size() << " repos" << endl;
+		// cout << "searching for repository '" << name << "' in " << repositories.size() << " repos" << endl;
 
 		for(auto repository : repositories) {
 			if(*repository == name) {

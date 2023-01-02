@@ -12,6 +12,9 @@
 /* "Do we have GTK++?" */
 #undef HAVE_GTK
 
+/* Do we have jsoncpp? */
+#undef HAVE_GUESTFS
+
 /* Define if you have the iconv() function and it works. */
 #undef HAVE_ICONV
 
