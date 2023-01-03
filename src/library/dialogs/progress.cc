@@ -50,7 +50,16 @@
 			return *instance;
 		}
 
-		void Progress::set_progress(double UDJAT_UNUSED(current), double UDJAT_UNUSED(total)) {
+		void Progress::set_progress(double current, double total) {
+
+			values.changed = true;
+
+			if(total > current && total > 1.0) {
+				values.current = current;
+				values.total = total;
+			} else {
+				total = current = 0.0;
+			}
 		}
 
 		void Progress::set_count(size_t current, size_t total) {

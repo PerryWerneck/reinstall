@@ -27,6 +27,13 @@
 
 		/// @brief Proxy for progress dialog.
 		class UDJAT_API Progress : public Window {
+		protected:
+			struct {
+				bool changed = false;
+				double current = 0;
+				double total = 0;
+			} values;
+
 		public:
 			Progress(const Progress &) = delete;
 			Progress(const Progress *) = delete;

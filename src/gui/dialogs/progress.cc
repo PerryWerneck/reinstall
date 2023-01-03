@@ -30,6 +30,8 @@
  using namespace Gtk;
  using namespace std;
 
+ static std::string format_size(double value);
+
  Dialog::Progress::Progress() {
 
 	Gtk::Box &content_area = *get_content_area();
@@ -81,9 +83,51 @@
 
 	content_area.show_all();
 
-	sigc::slot<bool()> slot = sigc::bind(sigc::mem_fun(*this, &::Dialog::Progress::on_timeout), 1);
+	timer.source = Glib::TimeoutSource::create(100);
 
-	this->timer.connection = Glib::signal_timeout().connect(slot,100);
+	timer.source->connect([this]{
+
+		if(!is_visible()) {
+			return true;
+		}
+
+		if(values.changed) {
+
+			timer.idle = 0;
+			values.changed = false;
+
+			if(values.total > values.current && values.total > 1.0) {
+
+				timer.idle = 0;
+				widgets.progress.set_fraction(((gdouble) values.current) / ((gdouble) values.total));
+
+				string fcurrent{format_size(values.current)};
+				string ftotal{format_size(values.total)};
+
+				widgets.right.set_text(
+					Logger::Message{
+						_("{} of {}"),
+						fcurrent,
+						ftotal
+					}.c_str()
+				);
+
+			} else {
+
+				widgets.right.set_text("");
+
+			}
+
+		} else if(timer.idle >= 100) {
+			widgets.progress.pulse();
+		} else {
+			timer.idle++;
+		}
+
+		return true;
+	});
+
+	timer.source->attach(Glib::MainContext::get_default());
 
 #ifdef DEBUG
 	widgets.left.set_text("left");
@@ -92,17 +136,8 @@
 
  }
 
- bool Dialog::Progress::on_timeout(int UDJAT_UNUSED(timer_number)) {
-
-	if(is_visible()) {
-		if(timer.idle >= 100) {
-			widgets.progress.pulse();
-		} else {
-			timer.idle++;
-		}
-	}
-
-	return true;
+ Dialog::Progress::~Progress() {
+	timer.source->destroy();
  }
 
  void Dialog::Progress::footer(bool enable) {
@@ -172,14 +207,26 @@
 
  }
 
+ void Dialog::Progress::set_url(const char *url) {
+
+	auto str = make_shared<string>(url);
+ 	Glib::signal_idle().connect([this,str](){
+
+		timer.idle = 0;
+		widgets.subtitle.set_text(str->c_str());
+		widgets.progress.set_fraction(0.0);
+		widgets.right.set_text("");
+
+		return 0;
+ 	});
+
+ }
+
  void Dialog::Progress::set_step(const char *step)  {
 
 	auto str = make_shared<string>(step);
 
  	Glib::signal_idle().connect([this,str](){
-
-		debug("-------------> ",str->c_str());
-
 		widgets.left.set_text(str->c_str());
 		return 0;
  	});
@@ -204,7 +251,7 @@
 
  }
 
- static std::string format_size(double value) {
+ std::string format_size(double value) {
 
 #if UDJAT_CORE_BUILD > 22123100
 
@@ -242,6 +289,7 @@
 
  }
 
+ /*
  void Dialog::Progress::set_progress(double current, double total)  {
 
  	Glib::signal_idle().connect([this,current,total](){
@@ -285,6 +333,7 @@
  	});
 
  }
+ */
 
  void Dialog::Progress::set(const Reinstall::Abstract::Object &object) {
 
