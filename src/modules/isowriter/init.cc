@@ -112,6 +112,45 @@
 						}
 
 						void burn(std::shared_ptr<Reinstall::Writer> writer) override {
+
+							Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
+							progress.set_sub_title(_("Writing image"));
+
+							size_t current = 0;
+							size_t total = size();
+
+							#define BUFLEN 2048
+							unsigned char buffer[BUFLEN];
+
+							while(current < total) {
+
+								size_t length = (total - current);
+								if(length > BUFLEN) {
+									length = BUFLEN;
+								}
+
+								ssize_t bytes = ::read(fd, buffer, length);
+								if(bytes < 0) {
+									throw system_error(errno,system_category(),_("Cant read from image file"));
+								}
+
+								if(bytes == 0) {
+									throw runtime_error(_("Unexpected EOF reading image file"));
+								}
+
+								writer->write(buffer,length);
+
+								current += length;
+								progress.set_progress(current,total);
+
+							}
+
+							progress.set_sub_title(_("Finalizing"));
+							writer->finalize();
+							writer->close();
+
+							progress.set_sub_title(_(""));
+
 						}
 
 					};
