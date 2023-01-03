@@ -77,7 +77,7 @@
 					Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
 					auto worker = Protocol::WorkerFactory(this->url);
 
-					progress.set_title(_("Downloading ISO image"));
+					progress.set_sub_title(_("Downloading ISO image"));
 					progress.set_url(worker->url().c_str());
 
 					worker->save(filename.c_str(),[&progress](double current, double total){

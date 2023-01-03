@@ -137,6 +137,7 @@
  }
 
  Dialog::Progress::~Progress() {
+ 	debug("Progress dialog was deleted");
 	timer.source->destroy();
  }
 
@@ -153,18 +154,21 @@
 	set_transient_for(window);
  }
 
- bool Dialog::Progress::on_dismiss(int response_id) {
- 	response(response_id);
- 	return false;
- }
-
  void Dialog::Progress::dismiss(int response_id) {
-	Glib::signal_idle().connect(sigc::bind<1>( sigc::mem_fun(this,&::Dialog::Progress::on_dismiss),response_id) );
+
+ 	Glib::signal_idle().connect([this,response_id](){
+		debug("Dismissing dialog with id ",response_id);
+		response(response_id);
+		return 0;
+ 	});
+
  }
 
  void Dialog::Progress::show() {
 
+	debug("Asking for show progress");
  	Glib::signal_idle().connect([this](){
+		debug("Showing progress dialog");
 		Gtk::Dialog::show();
 		return 0;
  	});

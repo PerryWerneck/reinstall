@@ -44,6 +44,7 @@
 	class TaskRunner : public Gtk::MessageDialog, public Reinstall::Dialog::TaskRunner  {
 	public:
 		TaskRunner(Gtk::Window &parent, const char *message, bool markup = false);
+		virtual ~TaskRunner();
 
 		void show() override;
 
@@ -93,8 +94,6 @@
 			Gtk::Box footer{Gtk::ORIENTATION_HORIZONTAL};
 
 		} widgets;
-
-		bool on_dismiss(int response_id);
 
 	public:
 		Progress();

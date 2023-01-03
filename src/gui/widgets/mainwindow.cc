@@ -83,7 +83,15 @@
 
 	buttons.apply.set_sensitive(false);
 	buttons.apply.signal_clicked().connect([&]() {
+
+		buttons.apply.set_sensitive(false);
+		buttons.cancel.set_sensitive(false);
+		layout.view.set_sensitive(false);
 		apply();
+		buttons.apply.set_sensitive(true);
+		buttons.cancel.set_sensitive(true);
+		layout.view.set_sensitive(true);
+
     });
 
 	buttons.cancel.signal_clicked().connect([&]() {
@@ -282,262 +290,80 @@
 	return group;
  }
 
- void MainWindow::apply() {
+ void MainWindow::show(Dialog::Progress &dialog) {
+
+	dialog.set_parent(*this);
+	dialog.set_decorated(false);
+	dialog.set_deletable(false);
 
 	Reinstall::Action &action = Reinstall::Action::get_selected();
 
- 	g_message("Apply '%s'",std::to_string(action).c_str());
-	buttons.apply.set_sensitive(false);
-	buttons.cancel.set_sensitive(false);
-	layout.view.set_sensitive(false);
-
-	//
-	// Interact with user.
-	//
-	try {
-
-		if(!action.interact()) {
-			buttons.apply.set_sensitive(true);
-			buttons.cancel.set_sensitive(true);
-			layout.view.set_sensitive(true);
-			return;
-		}
-
-	} catch(const std::exception &e) {
-
-		Gtk::MessageDialog dialog_fail{
-			*this,
-			_("First step has failed"),
-			false,
-			Gtk::MESSAGE_ERROR,
-			Gtk::BUTTONS_OK,
-			true
-		};
-
-		dialog_fail.set_default_size(500, -1);
-		dialog_fail.set_title(action.get_label());
-		dialog_fail.set_secondary_text(e.what());
-		dialog_fail.show();
-		dialog_fail.run();
-
-		return;
-	}
-
-	//
-	// Ask for confirmation.
-	//
-	Gtk::ResponseType response = Gtk::RESPONSE_YES;
-	if(action.confirmation()) {
-		response = (Gtk::ResponseType) Dialog::Popup{
-						*this,
-						*action.get_button(),
-						action.confirmation(),
-						Gtk::MESSAGE_QUESTION,
-						Gtk::BUTTONS_YES_NO
-					}.run();
-	}
-
-	if(response == Gtk::RESPONSE_YES) {
-		//
-		// Build and burn image.
-		//
-		std::string error_message;
-		Dialog::Progress dialog;
-
-		std::shared_ptr<Reinstall::Worker> worker;
-		std::shared_ptr<Reinstall::Writer> writer;
-
-		dialog.set_parent(*this);
-		dialog.set_decorated(false);
-		dialog.set_deletable(false);
-
-		dialog.set(*action.get_button());
-		dialog.set_icon_name(action.get_icon_name());
-		dialog.show();
-
-		Udjat::ThreadPool::getInstance().push([&dialog,&action,&worker,&error_message](){
-
-			try {
-
-				worker = action.WorkerFactory();
-
-			} catch(const std::exception &e) {
-
-				error_message = e.what();
-				cerr << e.what() << endl;
-
-			}
-
-			dialog.dismiss();
-
-		});
-
-		dialog.run();
-		dialog.hide(); // Just hide to wait for all enqueued state changes to run.
-
-		//
-		// Get action writer.
-		//
-		if(error_message.empty()) {
-
-			try {
-
-				writer = action.WriterFactory();
-				if(!writer) {
-					buttons.apply.set_sensitive(true);
-					buttons.cancel.set_sensitive(true);
-					layout.view.set_sensitive(true);
-					return;
-				}
-
-			} catch(const std::exception &e) {
-
-				error_message = e.what();
-				cerr << e.what() << endl;
-
-			}
-
-		}
-
-		//
-		// Burn image
-		//
-		if(error_message.empty()) {
-
-			dialog.show();
-
-			Udjat::ThreadPool::getInstance().push([&dialog,writer,worker,&error_message](){
-
-				try {
-
-					worker->burn(writer);
-
-				} catch(const std::exception &e) {
-
-					error_message = e.what();
-					cerr << e.what() << endl;
-
-				}
-
-				dialog.dismiss();
-			});
-
-			dialog.run();
-			dialog.hide();
-
-		}
-
-		// Show last dialogs.
-		{
-			std::shared_ptr<Gtk::MessageDialog> popup;
-
-			if(error_message.empty()) {
-
-				if(action.success()) {
-
-					// Customized success dialog.
-
-					cout << "MainWindow\tShowing action 'success' dialog" << endl;
-					popup = make_shared<Dialog::Popup>(
-						*this,
-						*action.get_button(),
-						action.success(),
-						Gtk::MESSAGE_INFO,
-						Gtk::BUTTONS_OK
-					);
-
-				} else {
-
-					// Standard success dialog.
-
-					cout << "MainWindow\tShowing default 'success' dialog" << endl;
-					popup = make_shared<Gtk::MessageDialog>(
-						*this,
-						_("Action completed"),
-						false,
-						Gtk::MESSAGE_INFO,
-						Gtk::BUTTONS_OK,
-						true
-					);
-
-				}
-
-				// Add extra buttons.
-				if(action.reboot()) {
-
-					// Close button is the suggested action.
-					auto close = popup->get_widget_for_response(Gtk::RESPONSE_CLOSE);
-					close->get_style_context()->add_class("suggested-action");
-					popup->set_default_response(Gtk::RESPONSE_CLOSE);
-
-					// Reboot button is destructive.
-					auto reboot = popup->add_button(_("Reboot"),Gtk::RESPONSE_APPLY);
-					reboot->get_style_context()->add_class("destructive-action");
-
-				}
-
-			} else if(action.failed()) {
-
-				// Customized error dialog.
-
-				popup = make_shared<Dialog::Popup>(
-					*this,
-					*action.get_button(),
-					action.failed(),
-					Gtk::MESSAGE_ERROR,
-					Gtk::BUTTONS_OK
-				);
-
-				if(!action.failed().has_secondary()) {
-					popup->set_secondary_text(error_message);
-				}
-
-			} else {
-
-				// Standard error dialog.
-
-				popup = make_shared<Gtk::MessageDialog>(
-					*this,
-					_("Action has failed"),
-					false,
-					Gtk::MESSAGE_ERROR,
-					Gtk::BUTTONS_OK,
-					true
-				);
-
-				popup->set_secondary_text(error_message);
-
-			}
-
-			if(action.quit()) {
-				auto cancel = popup->add_button(_("Quit application"),Gtk::RESPONSE_CANCEL);
-				if(!action.reboot() && error_message.empty()) {
-					cancel->get_style_context()->add_class("suggested-action");
-					popup->set_default_response(Gtk::RESPONSE_CANCEL);
-				}
-			}
-
-			popup->set_title(action.get_label());
-			popup->set_default_size(500, -1);
-			popup->show();
-			switch(popup->run()) {
-			case Gtk::RESPONSE_APPLY:
-				cout << "MainWindow\tRebooting by user request" << endl;
-				Reinstall::reboot();
-				Gtk::Application::get_default()->quit();
-				break;
-
-			case Gtk::RESPONSE_CANCEL:
-				Gtk::Application::get_default()->quit();
-				break;
-			}
-
-
-		}
-	}
-
-	buttons.apply.set_sensitive(true);
-	buttons.cancel.set_sensitive(true);
-	layout.view.set_sensitive(true);
+	dialog.set(*action.get_button());
+	dialog.set_icon_name(action.get_icon_name());
+	dialog.show();
 
  }
+
+ void MainWindow::failed(const char *message) {
+
+	std::shared_ptr<string> str = make_shared<string>(message);
+
+	cerr << "MainWindow\tOperation failed: " << str->c_str() << endl;
+
+ 	Glib::signal_idle().connect([this,str](){
+
+		cout << "MainWindow\tShowing error popup for '" << str->c_str() << "'" << endl;
+
+		Reinstall::Action &action = Reinstall::Action::get_selected();
+		std::shared_ptr<Gtk::MessageDialog> popup;
+
+		if(action.failed()) {
+
+			// Customized error dialog.
+
+			popup = make_shared<Dialog::Popup>(
+				*this,
+				*action.get_button(),
+				action.failed(),
+				Gtk::MESSAGE_ERROR,
+				Gtk::BUTTONS_OK
+			);
+
+			if(!action.failed().has_secondary()) {
+				popup->set_secondary_text(str->c_str());
+			}
+
+		} else {
+
+			// Standard error dialog.
+
+			popup = make_shared<Gtk::MessageDialog>(
+				*this,
+				_("Action has failed"),
+				false,
+				Gtk::MESSAGE_ERROR,
+				Gtk::BUTTONS_OK,
+				true
+			);
+
+			popup->set_secondary_text(str->c_str());
+
+		}
+
+		if(action.quit()) {
+			popup->add_button(_("Quit application"),Gtk::RESPONSE_CANCEL);
+		}
+
+		popup->set_title(action.get_label());
+		popup->set_default_size(500, -1);
+		popup->show();
+
+		if(popup->run() == Gtk::RESPONSE_CANCEL) {
+			Gtk::Application::get_default()->quit();
+		}
+
+		return 0;
+ 	});
+
+ }
+

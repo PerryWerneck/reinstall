@@ -24,6 +24,7 @@
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
  #include <reinstall/action.h>
+ #include <private/dialogs.h>
  #include <reinstall/userinterface.h>
  #include <pugixml.hpp>
 
@@ -56,6 +57,12 @@
 
 	MainWindow();
 	virtual ~MainWindow();
+
+	/// @brief Setup progress dialog.
+	void show(Dialog::Progress &dialog);
+
+	/// @brief Action has failed, notify user.
+	void failed(const char *message);
 
 	/// @brief Construct an action button.
 	std::shared_ptr<Reinstall::Abstract::Object> ActionFactory(const pugi::xml_node &node, const char *icon_name) override;
