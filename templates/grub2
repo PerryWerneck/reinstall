@@ -17,12 +17,12 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-REINSTALL_ENABLED="${ENABLED}"
+REINSTALL_ENABLED="${install-enabled}"
 
-INSTALL_KERNEL_PARAMETERS=""
-INSTALL_KERNEL="${KERNEL_PATH}"
-INSTALL_INITRD="${INITRD_PATH}"
-INSTALL_LABEL="${INSTALL_LABEL}"
+INSTALL_KERNEL_PARAMETERS="${kernel-parameters}"
+INSTALL_KERNEL="${kernel-path}"
+INSTALL_INITRD="${initrd-path}"
+INSTALL_LABEL="${install-label}"
 
 if [ "${REINSTALL_ENABLED}" != "1" ]; then
 	exit 0

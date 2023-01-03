@@ -39,69 +39,11 @@
 
 			virtual void set(const pugi::xml_node &node);
 
-			// bool getProperty(const char *key, std::string &value) const noexcept override;
-
 			virtual std::string get_label() const = 0;
 
 		};
 
 	}
-
-	/*
-	class UDJAT_API Object : public Udjat::NamedObject {
-	public:
-		class UDJAT_API Label : public Gtk::Label {
-		public:
-			Label(const pugi::xml_node &node, const char *attrname);
-
-			inline bool empty() const {
-				return get_text().empty();
-			}
-
-			inline operator bool() const {
-				return !get_text().empty();
-			}
-
-		};
-
-		/// @brief Title of the container.
-		Label title;
-
-		/// @brief Subtitle.
-		Label subtitle;
-
-		/// @brief icon name.
-		const char *icon = nullptr;
-
-		/// @brief Setup window from object properties.
-		void set_dialog(Gtk::Window &window) const;
-
-
-
-		class UDJAT_API Link : public Gtk::Button {
-		private:
-			bool valid = false;
-
-		public:
-			Link(const pugi::xml_node &node, const char *attrname);
-
-			inline operator bool() const noexcept {
-				return valid;
-			}
-
-		};
-
-		Link help;
-
-	protected:
-
-
-	public:
-
-		Object(const pugi::xml_node &node);
-
-	};
-	*/
 
  }
 

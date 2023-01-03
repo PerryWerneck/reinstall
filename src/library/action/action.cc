@@ -277,44 +277,6 @@
 
 	}
 
-	/*
-	bool Action::getProperty(const char *key, std::string &value) const noexcept {
-
-		if(!strcasecmp(key,"kernel-parameters")) {
-
-			if(kparms.empty()) {
-				warning() << _("The kernel parameters list is empty") << endl;
-				value.clear();
-			} else {
-
-				for(const KernelParameter &kparm : kparms) {
-
-					const char * name = kparm.name();
-					if(!(name && *name)) {
-						error() << _("Unnamed kernel parameter, possible misconfiguration") << endl;
-						continue;
-					}
-
-					const char * val = kparm.value();
-					if(val && *val) {
-						if(!value.empty()) {
-							value += " ";
-						}
-
-						value += name;
-						value += "=";
-						value += val;
-					}
-
-				}
-			}
-			return true;
-		}
-
-		return Object::getProperty(key,value);
-	}
-	*/
-
 	void Action::applyTemplates() {
 
 		for(auto tmpl : templates) {
@@ -358,6 +320,66 @@
 		}
 
 		throw system_error(ENOENT,system_category(),name);
+	}
+
+	bool Action::getProperty(const char *key, std::string &value) const noexcept {
+
+		if(strcasecmp(key,"icon-name") == 0) {
+
+			value = get_icon_name();
+			return true;
+
+		}
+
+		if(strcasecmp(key,"label") == 0 || strcasecmp(key,"install-label") == 0 ) {
+
+			value = get_label();
+			return true;
+
+		}
+
+		if(strcasecmp(key,"kernel-parameters") == 0) {
+
+			if(kparms.empty()) {
+
+				warning() << _("The kernel parameters list is empty") << endl;
+				value.clear();
+
+			} else {
+
+				for(const KernelParameter &kparm : kparms) {
+
+					const char * name = kparm.name();
+					if(!(name && *name)) {
+						error() << _("Unnamed kernel parameter, possible misconfiguration") << endl;
+						continue;
+					}
+
+					const char * val = kparm.value();
+					if(val && *val) {
+
+						if(!value.empty()) {
+							value += " ";
+						}
+
+						value += name;
+						value += "=";
+						value += val;
+					}
+
+				}
+			}
+			return true;
+		}
+
+		if(Udjat::NamedObject::getProperty(key,value)) {
+			return true;
+		}
+
+		error() << "Unknown property '" << key << "'" << endl;
+
+		return false;
+
 	}
 
  }
