@@ -24,6 +24,7 @@
  namespace Reinstall {
 
 	class Writer;
+	class Builder;
 
 	namespace Dialog {
 

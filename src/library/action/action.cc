@@ -19,7 +19,7 @@
 
  #include <config.h>
  #include <reinstall/action.h>
- #include <reinstall/worker.h>
+ #include <reinstall/builder.h>
  #include <reinstall/dialogs.h>
  #include <reinstall/userinterface.h>
  #include <udjat/tools/quark.h>
@@ -154,8 +154,8 @@
 		}
 	}
 
-	std::shared_ptr<Reinstall::Worker> Action::WorkerFactory() {
-		return make_shared<Reinstall::Worker>();
+	std::shared_ptr<Reinstall::Builder> Action::BuilderFactory() {
+		return make_shared<Reinstall::Builder>();
 	}
 
 	std::shared_ptr<Reinstall::Writer> Action::WriterFactory() {
@@ -207,21 +207,21 @@
 		return true;
 	}
 
-	void Action::prepare(Worker &worker) {
+	void Action::prepare(Builder &worker) {
 
 		Dialog::Progress &dialog = Dialog::Progress::getInstance();
 
 		{
 			dialog.set_sub_title(_("Initializing"));
-			worker.pre(*this);
+			//worker.pre(*this);
 
 			// Get folder contents.
 			dialog.set_sub_title(_("Getting file lists"));
-			load();
+			//load();
 
 			// Apply templates.
 			dialog.set_sub_title(_("Checking for templates"));
-			applyTemplates();
+			//applyTemplates();
 
 			// Download files.
 			dialog.set_sub_title(_("Getting required files"));
@@ -243,7 +243,7 @@
 			}
 		}
 
-		worker.post(*this);
+		// worker.post(*this);
 
 	}
 

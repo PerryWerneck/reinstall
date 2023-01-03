@@ -63,7 +63,7 @@
 
 		/// @brief Build image.
 		/// @return Worker with a prepared iso image.
-		std::shared_ptr<Reinstall::Worker> WorkerFactory() override;
+		std::shared_ptr<Reinstall::Builder> BuilderFactory() override;
 
 		/// @brief Create an image writer.
 		std::shared_ptr<Reinstall::Writer> WriterFactory() override;

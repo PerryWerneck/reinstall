@@ -142,7 +142,7 @@
 		bool scan(const pugi::xml_node &node, const char *tagname, const std::function<bool(const pugi::xml_node &node)> &call);
 
 		/// @brief Run first step with worker.
-		virtual void prepare(Reinstall::Worker &worker);
+		virtual void prepare(Reinstall::Builder &worker);
 
 		/// @brief Icon name (for dialogs and menus).
 		const char *icon_name = "";
@@ -214,7 +214,7 @@
 
 		/// @brief Create image (second step, work thread).
 		/// @return Pointer to action worker.
-		virtual std::shared_ptr<Reinstall::Worker> WorkerFactory();
+		virtual std::shared_ptr<Reinstall::Builder> BuilderFactory();
 
 		/// @brief Construct file writer (Runs on main thread).
 		virtual std::shared_ptr<Reinstall::Writer> WriterFactory();

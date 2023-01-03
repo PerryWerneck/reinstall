@@ -20,7 +20,7 @@
  #include <config.h>
  #include <udjat/defs.h>
  #include <reinstall/source.h>
- #include <reinstall/worker.h>
+ #include <reinstall/builder.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/protocol.h>
  #include <udjat/tools/intl.h>

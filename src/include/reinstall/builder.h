@@ -26,21 +26,26 @@
 
  namespace Reinstall {
 
-	class UDJAT_API Worker {
+	class UDJAT_API Builder {
 	protected:
 
 	public:
 
-		Worker();
+		Builder();
+		virtual ~Builder();
 
-		/// @brief First step, initialize image (before download files.
-		virtual void pre(Action &action);
+		/// @brief First step, initialize image (before downloads).
+		//virtual void pre(Action &action);
+
+		/// @brief Second step, build (after downloads).
+		// virtual void build(Action &action);
+
+		/// @brief Last step, finalize.
+		//virtual void post(Action &action);
 
 		/// @brief Second step, insert downloaded file on the target image.
 		virtual void apply(Source &source);
 
-		/// @brief Last step, finalize.
-		virtual void post(Action &action);
 
 		/// @brief Get image length.
 		/// @return Image length in bytes.

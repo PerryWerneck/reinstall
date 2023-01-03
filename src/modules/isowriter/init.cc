@@ -27,7 +27,7 @@
  #include <udjat/tools/protocol.h>
  #include <iostream>
  #include <reinstall/dialogs/progress.h>
- #include <reinstall/worker.h>
+ #include <reinstall/builder.h>
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <fcntl.h>
@@ -66,7 +66,7 @@
 				virtual ~Action() {
 				}
 
-				std::shared_ptr<Reinstall::Worker> WorkerFactory() override {
+				std::shared_ptr<Reinstall::Builder> WorkerFactory() override {
 
 					sleep(1);
 
@@ -90,7 +90,7 @@
 						throw system_error(errno, system_category(), _("Cant access downloaded image"));
 					}
 
-					class Worker : public Reinstall::Worker {
+					class Worker : public Reinstall::Builder {
 					private:
 						int fd;
 

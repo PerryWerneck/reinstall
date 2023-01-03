@@ -35,11 +35,13 @@
 		<Unit filename="../include/config.h" />
 		<Unit filename="../include/private/dialogs.h" />
 		<Unit filename="../include/private/mainwindow.h" />
+		<Unit filename="../include/private/mirror.h" />
 		<Unit filename="../include/private/widgets.h" />
 		<Unit filename="../include/reinstall/action.h" />
 		<Unit filename="../include/reinstall/actions/initrd.h" />
 		<Unit filename="../include/reinstall/actions/isobuilder.h" />
 		<Unit filename="../include/reinstall/actions/kernel.h" />
+		<Unit filename="../include/reinstall/builder.h" />
 		<Unit filename="../include/reinstall/controller.h" />
 		<Unit filename="../include/reinstall/defs.h" />
 		<Unit filename="../include/reinstall/dialogs.h" />
@@ -71,6 +73,7 @@
 		<Unit filename="dialogs/taskrunner.cc" />
 		<Unit filename="dialogs/window.cc" />
 		<Unit filename="group.cc" />
+		<Unit filename="iso9660/builder.cc" />
 		<Unit filename="iso9660/worker.cc" />
 		<Unit filename="isobuilder.cc" />
 		<Unit filename="kernelparameter.cc" />

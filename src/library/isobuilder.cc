@@ -185,12 +185,12 @@
 
 	}
 
-	std::shared_ptr<Reinstall::Worker> IsoBuilder::WorkerFactory() {
+	std::shared_ptr<Reinstall::Builder> IsoBuilder::BuilderFactory() {
 
 		Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
 
 		// Create and activate worker
-		auto worker = make_shared<Reinstall::iso9660::Worker>();
+		auto worker = make_shared<Reinstall::iso9660::Builder>();
 
 		progress.set_sub_title(_("Building ISO image"));
 

@@ -64,6 +64,7 @@ CFLAGS= \
 	@UDJAT_CFLAGS@ \
 	@PUGIXML_CFLAGS@ \
 	@ISOFS_CFLAGS@ \
+	@JSON_CFLAGS@ \
 	@DBUS_CFLAGS@
 
 LDFLAGS=\
@@ -75,6 +76,8 @@ LIBS= \
 	@UDJAT_LIBS@ \
 	@PUGIXML_LIBS@ \
 	@ISOFS_LIBS@ \
+	@DBUS_LIBS@ \
+	@JSON_LIBS@ \
 	@DBUS_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------

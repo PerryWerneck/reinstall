@@ -22,7 +22,7 @@
  #include <pugixml.hpp>
  #include <udjat/defs.h>
  #include <udjat/tools/object.h>
- #include <reinstall/worker.h>
+ #include <reinstall/builder.h>
  #include <reinstall/writer.h>
 
  typedef struct Iso_Image IsoImage;
@@ -32,8 +32,8 @@
 
 	namespace iso9660 {
 
-		/// @brief Worker for building an iso image.
-		class UDJAT_API Worker : public Reinstall::Worker {
+		/// @brief Build an iso image.
+		class UDJAT_API Builder : public Reinstall::Builder {
 		private:
 			IsoImage *image = nullptr;
 			IsoWriteOpts *opts;
@@ -43,8 +43,8 @@
 
 		public:
 
-			Worker();
-			~Worker();
+			Builder();
+			virtual ~Builder();
 
 			/// @brief Save image to and already open writer.
 			void burn(std::shared_ptr<Writer> writer) override;
