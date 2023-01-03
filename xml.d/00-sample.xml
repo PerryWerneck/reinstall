@@ -19,14 +19,18 @@
 			* slp-scope-list: A pointer to a comma separated list of scope names.
 			* slp-filter: A query formulated of attribute pattern matching expressions in the form of an LDAPv3 search filter.
 			* slp-url: The URL for the kernel parameter when SLP is available.
+			* Repository layout (apache/MirrorCache).
 		
+		
+		https://download.opensuse.org/distribution/leap/15.4/repo/oss
 	-->
 	<repository name='install' url='http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64' 
 		slp-service-type='service:install.suse' 
 		slp-scope-list='' 
 		slp-filter='' 
 		slp-allow-local='no' 
-		slp-kernel-parameter='slp:/' />
+		slp-kernel-parameter='slp:/'
+		layout='apache' />
 
 	<!-- Path for the installation kernel (Full URL or path from repository -->
 	<kernel path='/boot/x86_64/loader/linux' repository='install' />
@@ -60,17 +64,23 @@
 
 		<!-- Nome que aparece na opção de menu -->
  		<attribute name='title' value='OpenSUSE Leap 15.4' />
- 		<attribute name='sub-title' value='Testing group sub title' />
- 		<attribute name='help' value='http://google.com' />
- 		<!-- attribute name='icon' value='document-save' / -->
+ 		<attribute name='sub-title' value='A brand new way of building openSUSE and a new type of a hybrid Linux distribution' />
+ 		<attribute name='help' value='https://get.opensuse.org/leap/15.4/' />
  		
- 		<remote-installer name='simple' default='yes'>
+ 		<local-installer name='reinstall-local' default='yes'>
+
+	 		<attribute name='title' value='Reinstall this workstation'/>
+	 		<attribute name='sub-title' value='Do a complete network based reinstall on this workstation withot any external boot device' />
+		
+		</local-installer>
+ 		
+ 		<remote-installer name='reinstall-usb' default='no'>
 
 	 		<attribute name='title' value='Build a simple network install image'/>
-	 		<attribute name='sub-title' value='First option sub title' />
+	 		<attribute name='sub-title' value='Build an small usb based boot device for network install' />
 
 			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
-			<dialog name='confirmation' icon='dialog-question' message='Do you confirm?' url='http://google.com' url-label='More info'>
+			<dialog name='confirmation' icon='dialog-question' message='Do you confirm?'>
 				This is the secondary text on confirmation message.
 			</dialog>
 

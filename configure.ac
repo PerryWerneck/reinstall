@@ -233,15 +233,13 @@ AC_SUBST(DBUS_LIBS)
 AC_SUBST(DBUS_CFLAGS)
 
 dnl ---------------------------------------------------------------------------
-dnl Check for libguestfs
+dnl Check for jsoncpp
 dnl ---------------------------------------------------------------------------
 dnl 
-dnl PKG_CHECK_MODULES( [GUESTFS], [libguestfs], AC_DEFINE(HAVE_GUESTFS,[],[Do we have libiguestfs?]), AC_MSG_NOTICE([libguestfs not present.]) )
-dnl 
-dnl AC_SUBST(GUESTFS_LIBS)
-dnl AC_SUBST(GUESTFS_CFLAGS)
-dnl 
+PKG_CHECK_MODULES( [JSON], [jsoncpp], AC_DEFINE(HAVE_GUESTFS,[],[Do we have jsoncpp?]), AC_MSG_ERROR([jsoncpp not present.]) )
 
+AC_SUBST(JSON_LIBS)
+AC_SUBST(JSON_CFLAGS)
 
 dnl ---------------------------------------------------------------------------
 dnl Output config

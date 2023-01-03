@@ -130,7 +130,7 @@
 			filename = source.filename;
 		}
 
-		cout << "iso9660\t" << source.url << " -> " << source.path << endl;
+		Logger::String{source.url," -> ",source.path}.trace("iso9660");
 
 		if(filename.empty()) {
 
@@ -386,7 +386,7 @@
 		int rc;
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set_title(_("Creating ISO Image"));
+		progress.set_sub_title(_("Preparing to write"));
 
 		rc = iso_image_update_sizes(image);
 		if (rc < 0) {
@@ -404,7 +404,7 @@
 
 		writer->open();
 
-		progress.set_sub_title(_("Writing data"));
+		progress.set_sub_title(_("Writing image"));
 		try {
 
 			#define BUFLEN 2048
@@ -439,8 +439,7 @@
 		writer->finalize();
 		writer->close();
 
-		progress.set_title(_("ISO image Complete"));
-		progress.set_sub_title("");
+		progress.set_sub_title(_(""));
 
 	}
 

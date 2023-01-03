@@ -24,13 +24,14 @@
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
+ #include <private/mirror.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	static void mirror(const char *name, const char *path, const char *url, std::vector<std::shared_ptr<Source>> &contents) {
+	void Mirror::apache(const char *name, const char *path, const char *url, std::vector<std::shared_ptr<Source>> &contents) {
 
 		// Get index and insert folder contents.
 		string index = Protocol::WorkerFactory(url)->get();
@@ -66,12 +67,14 @@
 			if(remote[remote.size()-1] == '/') {
 
 				// Its a folder, expand it.
-				mirror(name,local.c_str(),remote.c_str(),contents);
+				Mirror::apache(name,local.c_str(),remote.c_str(),contents);
 
 			} else {
 
 				// Its a file, append in the content list.
-				cout << name << "\t" << remote << " -> " << local << endl;
+				Logger::String {
+					remote," -> ",local
+				}.trace(name);
 				contents.push_back(std::make_shared<Source>(name,remote.c_str(),local.c_str()));
 			}
 
@@ -79,29 +82,6 @@
 
 		}
 
-	}
-
-	bool Source::contents(const Action UDJAT_UNUSED(&action), std::vector<std::shared_ptr<Source>> &contents) {
-
-		if( *(url + strlen(url) - 1) != '/') {
-			return false;
-		}
-
-		if(url[0] == '/') {
-			throw runtime_error("URL EXPANSION WAS NOT IMPLEMENTED");
-		}
-
-		if(message && *message) {
-			Dialog::Progress::getInstance().set_title(message);
-		}
-
-		mirror(name(),path,url,contents);
-
-#ifdef DEBUG
-		cout << endl << endl << "Source " << name() << " contents loaded" << endl << endl;
-#endif // DEBUG
-
-		return true;
 	}
 
  }

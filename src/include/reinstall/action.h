@@ -219,6 +219,8 @@
 		/// @brief Construct file writer (Runs on main thread).
 		virtual std::shared_ptr<Reinstall::Writer> WriterFactory();
 
+		bool getProperty(const char *key, std::string &value) const noexcept override;
+
 		/// @brief Load folders.
 		void load();
 

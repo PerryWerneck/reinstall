@@ -212,19 +212,19 @@
 		Dialog::Progress &dialog = Dialog::Progress::getInstance();
 
 		{
-			dialog.set_title(_("Initializing"));
+			dialog.set_sub_title(_("Initializing"));
 			worker.pre(*this);
 
 			// Get folder contents.
-			dialog.set_title(_("Getting file lists"));
+			dialog.set_sub_title(_("Getting file lists"));
 			load();
 
 			// Apply templates.
-			dialog.set_title(_("Checking for templates"));
+			dialog.set_sub_title(_("Checking for templates"));
 			applyTemplates();
 
 			// Download files.
-			dialog.set_title(_("Getting required files"));
+			dialog.set_sub_title(_("Getting required files"));
 			size_t total = source_count();
 			size_t current = 0;
 			for_each([this,&current,total,&dialog,&worker](Source &source) {
@@ -250,7 +250,7 @@
 	void Action::load() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set_title(_("Getting required files"));
+		progress.set_sub_title(_("Getting required files"));
 
 		for(auto source : sources) {
 			source->set(*this);
@@ -276,44 +276,6 @@
 		}
 
 	}
-
-	/*
-	bool Action::getProperty(const char *key, std::string &value) const noexcept {
-
-		if(!strcasecmp(key,"kernel-parameters")) {
-
-			if(kparms.empty()) {
-				warning() << _("The kernel parameters list is empty") << endl;
-				value.clear();
-			} else {
-
-				for(const KernelParameter &kparm : kparms) {
-
-					const char * name = kparm.name();
-					if(!(name && *name)) {
-						error() << _("Unnamed kernel parameter, possible misconfiguration") << endl;
-						continue;
-					}
-
-					const char * val = kparm.value();
-					if(val && *val) {
-						if(!value.empty()) {
-							value += " ";
-						}
-
-						value += name;
-						value += "=";
-						value += val;
-					}
-
-				}
-			}
-			return true;
-		}
-
-		return Object::getProperty(key,value);
-	}
-	*/
 
 	void Action::applyTemplates() {
 
@@ -349,7 +311,7 @@
 			throw runtime_error(_("No repositories on this action"));
 		}
 
-		cout << "searching for repository '" << name << "' in " << repositories.size() << " repos" << endl;
+		// cout << "searching for repository '" << name << "' in " << repositories.size() << " repos" << endl;
 
 		for(auto repository : repositories) {
 			if(*repository == name) {
@@ -358,6 +320,66 @@
 		}
 
 		throw system_error(ENOENT,system_category(),name);
+	}
+
+	bool Action::getProperty(const char *key, std::string &value) const noexcept {
+
+		if(strcasecmp(key,"icon-name") == 0) {
+
+			value = get_icon_name();
+			return true;
+
+		}
+
+		if(strcasecmp(key,"label") == 0 || strcasecmp(key,"install-label") == 0 ) {
+
+			value = get_label();
+			return true;
+
+		}
+
+		if(strcasecmp(key,"kernel-parameters") == 0) {
+
+			if(kparms.empty()) {
+
+				warning() << _("The kernel parameters list is empty") << endl;
+				value.clear();
+
+			} else {
+
+				for(const KernelParameter &kparm : kparms) {
+
+					const char * name = kparm.name();
+					if(!(name && *name)) {
+						error() << _("Unnamed kernel parameter, possible misconfiguration") << endl;
+						continue;
+					}
+
+					const char * val = kparm.value();
+					if(val && *val) {
+
+						if(!value.empty()) {
+							value += " ";
+						}
+
+						value += name;
+						value += "=";
+						value += val;
+					}
+
+				}
+			}
+			return true;
+		}
+
+		if(Udjat::NamedObject::getProperty(key,value)) {
+			return true;
+		}
+
+		error() << "Unknown property '" << key << "'" << endl;
+
+		return false;
+
 	}
 
  }

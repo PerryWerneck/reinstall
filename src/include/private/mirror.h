@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -18,34 +18,20 @@
  */
 
  #pragma once
+ #include <config.h>
  #include <reinstall/defs.h>
- #include <reinstall/action.h>
- #include <reinstall/dialogs/popup.h>
 
  namespace Reinstall {
 
-	namespace Dialog {
+	namespace Mirror {
 
-		class UDJAT_API Window {
-		private:
-			static Window * current;
-			Window *parent;
+		/// @brief Mirror from apache web server.
+		void apache(const char *name, const char *path, const char *url, std::vector<std::shared_ptr<Source>> &contents);
 
-		public:
-			Window();
-			virtual ~Window();
-
-			static Window & getInstance();
-
-			virtual void show();
-			virtual void hide();
-
-			/// @brief Set window from objects (runs in GUI thread).
-			virtual void set(const Abstract::Object &object);
-
-		};
-
+		void mirrorcache(const char *name, const char *path, const char *url, std::vector<std::shared_ptr<Source>> &contents);
 	}
 
  }
+
+
 

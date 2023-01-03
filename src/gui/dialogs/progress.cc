@@ -30,6 +30,8 @@
  using namespace Gtk;
  using namespace std;
 
+ static std::string format_size(double value);
+
  Dialog::Progress::Progress() {
 
 	Gtk::Box &content_area = *get_content_area();
@@ -81,9 +83,51 @@
 
 	content_area.show_all();
 
-	sigc::slot<bool()> slot = sigc::bind(sigc::mem_fun(*this, &::Dialog::Progress::on_timeout), 1);
+	timer.source = Glib::TimeoutSource::create(100);
 
-	this->timer.connection = Glib::signal_timeout().connect(slot,100);
+	timer.source->connect([this]{
+
+		if(!is_visible()) {
+			return true;
+		}
+
+		if(values.changed) {
+
+			timer.idle = 0;
+			values.changed = false;
+
+			if(values.total > values.current && values.total > 1.0) {
+
+				timer.idle = 0;
+				widgets.progress.set_fraction(((gdouble) values.current) / ((gdouble) values.total));
+
+				string fcurrent{format_size(values.current)};
+				string ftotal{format_size(values.total)};
+
+				widgets.right.set_text(
+					Logger::Message{
+						_("{} of {}"),
+						fcurrent,
+						ftotal
+					}.c_str()
+				);
+
+			} else {
+
+				widgets.right.set_text("");
+
+			}
+
+		} else if(timer.idle >= 100) {
+			widgets.progress.pulse();
+		} else {
+			timer.idle++;
+		}
+
+		return true;
+	});
+
+	timer.source->attach(Glib::MainContext::get_default());
 
 #ifdef DEBUG
 	widgets.left.set_text("left");
@@ -92,17 +136,9 @@
 
  }
 
- bool Dialog::Progress::on_timeout(int UDJAT_UNUSED(timer_number)) {
-
-	if(is_visible()) {
-		if(timer.idle >= 100) {
-			widgets.progress.pulse();
-		} else {
-			timer.idle++;
-		}
-	}
-
-	return true;
+ Dialog::Progress::~Progress() {
+ 	debug("Progress dialog was deleted");
+	timer.source->destroy();
  }
 
  void Dialog::Progress::footer(bool enable) {
@@ -118,18 +154,21 @@
 	set_transient_for(window);
  }
 
- bool Dialog::Progress::on_dismiss(int response_id) {
- 	response(response_id);
- 	return false;
- }
-
  void Dialog::Progress::dismiss(int response_id) {
-	Glib::signal_idle().connect(sigc::bind<1>( sigc::mem_fun(this,&::Dialog::Progress::on_dismiss),response_id) );
+
+ 	Glib::signal_idle().connect([this,response_id](){
+		debug("Dismissing dialog with id ",response_id);
+		response(response_id);
+		return 0;
+ 	});
+
  }
 
  void Dialog::Progress::show() {
 
+	debug("Asking for show progress");
  	Glib::signal_idle().connect([this](){
+		debug("Showing progress dialog");
 		Gtk::Dialog::show();
 		return 0;
  	});
@@ -172,14 +211,26 @@
 
  }
 
+ void Dialog::Progress::set_url(const char *url) {
+
+	auto str = make_shared<string>(url);
+ 	Glib::signal_idle().connect([this,str](){
+
+		timer.idle = 0;
+		widgets.subtitle.set_text(str->c_str());
+		widgets.progress.set_fraction(0.0);
+		widgets.right.set_text("");
+
+		return 0;
+ 	});
+
+ }
+
  void Dialog::Progress::set_step(const char *step)  {
 
 	auto str = make_shared<string>(step);
 
  	Glib::signal_idle().connect([this,str](){
-
-		debug("-------------> ",str->c_str());
-
 		widgets.left.set_text(str->c_str());
 		return 0;
  	});
@@ -204,7 +255,7 @@
 
  }
 
- static std::string format_size(double value) {
+ std::string format_size(double value) {
 
 #if UDJAT_CORE_BUILD > 22123100
 
@@ -242,29 +293,42 @@
 
  }
 
+ /*
  void Dialog::Progress::set_progress(double current, double total)  {
 
  	Glib::signal_idle().connect([this,current,total](){
 
-		if(total > current && total > 1) {
+		try {
 
-			timer.idle = 0;
-			widgets.progress.set_fraction(((gdouble) current) / ((gdouble) total));
+			if(total > current && total > 1.0) {
 
-			string fcurrent{format_size(current)};
-			string ftotal{format_size(total)};
+				timer.idle = 0;
+				widgets.progress.set_fraction(((gdouble) current) / ((gdouble) total));
 
-			widgets.right.set_text(
-				Logger::Message{
-					_("{} of {}"),
-					fcurrent,
-					ftotal
-				}.c_str()
-			);
+				string fcurrent{format_size(current)};
+				string ftotal{format_size(total)};
 
-		} else {
+				widgets.right.set_text(
+					Logger::Message{
+						_("{} of {}"),
+						fcurrent,
+						ftotal
+					}.c_str()
+				);
 
-			widgets.right.set_text("");
+			} else {
+
+				widgets.right.set_text("");
+
+			}
+
+		} catch(const std::exception &e) {
+
+			cerr << "gtk\t" << e.what() << endl;
+
+		} catch(...) {
+
+			cerr << "gtk\tUnexpected error updating progress dialog" << endl;
 
 		}
 
@@ -273,44 +337,25 @@
  	});
 
  }
+ */
 
  void Dialog::Progress::set(const Reinstall::Abstract::Object &object) {
 
- 	Glib::signal_idle().connect([this,&object](){
-
-		// object.set_dialog(*this);
-		set_title(object.get_label().c_str());
-		set_sub_title(_("Initializing"));
+	// object.set_dialog(*this);
+	set_title(object.get_label().c_str());
+	set_sub_title(_("Initializing"));
 
 #ifdef DEBUG
-		widgets.left.set_text("left");
-		widgets.right.set_text("right");
+	widgets.left.set_text("left");
+	widgets.right.set_text("right");
 #else
-		widgets.left.set_text("");
-		widgets.left.set_text("");
+	widgets.left.set_text("");
+	widgets.left.set_text("");
 #endif // DEBUG
 
-		Gtk::Window::set_title(object.get_label());
+	Gtk::Window::set_title(object.get_label());
 
-		timer.idle = -1;
-
-		/*
-		if(object.icon && *object.icon) {
-
-			// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
-			icon().set_from_icon_name(object.icon,Gtk::ICON_SIZE_DND);
-			icon().show_all();
-
-		} else {
-
-			icon().hide();
-
-		}
-		*/
-
-		return 0;
-
- 	});
+	timer.idle = -1;
 
  }
 

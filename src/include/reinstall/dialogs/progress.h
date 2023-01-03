@@ -27,6 +27,13 @@
 
 		/// @brief Proxy for progress dialog.
 		class UDJAT_API Progress : public Window {
+		protected:
+			struct {
+				bool changed = false;
+				double current = 0;
+				double total = 0;
+			} values;
+
 		public:
 			Progress(const Progress &) = delete;
 			Progress(const Progress *) = delete;
@@ -38,7 +45,7 @@
 
 			static Progress & getInstance();
 
-			virtual void set(const Action &action);
+			// virtual void set(const Action &action);
 			virtual void set_title(const char *title);
 			virtual void set_sub_title(const char *subtitle);
 			virtual void set_step(const char *step);

@@ -38,15 +38,16 @@
 
  }
 
+ Dialog::TaskRunner::~TaskRunner() {
+	debug("Taskrunner deleted");
+ }
+
  void Dialog::TaskRunner::set(const Reinstall::Action &action) {
 	Gtk::Window::set_title(action.get_label().c_str());
  }
 
  void Dialog::TaskRunner::show() {
-  	Glib::signal_idle().connect([this](){
-		Gtk::Window::show();
-		return 0;
- 	});
+	Gtk::Window::show();
  }
 
  int Dialog::TaskRunner::push(const std::function<int()> &callback, bool s) {
@@ -70,6 +71,7 @@
 	}
 
 	mainloop->run();
+	debug("Taskrunner returns with rc=",response);
 
 	return response;
  }
@@ -155,8 +157,6 @@
 		}
 
 	};
-
-	debug("-----------------------------------------------------------------");
 
 	std::shared_ptr<Button> button = make_shared<Button>(label,callback);
 

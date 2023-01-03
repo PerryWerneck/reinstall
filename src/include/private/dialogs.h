@@ -44,6 +44,7 @@
 	class TaskRunner : public Gtk::MessageDialog, public Reinstall::Dialog::TaskRunner  {
 	public:
 		TaskRunner(Gtk::Window &parent, const char *message, bool markup = false);
+		virtual ~TaskRunner();
 
 		void show() override;
 
@@ -77,8 +78,8 @@
 	private:
 
 		struct {
+			Glib::RefPtr<Glib::TimeoutSource> source;
 			unsigned int idle = (unsigned int) -1;
-			sigc::connection connection;
 		} timer;
 
 		struct {
@@ -94,11 +95,9 @@
 
 		} widgets;
 
-		bool on_timeout(int timer_number);
-		bool on_dismiss(int response_id);
-
 	public:
 		Progress();
+		virtual ~Progress();
 
 		void set_parent(Gtk::Window &window);
 
@@ -122,8 +121,7 @@
 		void set_step(const char *step) override;
 		void set_icon_name(const char *icon_name) override;
 		void set(const Reinstall::Abstract::Object &object) override;
-
-		void set_progress(double current, double total) override;
+		void set_url(const char *url) override;
 
 	};
 
