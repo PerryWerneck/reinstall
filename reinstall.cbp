@@ -105,6 +105,7 @@
 		<Unit filename="src/library/worker.cc" />
 		<Unit filename="src/library/writers/abstract.cc" />
 		<Unit filename="src/library/writers/file.cc" />
+		<Unit filename="src/modules/grub/init.cc" />
 		<Unit filename="src/modules/isowriter/init.cc" />
 		<Unit filename="src/modules/netinstall/init.cc" />
 		<Unit filename="src/modules/netinstall/private.h" />

@@ -21,6 +21,9 @@ ISOWRITER_SOURCES = \
 NETINSTALL_SOURCES = \
 		$(wildcard src/modules/netinstall/*.cc)
 
+GRUB_SOURCES = \
+		$(wildcard src/modules/grub/*.cc)
+
 GUI_SOURCES= \
 	$(wildcard src/gui/*.cc) \
 	$(wildcard src/gui/dialogs/*.cc) \
@@ -246,7 +249,8 @@ install-windows: \
 Debug: \
 	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@ \
 	$(BINDBG)/modules/isowriter@DLLEXT@ \
-	$(BINDBG)/modules/netinstall@DLLEXT@
+	$(BINDBG)/modules/netinstall@DLLEXT@ \
+	$(BINDBG)/modules/grub@DLLEXT@
 
 $(BINDBG)/$(PACKAGE_NAME)@EXEEXT@: \
 	$(foreach SRC, $(basename $(GUI_SOURCES)), $(OBJDBG)/$(SRC).o) \
@@ -292,6 +296,21 @@ $(BINDBG)/modules/netinstall@DLLEXT@: \
 		$(LDFLAGS) \
 		$(LIBS)
 
+$(BINDBG)/modules/grub@DLLEXT@: \
+	$(foreach SRC, $(basename $(GRUB_SOURCES)), $(OBJDBG)/$(SRC).o) \
+	$(BINDBG)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		$(DLL_LDFLAGS) \
+		-o $@ \
+		$^ \
+		-L$(BINDBG) \
+		-Wl,-rpath,$(BINDBG) \
+		$(LDFLAGS) \
+		$(LIBS)
+
 
 $(BINDBG)/$(SONAME): \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(OBJDBG)/$(SRC).o)
@@ -316,7 +335,8 @@ inspect: \
 run: \
 	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@ \
 	$(BINDBG)/modules/isowriter@DLLEXT@ \
-	$(BINDBG)/modules/netinstall@DLLEXT@
+	$(BINDBG)/modules/netinstall@DLLEXT@ \
+	$(BINDBG)/modules/grub@DLLEXT@
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
 		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
@@ -357,6 +377,6 @@ clean: \
 	cleanDebug \
 	cleanRelease
 
--include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES)), $(OBJDBG)/$(SRC).d)
--include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES)), $(OBJRLS)/$(SRC).d)
+-include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES) $(GRUB_SOURCES)), $(OBJDBG)/$(SRC).d)
+-include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES) $(GRUB_SOURCES)), $(OBJRLS)/$(SRC).d)
 

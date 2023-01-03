@@ -64,17 +64,23 @@
 
 		<!-- Nome que aparece na opção de menu -->
  		<attribute name='title' value='OpenSUSE Leap 15.4' />
- 		<attribute name='sub-title' value='Testing group sub title' />
- 		<attribute name='help' value='http://google.com' />
- 		<!-- attribute name='icon' value='document-save' / -->
+ 		<attribute name='sub-title' value='A brand new way of building openSUSE and a new type of a hybrid Linux distribution' />
+ 		<attribute name='help' value='https://get.opensuse.org/leap/15.4/' />
  		
- 		<remote-installer name='simple' default='yes'>
+ 		<local-installer name='reinstall-local' default='yes'>
+
+	 		<attribute name='title' value='Reinstall this workstation'/>
+	 		<attribute name='sub-title' value='Do a complete network based reinstall on this workstation withot any external boot device' />
+		
+		</local-installer>
+ 		
+ 		<remote-installer name='reinstall-usb' default='no'>
 
 	 		<attribute name='title' value='Build a simple network install image'/>
-	 		<attribute name='sub-title' value='First option sub title' />
+	 		<attribute name='sub-title' value='Build an small usb based boot device for network install' />
 
 			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
-			<dialog name='confirmation' icon='dialog-question' message='Do you confirm?' url='http://google.com' url-label='More info'>
+			<dialog name='confirmation' icon='dialog-question' message='Do you confirm?'>
 				This is the secondary text on confirmation message.
 			</dialog>
 
