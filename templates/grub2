@@ -1,0 +1,57 @@
+#!/bin/sh
+# SPDX-License-Identifier: LGPL-3.0-or-later
+#
+# Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as published
+# by the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+
+REINSTALL_ENABLED="${ENABLED}"
+
+INSTALL_KERNEL_PARAMETERS=""
+INSTALL_KERNEL="${KERNEL_PATH}"
+INSTALL_INITRD="${INITRD_PATH}"
+INSTALL_LABEL="${INSTALL_LABEL}"
+
+if [ "${REINSTALL_ENABLED}" != "1" ]; then
+	exit 0
+fi
+
+if [ -z "${KERNEL_PATH}" ]; then
+	exit 0
+fi
+
+if [ -z "${INITRD_PATH}" ]; then
+	exit 0
+fi
+
+if [ -z "${INSTALL_LABEL}" ]; then
+	exit 0
+fi
+
+echo "menuentry '${INSTALL_LABEL}'  --class opensuse --class gnu-linux --class gnu --class os {"
+echo "    insmod gzio"
+echo "    insmod part_gpt"
+echo "    insmod btrfs"
+echo "    insmod search"  
+echo "    insmod part_msdos"
+echo "    insmod ext2"
+echo ""
+echo "    linux ${INSTALL_KERNEL} ${INSTALL_KERNEL_PARAMETERS}"
+echo "    initrd ${INSTALL_INITRD}"
+echo ""
+echo " }"
+
+exit 0
+
