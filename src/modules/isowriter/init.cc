@@ -23,6 +23,7 @@
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
  #include <reinstall/action.h>
+ #include <reinstall/source.h>
  #include <udjat/tools/application.h>
  #include <udjat/tools/protocol.h>
  #include <iostream>
@@ -84,6 +85,115 @@
 
 					sources.clear(); // Remove other sources.
 					sources.insert(make_shared<Source>(node));
+
+				}
+
+				std::shared_ptr<Reinstall::Builder> BuilderFactory() override {
+
+					class Builder : public Reinstall::Builder {
+					private:
+						int fd = -1;
+
+					public:
+						Builder() = default;
+
+						~Builder() {
+							if(fd > 0) {
+								debug("Closing device");
+								::close(fd);
+								debug("Device closed");
+								fd = -1;
+							}
+						}
+
+						size_t size() override {
+
+							debug("fd=",fd);
+
+							if(fd < 0) {
+								cerr << "IsoWriter\tController asked for size of unavailable image, returning '0'" << endl;
+							}
+
+							struct stat statbuf;
+							if(fstat(fd,&statbuf) != 0) {
+								cerr << "isowriter\tCan't get image file size: " << strerror(errno) << endl;
+								return 0;
+							}
+
+							return statbuf.st_size;
+						}
+
+						void pre(const Reinstall::Action &action) override {
+						}
+
+						void apply(Reinstall::Source &source) override {
+
+							if(fd > 0) {
+								throw runtime_error(_("More sources than module expects"));
+							}
+
+							fd = ::open(source.save().c_str(),O_RDONLY);
+							if(fd < 0) {
+								throw system_error(errno, system_category(), _("Cant access downloaded image"));
+							}
+
+							Logger::String{"ISO File is '",source.filename,"'"}.write(Logger::Trace,"isowriter");
+
+						}
+
+						void build(const Reinstall::Action &action) override {
+						}
+
+						void post(const Reinstall::Action &action) override {
+						}
+
+						std::shared_ptr<Reinstall::Writer> burn(std::shared_ptr<Reinstall::Writer> writer) override {
+
+							Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
+							progress.set_sub_title(_("Writing ISO image"));
+
+							size_t current = 0;
+							size_t total = size();
+							if(!size()) {
+								throw runtime_error(_("Unable to get image size"));
+							}
+
+							#define BUFLEN 2048
+							unsigned char buffer[BUFLEN];
+
+							while(current < total) {
+
+								size_t length = (total - current);
+								if(length > BUFLEN) {
+									length = BUFLEN;
+								}
+
+								ssize_t bytes = ::read(fd, buffer, length);
+								if(bytes < 0) {
+									throw system_error(errno,system_category(),_("Cant read from image file"));
+								}
+
+								if(bytes == 0) {
+									throw runtime_error(_("Unexpected EOF reading image file"));
+								}
+
+								writer->write(buffer,length);
+
+								current += length;
+								progress.set_progress(current,total);
+
+							}
+
+							progress.set_sub_title(_("Finalizing"));
+							writer->finalize();
+
+							return writer;
+						}
+
+
+					};
+
+					return(make_shared<Builder>());
 
 				}
 

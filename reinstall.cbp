@@ -52,6 +52,7 @@
 		<Unit filename="src/include/reinstall/actions/initrd.h" />
 		<Unit filename="src/include/reinstall/actions/isobuilder.h" />
 		<Unit filename="src/include/reinstall/actions/kernel.h" />
+		<Unit filename="src/include/reinstall/builder.h" />
 		<Unit filename="src/include/reinstall/controller.h" />
 		<Unit filename="src/include/reinstall/defs.h" />
 		<Unit filename="src/include/reinstall/dialogs.h" />

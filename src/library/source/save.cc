@@ -60,7 +60,7 @@
 			worker->save(filename,[&progress](double current, double total){
 				progress.set_progress(current,total);
 				return true;
-			});
+			},true);
 
 			return filename;
 
