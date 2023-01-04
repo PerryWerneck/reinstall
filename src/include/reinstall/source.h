@@ -20,14 +20,13 @@
  #pragma once
 
  #include <udjat/defs.h>
+ #include <reinstall/defs.h>
  #include <udjat/tools/object.h>
  #include <pugixml.hpp>
  #include <memory>
  #include <vector>
 
  namespace Reinstall {
-
-	class Action;
 
 	/// @brief File/Folder to copy from repository to image.
 	class UDJAT_API Source : public Udjat::NamedObject {
@@ -47,7 +46,7 @@
 		const char *repository = nullptr;	///< @brief Repository name.
 		const char *path = nullptr;			///< @brief The path inside the image.
 		const char *message = nullptr;		///< @brief User message while downloading source.
-		const char *filename = nullptr;		///< @brief Nome do arquivo local.
+		const char *filename = nullptr;		///< @brief Local filename.
 
 		/// @brief Create a simple source.
 		/// @param url Default URL.
@@ -80,10 +79,9 @@
 
 		/// @brief Process source based on action properties.
 		/// @param action The current action.
-		void set(const Action &action);
+		void set(const Reinstall::Action &object);
 
 		/// @brief Download file.
-		/// @param action The current action.
 		/// @return Filename.
 		std::string save();
 

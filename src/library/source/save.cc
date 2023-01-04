@@ -24,6 +24,7 @@
  #include <reinstall/dialogs.h>
  #include <udjat/tools/protocol.h>
  #include <udjat/tools/intl.h>
+ #include <udjat/tools/logger.h>
 
  using namespace std;
  using namespace Udjat;
@@ -32,9 +33,16 @@
 
 	string Source::save() {
 
+		debug("source-name=",name()," url=",this->url);
+
 		if(!this->url[0]) {
 			error() << "Cant save source with empty URL" << endl;
 			throw runtime_error(_("Unable to get source with an empty URL"));
+		}
+
+		if(this->url[0] == '/') {
+			error() << "Cant save source with relative URL '" << this->url << "'" << endl;
+			throw runtime_error(_("Unable to get source with relative URL"));
 		}
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();

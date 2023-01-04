@@ -278,6 +278,7 @@
 			if(source->path && *source->path && !strcmp(path,source->path)) {
 				return source;
 			}
+
 		}
 		error() << "Cant find source for path '" << path << "'" << endl;
 		throw system_error(ENOENT,system_category(),path);
@@ -349,6 +350,11 @@
 
 				}
 			}
+			return true;
+		}
+
+		if(strcasecmp(key,"boot") == 0) {
+			value = "/boot/x86_64";
 			return true;
 		}
 

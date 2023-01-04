@@ -41,6 +41,15 @@
 			url{Quark(u).c_str()},
 			repository{Quark::getFromStatic("install").c_str()},
 			path{Quark(p).c_str()} {
+
+		if(!url[0]) {
+			throw runtime_error(string{"Missing required attribute 'url' on node "} + name());
+		}
+
+		if(url[0] == '/' && !path[0]) {
+			path = url;
+		}
+
 	}
 
 	Source::Source(const pugi::xml_node &node,const Source::Type t,const char *defurl,const char *defpath)
@@ -55,6 +64,10 @@
 			throw runtime_error(string{"Missing required attribute 'url' on node "} + name());
 		}
 
+		if(url[0] == '/' && !path[0]) {
+			path = url;
+		}
+
 	}
 
 	Source::~Source() {
@@ -65,19 +78,48 @@
 		}
 	}
 
-	void Source::set(const Action &action) {
+	void Source::set(const Reinstall::Action &object) {
 
-		if(!url[0]) {
-			// Expand URL based on repository path
-			URL url(action.repository(repository)->url(true));
-			url += this->url;
-#if UDJAT_CORE_BUILD > 22122511
-			url.expand();
-#endif
-			this->url = Quark(url.c_str()).c_str();
+		Udjat::String expander;
+
+		// Expand URL.
+		{
+			expander = this->url;
+			expander.expand(object);
+
+			if(expander[0] == '/') {
+
+				// Expand URL based on repository path
+				URL url(object.repository(repository)->url(true));
+				url += expander.c_str();
+				expander = url;
+				expander.expand(object);
+			}
+
+			if(strcmp(expander.c_str(),this->url)) {
+				this->url = Quark{expander}.c_str();
+			}
+
+			debug("URL=",this->url);
 		}
 
-		debug("URL=",this->url);
+		// Expand path
+		if(this->path && this->path[0]) {
+			expander = this->path;
+			expander.expand(object);
+			if(strcmp(expander.c_str(),this->path)) {
+				this->path = Quark{expander}.c_str();
+			}
+		}
+
+		// Expand filename.
+		if(this->filename && this->filename[0]) {
+			expander = this->filename;
+			expander.expand(object);
+			if(strcmp(expander.c_str(),this->filename)) {
+				this->filename = Quark{expander}.c_str();
+			}
+		}
 
 	}
 

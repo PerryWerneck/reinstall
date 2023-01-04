@@ -63,6 +63,7 @@
 		<Unit filename="../include/reinstall/value.h" />
 		<Unit filename="../include/reinstall/worker.h" />
 		<Unit filename="../include/reinstall/writer.h" />
+		<Unit filename="../modules/grub/init.cc" />
 		<Unit filename="../modules/isowriter/init.cc" />
 		<Unit filename="../modules/netinstall/action.cc" />
 		<Unit filename="../modules/netinstall/init.cc" />
@@ -87,7 +88,11 @@
 		<Unit filename="repository/construct.cc" />
 		<Unit filename="repository/slpclient.cc" />
 		<Unit filename="script.cc" />
-		<Unit filename="source/expand_url.cc" />
+		<Unit filename="source/apache_mirror.cc" />
+		<Unit filename="source/initrd.cc" />
+		<Unit filename="source/kernel.cc" />
+		<Unit filename="source/mirror.cc" />
+		<Unit filename="source/mirrorcache_mirror.cc" />
 		<Unit filename="source/save.cc" />
 		<Unit filename="source/source.cc" />
 		<Unit filename="template.cc" />

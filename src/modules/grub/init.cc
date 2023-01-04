@@ -58,7 +58,11 @@
 
 					// Get URL for installation kernel.
 					if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
-						push_back(make_shared<Reinstall::Kernel>(node,"${boot}/kernel.install"));
+						auto source = make_shared<Reinstall::Kernel>(node)
+						if(!source->filename[0]) {
+							source->filename = "${boot}/kernel.install";
+						}
+						push_back(source);
 						return true;
 					})) {
 						throw runtime_error(_("Missing required entry <kernel> with the URL for installation kernel"));
@@ -66,7 +70,11 @@
 
 					// Get URL for installation init.
 					if(!scan(node,"init",[this](const pugi::xml_node &node) {
-						push_back(make_shared<Reinstall::InitRD>(node,"${boot}/initrd.install"));
+						auto source = make_shared<Reinstall::InitRD>(node);
+						if(!source->filename[0]) {
+							source->filename = "${boot}/initrd.install";
+						}
+						push_back(source);
 						return true;
 					})) {
 						throw runtime_error(_("Missing required entry <init> with the URL for the linuxrc program"));
