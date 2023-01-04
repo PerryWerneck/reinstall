@@ -87,4 +87,13 @@ if [ "$1" == "--isolinux" ]; then
 	isolinux
 fi
 
+if [ "$1" == "--shell" ]; then
+	sudo mount -o loop /tmp/test.iso /mnt
+	cd /mnt
+	echo "exit to umount"
+	/bin/bash
+	cd $(dirname $(readlink -f ${0}))
+	sudo umount /mnt
+fi
+
 

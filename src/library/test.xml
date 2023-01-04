@@ -45,7 +45,7 @@
 	<kernel-parameter name='noshell' value='1' /> 
 	<kernel-parameter name='insecure' value='1' /> 
 	<kernel-parameter name='self_update' value='0' />
-	<kernel-parameter name='install' url='' repository='install' />
+	<kernel-parameter name='install' repository='install' />
 
 	<!-- Replace every 'grub.cfg' file with template -->
 	<template name='grub.cfg' url='file://../../templates/grub.cfg' />
