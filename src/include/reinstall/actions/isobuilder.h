@@ -52,10 +52,10 @@
 	protected:
 
 		/// brief Post scripts.
-		std::vector<Script> post_scripts;
+		// std::vector<Script> post_scripts;
 
 		/// @brief Run image post-processing (isohybrid).
-		void post(const char *isoname);
+		// void post(const char *isoname);
 
 	public:
 		IsoBuilder(const pugi::xml_node &node, const char *icon_name = "");

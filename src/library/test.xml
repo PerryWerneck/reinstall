@@ -61,7 +61,7 @@
 		<!-- Nome que aparece na opção de menu -->
  		<attribute name='label' value='OpenSUSE ${osversion}' />
  		
- 		<option name='opt1' default='yes'>
+ 		<option name='opt1' default='yes' output-file='/tmp/test.iso'>
 
 	 		<attribute name='label' value='Option 1' />
 

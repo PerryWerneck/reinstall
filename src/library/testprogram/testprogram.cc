@@ -78,7 +78,8 @@
 		Reinstall::Action &action = Reinstall::Action::get_selected();
 
 		if(action.interact()) {
-			// action.prepare()->burn(action.BuilderFactory());
+
+			action.act();
 		}
 
 	}

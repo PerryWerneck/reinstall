@@ -132,7 +132,7 @@
 		std::unordered_set<std::shared_ptr<Source>, Source::Hash, Source::Equal> sources;
 
 		/// @brief Search for source based on image path
-		std::shared_ptr<Source> source(const char *path);
+		std::shared_ptr<Source> source(const char *path) const;
 
 		/// @brief Scan xml for 'tagname', call lambda in every occurrence.
 		/// @param tagname the <tag> to search for.
@@ -142,7 +142,7 @@
 		bool scan(const pugi::xml_node &node, const char *tagname, const std::function<bool(const pugi::xml_node &node)> &call);
 
 		/// @brief Run first step with worker.
-		virtual void prepare(Reinstall::Builder &worker);
+		//virtual void prepare(Reinstall::Builder &worker);
 
 		/// @brief Icon name (for dialogs and menus).
 		const char *icon_name = "";
@@ -163,6 +163,8 @@
 
 	public:
 		virtual ~Action();
+
+		virtual void act();
 
 		unsigned short id;
 

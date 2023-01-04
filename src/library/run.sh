@@ -67,8 +67,11 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
+mkdir -p ~/Público/openSUSE-Leap-15.4-NET-x86_64/
+if [ "$(grep -c Público/openSUSE-Leap-15.4-NET-x86_64 /proc/mounts)" == "0" ]; then
+	sudo mount -o loop ~/Público/iso/openSUSE-Leap-15.4-NET-x86_64-Build243.2-Media.iso ~/Público/openSUSE-Leap-15.4-NET-x86_64/
+fi
 
-sudo mount -o loop ~/Público/iso/openSUSE-Leap-15.3-NET-x86_64-Media.iso ~/Público/openSUSE-Leap-15.3-NET-x86_64/
 sudo setcap cap_dac_override,cap_setuid,cap_setgid,cap_chown,cap_sys_admin+ep .bin/Debug/reinstall 
 
 .bin/Debug/reinstall
@@ -76,7 +79,12 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-# ${VM_TYPE}
+if [ "$1" == "--efi" ]; then
+	efi
+fi
 
+if [ "$1" == "--isolinux" ]; then
+	isolinux
+fi
 
 

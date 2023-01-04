@@ -155,7 +155,7 @@
 	}
 
 	std::shared_ptr<Reinstall::Builder> Action::BuilderFactory() {
-		return make_shared<Reinstall::Builder>();
+		throw runtime_error(_("No available image builder"));
 	}
 
 	std::shared_ptr<Reinstall::Writer> Action::WriterFactory() {
@@ -207,46 +207,6 @@
 		return true;
 	}
 
-	void Action::prepare(Builder &worker) {
-
-		Dialog::Progress &dialog = Dialog::Progress::getInstance();
-
-		{
-			dialog.set_sub_title(_("Initializing"));
-			//worker.pre(*this);
-
-			// Get folder contents.
-			dialog.set_sub_title(_("Getting file lists"));
-			//load();
-
-			// Apply templates.
-			dialog.set_sub_title(_("Checking for templates"));
-			//applyTemplates();
-
-			// Download files.
-			dialog.set_sub_title(_("Getting required files"));
-			size_t total = source_count();
-			size_t current = 0;
-			for_each([this,&current,total,&dialog,&worker](Source &source) {
-				dialog.set_count(++current,total);
-				worker.apply(source);
-			});
-			dialog.set_count(0,0);
-
-		}
-
-		// Update kernel parameters.
-		{
-			dialog.set_title(_("Getting installation parameters"));
-			for(KernelParameter &kparm : kparms) {
-				kparm.set(*this);
-			}
-		}
-
-		// worker.post(*this);
-
-	}
-
 	void Action::load() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
@@ -295,7 +255,7 @@
 
 	}
 
-	std::shared_ptr<Source> Action::source(const char *path) {
+	std::shared_ptr<Source> Action::source(const char *path) const {
 		for(auto source : sources) {
 			if(source->path && *source->path && !strcmp(path,source->path)) {
 				return source;
@@ -379,6 +339,47 @@
 		error() << "Unknown property '" << key << "'" << endl;
 
 		return false;
+
+	}
+
+	void Action::act() {
+
+		Dialog::Progress &dialog = Dialog::Progress::getInstance();
+
+		dialog.set_sub_title(_("Initializing"));
+		auto builder = BuilderFactory();
+		builder->pre(*this);
+
+		// Get folder contents.
+		dialog.set_sub_title(_("Getting file lists"));
+		load();
+
+		// Apply templates.
+		dialog.set_sub_title(_("Checking for templates"));
+		applyTemplates();
+
+		// Download files.
+		dialog.set_sub_title(_("Getting required files"));
+		size_t total = source_count();
+		size_t current = 0;
+		for_each([this,&current,total,&dialog,builder](Source &source) {
+			dialog.set_count(++current,total);
+			builder->apply(source);
+		});
+		dialog.set_count(0,0);
+
+		// Update kernel parameters.
+		{
+			dialog.set_sub_title(_("Getting installation parameters"));
+			for(KernelParameter &kparm : kparms) {
+				kparm.set(*this);
+			}
+		}
+
+		builder->build(*this);
+		builder->post(*this);
+
+		builder->burn(WriterFactory());
 
 	}
 
