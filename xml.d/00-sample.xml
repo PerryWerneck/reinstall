@@ -90,12 +90,21 @@
 
 		</remote-installer>
 		
-		<iso-writer name='netinstall' default='no' url='http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Media.iso' cache='yes'>
-	 		<attribute name='title' value='Create USB drive using the original OpenSUSE netinstall' />
-	 		<attribute name='sub-title' value='This will download and write the OpenSUSE net install image ' />
+		
+		<!-- http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Current.iso -->
+		<!-- http://download.opensuse.net.br/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Media.iso -->
+		<iso-writer name='netinstall' default='no' url='http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Current.iso' cache='yes'>
+	 		<attribute name='title' value='Create USB drive for network install' />
+	 		<attribute name='sub-title' value='This will download and write the OpenSUSE network install' />
+		</iso-writer>
+
+		<iso-writer name='netinstall' default='no' url='http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-DVD-x86_64-Current.iso' cache='yes'>
+	 		<attribute name='title' value='Create USB drive for offline install' />
+	 		<attribute name='sub-title' value='This will download and write the OpenSUSE full install' />
 		</iso-writer>
 
 	</group>
+
 
 </config>
 
