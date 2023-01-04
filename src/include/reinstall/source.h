@@ -33,6 +33,9 @@
 	private:
 		std::string tempfilename;			///< @brief If not empty, the temporary file name.
 
+	protected:
+		void save(const char *filename);
+
 	public:
 
 		enum Type {
@@ -83,7 +86,7 @@
 
 		/// @brief Download file.
 		/// @return Filename.
-		std::string save();
+		virtual std::string save();
 
 		/// @brief Get folders contents.
 		/// @param action The current action.

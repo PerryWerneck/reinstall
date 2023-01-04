@@ -50,123 +50,48 @@
 
 		bool push_back(const pugi::xml_node &node) override {
 
-			/*
+			/// @brief ISO Writer Action
 			class Action : public Reinstall::Action {
-			private:
-				const char *url;
-
 			public:
-				Action(const pugi::xml_node &node) : Reinstall::Action(node,"drive-removable-media"), url{getAttribute(node,"url","")} {
+				Action(const pugi::xml_node &node) : Reinstall::Action(node,"drive-removable-media") {
 
-					if(!(url && *url)) {
-						throw runtime_error(_("Required attribute 'URL' is missing"));
-					}
-
-				}
-
-				virtual ~Action() {
-				}
-
-				std::shared_ptr<Reinstall::Builder> BuilderFactory() override {
-
-					sleep(1);
-
-					// Download image.
-					std::string filename = Udjat::Application::CacheDir("iso").build_filename(url);
-					debug("Cache filename is ",filename.c_str());
-
-					Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
-					auto worker = Protocol::WorkerFactory(this->url);
-
-					progress.set_sub_title(_("Downloading ISO image"));
-					progress.set_url(worker->url().c_str());
-
-					worker->save(filename.c_str(),[&progress](double current, double total){
-						progress.set_progress(current,total);
-						return true;
-					});
-
-					int fd = ::open(filename.c_str(),O_RDONLY);
-					if(fd < 0) {
-						throw system_error(errno, system_category(), _("Cant access downloaded image"));
-					}
-
-					class Worker : public Reinstall::Builder {
+					/// @brief ISO Image source
+					class Source : public Reinstall::Source {
 					private:
-						int fd;
+						bool cache;
 
 					public:
-						Worker(int f) : fd{f} {
-						}
-
-						virtual ~Worker() {
-							::close(fd);
-						}
-
-						size_t size() override {
-							struct stat statbuf;
-							if(fstat(fd,&statbuf) != 0) {
-								cerr << "isowriter\tCan't get image file size: " << strerror(errno) << endl;
-								return 0;
+						Source(const pugi::xml_node &node) : Reinstall::Source(node), cache{getAttribute(node,"cache",true)} {
+							if(!(url && *url)) {
+								throw runtime_error(_("Required attribute 'URL' is missing"));
 							}
-							return statbuf.st_size;
+							if(!(message && *message)) {
+								message = _("Downloading ISO image");
+							}
 						}
 
-						std::shared_ptr<Reinstall::Writer> burn(std::shared_ptr<Reinstall::Writer> writer) override {
+						std::string save() override {
 
-							Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
-							progress.set_sub_title(_("Writing image"));
-
-							size_t current = 0;
-							size_t total = size();
-
-							#define BUFLEN 2048
-							unsigned char buffer[BUFLEN];
-
-							while(current < total) {
-
-								size_t length = (total - current);
-								if(length > BUFLEN) {
-									length = BUFLEN;
-								}
-
-								ssize_t bytes = ::read(fd, buffer, length);
-								if(bytes < 0) {
-									throw system_error(errno,system_category(),_("Cant read from image file"));
-								}
-
-								if(bytes == 0) {
-									throw runtime_error(_("Unexpected EOF reading image file"));
-								}
-
-								writer->write(buffer,length);
-
-								current += length;
-								progress.set_progress(current,total);
-
+							if(cache) {
+								// Build cache filename.
+								this->filename = Quark{Udjat::Application::CacheDir("iso").build_filename(url)}.c_str();
 							}
 
-							progress.set_sub_title(_("Finalizing"));
-							writer->finalize();
-							writer->close();
-
-							progress.set_sub_title(_(""));
-
-							return writer;
+							return Reinstall::Source::save();
 						}
 
 					};
 
-					return make_shared<Worker>(fd);
+					sources.clear(); // Remove other sources.
+					sources.insert(make_shared<Source>(node));
 
 				}
 
 			};
 
 			Reinstall::push_back(node,make_shared<Action>(node));
-			*/
-
 			return true;
+
 		}
 
 	};
