@@ -23,6 +23,7 @@
  #include <udjat/tools/string.h>
  #include <udjat/tools/url.h>
  #include <udjat/tools/intl.h>
+ #include <udjat/tools/logger.h>
 
  using namespace std;
  using namespace Udjat;
@@ -41,8 +42,11 @@
 			Type type;
 			const char *name;
 		} args[] = {
-			{ Value, 		"value"			},
-			{ Url, 			"url"			}
+			{ Value, 		"value"				},
+			{ Url, 			"url"				},
+
+			// Allways the last one.
+			{ Repository, 	"repository"		}
 		};
 
 		type = Invalid;
@@ -51,8 +55,8 @@
 			attribute = node.attribute(args[ix].name);
 			if(attribute) {
 				type = args[ix].type;
-				vl = attribute.as_string();
-				vl.expand(node,false);
+				value = Quark{String{attribute.as_string()}.expand(node,false)}.c_str();
+				repository = Quark{node,"repository"}.c_str();
 				break;
 			}
 
@@ -67,34 +71,42 @@
 	Action::KernelParameter::~KernelParameter() {
 	}
 
-	void Action::KernelParameter::set(const Action &action) {
+	std::string Action::KernelParameter::expand(const Action &action) const {
 
-		if(type == Url) {
+		Udjat::String response;
 
-			if(vl.empty() || vl[0] == '/') {
+		switch(type) {
+		case Invalid:
+		case Value:
+			response = this->value;
+			break;
+
+		case Url:
+			if(value[0] == '/') {
 
 				// Fix URL with repository.
 				URL url(action.repository(repository)->url(false));
+				url += value;
+				response = url.c_str();
 
-				if(!vl.empty()) {
-					vl.expand(action,false);
-					url += vl.c_str();
-				}
+			} else {
 
-				String value{url.c_str()};
-				value.expand(action,true);
-
-				action.info() << "Kernel parameter '" << vl << "' expanded to " << value << endl;
-				vl = value;
+				response = value;
 
 			}
+			break;
 
-		} else {
-
-			vl.expand(action,true);
+		case Repository:
+			response = action.repository(value)->url(false);
+			break;
 
 		}
 
+		response.expand(action);
+
+		Logger::String{"Kernel parameter '",nm,"' expanded to ",response.c_str()}.write(Logger::Trace,"KParm");
+
+		return response;
 	}
 
 

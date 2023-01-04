@@ -46,27 +46,25 @@
 		private:
 			const char * nm = "";
 			const char * repository = "install";
-			Udjat::String vl;
+			const char * value;
 
 			enum Type : uint8_t {
 				Invalid,
 				Value,			///< @brief Standard string value.
-				Url
+				Url,			///< @brief URL value.
+				Repository		///< @brief Repository.
 			} type = Invalid;
 
 		public:
 			KernelParameter(const pugi::xml_node &node);
 			~KernelParameter();
 
-			void set(const Action &action);
+			std::string expand(const Action &action) const;
 
 			inline const char * name() const noexcept {
 				return nm;
 			}
 
-			const char * value() const noexcept {
-				return vl.c_str();
-			}
 
 		};
 

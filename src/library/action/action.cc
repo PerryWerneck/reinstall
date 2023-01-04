@@ -315,8 +315,10 @@
 						continue;
 					}
 
-					const char * val = kparm.value();
-					if(val && *val) {
+					std::string val = kparm.expand(*this);
+					if(val.empty()) {
+						warning() << "Kernel parameter '" << name << "' is empty, ignoring" << endl;
+					} else {
 
 						if(!value.empty()) {
 							value += " ";
@@ -367,14 +369,6 @@
 			builder->apply(source);
 		});
 		dialog.set_count(0,0);
-
-		// Update kernel parameters.
-		{
-			dialog.set_sub_title(_("Getting installation parameters"));
-			for(KernelParameter &kparm : kparms) {
-				kparm.set(*this);
-			}
-		}
 
 		builder->build(*this);
 		builder->post(*this);
