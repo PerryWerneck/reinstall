@@ -26,6 +26,7 @@
  #include <reinstall/object.h>
  #include <reinstall/repository.h>
  #include <reinstall/value.h>
+ #include <reinstall/script.h>
  #include <reinstall/source.h>
  #include <reinstall/dialogs/popup.h>
  #include <list>
@@ -148,6 +149,12 @@
 		/// @brief Object with the UI definitions.
 		std::shared_ptr<Abstract::Object> item;
 
+		/// @brief Scripts.
+		struct {
+			std::vector<Script> pre;
+			std::vector<Script> post;
+		} scripts;
+
 		Action(const pugi::xml_node &node, const char *icon_name = "");
 
 	private:
@@ -162,7 +169,7 @@
 	public:
 		virtual ~Action();
 
-		virtual void act();
+		virtual void activate();
 
 		unsigned short id;
 

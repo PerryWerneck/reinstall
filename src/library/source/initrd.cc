@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,19 +17,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
-
- #include <udjat/defs.h>
+ #include <config.h>
+ #include <reinstall/defs.h>
  #include <reinstall/source.h>
+ #include <reinstall/sources/initrd.h>
  #include <pugixml.hpp>
+ #include <udjat/tools/intl.h>
 
  namespace Reinstall {
 
-	/// @brief The source for the installation kernel;
-	class UDJAT_API Kernel : public Source {
-	public:
-		Kernel(const pugi::xml_node &node, const char *defpath = "");
-
-	};
+	InitRD::InitRD(const pugi::xml_node &node, const char *defpath) : Source(node,Source::InitRD,"/boot/x86_64/loader/initrd",defpath) {
+		if(!(message && *message)) {
+			message = _("Getting install loader");
+		}
+	}
 
  }

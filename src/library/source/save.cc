@@ -41,6 +41,9 @@
 
 		auto worker = Protocol::WorkerFactory(this->url);
 
+		if(message && *message) {
+			progress.set_sub_title(message);
+		}
 		progress.set_url(worker->url().c_str());
 
 		if(filename) {

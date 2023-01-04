@@ -21,23 +21,25 @@
 			* slp-url: The URL for the kernel parameter when SLP is available.
 		
 	-->
-	<repository name='install' url='http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64' 
+	<repository name='install' url='https://download.opensuse.org/distribution/leap/15.4/repo/oss' 
 		slp-service-type='service:install.suse' 
 		slp-scope-list='' 
 		slp-filter='' 
 		slp-allow-local='no' 
-		slp-kernel-parameter='slp:/' />
+		slp-kernel-parameter='slp:/' 
+		layout='MirrorCache'
+	/>
 
-	<!-- Path for the installation kernel (Full URL or path from repository -->
-	<kernel path='/boot/x86_64/loader/linux' repository='install' />
+	<!-- Path for the installation kernel (Full URL or path from repository) -->
+	<kernel url='/boot/x86_64/loader/linux' repository='install' />
 
-	<!-- Path for the installation init (Full URL or path from repository -->
-	<init path='/boot/x86_64/loader/initrd' repository='install' />
+	<!-- Path for the installation init (Full URL or path from repository) -->
+	<init url='/boot/x86_64/loader/initrd' repository='install' />
 
 	<!-- driver-installation-disk url='http://localhost/updates.dud' path='boot/updates.dud' / -->	
 
-	<source name='boot' path='/boot/x86_64/' repository='install' />
-	<source name='efi' path='/EFI/' repository='install' />
+	<source name='boot' url='/boot/x86_64/' repository='install' />
+	<source name='efi' url='/EFI/' repository='install' />
 
 	<kernel-parameter name='splash' value='silent' /> 
 	<kernel-parameter name='lang' value='pt_BR' />
@@ -53,9 +55,6 @@
 	<!-- Replace every 'isolinux.cfg' file with template -->
 	<template name='isolinux.cfg' url='file://../../templates/isolinux.cfg' />
 	
-	<!-- Image post processing -->
-	<!-- image-post name='iso-hybrid' cmdline='/usr/bin/isohybrid -u ${devname}' / -->
-	
 	<group name='OpenSUSE'>
 
 		<!-- Nome que aparece na opção de menu -->
@@ -65,12 +64,15 @@
 
 	 		<attribute name='label' value='Option 1' />
 
+			<!-- Image post processing -->
+			<!-- script type='post' name='iso-hybrid' cmdline='/usr/bin/isohybrid -u ${devname}' / -->
+			
 			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
 			<dialog name='confirmation' title='Confirmation message' icon='dialog-question' text='Do you confirm?' url='http://google.com' url-label='More info'>
 				This is the secondary text on confirmation message.
 			</dialog>
 
-			<dialog name='sucess' title='Success message' icon='dialog-information' text='Operation complete' url='http://google.com' url-label='More info' allow-reboot='yes'>
+			<dialog name='success' title='Success message' icon='dialog-information' text='Operation complete' url='http://google.com' url-label='More info' allow-reboot='yes'>
 				This is the secondary text of sucess message.
 			</dialog>
 

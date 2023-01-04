@@ -43,20 +43,16 @@
 			path{Quark(p).c_str()} {
 	}
 
-	Source::Source(const pugi::xml_node &node,const Source::Type t,const char *url,const char *defpath)
+	Source::Source(const pugi::xml_node &node,const Source::Type t,const char *defurl,const char *defpath)
 		: 	NamedObject{node},
 			type{t},
-			url{Quark{node,"url",url,false}.c_str()},
-			repository{Quark{node,"repository","install"}.c_str()},
-			path{Quark{node,"path",defpath,false}.c_str()},
-			message{Quark{node,"download-message","",true}.c_str()} {
+			url{getAttribute(node,"url",defurl)},
+			repository{getAttribute(node,"repository","install")},
+			path{getAttribute(node,"path",defpath)},
+			message{getAttribute(node,"download-message","")} {
 
 		if(!url[0]) {
-			url = Quark{node,"path"}.c_str();
-		}
-
-		if(!url[0]) {
-			throw runtime_error("Missing required attribute 'url'");
+			throw runtime_error(string{"Missing required attribute 'url' on node "} + name());
 		}
 
 	}
@@ -74,7 +70,7 @@
 		if(!url[0]) {
 			// Expand URL based on repository path
 			URL url(action.repository(repository)->url(true));
-			url += path;
+			url += this->url;
 #if UDJAT_CORE_BUILD > 22122511
 			url.expand();
 #endif

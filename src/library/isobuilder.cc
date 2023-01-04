@@ -54,14 +54,6 @@
 			throw runtime_error(_("Missing required entry <init> with the URL for the linuxrc program"));
 		}
 
-		// Get post scripts.
-		/*
-		scan(node,"image-post",[this](const pugi::xml_node &node) {
-			post_scripts.emplace_back(node);
-			return true;
-		});
-		*/
-
 		// Get options.
 		system_area = getAttribute(
 							node,

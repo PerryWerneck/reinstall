@@ -142,6 +142,24 @@
 			return false;
 		});
 
+		// Get scripts.
+		scan(node,"script",[this](const pugi::xml_node &node) {
+			switch(Udjat::String{node.attribute("type").as_string("post")}.select("pre","post",nullptr)) {
+			case 0:	// pre.
+				scripts.pre.emplace_back(node);
+				break;
+
+			case 1: // post.
+				scripts.post.emplace_back(node);
+				break;
+
+			default:
+				throw runtime_error(_("Invalid 'type' attribute"));
+
+			}
+			return true;
+		});
+
 		// Create action id
 		static unsigned short id = 0;
 		this->id = ++id;
@@ -344,9 +362,14 @@
 
 	}
 
-	void Action::act() {
+	void Action::activate() {
 
 		Dialog::Progress &dialog = Dialog::Progress::getInstance();
+
+		dialog.set_sub_title(_("Preparing"));
+		for(Script &script : scripts.pre) {
+			script.run(*this);
+		}
 
 		dialog.set_sub_title(_("Initializing"));
 		auto builder = BuilderFactory();
@@ -370,10 +393,19 @@
 		});
 		dialog.set_count(0,0);
 
+		dialog.set_sub_title(_("Building"));
 		builder->build(*this);
+
+		dialog.set_sub_title(_("Building"));
 		builder->post(*this);
 
+		dialog.set_sub_title(_("Writing"));
 		builder->burn(WriterFactory());
+
+		dialog.set_sub_title(_("Running post scripts"));
+		for(Script &script : scripts.post) {
+			script.run(*this);
+		}
 
 	}
 

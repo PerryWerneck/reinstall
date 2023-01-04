@@ -79,7 +79,7 @@
 
 		if(action.interact()) {
 
-			action.act();
+			action.activate();
 		}
 
 	}
