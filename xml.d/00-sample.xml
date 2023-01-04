@@ -33,15 +33,15 @@
 		layout='apache' />
 
 	<!-- Path for the installation kernel (Full URL or path from repository -->
-	<kernel path='/boot/x86_64/loader/linux' repository='install' />
+	<kernel url='/boot/x86_64/loader/linux' repository='install' />
 
 	<!-- Path for the installation init (Full URL or path from repository -->
-	<init path='/boot/x86_64/loader/initrd' repository='install' />
+	<init url='/boot/x86_64/loader/initrd' repository='install' />
 
 	<!-- driver-installation-disk url='http://localhost/updates.dud' path='boot/updates.dud' / -->	
 
-	<source name='boot' path='/boot/x86_64/' repository='install' />
-	<source name='efi' path='/EFI/' repository='install' />
+	<source name='boot' url='/boot/x86_64/' repository='install' />
+	<source name='efi' url='/EFI/' repository='install' />
 
 	<kernel-parameter name='splash' value='silent' /> 
 	<kernel-parameter name='lang' value='pt_BR' />

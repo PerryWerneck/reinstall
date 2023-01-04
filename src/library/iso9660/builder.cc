@@ -379,7 +379,7 @@
 	}
 	*/
 
-	void iso9660::Builder::burn(std::shared_ptr<Writer> writer) {
+	std::shared_ptr<Writer> iso9660::Builder::burn(std::shared_ptr<Writer> writer) {
 
 		debug("Burning ISO image");
 
@@ -441,6 +441,7 @@
 
 		progress.set_sub_title(_(""));
 
+		return writer;
 	}
 
  }

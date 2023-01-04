@@ -48,8 +48,7 @@
 
 		/// @brief Step 5 (last step, work thread).
 		/// @param Write prepared image @see Action::WriterFactory
-		virtual void burn(std::shared_ptr<Writer> writer);
-
+		virtual std::shared_ptr<Writer> burn(std::shared_ptr<Writer> writer);
 
 		/// @brief Get image length.
 		/// @return Image length in bytes.

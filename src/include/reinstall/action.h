@@ -169,6 +169,9 @@
 	public:
 		virtual ~Action();
 
+		virtual std::shared_ptr<Reinstall::Builder> pre();
+		virtual void post(std::shared_ptr<Reinstall::Writer> writer);
+
 		virtual void activate();
 
 		unsigned short id;

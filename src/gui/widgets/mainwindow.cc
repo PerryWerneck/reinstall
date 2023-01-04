@@ -22,7 +22,7 @@
  #include <private/mainwindow.h>
  #include <private/dialogs.h>
  #include <reinstall/object.h>
- #include <reinstall/worker.h>
+ #include <reinstall/builder.h>
  #include <reinstall/writer.h>
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/application.h>

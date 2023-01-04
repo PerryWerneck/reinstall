@@ -94,16 +94,16 @@
 	//
 	// Step 1 - Prepare image get image builder.
 	//
-	std::shared_ptr<Reinstall::Worker> worker;
+	std::shared_ptr<Reinstall::Builder> builder;
 	{
 		Dialog::Progress dialog;
 		show(dialog);
 
-		Udjat::ThreadPool::getInstance().push([this,&dialog,&action,&worker](){
+		Udjat::ThreadPool::getInstance().push([this,&dialog,&action,&builder](){
 
 			try {
 
-				worker = action.WorkerFactory();
+				builder = action.pre();
 				dialog.dismiss(Gtk::RESPONSE_OK);
 
 			} catch(const std::exception &e) {
@@ -150,11 +150,12 @@
 		Dialog::Progress dialog;
 		show(dialog);
 
-		Udjat::ThreadPool::getInstance().push([this,&dialog,writer,worker](){
+		Udjat::ThreadPool::getInstance().push([this,&dialog,writer,builder,&action](){
 
 			try {
 
-				worker->burn(writer);
+				builder->burn(writer);
+				action.post(writer);
 				dialog.dismiss(Gtk::RESPONSE_OK);
 
 			} catch(const std::exception &e) {

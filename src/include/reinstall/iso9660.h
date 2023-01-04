@@ -47,7 +47,7 @@
 			virtual ~Builder();
 
 			/// @brief Save image to and already open writer.
-			void burn(std::shared_ptr<Writer> writer) override;
+			std::shared_ptr<Writer> burn(std::shared_ptr<Writer> writer) override;
 
 			void set_system_area(const char *path = nullptr);
 			void set_volume_id(const char *volume_id);

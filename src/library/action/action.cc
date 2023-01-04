@@ -368,7 +368,7 @@
 
 	}
 
-	void Action::activate() {
+	std::shared_ptr<Reinstall::Builder> Action::pre() {
 
 		Dialog::Progress &dialog = Dialog::Progress::getInstance();
 
@@ -405,14 +405,20 @@
 		dialog.set_sub_title(_("Building"));
 		builder->post(*this);
 
-		dialog.set_sub_title(_("Writing"));
-		builder->burn(WriterFactory());
+		return builder;
+	}
+
+	void Action::post(std::shared_ptr<Reinstall::Writer> UDJAT_UNUSED(writer)) {
+		Dialog::Progress &dialog = Dialog::Progress::getInstance();
 
 		dialog.set_sub_title(_("Running post scripts"));
 		for(Script &script : scripts.post) {
 			script.run(*this);
 		}
+	}
 
+	void Action::activate() {
+		post(pre()->burn(WriterFactory()));
 	}
 
  }

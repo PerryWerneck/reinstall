@@ -47,7 +47,8 @@
 		return 0;
 	}
 
-	void Builder::burn(std::shared_ptr<Reinstall::Writer> UDJAT_UNUSED(writer)) {
+	std::shared_ptr<Writer> Builder::burn(std::shared_ptr<Reinstall::Writer> writer) {
+		return writer;
 	}
 
  }

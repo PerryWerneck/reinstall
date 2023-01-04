@@ -50,6 +50,7 @@
 
 		bool push_back(const pugi::xml_node &node) override {
 
+			/*
 			class Action : public Reinstall::Action {
 			private:
 				const char *url;
@@ -66,7 +67,7 @@
 				virtual ~Action() {
 				}
 
-				std::shared_ptr<Reinstall::Builder> WorkerFactory() override {
+				std::shared_ptr<Reinstall::Builder> BuilderFactory() override {
 
 					sleep(1);
 
@@ -111,7 +112,7 @@
 							return statbuf.st_size;
 						}
 
-						void burn(std::shared_ptr<Reinstall::Writer> writer) override {
+						std::shared_ptr<Reinstall::Writer> burn(std::shared_ptr<Reinstall::Writer> writer) override {
 
 							Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
 							progress.set_sub_title(_("Writing image"));
@@ -151,6 +152,7 @@
 
 							progress.set_sub_title(_(""));
 
+							return writer;
 						}
 
 					};
@@ -162,6 +164,7 @@
 			};
 
 			Reinstall::push_back(node,make_shared<Action>(node));
+			*/
 
 			return true;
 		}
