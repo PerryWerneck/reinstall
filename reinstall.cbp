@@ -8,7 +8,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output=".bin/Debug/Reinstall Main application" prefix_auto="1" extension_auto="1" />
+				<Option output=".bin/Debug/reinstall" prefix_auto="1" extension_auto="1" />
 				<Option object_output=".obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -67,6 +67,7 @@
 		<Unit filename="src/include/reinstall/repository.h" />
 		<Unit filename="src/include/reinstall/script.h" />
 		<Unit filename="src/include/reinstall/source.h" />
+		<Unit filename="src/include/reinstall/sources/cached.h" />
 		<Unit filename="src/include/reinstall/sources/initrd.h" />
 		<Unit filename="src/include/reinstall/sources/kernel.h" />
 		<Unit filename="src/include/reinstall/tools.h" />

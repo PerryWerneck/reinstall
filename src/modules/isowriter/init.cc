@@ -32,6 +32,7 @@
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <fcntl.h>
+ #include <reinstall/sources/cached.h>
 
  #ifndef _WIN32
 	#include <unistd.h>
@@ -39,6 +40,7 @@
 
  using namespace std;
  using namespace Udjat;
+ using namespace Reinstall;
 
  Udjat::Module * udjat_module_init() {
 
@@ -56,35 +58,8 @@
 			public:
 				Action(const pugi::xml_node &node) : Reinstall::Action(node,"drive-removable-media") {
 
-					/// @brief ISO Image source
-					class Source : public Reinstall::Source {
-					private:
-						bool cache;
-
-					public:
-						Source(const pugi::xml_node &node) : Reinstall::Source(node), cache{getAttribute(node,"cache",true)} {
-							if(!(url && *url)) {
-								throw runtime_error(_("Required attribute 'URL' is missing"));
-							}
-							if(!(message && *message)) {
-								message = _("Downloading ISO image");
-							}
-						}
-
-						std::string save() override {
-
-							if(cache) {
-								// Build cache filename.
-								this->filename = Quark{Udjat::Application::CacheDir("iso").build_filename(url)}.c_str();
-							}
-
-							return Reinstall::Source::save();
-						}
-
-					};
-
 					sources.clear(); // Remove other sources.
-					sources.insert(make_shared<Source>(node));
+					sources.insert(make_shared<CachedFileSource>(node,_("Downloading ISO image")));
 
 				}
 
