@@ -84,7 +84,7 @@
 	}
 
 	Action::Action(const pugi::xml_node &node, const char *iname)
-		: 	Udjat::NamedObject(node), options{node},
+		: 	Reinstall::Abstract::Object(node), options{node},
 			output_file{getAttribute(node,"output-file","")},
 			icon_name{getAttribute(node,"icon",iname)},
 			item{UserInterface::getInstance().ActionFactory(node,icon_name)} {
@@ -230,25 +230,31 @@
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 		progress.set_sub_title(_("Getting required files"));
 
-		for(auto source : sources) {
-			source->set(*this);
-		}
+		// Expand all sources.
+		for(auto iter = sources.begin(); iter != sources.end();) {
 
-		{
+			std::shared_ptr<Source> source = *iter;
 			std::vector<std::shared_ptr<Source>> contents;
 
-			// Expand all sources.
-			for(auto source = sources.begin(); source != sources.end();) {
-				if((*source)->contents(*this,contents)) {
-					source = sources.erase(source);
-				} else {
-					source++;
-				}
+			iter = sources.erase(iter);	// Remove it; path can change.
+
+			source->set(*this);
+
+			if(!source->contents(*this,contents)) {
+				contents.push_back(source);
 			}
 
+			Logger::String {
+				"Source '", source->name(), "' has ", contents.size(), " file(s)"
+			}.trace(name());
+
 			// Add expanded elements.
-			for(auto source : contents) {
-				sources.insert(source);
+			for(std::shared_ptr<Source> source : contents) {
+				if(sources.count(source)) {
+					Logger::String{"Duplicate file '",source->path,"' on source ",source->name()}.trace(name());
+				} else {
+					sources.insert(source);
+				}
 			}
 
 		}
@@ -275,6 +281,7 @@
 
 	std::shared_ptr<Source> Action::source(const char *path) const {
 		for(auto source : sources) {
+			debug(source->path);
 			if(source->path && *source->path && !strcmp(path,source->path)) {
 				return source;
 			}
@@ -302,6 +309,8 @@
 	}
 
 	bool Action::getProperty(const char *key, std::string &value) const noexcept {
+
+		debug("Searching for '",key,"' in ",name());
 
 		if(strcasecmp(key,"icon-name") == 0) {
 
@@ -353,18 +362,22 @@
 			return true;
 		}
 
-		if(strcasecmp(key,"boot") == 0) {
+		if(strcasecmp(key,"boot-dir") == 0) {
 			value = "/boot/x86_64";
 			return true;
 		}
 
-		if(Udjat::NamedObject::getProperty(key,value)) {
+		if(strcasecmp(key,"kernel-file") == 0) {
+			value = "/boot/x86_64/loader/linux";
 			return true;
 		}
 
-		error() << "Unknown property '" << key << "'" << endl;
+		if(strcasecmp(key,"initrd-file") == 0) {
+			value = "/boot/x86_64/loader/initrd";
+			return true;
+		}
 
-		return false;
+		return Reinstall::Abstract::Object::getProperty(key,value);
 
 	}
 

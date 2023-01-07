@@ -39,7 +39,7 @@
 
  	class Worker;
 
-	class UDJAT_API Action : public Udjat::NamedObject {
+	class UDJAT_API Action : public Abstract::Object {
 	public:
 
 		/// @brief Kernel parameters.
@@ -82,6 +82,10 @@
 			std::string filename;
 
 		public:
+
+			Template(const char *n, const char *u) : name{n}, url{u} {
+			}
+
 			Template(const pugi::xml_node &node);
 			~Template();
 
@@ -100,9 +104,9 @@
 
 		};
 
-		std::list<std::shared_ptr<Template>> templates;
-
 	protected:
+
+		std::list<std::shared_ptr<Template>> templates;
 
 		const struct Options {
 
@@ -211,7 +215,7 @@
 			return item;
 		}
 
-		inline std::string get_label() const {
+		inline std::string get_label() const override {
 			return item->get_label();
 		}
 

@@ -11,8 +11,8 @@
  #include <reinstall/dialogs.h>
  #include <reinstall/writer.h>
 
- #include <reinstall/actions/kernel.h>
- #include <reinstall/actions/initrd.h>
+ #include <reinstall/sources/kernel.h>
+ #include <reinstall/sources/initrd.h>
  #include <reinstall/userinterface.h>
 
  #include <udjat/moduleinfo.h>

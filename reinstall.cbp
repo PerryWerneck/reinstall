@@ -73,16 +73,16 @@
 		<Unit filename="src/include/reinstall/tools.h" />
 		<Unit filename="src/include/reinstall/userinterface.h" />
 		<Unit filename="src/include/reinstall/value.h" />
-		<Unit filename="src/include/reinstall/worker.h" />
 		<Unit filename="src/include/reinstall/writer.h" />
 		<Unit filename="src/library/action/action.cc" />
+		<Unit filename="src/library/action/template.cc" />
 		<Unit filename="src/library/controller.cc" />
 		<Unit filename="src/library/dialogs/button.cc" />
 		<Unit filename="src/library/dialogs/progress.cc" />
 		<Unit filename="src/library/dialogs/taskrunner.cc" />
 		<Unit filename="src/library/dialogs/window.cc" />
 		<Unit filename="src/library/group.cc" />
-		<Unit filename="src/library/iso9660/worker.cc" />
+		<Unit filename="src/library/iso9660/builder.cc" />
 		<Unit filename="src/library/isobuilder.cc" />
 		<Unit filename="src/library/kernelparameter.cc" />
 		<Unit filename="src/library/object.cc" />
@@ -101,7 +101,6 @@
 		<Unit filename="src/library/source/mirrorcache_mirror.cc" />
 		<Unit filename="src/library/source/save.cc" />
 		<Unit filename="src/library/source/source.cc" />
-		<Unit filename="src/library/template.cc" />
 		<Unit filename="src/library/testprogram/private.h" />
 		<Unit filename="src/library/testprogram/testprogram.cc" />
 		<Unit filename="src/library/userinterface.cc" />

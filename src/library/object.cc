@@ -86,86 +86,21 @@
 
 	}
 
-	/*
-	Object::Label::Label(const pugi::xml_node &nd, const char *attrname) : Gtk::Label{"", Gtk::ALIGN_START, Gtk::ALIGN_START} {
+	bool Abstract::Object::getProperty(const char *key, std::string &value) const noexcept {
 
-		auto node = find(nd,attrname);
-		if(!node) {
-			debug("Cant find attribute '",attrname,"' for node ",nd.attribute("name").as_string());
-			return;
-		}
+		if(!strcasecmp(key,"template-dir")) {
 
-		set_text(Quark{node,"value"}.c_str());
-
-		const char *tooltip = node.attribute("tooltip").as_string();
-		if(tooltip && *tooltip) {
-			set_tooltip_text(Quark{tooltip}.c_str());
-		}
-
-	}
-
-	Object::Link::Link(const pugi::xml_node &nd, const char *attrname) {
-
-		auto node = find(nd,attrname);
-		if(!node) {
-			valid = false;
-			debug("Cant find attribute '",attrname,"' for node ",nd.attribute("name").as_string());
-			return;
-		}
-
-		valid = true;
-
-		set_relief(Gtk::RELIEF_NONE);
-		set_focus_on_click(false);
-
-		set_image_from_icon_name(node.attribute("icon-name").as_string("help-contents"));
-
-		const char *tooltip = node.attribute("tooltip").as_string();
-		if(tooltip && *tooltip) {
-			set_tooltip_text(Quark{tooltip}.c_str());
-		}
-
-	}
-
-
-	Object::Object(const pugi::xml_node &node) :
-		Udjat::NamedObject{node},
-		title{node,"title"},
-		subtitle(node,"sub-title"),
-		help(node,"help-url") {
-
-		subtitle.set_line_wrap(true);
-		// subtitle.wrap_mode(Pango::WRAP_WORD);
-
-
-	}
-
-	bool Object::getProperty(const char *key, std::string &value) const noexcept {
-
-		if(!strcasecmp(key,"title")) {
-
-			value = title.get_text();
+#ifdef DEBUG
+			value = "./templates";
+#else
+			value = Udjat::Application::DataDir("templates");
+#endif // DEBUG
 			return true;
-
-		} else if(!strcasecmp(key,"sub-title")) {
-
-			value = subtitle.get_text();
-			return true;
-
 		}
 
 		return Udjat::NamedObject::getProperty(key,value);
 	}
 
-	void Object::set_dialog(Gtk::Window &window) const {
-		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Window.html
-		window.set_title(title.get_text());
-		if(icon && *icon) {
-			window.set_icon_name(icon);
-		}
-	}
-
-	*/
 
  }
 

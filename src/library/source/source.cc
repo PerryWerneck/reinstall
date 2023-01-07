@@ -92,7 +92,7 @@
 				// Expand URL based on repository path
 				URL url(object.repository(repository)->url(true));
 				url += expander.c_str();
-				expander = url;
+				expander = url.c_str();
 				expander.expand(object);
 			}
 

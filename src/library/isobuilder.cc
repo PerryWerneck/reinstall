@@ -19,8 +19,8 @@
 
 
  #include <config.h>
- #include <reinstall/actions/kernel.h>
- #include <reinstall/actions/initrd.h>
+ #include <reinstall/sources/kernel.h>
+ #include <reinstall/sources/initrd.h>
  #include <reinstall/actions/isobuilder.h>
  #include <udjat/tools/subprocess.h>
  #include <udjat/tools/string.h>

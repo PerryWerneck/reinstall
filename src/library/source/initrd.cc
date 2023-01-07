@@ -23,10 +23,16 @@
  #include <reinstall/sources/initrd.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
+ #include <iostream>
+ #include <udjat/tools/logger.h>
+
+ using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
-	InitRD::InitRD(const pugi::xml_node &node, const char *defpath) : Source(node,Source::InitRD,"/boot/x86_64/loader/initrd",defpath) {
+	InitRD::InitRD(const pugi::xml_node &node, const char *defpath) : Source(node,Source::InitRD,"/boot/x86_64/loader/initrd","${initrd-file}") {
+		debug("Source for '",name(),"' will be ",url);
 		if(!(message && *message)) {
 			message = _("Getting install loader");
 		}

@@ -23,10 +23,16 @@
  #include <reinstall/sources/kernel.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
+ #include <iostream>
+ #include <udjat/tools/logger.h>
+
+ using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
-	Kernel::Kernel(const pugi::xml_node &node, const char *defpath) : Source(node,Source::Kernel,"/boot/x86_64/loader/linux",defpath) {
+	Kernel::Kernel(const pugi::xml_node &node, const char *defpath) : Source(node,Source::Kernel,"/boot/x86_64/loader/linux","${kernel-file}") {
+		debug("Source for '",name(),"' will be ",url);
 		if(!(message && *message)) {
 			message = _("Getting installation kernel");
 		}

@@ -19,10 +19,11 @@
 			* slp-scope-list: A pointer to a comma separated list of scope names.
 			* slp-filter: A query formulated of attribute pattern matching expressions in the form of an LDAPv3 search filter.
 			* slp-url: The URL for the kernel parameter when SLP is available.
-			* Repository layout (apache/MirrorCache).
+			* Repository layout (apache/MirrorCache).		
 		
-		
+		http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64
 		https://download.opensuse.org/distribution/leap/15.4/repo/oss
+		
 	-->
 	<repository name='install' url='http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64' 
 		slp-service-type='service:install.suse' 
@@ -30,18 +31,15 @@
 		slp-filter='' 
 		slp-allow-local='no' 
 		slp-kernel-parameter='slp:/'
-		layout='apache' />
+		layout='MirrorCache' />
 
-	<!-- Path for the installation kernel (Full URL or path from repository -->
+	<!-- driver-installation-disk url='http://localhost/updates.dud' path='${boot-dir}/updates.dud' allow-remote='yes' / -->	
+
+	<!-- Path for the installation kernel (Full URL or repository path) -->
 	<kernel url='/boot/x86_64/loader/linux' repository='install' />
 
-	<!-- Path for the installation init (Full URL or path from repository -->
+	<!-- Path for the installation init (Full URL or repository path) -->
 	<init url='/boot/x86_64/loader/initrd' repository='install' />
-
-	<!-- driver-installation-disk url='http://localhost/updates.dud' path='boot/updates.dud' / -->	
-
-	<source name='boot' url='/boot/x86_64/' repository='install' />
-	<source name='efi' url='/EFI/' repository='install' />
 
 	<kernel-parameter name='splash' value='silent' /> 
 	<kernel-parameter name='lang' value='pt_BR' />
@@ -49,14 +47,8 @@
 	<kernel-parameter name='noshell' value='1' /> 
 	<kernel-parameter name='insecure' value='1' /> 
 	<kernel-parameter name='self_update' value='0' />
-	<kernel-parameter name='install' url='' repository='install' />
+	<kernel-parameter name='install' repository='install' />
 
-	<!-- Replace every 'grub.cfg' file with template -->
-	<template name='grub.cfg' url='file://./templates/grub.cfg' />
-	
-	<!-- Replace every 'isolinux.cfg' file with template -->
-	<template name='isolinux.cfg' url='file://./templates/isolinux.cfg' />
-	
 	<!-- Image post processing -->
 	<!-- image-post name='iso-hybrid' cmdline='/usr/bin/isohybrid -u ${devname}' / -->
 	
@@ -67,11 +59,21 @@
  		<attribute name='sub-title' value='A brand new way of building openSUSE and a new type of a hybrid Linux distribution' />
  		<attribute name='help' value='https://get.opensuse.org/leap/15.4/' />
  		
+ 		<!-- 
+ 		
+ 			Local installer:
+ 			
+ 				Download kernel and initrd from net install image, adding to grub2 menu and set them to activate on next boot.
+ 				This allow reinstall of the workstation without use of any external midia.
+ 		
+ 		-->
  		<local-installer name='reinstall-local' default='yes'>
 
 	 		<attribute name='title' value='Reinstall this workstation'/>
 	 		<attribute name='sub-title' value='Do a complete network based reinstall on this workstation withot any external boot device' />
 		
+			<template name='grub-config' url='file://${template-dir}/grub2' path='${grub-conf}/90_reinstall' />
+
 		</local-installer>
  		
  		<remote-installer name='reinstall-usb' default='no'>
@@ -79,6 +81,16 @@
 	 		<attribute name='title' value='Build a simple network install image'/>
 	 		<attribute name='sub-title' value='Build an small usb based boot device for network install' />
 
+			<!-- Replace every 'grub.cfg' file with template -->
+			<template name='grub.cfg' url='file://${template-dir}/grub.cfg' />
+			
+			<!-- Replace every 'isolinux.cfg' file with template -->
+			<template name='isolinux.cfg' url='file://${template-dir}/isolinux.cfg' />
+
+			<!-- Files to copy to ISO image -->
+			<source name='boot' url='/boot/x86_64/' repository='install' />
+			<source name='efi' url='/EFI/' repository='install' />
+			
 			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
 			<dialog name='confirmation' icon='dialog-question' message='Do you confirm?'>
 				This is the secondary text on confirmation message.
@@ -90,9 +102,6 @@
 
 		</remote-installer>
 		
-		
-		<!-- http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Current.iso -->
-		<!-- http://download.opensuse.net.br/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Media.iso -->
 		<iso-writer name='netinstall' default='no' url='http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Current.iso' cache='yes'>
 	 		<attribute name='title' value='Create USB drive for network install' />
 	 		<attribute name='sub-title' value='This will download and write the OpenSUSE network install' />

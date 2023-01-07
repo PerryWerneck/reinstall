@@ -37,7 +37,7 @@
 
  namespace Reinstall {
 
-	Action::Template::Template(const pugi::xml_node &node) : name(Quark(node,"name").c_str()), url(Quark(node,"url").c_str()) {
+	Action::Template::Template(const pugi::xml_node &node) : Template(Quark{node,"name"}.c_str(), Quark{node,"url"}.c_str()) {
 	}
 
 	Action::Template::~Template() {
@@ -55,7 +55,7 @@
 		}
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		auto worker = Udjat::Protocol::WorkerFactory(this->url);
+		auto worker = Udjat::Protocol::WorkerFactory(String{this->url}.expand(object).c_str());
 
 		progress.set_url(worker->url().c_str());
 		Udjat::String contents = worker->get([&progress](double current, double total){

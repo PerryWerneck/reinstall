@@ -24,11 +24,12 @@
  #include <stdexcept>
  #include <reinstall/userinterface.h>
  #include <reinstall/group.h>
+ #include <reinstall/builder.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
- #include <reinstall/actions/kernel.h>
- #include <reinstall/actions/initrd.h>
+ #include <reinstall/sources/kernel.h>
+ #include <reinstall/sources/initrd.h>
 
  /*
 
@@ -58,11 +59,7 @@
 
 					// Get URL for installation kernel.
 					if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
-						auto source = make_shared<Reinstall::Kernel>(node);
-						if(!(source->filename && source->filename[0])) {
-							source->filename = "${boot}/kernel.install";
-						}
-						push_back(source);
+						push_back(make_shared<Reinstall::Kernel>(node));
 						return true;
 					})) {
 						throw runtime_error(_("Missing required entry <kernel> with the URL for installation kernel"));
@@ -70,19 +67,68 @@
 
 					// Get URL for installation init.
 					if(!scan(node,"init",[this](const pugi::xml_node &node) {
-						auto source = make_shared<Reinstall::InitRD>(node);
-						if(!(source->filename && source->filename[0])) {
-							source->filename = "${boot}/initrd.install";
-						}
-						push_back(source);
+						push_back(make_shared<Reinstall::InitRD>(node));
 						return true;
 					})) {
 						throw runtime_error(_("Missing required entry <init> with the URL for the linuxrc program"));
 					}
 
+					debug("sources.size=",sources.size());
+
+				}
+
+				std::shared_ptr<Reinstall::Builder> BuilderFactory() override {
+
+					class Builder : public Reinstall::Builder {
+					public:
+						Builder() = default;
+
+						void pre(const Reinstall::Action &action) override {
+						}
+
+						void apply(Reinstall::Source &source) override {
+
+							debug("--------------------------------------------------------");
+							debug("url=",source.url);
+							debug("path=",source.path);
+							//debug("filename=",source.filename);
+
+//		const char *url = nullptr;			///< @brief The file URL.
+//		const char *repository = nullptr;	///< @brief Repository name.
+//		const char *path = nullptr;			///< @brief The path inside the image.
+//		const char *message = nullptr;		///< @brief User message while downloading source.
+//		const char *filename = nullptr;		///< @brief Local filename.
+
+							Reinstall::Builder::apply(source);
+						}
+
+						void build(const Reinstall::Action &action) override {
+						}
+
+						void post(const Reinstall::Action &action) override {
+						}
+
+						std::shared_ptr<Reinstall::Writer> burn(std::shared_ptr<Reinstall::Writer> writer) override {
+
+							return writer;
+						}
+
+
+					};
+
+					return(make_shared<Builder>());
+
 				}
 
 				bool getProperty(const char *key, std::string &value) const noexcept override {
+
+					debug("Searching for '",key,"' in ",name());
+
+					if(strcasecmp(key,"boot-dir") == 0) {
+						// TODO: Use path relative to boot partition
+						value = "/tmp";
+						return true;
+					}
 
 					if(strcasecmp(key,"install-enabled") == 0) {
 						value = "1";
@@ -90,10 +136,38 @@
 					}
 
 					if(strcasecmp(key,"kernel-path") == 0) {
+						// TODO: Use path relative to boot partition
+						value = "/boot/kernel." PACKAGE_NAME;
+						debug(key,"=",value);
 						return true;
 					}
 
 					if(strcasecmp(key,"initrd-path") == 0) {
+						// TODO: Use path relative to boot partition
+						value = "/boot/initrd." PACKAGE_NAME;
+						debug(key,"=",value);
+						return true;
+					}
+
+					if(strcasecmp(key,"kernel-file") == 0) {
+#ifdef DEBUG
+						value = "/tmp/kernel." PACKAGE_NAME;
+#else
+						// TODO: Detect boot path ( /proc/cmdline? )
+						value = "/boot/kernel." PACKAGE_NAME;
+#endif // DEBUG
+						debug(key,"=",value);
+						return true;
+					}
+
+					if(strcasecmp(key,"initrd-file") == 0) {
+#ifdef DEBUG
+						value = "/tmp/initrd." PACKAGE_NAME;
+#else
+						// TODO: Detect boot path ( /proc/cmdline? )
+						value = "/boot/initrd." PACKAGE_NAME;
+#endif // DEBUG
+						debug(key,"=",value);
 						return true;
 					}
 
