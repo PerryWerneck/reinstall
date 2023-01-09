@@ -28,6 +28,7 @@
 
 	class UDJAT_API Builder {
 	protected:
+		const char *name = "builder";
 
 	public:
 
@@ -37,8 +38,9 @@
 		/// @brief Step 1, initialize image (before downloads).
 		virtual void pre(const Action &action) = 0;
 
-		/// @brief Step 2, insert downloaded files.
-		virtual void apply(Source &source);
+		/// @brief Step 2, insert source, download it if necessary.
+		/// @return true if source was downloaded.
+		virtual bool apply(Source &source);
 
 		/// @brief Step 3, build (after downloads).
 		virtual void build(const Action &action) = 0;

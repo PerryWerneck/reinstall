@@ -71,9 +71,9 @@
 	}
 
 	Source::~Source() {
-		if(!tempfilename.empty()) {
-			if(remove(tempfilename.c_str()) != 0) {
-				error() << "Error removing '" << tempfilename << "'" << endl;
+		if(!filenames.temp.empty()) {
+			if(remove(filenames.temp.c_str()) != 0) {
+				error() << "Unable to remove '" << filenames.temp << "': " << strerror(errno) << endl;
 			}
 		}
 	}
@@ -113,12 +113,8 @@
 		}
 
 		// Expand filename.
-		if(this->filename && this->filename[0]) {
-			expander = this->filename;
-			expander.expand(object);
-			if(strcmp(expander.c_str(),this->filename)) {
-				this->filename = Quark{expander}.c_str();
-			}
+		if(!filenames.defined.empty()) {
+			filenames.defined.expand(object);
 		}
 
 	}

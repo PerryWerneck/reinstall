@@ -408,6 +408,7 @@
 		size_t current = 0;
 		for_each([this,&current,total,&dialog,builder](Source &source) {
 			dialog.set_count(++current,total);
+			debug("Processing source '",source.name(),"'");
 			builder->apply(source);
 		});
 		dialog.set_count(0,0);

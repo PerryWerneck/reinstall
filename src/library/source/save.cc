@@ -31,7 +31,7 @@
 
  namespace Reinstall {
 
-	string Source::save() {
+	void Source::save() {
 
 		debug("source-name=",name()," url=",this->url);
 
@@ -45,6 +45,12 @@
 			throw runtime_error(_("Unable to get source with relative URL"));
 		}
 
+		if(!filenames.saved.empty()) {
+			// Already downloaded, return
+			warning() << "Already downloaded, ignoring request" << endl;
+			return;
+		}
+
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
 		auto worker = Protocol::WorkerFactory(this->url);
@@ -54,29 +60,27 @@
 		}
 		progress.set_url(worker->url().c_str());
 
-		if(filename) {
+		if(!filenames.defined.empty()) {
 
 			// Download URL to 'filename'
-			worker->save(filename,[&progress](double current, double total){
+			worker->save(filenames.defined.c_str(),[&progress](double current, double total){
 				progress.set_progress(current,total);
 				return true;
 			},true);
 
-			return filename;
+			filenames.saved = filenames.defined;
 
-		} else if(tempfilename.empty()) {
+		} else if(filenames.temp.empty()) {
 
 			// Download to temporary file.
-			tempfilename = worker->save([&progress](double current, double total){
+			filenames.temp = worker->save([&progress](double current, double total){
 				progress.set_progress(current,total);
 				return true;
 			});
 
-			filename = tempfilename.c_str();
+			filenames.saved = filenames.temp;
 
 		}
-
-		return string(filename);
 
 	}
 

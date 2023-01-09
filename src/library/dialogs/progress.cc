@@ -71,9 +71,11 @@
 		}
 
 		void Progress::set_title(const char *title) {
+			debug("title: ",title);
 		}
 
 		void Progress::set_sub_title(const char *sub_title) {
+			debug("sub-title: ",sub_title);
 		}
 
 		void Progress::set_url(const char *url) {

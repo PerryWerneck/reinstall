@@ -20,6 +20,7 @@
  #pragma once
 
  #include <udjat/defs.h>
+ #include <udjat/tools/string.h>
  #include <reinstall/defs.h>
  #include <udjat/tools/object.h>
  #include <pugixml.hpp>
@@ -31,12 +32,22 @@
 	/// @brief File/Folder to copy from repository to image.
 	class UDJAT_API Source : public Udjat::NamedObject {
 	private:
-		std::string tempfilename;			///< @brief If not empty, the temporary file name.
-
-	protected:
-		void save(const char *filename);
+		struct {
+			std::string temp;			///< @brief If not empty, the temporary file name.
+			Udjat::String defined;		///< @brief The filename set from xml definition.
+			std::string saved;			///< @brief Tem path for saved file (empty if not downloaded).
+		} filenames;
 
 	public:
+
+		/// @brief Get cached file name.
+		inline const char * local_file() const noexcept {
+			return filenames.saved.c_str();
+		}
+
+		inline void local_file(const char *filename) noexcept {
+			filenames.saved = filename;
+		}
 
 		enum Type {
 			Common,	///< @brief Common source (file or folder).
@@ -49,7 +60,7 @@
 		const char *repository = nullptr;	///< @brief Repository name.
 		const char *path = nullptr;			///< @brief The path inside the image.
 		const char *message = nullptr;		///< @brief User message while downloading source.
-		const char *filename = nullptr;		///< @brief Local filename.
+		//const char *filename = nullptr;		///< @brief Local filename.
 
 		/// @brief Create a simple source.
 		/// @param url Default URL.
@@ -84,9 +95,8 @@
 		/// @param action The current action.
 		void set(const Reinstall::Action &object);
 
-		/// @brief Download file.
-		/// @return Filename.
-		virtual std::string save();
+		/// @brief Download file, update filename.
+		virtual void save();
 
 		/// @brief Get folders contents.
 		/// @param action The current action.

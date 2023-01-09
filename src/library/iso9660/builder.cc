@@ -117,27 +117,13 @@
 
 	}
 
-	void iso9660::Builder::apply(Source &source) {
+	bool iso9660::Builder::apply(Source &source) {
 
-		if(!(source.path && *source.path)) {
-			// No local path, ignore it.
-			return;
+		debug("Download starting");
+		if(!Reinstall::Builder::apply(source)) {
+			return false;
 		}
-
-		// Download and apply files.
-		string filename;
-		if(source.filename) {
-			filename = source.filename;
-		}
-
-		Logger::String{source.url," -> ",source.path}.trace("iso9660");
-
-		if(filename.empty()) {
-
-			// No local filename, download the file to get one.
-			filename = source.save();
-
-		}
+		debug("Download complete");
 
 		int rc = 0;
 
@@ -154,7 +140,7 @@
 				image,
 				getIsoDir(image,string(source.path,pos - source.path).c_str()),
 				pos+1,
-				filename.c_str(),
+				source.local_file(),
 				NULL
 			);
 
@@ -165,7 +151,7 @@
 				image,
 				iso_image_get_root(image),
 				source.path,
-				filename.c_str(),
+				source.local_file(),
 				NULL
 			);
 
@@ -175,6 +161,8 @@
 			cerr << "iso9660\tError '" << iso_error_to_msg(rc) << "' adding node" << endl;
 			throw runtime_error(iso_error_to_msg(rc));
 		}
+
+		return true;
 
 	}
 

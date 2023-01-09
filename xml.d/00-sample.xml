@@ -31,7 +31,7 @@
 		slp-filter='' 
 		slp-allow-local='no' 
 		slp-kernel-parameter='slp:/'
-		layout='MirrorCache' />
+		layout='apache' />
 
 	<!-- driver-installation-disk url='http://localhost/updates.dud' path='${boot-dir}/updates.dud' allow-remote='yes' / -->	
 

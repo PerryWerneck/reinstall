@@ -39,7 +39,7 @@
 			IsoWriteOpts *opts;
 
 		protected:
-			void apply(Source &source) override;
+			bool apply(Source &source) override;
 
 		public:
 

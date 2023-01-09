@@ -69,13 +69,14 @@
 		<Unit filename="../modules/netinstall/init.cc" />
 		<Unit filename="../modules/netinstall/private.h" />
 		<Unit filename="action/action.cc" />
+		<Unit filename="action/template.cc" />
 		<Unit filename="controller.cc" />
+		<Unit filename="dialogs/button.cc" />
 		<Unit filename="dialogs/progress.cc" />
 		<Unit filename="dialogs/taskrunner.cc" />
 		<Unit filename="dialogs/window.cc" />
 		<Unit filename="group.cc" />
 		<Unit filename="iso9660/builder.cc" />
-		<Unit filename="iso9660/worker.cc" />
 		<Unit filename="isobuilder.cc" />
 		<Unit filename="kernelparameter.cc" />
 		<Unit filename="object.cc" />

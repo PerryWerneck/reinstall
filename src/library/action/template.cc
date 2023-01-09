@@ -101,9 +101,9 @@
 
 		Logger::String{
 			"Replacing file '", source.path, "' with '", name, "' template"
-		}.trace("templates");
+		}.trace("template");
 
-		source.filename = this->filename.c_str();
+		source.local_file(this->filename.c_str());
 
 	}
 

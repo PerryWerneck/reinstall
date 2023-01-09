@@ -228,7 +228,7 @@
 					Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Adding el-torito boot image"));
 
 					// Search to confirm presence of the boot_image.
-					const char *filename = action->source(action->eltorito.boot_image)->filename;
+					const char *filename = action->source(action->eltorito.boot_image)->local_file();
 					if(!(filename && *filename)) {
 						throw runtime_error(_("Unexpected filename on el-torito boot image"));
 					}
@@ -247,13 +247,14 @@
 					Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Adding EFI boot image"));
 
 					auto source = action->source(action->efi.boot_image);
-					if(!(source->filename && *source->filename)) {
+					const char *filename = source->local_file();
+					if(!filename[0]) {
 						throw runtime_error(_("Unexpected filename on EFI boot image"));
 					}
 
 					// Apply templates on EFI boot image.
 					{
-						Disk::Image disk(source->filename);
+						Disk::Image disk(filename);
 
 						for(auto tmpl : action->templates) {
 
@@ -272,11 +273,10 @@
 					}
 
 					// Add EFI boot image
-					set_efi_boot_image(source->filename);
+					set_efi_boot_image(filename);
 
 					cout << "isobuilder\tAdding " << source->path << " as boot image" << endl;
 					add_boot_image(source->path,0xEF);
-
 
 				}
 
