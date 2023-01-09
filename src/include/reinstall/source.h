@@ -31,23 +31,13 @@
 
 	/// @brief File/Folder to copy from repository to image.
 	class UDJAT_API Source : public Udjat::NamedObject {
-	private:
+	protected:
 		struct {
 			std::string temp;			///< @brief If not empty, the temporary file name.
-			Udjat::String defined;		///< @brief The filename set from xml definition.
-			std::string saved;			///< @brief Tem path for saved file (empty if not downloaded).
+			std::string saved;			///< @brief The filename used to download.
 		} filenames;
 
 	public:
-
-		/// @brief Get cached file name.
-		inline const char * local_file() const noexcept {
-			return filenames.saved.c_str();
-		}
-
-		inline void local_file(const char *filename) noexcept {
-			filenames.saved = filename;
-		}
 
 		enum Type {
 			Common,	///< @brief Common source (file or folder).
@@ -60,11 +50,10 @@
 		const char *repository = nullptr;	///< @brief Repository name.
 		const char *path = nullptr;			///< @brief The path inside the image.
 		const char *message = nullptr;		///< @brief User message while downloading source.
-		//const char *filename = nullptr;		///< @brief Local filename.
 
 		/// @brief Create a simple source.
 		/// @param url Default URL.
-		/// @param defpath path.
+		/// @param path The default image path.
 		Source(const char *name, const char *url, const char *path);
 
 		/// @brief Create new file source.
@@ -74,6 +63,18 @@
 		Source(const pugi::xml_node &node, const Type type=Common, const char *url="", const char *defpath="");
 
 		virtual ~Source();
+
+		inline bool saved() const noexcept {
+			return !filenames.saved.empty();
+		}
+
+		inline const char *filename() const noexcept {
+			return filenames.saved.c_str();
+		}
+
+		inline void set_filename(const char *filename) noexcept {
+			filenames.saved = filename;
+		}
 
 		inline bool operator< (const Source &b) const noexcept {
 			return strcasecmp(path,b.path) < 0;
@@ -95,8 +96,11 @@
 		/// @param action The current action.
 		void set(const Reinstall::Action &object);
 
-		/// @brief Download file, update filename.
+		/// @brief Download to temporary file.
 		virtual void save();
+
+		/// @brief Download to defined file.
+		void save(const char *filename);
 
 		/// @brief Get folders contents.
 		/// @param action The current action.

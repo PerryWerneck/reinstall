@@ -45,13 +45,15 @@
 			}
 		}
 
-		std::string save() override {
+		void save() override {
 
-			if(cache) {
-				this->filename = Quark{Udjat::Application::CacheDir().build_filename(url)}.c_str();
+			if(this->filenames.saved.empty()) {
+				if(cache) {
+					this->filenames.saved = Udjat::Application::CacheDir().build_filename(url);
+				}
+				Reinstall::Source::save();
 			}
 
-			return Reinstall::Source::save();
 		}
 
 	};

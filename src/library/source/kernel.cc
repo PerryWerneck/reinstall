@@ -31,7 +31,7 @@
 
  namespace Reinstall {
 
-	Kernel::Kernel(const pugi::xml_node &node, const char *defpath) : Source(node,Source::Kernel,"/boot/x86_64/loader/linux","${kernel-file}") {
+	Kernel::Kernel(const pugi::xml_node &node) : Source(node,Source::Kernel,"/boot/x86_64/loader/linux","${kernel-file}") {
 		debug("Source for '",name(),"' will be ",url);
 		if(!(message && *message)) {
 			message = _("Getting installation kernel");

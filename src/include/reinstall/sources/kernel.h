@@ -28,7 +28,7 @@
 	/// @brief The source for the installation kernel;
 	class UDJAT_API Kernel : public Source {
 	public:
-		Kernel(const pugi::xml_node &node, const char *defpath = "");
+		Kernel(const pugi::xml_node &node);
 
 	};
 

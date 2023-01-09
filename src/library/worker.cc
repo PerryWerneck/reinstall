@@ -44,13 +44,6 @@
 			return false;
 		}
 
-		// Download and apply files.
-		Logger::String{source.url," -> ",source.path}.trace(name);
-
-		if(!source.local_file()[0]) {
-			source.save();
-		}
-
 		return true;
 
 	}

@@ -28,6 +28,7 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
+ #include <reinstall/source.h>
  #include <reinstall/sources/kernel.h>
  #include <reinstall/sources/initrd.h>
 
@@ -59,7 +60,8 @@
 
 					// Get URL for installation kernel.
 					if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
-						push_back(make_shared<Reinstall::Kernel>(node));
+						auto source = make_shared<Reinstall::Kernel>(node);
+						push_back(source);
 						return true;
 					})) {
 						throw runtime_error(_("Missing required entry <kernel> with the URL for installation kernel"));
@@ -67,7 +69,8 @@
 
 					// Get URL for installation init.
 					if(!scan(node,"init",[this](const pugi::xml_node &node) {
-						push_back(make_shared<Reinstall::InitRD>(node));
+						auto source = make_shared<Reinstall::InitRD>(node);
+						push_back(source);
 						return true;
 					})) {
 						throw runtime_error(_("Missing required entry <init> with the URL for the linuxrc program"));
@@ -86,20 +89,16 @@
 						void pre(const Reinstall::Action &action) override {
 						}
 
-						void apply(Reinstall::Source &source) override {
+						bool apply(Reinstall::Source &source) override {
 
-							debug("--------------------------------------------------------");
-							debug("url=",source.url);
-							debug("path=",source.path);
-							//debug("filename=",source.filename);
+							if(!Reinstall::Builder::apply(source)) {
+								return false;
+							}
 
-//		const char *url = nullptr;			///< @brief The file URL.
-//		const char *repository = nullptr;	///< @brief Repository name.
-//		const char *path = nullptr;			///< @brief The path inside the image.
-//		const char *message = nullptr;		///< @brief User message while downloading source.
-//		const char *filename = nullptr;		///< @brief Local filename.
+							source.save(source.path);
 
-							Reinstall::Builder::apply(source);
+							return true;
+
 						}
 
 						void build(const Reinstall::Action &action) override {

@@ -31,9 +31,12 @@
 
  namespace Reinstall {
 
-	void Source::save() {
+ 	void Source::save(const char *filename) {
 
-		debug("source-name=",name()," url=",this->url);
+		if(!filenames.saved.empty()) {
+			warning() << "Already downloaded" << endl;
+			return;
+		}
 
 		if(!this->url[0]) {
 			error() << "Cant save source with empty URL" << endl;
@@ -45,10 +48,39 @@
 			throw runtime_error(_("Unable to get source with relative URL"));
 		}
 
+ 		filenames.saved = filename;
+
+		Dialog::Progress &progress = Dialog::Progress::getInstance();
+
+		auto worker = Protocol::WorkerFactory(this->url);
+
+		if(message && *message) {
+			progress.set_sub_title(message);
+		}
+		progress.set_url(worker->url().c_str());
+
+		worker->save(filename,[&progress](double current, double total){
+			progress.set_progress(current,total);
+			return true;
+		},true);
+
+ 	}
+
+	void Source::save() {
+
 		if(!filenames.saved.empty()) {
-			// Already downloaded, return
-			warning() << "Already downloaded, ignoring request" << endl;
+			warning() << "Already downloaded" << endl;
 			return;
+		}
+
+		if(!this->url[0]) {
+			error() << "Cant save source with empty URL" << endl;
+			throw runtime_error(_("Unable to get source with an empty URL"));
+		}
+
+		if(this->url[0] == '/') {
+			error() << "Cant save source with relative URL '" << this->url << "'" << endl;
+			throw runtime_error(_("Unable to get source with relative URL"));
 		}
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
@@ -60,27 +92,13 @@
 		}
 		progress.set_url(worker->url().c_str());
 
-		if(!filenames.defined.empty()) {
+		// Download to temporary file.
+		filenames.temp = worker->save([&progress](double current, double total){
+			progress.set_progress(current,total);
+			return true;
+		});
 
-			// Download URL to 'filename'
-			worker->save(filenames.defined.c_str(),[&progress](double current, double total){
-				progress.set_progress(current,total);
-				return true;
-			},true);
-
-			filenames.saved = filenames.defined;
-
-		} else if(filenames.temp.empty()) {
-
-			// Download to temporary file.
-			filenames.temp = worker->save([&progress](double current, double total){
-				progress.set_progress(current,total);
-				return true;
-			});
-
-			filenames.saved = filenames.temp;
-
-		}
+		filenames.saved = filenames.temp;
 
 	}
 

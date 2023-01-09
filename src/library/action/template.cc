@@ -103,7 +103,7 @@
 			"Replacing file '", source.path, "' with '", name, "' template"
 		}.trace("template");
 
-		source.local_file(this->filename.c_str());
+		source.set_filename(this->filename.c_str());
 
 	}
 

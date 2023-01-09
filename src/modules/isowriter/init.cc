@@ -101,19 +101,24 @@
 						void pre(const Reinstall::Action &action) override {
 						}
 
-						void apply(Reinstall::Source &source) override {
+						bool apply(Reinstall::Source &source) override {
 
 							if(fd > 0) {
 								throw runtime_error(_("More sources than module expects"));
 							}
 
-							fd = ::open(source.save().c_str(),O_RDONLY);
+							if(!Reinstall::Builder::apply(source)) {
+								return false;
+							}
+
+							fd = ::open(source.filename(),O_RDONLY);
 							if(fd < 0) {
 								throw system_error(errno, system_category(), _("Cant access downloaded image"));
 							}
 
-							Logger::String{"ISO File is '",source.filename,"'"}.write(Logger::Trace,"isowriter");
+							Logger::String{"ISO File is '",source.filename(),"'"}.write(Logger::Trace,"isowriter");
 
+							return true;
 						}
 
 						void build(const Reinstall::Action &action) override {

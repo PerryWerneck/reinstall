@@ -112,11 +112,6 @@
 			}
 		}
 
-		// Expand filename.
-		if(!filenames.defined.empty()) {
-			filenames.defined.expand(object);
-		}
-
 	}
 
  }

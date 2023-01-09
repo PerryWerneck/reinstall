@@ -28,7 +28,7 @@
 	/// @brief The linuxrc for the installation.
 	class UDJAT_API InitRD : public Source {
 	public:
-		InitRD(const pugi::xml_node &node, const char *defpath = "");
+		InitRD(const pugi::xml_node &node);
 
 	};
 

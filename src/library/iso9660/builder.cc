@@ -27,6 +27,7 @@
  #include <udjat/tools/configuration.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/url.h>
 
  #include <sys/stat.h>
  #include <fcntl.h>
@@ -119,11 +120,34 @@
 
 	bool iso9660::Builder::apply(Source &source) {
 
-		debug("Download starting");
 		if(!Reinstall::Builder::apply(source)) {
 			return false;
 		}
-		debug("Download complete");
+
+		// Download and save to temporary file.
+		if(strncasecmp(source.url,"file://",7)) {
+
+			// It's not file, download it.
+			source.save();
+
+		} else {
+
+			// file:// scheme, is it pointing to an existant file?
+
+			Udjat::URL u{source.url};
+			if(u.test() == 200) {
+
+				// file:// scheme pointing to an existent file, use it.
+				source.set_filename(u.ComponentsFactory().path.c_str());
+
+			} else {
+
+				// The response for 'test()' in a local file should be 200, but, if not try to download it anyway
+				source.warning() << "Test for '" << u << "' failed, downloading" << endl;
+				source.save();
+			}
+
+		}
 
 		int rc = 0;
 
@@ -140,7 +164,7 @@
 				image,
 				getIsoDir(image,string(source.path,pos - source.path).c_str()),
 				pos+1,
-				source.local_file(),
+				source.filename(),
 				NULL
 			);
 
@@ -151,7 +175,7 @@
 				image,
 				iso_image_get_root(image),
 				source.path,
-				source.local_file(),
+				source.filename(),
 				NULL
 			);
 

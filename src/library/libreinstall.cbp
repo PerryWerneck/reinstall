@@ -96,7 +96,6 @@
 		<Unit filename="source/mirrorcache_mirror.cc" />
 		<Unit filename="source/save.cc" />
 		<Unit filename="source/source.cc" />
-		<Unit filename="template.cc" />
 		<Unit filename="testprogram/private.h" />
 		<Unit filename="testprogram/testprogram.cc" />
 		<Unit filename="userinterface.cc" />
