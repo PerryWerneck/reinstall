@@ -75,5 +75,8 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
+/* The product id */
+#undef PRODUCT_ID
+
 /* Version number of package */
 #undef VERSION

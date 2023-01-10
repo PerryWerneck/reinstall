@@ -21,7 +21,7 @@
  #include <private/mainwindow.h>
  #include <udjat/tools/configuration.h>
 
- MainWindow::Logo::Logo() : Gtk::Image{Udjat::Config::Value<std::string>{"system","logo","/usr/share/pixmaps/distribution-logos/square-hicolor.svg"}} {
+ MainWindow::Logo::Logo() : Gtk::Image{Udjat::Config::Value<std::string>{"MainWindow","sidebar-logo","/usr/share/pixmaps/distribution-logos/square-hicolor.svg"}} {
 
 	// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
 	set_hexpand(true);

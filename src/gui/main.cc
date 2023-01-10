@@ -60,9 +60,15 @@
 
 	Udjat::Quark::init(argc,argv);
 	Udjat::Logger::redirect();
+
+#ifdef DEBUG
+	Udjat::Logger::enable(Udjat::Logger::Trace);
+	Udjat::Logger::enable(Udjat::Logger::Debug);
+#endif // DEBUG
+
 	g_log_set_default_handler(g_syslog,NULL);
 
-	auto app = Gtk::Application::create("br.com.bb." PACKAGE_NAME);
+	auto app = Gtk::Application::create(PRODUCT_ID "." PACKAGE_NAME);
 	MainWindow window;
 
 	return app->run(window);

@@ -32,6 +32,7 @@
  #include <udjat/tools/file.h>
  #include <private/widgets.h>
  #include <udjat/module.h>
+ #include <udjat/tools/configuration.h>
  #include <iostream>
 
  using namespace std;
@@ -49,8 +50,11 @@
 		get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
  	}
 
-	set_title(_("System reinstallation"));
+	set_title(Config::Value<string>("MainWindow","title",_("System reinstallation")));
 	set_default_size(800, 600);
+
+	// MainWindow logo
+	set_icon_name(Config::Value<string>("MainWindow","icon-name",PRODUCT_ID "." PACKAGE_NAME));
 
 	// Left box
 	{

@@ -187,6 +187,10 @@ PKG_CHECK_MODULES( [UDJAT], [libudjat], AC_DEFINE(HAVE_UDJAT,,[Do we have udjat?
 AC_SUBST(UDJAT_LIBS)
 AC_SUBST(UDJAT_CFLAGS)
 
+AC_ARG_WITH([product-id], [AS_HELP_STRING([--with-product-id], [Set product id])], [ app_cv_product_id="$withval" ],[ app_cv_product_id="`pkg-config --variable=product_id libudjat`" ])
+AC_SUBST(PRODUCT_ID,$app_cv_product_id)
+AC_DEFINE_UNQUOTED(PRODUCT_ID,"$app_cv_product_id",[The product id])
+
 dnl ---------------------------------------------------------------------------
 dnl Check for GTK
 dnl ---------------------------------------------------------------------------
