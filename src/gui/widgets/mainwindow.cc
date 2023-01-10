@@ -54,7 +54,32 @@
 	set_default_size(800, 600);
 
 	// MainWindow logo
-	set_icon_name(Config::Value<string>("MainWindow","icon-name",PRODUCT_ID "." PACKAGE_NAME));
+	{
+#ifdef DEBUG
+		Config::Value<string> icon{"MainWindow","icon","./icon.svg"};
+#else
+		Config::Value<string> icon{"MainWindow","icon",PRODUCT_ID "." PACKAGE_NAME}
+#endif // DEBUG
+
+		if(access(icon.c_str(), R_OK)) {
+
+			// File not found, try icon name.
+			debug("icon-name=",icon.c_str());
+			set_icon_name(icon);
+			set_default_icon_name(icon);
+
+		} else {
+
+			// File exists, use it.
+			debug("icon-file=",icon.c_str());
+			if(!set_icon_from_file(icon)) {
+				cerr << "MainWindow\tUnable to set icon from '" << icon.c_str() << "'" << endl;
+			}
+
+		}
+
+	}
+
 
 	// Left box
 	{
