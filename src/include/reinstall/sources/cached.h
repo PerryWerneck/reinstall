@@ -46,14 +46,7 @@
 		}
 
 		void save() override {
-
-			if(this->filenames.saved.empty()) {
-				if(cache) {
-					this->filenames.saved = Udjat::Application::CacheDir().build_filename(url);
-				}
-				Reinstall::Source::save();
-			}
-
+			Reinstall::Source::save(Udjat::Application::CacheDir().build_filename(url).c_str());
 		}
 
 	};

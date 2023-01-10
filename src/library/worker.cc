@@ -38,14 +38,7 @@
 	}
 
 	bool Builder::apply(Source &source) {
-
-		if(!(source.path && *source.path)) {
-			// No local path, ignore it.
-			return false;
-		}
-
 		return true;
-
 	}
 
 	//void Builder::pre(Action &action) {

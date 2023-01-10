@@ -111,6 +111,8 @@
 								return false;
 							}
 
+							source.save();
+
 							fd = ::open(source.filename(),O_RDONLY);
 							if(fd < 0) {
 								throw system_error(errno, system_category(), _("Cant access downloaded image"));
