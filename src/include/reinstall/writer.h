@@ -33,9 +33,6 @@
 
 		typedef Reinstall::Writer super;
 
-		Writer(const Reinstall::Action &action);
-		virtual ~Writer();
-
 #ifndef _WIN32
 
 		void write(int fd, const void *buf, size_t count);
@@ -44,17 +41,19 @@
 #endif // _WIN32
 
 	public:
+		Writer(const Reinstall::Action &action);
+		virtual ~Writer();
 
 		/// @brief Open Device for writing
-		virtual void open() = 0;
+		virtual void open();
 
 		/// @brief Write data do device.
-		virtual void write(const void *buf, size_t count) = 0;
+		virtual void write(const void *buf, size_t count);
 
-		virtual void finalize() = 0;
+		virtual void finalize();
 
 		/// @brief Close Device.
-		virtual void close() = 0;
+		virtual void close();
 
 		/// @brief Factory file writer.
 		static std::shared_ptr<Writer> FileWriterFactory(const Reinstall::Action &action, const char *filename);

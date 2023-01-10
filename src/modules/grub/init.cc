@@ -31,10 +31,7 @@
  #include <reinstall/source.h>
  #include <reinstall/sources/kernel.h>
  #include <reinstall/sources/initrd.h>
-
- /*
-
- */
+ #include <reinstall/action.h>
 
  using namespace std;
  using namespace Udjat;
@@ -117,6 +114,10 @@
 
 					return(make_shared<Builder>());
 
+				}
+
+				std::shared_ptr<Reinstall::Writer> WriterFactory() override {
+					return make_shared<Reinstall::Writer>(*this);
 				}
 
 				bool getProperty(const char *key, std::string &value) const noexcept override {

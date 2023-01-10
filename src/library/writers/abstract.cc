@@ -37,6 +37,19 @@
 	Writer::~Writer() {
 	}
 
+	void Writer::open() {
+	}
+
+	void Writer::write(const void UDJAT_UNUSED(*buf), size_t UDJAT_UNUSED(count)) {
+		throw system_error(ENOTSUP,system_category(),"Module is trying to write on dummy writer");
+	}
+
+	void Writer::finalize() {
+	}
+
+	void Writer::close() {
+	}
+
 #ifndef _WIN32
 
 	void Writer::write(int fd, const void *buf, size_t length) {
