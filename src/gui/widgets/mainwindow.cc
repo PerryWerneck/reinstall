@@ -34,11 +34,14 @@
  #include <udjat/module.h>
  #include <udjat/tools/configuration.h>
  #include <iostream>
+ #include <udjat/tools/object.h>
 
  using namespace std;
  using namespace Udjat;
 
- MainWindow::MainWindow() {
+ static const Udjat::ModuleInfo moduleinfo{PACKAGE_NAME " Main window"};
+
+ MainWindow::MainWindow() : Udjat::Factory("MainWindow",moduleinfo) {
 
  	{
 		auto css = Gtk::CssProvider::create();
@@ -50,35 +53,15 @@
 		get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
  	}
 
-	set_title(Config::Value<string>("MainWindow","title",_("System reinstallation")));
+ 	set_title(Config::Value<string>("MainWindow","title",_("System reinstallation")));
 	set_default_size(800, 600);
 
 	// MainWindow logo
-	{
 #ifdef DEBUG
-		Config::Value<string> icon{"MainWindow","icon","./icon.svg"};
+	set_icon(Config::Value<string>{"MainWindow","icon","./icon.svg"}.c_str());
 #else
-		Config::Value<string> icon{"MainWindow","icon",PRODUCT_ID "." PACKAGE_NAME}
+	set_icon(Config::Value<string>{"MainWindow","icon",PRODUCT_ID "." PACKAGE_NAME}.c_str());
 #endif // DEBUG
-
-		if(access(icon.c_str(), R_OK)) {
-
-			// File not found, try icon name.
-			debug("icon-name=",icon.c_str());
-			set_icon_name(icon);
-			set_default_icon_name(icon);
-
-		} else {
-
-			// File exists, use it.
-			debug("icon-file=",icon.c_str());
-			if(!set_icon_from_file(icon)) {
-				cerr << "MainWindow\tUnable to set icon from '" << icon.c_str() << "'" << endl;
-			}
-
-		}
-
-	}
 
 
 	// Left box
@@ -395,4 +378,67 @@
  	});
 
  }
+
+ void MainWindow::set_icon(const char *icon) {
+
+	if(access(icon, R_OK)) {
+
+		// File not found, try icon name.
+		debug("icon-name=",icon);
+		set_icon_name(icon);
+		set_default_icon_name(icon);
+
+	} else {
+
+		// File exists, use it.
+		debug("icon-file=",icon);
+		if(!set_icon_from_file(icon)) {
+			cerr << "MainWindow\tUnable to set icon from '" << icon << "'" << endl;
+		}
+
+	}
+
+ }
+
+ void MainWindow::set_logo(const char *name) {
+ }
+
+ bool MainWindow::push_back(const pugi::xml_node &node) {
+
+	static const struct {
+		const char *name;
+		const std::function<void(MainWindow &hwnd, const char *value)> call;
+	} attributes[] = {
+		{
+			"title",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.set_title(value);
+			}
+		},
+		{
+			"logo",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.set_logo(value);
+			}
+		},
+		{
+			"icon",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.set_icon(value);
+			}
+		}
+	};
+
+	for(auto &attr : attributes) {
+
+		auto &attribute = Udjat::Object::getAttribute(node, attr.name);
+		if(attribute) {
+			attr.call(*this,attribute.as_string());
+		}
+
+	}
+
+	return false;
+ }
+
 

@@ -27,8 +27,9 @@
  #include <private/dialogs.h>
  #include <reinstall/userinterface.h>
  #include <pugixml.hpp>
+ #include <udjat/factory.h>
 
- class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Reinstall::UserInterface {
+ class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Reinstall::UserInterface, private Udjat::Factory {
  private:
 
  	class Logo : public Gtk::Image {
@@ -58,6 +59,12 @@
 	MainWindow();
 	virtual ~MainWindow();
 
+	/// @brief Set window icon.
+	void set_icon(const char *name);
+
+	/// @brief Set logo.
+	void set_logo(const char *name);
+
 	/// @brief Setup progress dialog.
 	void show(Dialog::Progress &dialog);
 
@@ -75,6 +82,9 @@
 
 	/// @brief Construct a wait for task dialog.
 	std::shared_ptr<Reinstall::Dialog::TaskRunner> TaskRunnerFactory(const char *message, bool markup) override;
+
+	/// @brief Parse XML definition.
+	bool push_back(const pugi::xml_node &node) override;
 
  };
 

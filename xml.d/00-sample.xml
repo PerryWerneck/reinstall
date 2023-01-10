@@ -6,6 +6,10 @@
 
 	<!-- HTTP is required for downloading files -->
 	<module name='http' required='yes' />
+	
+	<MainWindow>
+		<attribute name='title' value='Sample reinstall settings' />	
+	</MainWindow>
 
 	<!-- 
 	
