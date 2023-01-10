@@ -25,6 +25,7 @@
  #include <udjat/tools/protocol.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/file.h>
 
  using namespace std;
  using namespace Udjat;
@@ -50,6 +51,13 @@
 
  		filenames.saved = filename;
 
+ 		if(strncasecmp(url,"file://",7) == 0) {
+
+			Udjat::File::copy(Udjat::URL{url}.ComponentsFactory().path.c_str(),filename);
+			return;
+
+ 		}
+
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
 		auto worker = Protocol::WorkerFactory(this->url);
@@ -63,6 +71,7 @@
 			progress.set_progress(current,total);
 			return true;
 		},true);
+
 
  	}
 

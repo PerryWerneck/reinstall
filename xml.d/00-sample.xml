@@ -72,7 +72,7 @@
 	 		<attribute name='title' value='Reinstall this workstation'/>
 	 		<attribute name='sub-title' value='Do a complete network based reinstall on this workstation withot any external boot device' />
 		
-			<template name='grub-config' url='file://${template-dir}/grub2' path='${grub-conf}/90_reinstall' />
+			<template name='grub-config' url='file://${template-dir}/grub2' path='${grub-conf-dir}/90_reinstall' />
 
 		</local-installer>
  		

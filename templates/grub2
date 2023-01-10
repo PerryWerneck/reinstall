@@ -17,41 +17,19 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-REINSTALL_ENABLED="${install-enabled}"
+cat <<EOF
+menuentry '${install-label}'  --class opensuse --class gnu-linux --class gnu --class os {
+    insmod gzio
+    insmod part_gpt
+    insmod btrfs
+    insmod search  
+    insmod part_msdos
+    insmod ext2"
 
-INSTALL_KERNEL_PARAMETERS="${kernel-parameters}"
-INSTALL_KERNEL="${kernel-path}"
-INSTALL_INITRD="${initrd-path}"
-INSTALL_LABEL="${install-label}"
+    linux ${kernel-path} ${kernel-parameters}
+    initrd ${initrd-path}
 
-if [ "${REINSTALL_ENABLED}" != "1" ]; then
-	exit 0
-fi
-
-if [ -z "${KERNEL_PATH}" ]; then
-	exit 0
-fi
-
-if [ -z "${INITRD_PATH}" ]; then
-	exit 0
-fi
-
-if [ -z "${INSTALL_LABEL}" ]; then
-	exit 0
-fi
-
-echo "menuentry '${INSTALL_LABEL}'  --class opensuse --class gnu-linux --class gnu --class os {"
-echo "    insmod gzio"
-echo "    insmod part_gpt"
-echo "    insmod btrfs"
-echo "    insmod search"  
-echo "    insmod part_msdos"
-echo "    insmod ext2"
-echo ""
-echo "    linux ${INSTALL_KERNEL} ${INSTALL_KERNEL_PARAMETERS}"
-echo "    initrd ${INSTALL_INITRD}"
-echo ""
-echo " }"
-
+}
+EOF
 exit 0
 

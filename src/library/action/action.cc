@@ -261,24 +261,6 @@
 
 	}
 
-	void Action::applyTemplates() {
-
-		for(auto tmpl : templates) {
-
-			tmpl->load((Udjat::Object &) *this);
-
-			for(auto source : sources) {
-
-				if(tmpl->test(source->path)) {
-					tmpl->apply(*source);
-				}
-
-			}
-
-		}
-
-	}
-
 	std::shared_ptr<Source> Action::source(const char *path) const {
 		for(auto source : sources) {
 			debug(source->path);
@@ -400,7 +382,46 @@
 
 		// Apply templates.
 		dialog.set_sub_title(_("Checking for templates"));
-		applyTemplates();
+		for(auto tmpl : templates) {
+
+			// Load template
+			tmpl->load((Udjat::Object &) *this);
+
+			// Apply it on sources (if necessary).
+			for(auto source : sources) {
+
+				if(tmpl->test(source->path)) {
+					tmpl->apply(*source);
+				}
+
+			}
+
+			{
+				const char *path = tmpl->get_path();
+				if(path && *path) {
+
+					// Template has filename, update or create source
+					Udjat::String str{path};
+					str.expand(*this);
+
+					debug("Template=",tmpl->c_str()," filename=",tmpl->get_filename());
+					auto source = make_shared<Source>(
+							tmpl->c_str(),
+							(string{"file://"} + tmpl->get_filename()).c_str(),
+							str.c_str()
+					);
+
+					auto it = sources.find(source);
+					if(it != sources.end()) {
+						sources.erase(it);
+					}
+
+					sources.insert(source);
+
+				}
+			}
+
+		}
 
 		// Download files.
 		dialog.set_sub_title(_("Getting required files"));

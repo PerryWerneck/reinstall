@@ -37,7 +37,8 @@
 
  namespace Reinstall {
 
-	Action::Template::Template(const pugi::xml_node &node) : Template(Quark{node,"name"}.c_str(), Quark{node,"url"}.c_str()) {
+	Action::Template::Template(const pugi::xml_node &node)
+		: Template(Quark{node,"name"}.c_str(), Quark{node,"url"}.c_str(), Quark{node,"path"}.c_str()) {
 	}
 
 	Action::Template::~Template() {
@@ -71,17 +72,21 @@
 
 	}
 
-	bool Action::Template::test(const char *path) const noexcept {
+	bool Action::Template::test(const char *isopath) const noexcept {
 
-		if(*name == '/') {
-			return strcmp(name,path) == 0;
+		if(this->path && *this->path) {
+			return false;
 		}
 
-		const char *ptr = strrchr(path,'/');
+		if(*name == '/') {
+			return strcmp(name,isopath) == 0;
+		}
+
+		const char *ptr = strrchr(isopath,'/');
 		if(ptr) {
 			ptr++;
 		} else {
-			ptr = path;
+			ptr = isopath;
 		}
 
 		return strcmp(name,ptr) == 0;

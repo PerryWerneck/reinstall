@@ -81,9 +81,12 @@
 			/// @brief Template file name.
 			std::string filename;
 
+			/// @brief Template path (can be null).
+			const char *path = nullptr;
+
 		public:
 
-			Template(const char *n, const char *u) : name{n}, url{u} {
+			Template(const char *n, const char *u, const char *p = nullptr) : name{n}, url{u}, path{p} {
 			}
 
 			Template(const pugi::xml_node &node);
@@ -93,6 +96,18 @@
 
 			void load(const Udjat::Object &object);
 			void apply(Source &source);
+
+			inline const char * get_path() const noexcept {
+				return path;
+			}
+
+			inline const char * get_filename() const noexcept {
+				return filename.c_str();
+			}
+
+			inline const char * get_url() const noexcept {
+				return url;
+			}
 
 			/// @brief copy loaded template to file.
 			/// @param path Path to filename.
@@ -237,9 +252,6 @@
 
 		/// @brief Load folders.
 		void load();
-
-		/// @brief Apply templates.
-		void applyTemplates();
 
 		/// @brief Return the URL for installation media.
 		virtual const char * install();

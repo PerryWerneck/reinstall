@@ -129,6 +129,15 @@
 						return true;
 					}
 
+					if(strcasecmp(key,"grub-conf-dir") == 0) {
+#ifdef DEBUG
+						value = "/tmp";
+#else
+						value = "/etc/grub.d";
+#endif // DEBUG
+						return true;
+					}
+
 					if(strcasecmp(key,"install-enabled") == 0) {
 						value = "1";
 						return true;
