@@ -416,6 +416,12 @@
 			}
 		},
 		{
+			"sub-title",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.layout.title.set_text(value);
+			}
+		},
+		{
 			"logo",
 			[](MainWindow &hwnd, const char *value){
 				hwnd.set_logo(value);
@@ -438,7 +444,7 @@
 
 	}
 
-	return false;
+	return true;
  }
 
 

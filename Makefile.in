@@ -2,6 +2,7 @@
 #---[ Library configuration ]------------------------------------------------------------
 
 PACKAGE_NAME=@PACKAGE_NAME@
+APPLICATION_ID=@PRODUCT_ID@.@PACKAGE_NAME@
 LIBRARY_NAME="lib@PACKAGE_NAME@"
 SONAME=@SONAME@
 
