@@ -130,7 +130,7 @@
 
  MainWindow::~MainWindow() {
  	Reinstall::Controller::getInstance().clear();
-	Udjat::Application::finalize();
+ 	Application::finalize();
  }
 
  void MainWindow::on_show() {
@@ -150,23 +150,54 @@
 
 		Udjat::ThreadPool::getInstance().push([&dialog](){
 
-			// First get controller to construct the factories.
-			Reinstall::Controller::getInstance();
+			int response_id = GTK_RESPONSE_OK;
 
-			// Load application modules
+			try {
+
+				// First get controller to construct the factories.
+				Reinstall::Controller::getInstance();
+
 #ifdef DEBUG
-			Udjat::Module::load(".bin/Debug/modules");
+				Udjat::Module::load(Udjat::File::Path(".bin/Debug/modules"));
+				Udjat::Application::initialize(Abstract::Agent::RootFactory(),"./xml.d",true);
+#else
+				Udjat::Application::initialize(Abstract::Agent::RootFactory(),nullptr,true);
 #endif // DEBUG
 
-			// Load image definitions.
-			Udjat::Application::setup("./xml.d",true);
+			} catch(const std::exception &e) {
+
+				cerr << e.what() << endl;
+				response_id = GTK_RESPONSE_CANCEL;
+
+			} catch(...) {
+
+				cerr << "Unexpected error loading configuration" << endl;
+				response_id = GTK_RESPONSE_CANCEL;
+			}
 
 			// And dismiss dialog.
-			dialog.dismiss();
+			dialog.dismiss(response_id);
 
 		});
 
-		dialog.run();
+		if(dialog.run() != GTK_RESPONSE_OK) {
+			Gtk::MessageDialog dialog_fail{
+				*this,
+				_("Initializatio has failed"),
+				false,
+				Gtk::MESSAGE_ERROR,
+				Gtk::BUTTONS_OK,
+				true
+			};
+
+			dialog_fail.set_default_size(500, -1);
+			dialog_fail.set_title("Error");
+			dialog_fail.set_secondary_text("The initialization procedure has failed, the application cant continue");
+			dialog_fail.show();
+			dialog_fail.run();
+			Gtk::Application::get_default()->quit();
+			return;
+		}
 	}
 
 	// TODO: Check for disabled actions.
@@ -403,7 +434,7 @@
  void MainWindow::set_logo(const char *name) {
  }
 
- bool MainWindow::push_back(const pugi::xml_node &node) {
+ bool MainWindow::generic(const pugi::xml_node &node) {
 
 	static const struct {
 		const char *name;

@@ -45,7 +45,7 @@
 		Module() : Udjat::Module("local-installer", moduleinfo), Udjat::Factory("local-installer",moduleinfo) {
 		}
 
-		bool push_back(const pugi::xml_node &node) override {
+		bool generic(const pugi::xml_node &node) override {
 
 			class Action : public Reinstall::Action {
 			private:

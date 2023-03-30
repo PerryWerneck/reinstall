@@ -84,7 +84,7 @@
 	std::shared_ptr<Reinstall::Dialog::TaskRunner> TaskRunnerFactory(const char *message, bool markup) override;
 
 	/// @brief Parse XML definition.
-	bool push_back(const pugi::xml_node &node) override;
+	bool generic(const pugi::xml_node &node) override;
 
  };
 

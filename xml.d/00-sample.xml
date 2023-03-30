@@ -15,15 +15,18 @@
 	
 		URL for the installation repositóry 
 		
-		attributes:
+		Repository attributes:
 		
-			* name: The repository name (install).
-			* URL: The default URL to the repository.
-			* slp-service-type: The service type string, including the authority string (if any) for the request.
-			* slp-scope-list: A pointer to a comma separated list of scope names.
-			* slp-filter: A query formulated of attribute pattern matching expressions in the form of an LDAPv3 search filter.
-			* slp-url: The URL for the kernel parameter when SLP is available.
-			* Repository layout (apache/MirrorCache).		
+			name: 				The repository name (install).
+			URL: 				The default URL to the repository.
+			layout:				The repository layout (apache/MirrorCache).		
+
+		Optional attributes for automatic repository detection using SLP (http://www.openslp.org/):
+		
+			slp-service-type:	The service type string, including the authority string (if any) for the request.
+			slp-scope-list:		A pointer to a comma separated list of scope names.
+			slp-filter:			A query formulated of attribute pattern matching expressions in the form of an LDAPv3 search filter.
+			slp-url:			The URL for the kernel parameter when SLP is available.
 		
 		http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64
 		https://download.opensuse.org/distribution/leap/15.4/repo/oss
@@ -51,11 +54,10 @@
 	<kernel-parameter name='noshell' value='1' /> 
 	<kernel-parameter name='insecure' value='1' /> 
 	<kernel-parameter name='self_update' value='0' />
+	
+	<!-- Setup the kernel parameter based on repository 'install' settings, can be an URL or 'slp:/' for automatic detection -->
 	<kernel-parameter name='install' repository='install' />
 
-	<!-- Image post processing -->
-	<!-- image-post name='iso-hybrid' cmdline='/usr/bin/isohybrid -u ${devname}' / -->
-	
 	<group name='OpenSUSE'>
 
 		<!-- Nome que aparece na opção de menu -->
@@ -76,7 +78,27 @@
 	 		<attribute name='title' value='Reinstall this workstation'/>
 	 		<attribute name='sub-title' value='Do a complete network based reinstall on this workstation withot any external boot device' />
 		
+			<!-- Save configuration for the new boot option -->
 			<template name='grub-config' url='file://${template-dir}/grub2' path='${grub-conf-dir}/90_reinstall' />
+			
+			<!-- Add new boot option to grub.cfg -->
+			<script name='mkconfig' type='post' cmdline='echo /usr/sbin/grub2-mkconfig -o /boot/grub2/grub.cfg' />
+			
+			<!-- Set the new boot option as default -->
+			<script name='setdefault' type='post' cmdline='echo /usr/sbin/grub2-set-default "${install-label}"' />
+			
+			<!-- Set the new boot option as active for next reboot -->
+			<script name='reboot' type='post' cmdline='echo /usr/sbin/grub2-reboot "${install-label}"' />
+			
+			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
+			<dialog name='confirmation' icon='dialog-question' message='Do you confirm?'>
+				This is the secondary text on confirmation message.
+			</dialog>
+
+			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
+			<dialog name='success' title='Success message' icon='dialog-information' text='Operation complete' allow-reboot='yes'>
+				This is the secondary text of sucess message.
+			</dialog>
 
 		</local-installer>
  		

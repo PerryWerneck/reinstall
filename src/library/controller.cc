@@ -34,7 +34,7 @@
 		return controller;
 	}
 
-	bool Controller::push_back(const pugi::xml_node &node) {
+	bool Controller::generic(const pugi::xml_node &node) {
 		Abstract::Group::factory(node);
 		return true;
 	}

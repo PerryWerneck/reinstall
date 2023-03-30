@@ -42,7 +42,7 @@
 		Module() : Udjat::Module("remote-installer", moduleinfo), Udjat::Factory("remote-installer",moduleinfo) {
 		}
 
-		bool push_back(const pugi::xml_node &node) override {
+		bool generic(const pugi::xml_node &node) override {
 
 			class Action : public Reinstall::IsoBuilder {
 			private:

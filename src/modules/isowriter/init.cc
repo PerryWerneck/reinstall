@@ -51,7 +51,7 @@
 		Module() : Udjat::Module("IsoWriter", moduleinfo), Udjat::Factory("iso-writer",moduleinfo) {
 		}
 
-		bool push_back(const pugi::xml_node &node) override {
+		bool generic(const pugi::xml_node &node) override {
 
 			/// @brief ISO Writer Action
 			class Action : public Reinstall::Action {

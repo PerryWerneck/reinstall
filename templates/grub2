@@ -26,8 +26,8 @@ menuentry '${install-label}'  --class opensuse --class gnu-linux --class gnu --c
     insmod part_msdos
     insmod ext2"
 
-    linux ${kernel-path} ${kernel-parameters}
-    initrd ${initrd-path}
+    linux ${kernel-fspath} ${kernel-parameters}
+    initrd ${initrd-fspath}
 
 }
 EOF

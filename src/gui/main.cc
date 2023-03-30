@@ -58,7 +58,7 @@
 
  int main(int argc, char* argv[]) {
 
-	Udjat::Quark::init(argc,argv);
+	Udjat::Quark::init();
 	Udjat::Logger::redirect();
 
 #ifdef DEBUG

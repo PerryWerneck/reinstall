@@ -31,6 +31,14 @@
  #include <reinstall/dialogs.h>
  #include <udjat/tools/logger.h>
 
+#ifndef _WIN32
+	#include <limits.h>
+	#include <cstdlib>
+	#include <sys/types.h>
+	#include <sys/stat.h>
+	#include <unistd.h>
+#endif // _WIN32
+
  using namespace std;
  using namespace Udjat;
 
@@ -113,6 +121,55 @@
 		}
 
 	}
+
+#ifndef _WIN32
+	const std::string Source::fspath(const char *path) {
+
+		char buffer[PATH_MAX+1];
+		memset(buffer,0,PATH_MAX+1);
+
+		if(!realpath(path,buffer)) {
+			throw system_error(errno, system_category(),path);
+		}
+
+		// Get source device.
+		struct stat st;
+		dev_t st_dev;
+
+		if(stat(buffer,&st)) {
+			throw system_error(errno, system_category(),buffer);
+		}
+		st_dev = st.st_dev;
+		char *ptr = buffer;
+
+		debug("'",buffer,"' is on device ",((int) st.st_dev));
+
+		while(st_dev == st.st_dev) {
+
+			if(!*buffer) {
+				debug("Mount point for '",path,"' is '/'");
+				return realpath(path,buffer);
+			}
+
+			ptr = strrchr(buffer,'/');
+			if(!ptr) {
+				throw runtime_error("Error parsing path delimiter");
+			}
+			*ptr = 0;
+
+			if(stat((*buffer ? buffer : "/"),&st)) {
+				throw system_error(errno, system_category(),buffer);
+			}
+
+		}
+
+		*ptr = '/';
+
+		debug("Mount point for '",path,"' is '",buffer,"'");
+		return path + strlen(buffer);
+
+	}
+#endif // !_WIN32
 
  }
 

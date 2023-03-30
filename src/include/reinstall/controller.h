@@ -44,7 +44,7 @@
 		/// @brief Factory a new group from XML node.
 		/// @param XML definition for the new element.
 		/// @return true if the node whas inserted.
-		bool push_back(const pugi::xml_node &node) override;
+		bool generic(const pugi::xml_node &node) override;
 
 		/// @brief Navigate from groups.
 		bool for_each(const std::function<bool (std::shared_ptr<Abstract::Group> group)> &call) const;

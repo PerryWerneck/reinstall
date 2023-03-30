@@ -51,6 +51,13 @@
 		const char *path = nullptr;			///< @brief The path inside the image.
 		const char *message = nullptr;		///< @brief User message while downloading source.
 
+#ifndef _WIN32
+		/// @brief Extract mountpoint from path.
+		/// @param path The file path to extract.
+		/// @return String with path without the device mountpoint.
+		static const std::string fspath(const char *path);
+#endif // _WIN32
+
 		/// @brief Create a simple source.
 		/// @param url Default URL.
 		/// @param path The default image path.
