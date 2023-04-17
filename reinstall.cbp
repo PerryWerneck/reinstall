@@ -85,8 +85,8 @@
 		<Unit filename="src/library/kernelparameter.cc" />
 		<Unit filename="src/library/object.cc" />
 		<Unit filename="src/library/os/linux/disk_image.cc" />
-		<Unit filename="src/library/os/linux/libguestfs.cc" />
 		<Unit filename="src/library/os/linux/reboot.cc" />
+		<Unit filename="src/library/os/linux/source.cc" />
 		<Unit filename="src/library/os/linux/usbstorage.cc" />
 		<Unit filename="src/library/parameters.cc" />
 		<Unit filename="src/library/repository/construct.cc" />

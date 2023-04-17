@@ -141,6 +141,9 @@
 				auto source = make_shared<Reinstall::Source>(node);
 				push_back(source);
 
+				// Setup DUD url based on local path.
+				kparms.emplace_back("dud",source->hd_path());
+
 			} else if(node.attribute("url")) {
 
 				// No path, setup only as kernel parameter 'dud=url'.

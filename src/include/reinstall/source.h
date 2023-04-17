@@ -79,6 +79,8 @@
 			return filenames.saved.c_str();
 		}
 
+		const char * hd_path() const;
+
 		inline void set_filename(const char *filename) noexcept {
 			filenames.saved = filename;
 		}
