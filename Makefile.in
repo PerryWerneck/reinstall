@@ -184,14 +184,20 @@ install-%: \
 #---[ Release Targets ]------------------------------------------------------------------
 
 all: \
-	$(BINRLS)/$(PACKAGE_NAME)@DLLEXT@ \
+	$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINRLS)/modules/isowriter@DLLEXT@ \
+	$(BINRLS)/modules/netinstall@DLLEXT@ \
+	$(BINRLS)/modules/grub@DLLEXT@ \
 	locale/$(PACKAGE_NAME).pot
 
 Release: \
-	$(BINRLS)/$(PACKAGE_NAME)@DLLEXT@
+	$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINRLS)/modules/isowriter@DLLEXT@ \
+	$(BINRLS)/modules/netinstall@DLLEXT@ \
+	$(BINRLS)/modules/grub@DLLEXT@
 
 locale/$(PACKAGE_NAME).pot: \
-	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(POTDIR)/$(SRC).pot)
+	$(foreach SRC, $(basename $(LIBRARY_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES) $(GRUB_SOURCES) $(GUI_SOURCES)), $(POTDIR)/$(SRC).pot)
 
 	@rm -f $@
 	@$(MKDIR) $(dir $@)
@@ -199,6 +205,61 @@ locale/$(PACKAGE_NAME).pot: \
 
 locale: \
 	locale/$(PACKAGE_NAME).pot
+
+$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@: \
+	$(foreach SRC, $(basename $(GUI_SOURCES)), $(OBJRLS)/$(SRC).o) \
+	$(BINRLS)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		-o $@ \
+		$^ \
+		-L$(BINRLS) \
+		$(LDFLAGS) \
+		$(LIBS)
+
+$(BINRLS)/modules/isowriter@DLLEXT@: \
+	$(foreach SRC, $(basename $(ISOWRITER_SOURCES)), $(OBJRLS)/$(SRC).o) \
+	$(BINRLS)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		$(DLL_LDFLAGS) \
+		-o $@ \
+		$^ \
+		-L$(BINRLS) \
+		$(LDFLAGS) \
+		$(LIBS)
+
+$(BINRLS)/modules/netinstall@DLLEXT@: \
+	$(foreach SRC, $(basename $(NETINSTALL_SOURCES)), $(OBJRLS)/$(SRC).o) \
+	$(BINRLS)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		$(DLL_LDFLAGS) \
+		-o $@ \
+		$^ \
+		-L$(BINRLS) \
+		$(LDFLAGS) \
+		$(LIBS)
+
+$(BINRLS)/modules/grub@DLLEXT@: \
+	$(foreach SRC, $(basename $(GRUB_SOURCES)), $(OBJRLS)/$(SRC).o) \
+	$(BINRLS)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		$(DLL_LDFLAGS) \
+		-o $@ \
+		$^ \
+		-L$(BINRLS) \
+		$(LDFLAGS) \
+		$(LIBS)
 
 $(BINRLS)/$(SONAME): \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(OBJRLS)/$(SRC).o)
@@ -211,6 +272,7 @@ $(BINRLS)/$(SONAME): \
 		-o $@ \
 		$(LDFLAGS) \
 		$^ \
+		@ISOFS_LIBS@ \
 		$(LIBS)
 
 #---[ Install Targets ]------------------------------------------------------------------

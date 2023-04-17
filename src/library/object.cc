@@ -26,6 +26,7 @@
  #include <reinstall/dialogs.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
+ #include <udjat/tools/application.h>
  #include <iostream>
 
  using namespace std;
@@ -93,7 +94,7 @@
 #ifdef DEBUG
 			value = "./templates";
 #else
-			value = Udjat::Application::DataDir("templates");
+			value = Udjat::Application::DataDir{"templates"};
 #endif // DEBUG
 			return true;
 		}

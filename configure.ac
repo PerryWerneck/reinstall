@@ -36,6 +36,11 @@ AC_LANG([C++])
 
 AC_PATH_TOOL([STRIP], [strip])
 AC_SUBST(STRIP)
+AC_PATH_TOOL([XGETTEXT], [xgettext], [no])
+AC_PATH_TOOL([MSGCAT], [msgcat], [no])
+AC_PATH_TOOL([MSGINIT], [msginit], [no])
+AC_PATH_TOOL([MSGMERGE], [msgmerge], [no])
+AC_PATH_TOOL([MSGFMT], [msgfmt], [no])
 
 PKG_CHECK_EXISTS
 
