@@ -132,6 +132,29 @@
 			return false;
 		});
 
+		// Get driver updates
+		scan(node,"driver-installation-disk",[this](const pugi::xml_node &node) {
+
+			if(node.attribute("path")) {
+
+				// Has path, setup as a source.
+				auto source = make_shared<Reinstall::Source>(node);
+				push_back(source);
+
+			} else if(node.attribute("url")) {
+
+				// No path, setup only as kernel parameter 'dud=url'.
+				kparms.emplace_back("dud",node);
+
+			} else {
+
+				throw runtime_error(_("DUD Definition requires path or url attribute."));
+
+			}
+
+			return false;
+		});
+
 		scan(node, "repository", [this](const pugi::xml_node &node){
 			repositories.insert(make_shared<Repository>(node));
 			return false;

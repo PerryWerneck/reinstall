@@ -30,9 +30,12 @@
 
  namespace Reinstall {
 
-	Action::KernelParameter::KernelParameter(const pugi::xml_node &node) : nm(Quark(node.attribute("name").as_string()).c_str()) {
+	Action::KernelParameter::KernelParameter(const pugi::xml_node &node) : KernelParameter{Quark(node.attribute("name").as_string()).c_str(),node} {
+	}
 
-		if(!name()[0]) {
+	Action::KernelParameter::KernelParameter(const char *name, const pugi::xml_node &node) : nm{name} {
+
+		if(!this->name()[0]) {
 			throw runtime_error(_("Unnamed kernel parameter"));
 		}
 

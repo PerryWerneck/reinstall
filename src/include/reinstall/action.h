@@ -57,6 +57,10 @@
 			} type = Invalid;
 
 		public:
+			constexpr KernelParameter(const char *n, const char *v) : nm{n}, value{v}, type{Value} {
+			}
+
+			KernelParameter(const char *name, const pugi::xml_node &node);
 			KernelParameter(const pugi::xml_node &node);
 			~KernelParameter();
 
