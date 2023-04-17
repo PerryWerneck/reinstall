@@ -79,9 +79,6 @@ AC_SUBST(PACKAGE_RELEASE,"$app_cv_release")
 AC_SUBST(PACKAGE_MAJOR_RELEASE,$app_rls_major)
 AC_SUBST(PACKAGE_MINOR_RELEASE,$app_rls_minor)
 
-AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$PACKAGE",[The gettext package name.])
-AC_SUBST(GETTEXT_PACKAGE,$PACKAGE)
-
 dnl ---------------------------------------------------------------------------
 dnl Check for OS specifics
 dnl ---------------------------------------------------------------------------
@@ -195,6 +192,10 @@ PKG_CHECK_MODULES( [UDJAT], [libudjat], AC_DEFINE(HAVE_UDJAT,,[Do we have udjat?
 AC_SUBST(UDJAT_LIBS)
 AC_SUBST(UDJAT_CFLAGS)
 
+AC_ARG_WITH([product-name], [AS_HELP_STRING([--with-product-name], [Set product name])], [ app_cv_product="$withval" ],[ app_cv_product=$PACKAGE ])
+AC_DEFINE_UNQUOTED(PRODUCT_NAME, "$app_cv_product",[The product name])
+AC_SUBST(PRODUCT_NAME,"$app_cv_product")
+
 AC_ARG_WITH([product-id], [AS_HELP_STRING([--with-product-id], [Set product id])], [ app_cv_product_id="$withval" ],[ app_cv_product_id="`pkg-config --variable=product_id libudjat`" ])
 AC_SUBST(PRODUCT_ID,$app_cv_product_id)
 AC_DEFINE_UNQUOTED(PRODUCT_ID,"$app_cv_product_id",[The product id])
@@ -202,6 +203,9 @@ AC_DEFINE_UNQUOTED(PRODUCT_ID,"$app_cv_product_id",[The product id])
 app_cv_module_path=`pkg-config --variable=module_path libudjat`
 AC_DEFINE_UNQUOTED(MODULE_PATH, $app_cv_module_path, [The path for module installation])
 AC_SUBST(MODULE_PATH,$app_cv_module_path)
+
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$app_cv_product",[The gettext package name.])
+AC_SUBST(GETTEXT_PACKAGE,$app_cv_product)
 
 dnl ---------------------------------------------------------------------------
 dnl Check for GTK

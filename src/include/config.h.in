@@ -84,5 +84,8 @@
 /* The product id */
 #undef PRODUCT_ID
 
+/* The product name */
+#undef PRODUCT_NAME
+
 /* Version number of package */
 #undef VERSION

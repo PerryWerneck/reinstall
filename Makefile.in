@@ -2,6 +2,7 @@
 #---[ Library configuration ]------------------------------------------------------------
 
 PACKAGE_NAME=@PACKAGE_NAME@
+PRODUCT_NAME=@PRODUCT_NAME@
 APPLICATION_ID=@PRODUCT_ID@.@PACKAGE_NAME@
 LIBRARY_NAME="lib@PACKAGE_NAME@"
 SONAME=@SONAME@
@@ -184,14 +185,14 @@ install-%: \
 #---[ Release Targets ]------------------------------------------------------------------
 
 all: \
-	$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
 	$(BINRLS)/modules/isowriter@DLLEXT@ \
 	$(BINRLS)/modules/netinstall@DLLEXT@ \
 	$(BINRLS)/modules/grub@DLLEXT@ \
 	locale/$(PACKAGE_NAME).pot
 
 Release: \
-	$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
 	$(BINRLS)/modules/isowriter@DLLEXT@ \
 	$(BINRLS)/modules/netinstall@DLLEXT@ \
 	$(BINRLS)/modules/grub@DLLEXT@
@@ -206,7 +207,7 @@ locale/$(PACKAGE_NAME).pot: \
 locale: \
 	locale/$(PACKAGE_NAME).pot
 
-$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@: \
+$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@: \
 	$(foreach SRC, $(basename $(GUI_SOURCES)), $(OBJRLS)/$(SRC).o) \
 	$(BINRLS)/$(SONAME)
 
@@ -282,7 +283,7 @@ install: \
 	install-locale
 
 install-linux: \
-	$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
 	$(BINRLS)/modules/isowriter@DLLEXT@ \
 	$(BINRLS)/modules/netinstall@DLLEXT@ \
 	$(BINRLS)/modules/grub@DLLEXT@ \
@@ -301,7 +302,7 @@ install-linux: \
 		$(DESTDIR)$(bindir)
 
 	@$(INSTALL_PROGRAM) \
-		$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@ \
+		$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
 		$(DESTDIR)$(bindir)
 
 	# Install modules
@@ -334,12 +335,12 @@ install-windows: \
 #---[ Debug Targets ]--------------------------------------------------------------------
 
 Debug: \
-	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ \
 	$(BINDBG)/modules/isowriter@DLLEXT@ \
 	$(BINDBG)/modules/netinstall@DLLEXT@ \
 	$(BINDBG)/modules/grub@DLLEXT@
 
-$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@: \
+$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@: \
 	$(foreach SRC, $(basename $(GUI_SOURCES)), $(OBJDBG)/$(SRC).o) \
 	$(BINDBG)/$(SONAME)
 
@@ -415,33 +416,33 @@ $(BINDBG)/$(SONAME): \
 		
 
 inspect: \
-	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 
-	@GTK_DEBUG=interactive $(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+	@GTK_DEBUG=interactive $(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 
 run: \
-	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ \
 	$(BINDBG)/modules/isowriter@DLLEXT@ \
 	$(BINDBG)/modules/netinstall@DLLEXT@ \
 	$(BINDBG)/modules/grub@DLLEXT@
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
-		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 
 memcheck: \
-	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 
 ifeq ($(VALGRIND),no)
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
-		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 
 else
 	@touch valgrind.suppression
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
 		$(VALGRIND) --leak-check=full --track-origins=yes --gen-suppressions=all --suppressions=valgrind.suppression \
-		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 endif
 
 #---[ Clean Targets ]--------------------------------------------------------------------
