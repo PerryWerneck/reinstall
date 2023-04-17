@@ -282,20 +282,44 @@ install: \
 	install-locale
 
 install-linux: \
-	$(BINRLS)/$(SONAME)
+	$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINRLS)/modules/isowriter@DLLEXT@ \
+	$(BINRLS)/modules/netinstall@DLLEXT@ \
+	$(BINRLS)/modules/grub@DLLEXT@ \
+	locale/$(PACKAGE_NAME).pot
 
 	# Install library
-	@$(MKDIR) $(DESTDIR)$(libdir)
+	@$(MKDIR) \
+		$(DESTDIR)$(libdir)
 
 	@$(INSTALL_PROGRAM) \
 		$(BINRLS)/$(SONAME) \
 		$(DESTDIR)$(libdir)/$(SONAME)
-		
-	@$(MKDIR) $(DESTDIR)$(sysconfdir)/$(PACKAGE_NAME).conf.d
-	@$(INSTALL_DATA) \
-		conf.d/50-civetweb.conf \
-		$(DESTDIR)$(sysconfdir)/$(PACKAGE_NAME).conf.d		
-		
+
+	# Install application.
+	@$(MKDIR) \
+		$(DESTDIR)$(bindir)
+
+	@$(INSTALL_PROGRAM) \
+		$(BINRLS)/$(PACKAGE_NAME)@EXEEXT@ \
+		$(DESTDIR)$(bindir)
+
+	# Install modules
+	@$(MKDIR) \
+		$(DESTDIR)@MODULE_PATH@
+
+	@$(INSTALL_PROGRAM) \
+		$(BINRLS)/modules/isowriter@DLLEXT@ \
+		$(DESTDIR)@MODULE_PATH@
+
+	@$(INSTALL_PROGRAM) \
+		$(BINRLS)/modules/netinstall@DLLEXT@ \
+		$(DESTDIR)@MODULE_PATH@
+
+	@$(INSTALL_PROGRAM) \
+		$(BINRLS)/modules/grub@DLLEXT@ \
+		$(DESTDIR)@MODULE_PATH@
+
 install-windows: \
 	$(BINRLS)/@SONAME@
 

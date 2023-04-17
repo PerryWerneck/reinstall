@@ -1,0 +1,553 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Perry Werneck <perry.werneck@gmail.com>, 2022-2023.
+#
+#: src/library/iso9660/builder.cc:454
+msgid ""
+msgstr ""
+"Project-Id-Version: reinstall 5.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"PO-Revision-Date: 2023-04-17 10:07-0300\n"
+"Last-Translator: Perry Werneck <perry.werneck@gmail.com>\n"
+"Language-Team: Brazilian Portuguese <perry.werneck@gmail.com>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Portuguese\n"
+"X-Poedit-Country: BRAZIL\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"X-Generator: Gtranslator 40.0\n"
+
+#: src/gui/apply.cc:203
+msgid "Action completed"
+msgstr "Operação concluída"
+
+#: src/gui/widgets/mainwindow.cc:385
+msgid "Action has failed"
+msgstr "Operação falhou"
+
+#: src/library/isobuilder.cc:247
+msgid "Adding EFI boot image"
+msgstr "Adicionando imagem de boot EFI"
+
+#: src/library/isobuilder.cc:228
+msgid "Adding el-torito boot image"
+msgstr "Adicionando imagem de boot el-torito"
+
+#: src/library/action/action.cc:437 src/library/action/action.cc:440
+msgid "Building"
+msgstr "Construindo"
+
+#: src/library/os/linux/disk_image.cc:94
+msgid "Can't get an available loop device"
+msgstr "Nenhum dispositivo loop disponível"
+
+#: src/library/os/linux/disk_image.cc:136
+msgid "Can't get loop device status"
+msgstr "Não foi possível obter estado do dispositivo de loop"
+
+#: src/library/os/linux/disk_image.cc:145
+msgid "Can't update loop device status"
+msgstr "Não foi possível atualizar estado do dispositivo de loop"
+
+#: src/library/os/linux/usbstorage.cc:250
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/modules/isowriter/init.cc:118
+msgid "Cant access downloaded image"
+msgstr "Sem acesso á imagem baixada"
+
+#: src/modules/isowriter/init.cc:155
+msgid "Cant read from image file"
+msgstr "Não foi possível der do arquivo de imagem"
+
+#: src/library/iso9660/builder.cc:213
+msgid "Cant read system area definition file"
+msgstr "Não foi possível ler o arquivo de definição de área do sistema"
+
+#: src/library/action/action.cc:384
+msgid "Checking for templates"
+msgstr "Verificando templates"
+
+#: src/library/os/linux/usbstorage.cc:254
+msgid "Continue"
+msgstr "Continuar"
+
+#: src/modules/isowriter/init.cc:62
+msgid "Downloading ISO image"
+msgstr "Baixando imagem ISO"
+
+#: src/library/source/apache_mirror.cc:40
+msgid "Empty response from {}"
+msgstr "Resposta vazia de {}"
+
+#: src/library/iso9660/builder.cc:72
+msgid "Error creating iso image"
+msgstr "Erro criando imagem iso"
+
+#: src/library/iso9660/builder.cc:207
+msgid "Error loading system area"
+msgstr "Erro lendo área de sistema"
+
+#: src/library/iso9660/builder.cc:450 src/modules/isowriter/init.cc:169
+msgid "Finalizing"
+msgstr "Finalizando"
+
+#: src/gui/apply.cc:59
+msgid "First step has failed"
+msgstr "Primeira etapa falhou"
+
+#: src/gui/widgets/mainwindow.cc:143
+msgid "Getting configuration"
+msgstr "Obtendo a configuração"
+
+#: src/library/action/action.cc:380
+msgid "Getting file lists"
+msgstr "Obtendo lista de arquivos"
+
+#: src/library/source/initrd.cc:37
+msgid "Getting install loader"
+msgstr "Obtendo carregador de instalação"
+
+#: src/library/source/kernel.cc:37
+msgid "Getting installation kernel"
+msgstr "Obtendo kernel de instalação"
+
+#: src/library/action/action.cc:231 src/library/action/action.cc:427
+msgid "Getting required files"
+msgstr "Obtendo arquivos necessários"
+
+#: src/library/writers/abstract.cc:57
+msgid "I/O error writing image"
+msgstr "Erro de I/O gravando imagem"
+
+#: src/modules/netinstall/init.cc:66
+msgid "Image file name"
+msgstr "Nome do arquivo de imagem"
+
+#: src/gui/widgets/mainwindow.cc:186
+msgid "Initializatio has failed"
+msgstr "Inicialização falhou"
+
+#: src/library/action/action.cc:375 src/gui/dialogs/progress.cc:346
+msgid "Initializing"
+msgstr "Inicializando"
+
+#: src/library/os/linux/usbstorage.cc:244
+msgid "Insert an storage device <b>NOW</b> "
+msgstr "Insira um dispositivo de armazenamento <b>AGORA</b>"
+
+#: src/library/action/action.cc:157
+msgid "Invalid 'type' attribute"
+msgstr "Atributo 'type' é inválido"
+
+#: src/library/kernelparameter.cc:66
+msgid "Invalid kernel parameter value type"
+msgstr "Tipo inválido para parâmetro de kernel"
+
+#: src/gui/widgets/mainwindow.cc:144
+msgid "Loading option list"
+msgstr "Lendo lista de opções"
+
+#: src/library/isobuilder.cc:54 src/modules/grub/init.cc:73
+msgid "Missing required entry <init> with the URL for the linuxrc program"
+msgstr "Faltando entrada <init> com a URL do programa linuxrc"
+
+#: src/library/isobuilder.cc:46 src/modules/grub/init.cc:64
+msgid "Missing required entry <kernel> with the URL for installation kernel"
+msgstr "Faltando entrada <kernel> com a URL do kernel de instalação"
+
+#: src/library/object.cc:77
+msgid "More info"
+msgstr "Mais informações"
+
+#: src/modules/isowriter/init.cc:107
+msgid "More sources than module expects"
+msgstr "Mais fontes do que o módulo esperava"
+
+#: src/library/action/action.cc:46
+msgid "No action"
+msgstr "Nenhuma ação"
+
+#: src/library/dialogs/progress.cc:48
+msgid "No active progress dialog"
+msgstr "Nenhum diálogo de progresso ativo"
+
+#: src/library/dialogs/window.cc:52
+msgid "No active window"
+msgstr "Nenhuma janela ativa"
+
+#: src/library/action/action.cc:176
+msgid "No available image builder"
+msgstr "Nenhum construtor de imagem disponível"
+
+#: src/library/action/action.cc:191
+msgid "No installation media"
+msgstr "Nenhuma mídia de instalação"
+
+#: src/library/action/action.cc:279
+msgid "No repositories on this action"
+msgstr "Nenhum repositório nesta ação"
+
+#: src/library/action/action.cc:370
+msgid "Preparing"
+msgstr "Preparando"
+
+#: src/library/iso9660/builder.cc:401
+msgid "Preparing to write"
+msgstr "Preparando para gravar"
+
+#: src/gui/apply.cc:227 src/gui/widgets/mainwindow.cc:397
+msgid "Quit application"
+msgstr "Sair da aplicação"
+
+#: src/gui/apply.cc:221
+msgid "Reboot"
+msgstr "Reiniciar"
+
+#: src/library/isobuilder.cc:196 src/library/isobuilder.cc:217
+msgid "Rejecting invalid action pointer"
+msgstr "Rejeitando ponteiro de ação inválido"
+
+#: src/library/action/action.cc:449
+msgid "Running post scripts"
+msgstr "Executando scripts de finalização"
+
+#: src/modules/netinstall/init.cc:65
+msgid "Select target image file"
+msgstr "Selecione arquivo de imagem"
+
+#: src/library/isobuilder.cc:199 src/library/isobuilder.cc:220
+msgid "Setting up ISO image"
+msgstr "Configurando imagem ISO"
+
+#: src/library/os/linux/usbstorage.cc:189
+msgid "Storage device is unavailable"
+msgstr "Dispositivo de armazenamento indisponível"
+
+#: src/gui/widgets/mainwindow.cc:56
+msgid "System reinstallation"
+msgstr "Reinstalar o sistema"
+
+#: src/library/action/template.cc:98
+msgid "Template was not loaded"
+msgstr "Template não foi carregado"
+
+#: src/library/action/action.cc:315
+msgid "The kernel parameters list is empty"
+msgstr "A lista de parâmetros do kernel está vazia"
+
+#: src/library/script.cc:35
+msgid "The required attribute 'cmdline' is missing"
+msgstr "Atributo necessário 'cmdline' não foi encontrado"
+
+#: src/library/os/linux/usbstorage.cc:246
+msgid "This action will <b>DELETE ALL CONTENT</b> on the device."
+msgstr "Esta ação irá <b>APAGAR TODO O CONTEÚDO</b>do dispositivo."
+
+#: src/modules/isowriter/init.cc:140
+msgid "Unable to get image size"
+msgstr "Não foi possível obter o tamanho da imagem"
+
+#: src/library/source/save.cc:44 src/library/source/save.cc:87
+msgid "Unable to get source with an empty URL"
+msgstr "Não é possível obter uma fonte com URL vazia"
+
+#: src/library/source/save.cc:49 src/library/source/save.cc:92
+msgid "Unable to get source with relative URL"
+msgstr "Não é possível obter fonte com URL relativa"
+
+#: src/library/source/apache_mirror.cc:48
+msgid "Unable to parse file list from {}"
+msgstr "Incapaz de processar lista de arquivos em {}"
+
+#: src/library/iso9660/builder.cc:159
+msgid "Unexpanded path in source list"
+msgstr "Caminho incorreto na lista de fontes"
+
+#: src/modules/isowriter/init.cc:159
+msgid "Unexpected EOF reading image file"
+msgstr "Fim de arquivo inesperado ao ler arquivo de imagem"
+
+#: src/library/isobuilder.cc:252
+msgid "Unexpected filename on EFI boot image"
+msgstr "Nome de arquivo inesperado na imagem de boot EFI"
+
+#: src/library/isobuilder.cc:233
+msgid "Unexpected filename on el-torito boot image"
+msgstr "Nome de arquivo inesperado na imagem de boot el-torito"
+
+#: src/library/kernelparameter.cc:36
+msgid "Unnamed kernel parameter"
+msgstr "Parametro de kernel sem nome"
+
+#: src/library/action/action.cc:324
+msgid "Unnamed kernel parameter, possible misconfiguration"
+msgstr "Parametro de kernel sem nome, possível erro de configuração"
+
+#: src/library/dialogs/window.cc:42
+msgid "Window stack mismatch"
+msgstr "Divergência na pilha de janelas"
+
+#: src/modules/isowriter/init.cc:135
+msgid "Writing ISO image"
+msgstr "Gravando imagem ISO"
+
+#: src/library/iso9660/builder.cc:419
+msgid "Writing image"
+msgstr "Gravando imagem"
+
+#: src/gui/widgets/mainwindow.cc:306
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#: src/modules/netinstall/init.cc:67
+msgid "_Save"
+msgstr "_Salvar"
+
+#: src/library/dialogs/progress.cc:67 src/gui/dialogs/progress.cc:109
+msgid "{} of {}"
+msgstr "{} de {}"
+
+#~ msgid "Agent controller"
+#~ msgstr "Controlador de agentes"
+
+#~ msgid "Agent has nothing to report"
+#~ msgstr "Agente não tem nada a informar"
+
+#~ msgid "Alert controller"
+#~ msgstr "Controlador de alertas"
+
+#~ msgid ""
+#~ "Authentication is required and has failed or has not yet been provided."
+#~ msgstr "Autenticação falhou ou não foi fornecida."
+
+#~ msgid "Bad Request"
+#~ msgstr "Requisição inválida"
+
+#~ msgid "Bad gateway"
+#~ msgstr "Gateway inválido"
+
+#~ msgid "Cant resolve hostname"
+#~ msgstr "Não foi possivel resolver nome do host"
+
+#~ msgid "Client error"
+#~ msgstr "Erro de cliente"
+
+#~ msgid "Forbidden"
+#~ msgstr "Proibido"
+
+#~ msgid "Gateway timeout"
+#~ msgstr "Timeout no acesso ao gateway"
+
+#~ msgid "Gb"
+#~ msgstr "Gb"
+
+#~ msgid "HTTP Version Not Supported"
+#~ msgstr "Versão HTTP não suportada"
+
+#~ msgid "I dont know how to execute '{}'"
+#~ msgstr "Não sei como executar '{}'"
+
+#~ msgid "Internal error"
+#~ msgstr "Erro interno"
+
+#~ msgid "Kb"
+#~ msgstr "Kb"
+
+#~ msgid "Less than one minute"
+#~ msgstr "Menos de um minuto"
+
+#~ msgid "Local file protocol"
+#~ msgstr "Protocol de arquivo local"
+
+#~ msgid "Mb"
+#~ msgstr "Mb"
+
+#~ msgid "No abnormal state was detected"
+#~ msgstr "Nenhum estado anormal foi reportado"
+
+#~ msgid "Normal"
+#~ msgstr "Normal"
+
+#~ msgid "Not Implemented"
+#~ msgstr "Não implementado"
+
+#~ msgid "Not found"
+#~ msgstr "Não encontrado"
+
+#~ msgid "Ok"
+#~ msgstr "Ok"
+
+#~ msgid "Proxy Authentication Required"
+#~ msgstr "Proxy exige autenticação"
+
+#~ msgid "Redirected"
+#~ msgstr "Redirecionado"
+
+#~ msgid "Request Timeout"
+#~ msgstr "Tempo da requisição esgotado"
+
+#~ msgid "Server error"
+#~ msgstr "Erro de servidor"
+
+#~ msgid ""
+#~ "Something is making your server work too hard, and it just can’t keep up"
+#~ msgstr "Algo está fazendo seu servidor trabalhar além do limite"
+
+#~ msgid "Subprocess/Script protocol"
+#~ msgstr "Protocolo para subprocesso ou script"
+
+#~ msgid "System is configured"
+#~ msgstr "Sistema está configurado"
+
+#~ msgid "System is not ready"
+#~ msgstr "Sistema não está em funcionamento"
+
+#~ msgid "System is ready"
+#~ msgstr "Sistema em funcionamento"
+
+#~ msgid "Tb"
+#~ msgstr "Tb"
+
+#~ msgid "The HTTP error code is unknown"
+#~ msgstr "Código de erro HTTP desconhecido"
+
+#~ msgid "The HTTP version used in the request is not supported by the server."
+#~ msgstr "A versão HTTP usada na requisição não é suportada pelo servidor."
+
+#~ msgid "The client must first authenticate itself with the proxy."
+#~ msgstr "O cliente deve primeiro autenticar no proxy"
+
+#~ msgid ""
+#~ "The request contained valid data and was understood by the server, but "
+#~ "the server is refusing action."
+#~ msgstr ""
+#~ "A requisição contem dados válidos e foi reconhecida pelo servidor, porem, "
+#~ "o servidor se recusou a atuar."
+
+#~ msgid "The request has timed out"
+#~ msgstr "Tempo da requisição esgotado"
+
+#~ msgid ""
+#~ "The request method is not supported by the server and cannot be handled."
+#~ msgstr ""
+#~ "O método usado na requisição não é suportado pelo servidor e não pode ser "
+#~ "atendido."
+
+#~ msgid "The request succeeded."
+#~ msgstr "Requisição concluída com sucesso."
+
+#~ msgid "The request was redirected to another URL."
+#~ msgstr "Requisição foi redirecionada para outra URL."
+
+#~ msgid ""
+#~ "The server has encountered a situation it does not know how to handle."
+#~ msgstr "O servidor encontrou uma situação que ele não sabe como resolver."
+
+#~ msgid "The server is acting as a gateway and cannot get a response in time."
+#~ msgstr ""
+#~ "O servidor está atuando como proxy e não conseguiu obter uma resposta no "
+#~ "tempo esperado."
+
+#~ msgid ""
+#~ "The server is not ready to handle the request. Common causes are a server "
+#~ "that is down for maintenance or that is overloaded."
+#~ msgstr ""
+#~ "O servidor não está pronto para atender à requisição. Pode estar inativo "
+#~ "para manutenção ou sobrecarregado."
+
+#~ msgid ""
+#~ "The server, while working as a gateway to get a response needed to handle "
+#~ "the request, got an invalid response."
+#~ msgstr "O servidor está atuando como proxy e recebeu uma resposta inválida."
+
+#~ msgid "Too many requests"
+#~ msgstr "Muitas requisições"
+
+#~ msgid "Unauthorized"
+#~ msgstr "Não autorizado"
+
+#~ msgid "Unexpected HTTP error code"
+#~ msgstr "Código de erro HTTP inesperado"
+
+#~ msgid "Unexpected error activating state"
+#~ msgstr "Erro inesperado ao ativar estado"
+
+#~ msgid "\\StringFileInfo\\080904B0\\FileDescription"
+#~ msgstr "\\StringFileInfo\\041604B0\\FileDescription"
+
+#~ msgid "b"
+#~ msgstr "b"
+
+#~ msgid "day"
+#~ msgstr "dia"
+
+#~ msgid "days"
+#~ msgstr "dias"
+
+#~ msgid "default"
+#~ msgstr "padrão"
+
+#~ msgid "false"
+#~ msgstr "falso"
+
+#~ msgid "hour"
+#~ msgstr "hora"
+
+#~ msgid "hours"
+#~ msgstr "horas"
+
+#~ msgid "minute"
+#~ msgstr "minuto"
+
+#~ msgid "minutes"
+#~ msgstr "minutos"
+
+#~ msgid "no"
+#~ msgstr "não"
+
+#~ msgid "off"
+#~ msgstr "desligado"
+
+#~ msgid "on"
+#~ msgstr "ligado"
+
+#~ msgid "second"
+#~ msgstr "segundo"
+
+#~ msgid "seconds"
+#~ msgstr "segundos"
+
+#~ msgid "true"
+#~ msgstr "verdadeiro"
+
+#~ msgid "yes"
+#~ msgstr "sim"
+
+#~ msgid "{d} {D}"
+#~ msgstr "{d} {D}"
+
+#~ msgid "{d} {D} and {h} {H}"
+#~ msgstr "{d} {D} e {h} {H}"
+
+#~ msgid "{d} {D} and {m} {M}"
+#~ msgstr "{d} {D} e {m} {M}"
+
+#~ msgid "{d} {D}, {h} {H} and {m} {M}"
+#~ msgstr "{d} {D}, {h} {H} e {m} {M}"
+
+#~ msgid "{h} {H}"
+#~ msgstr "{h} {H}"
+
+#~ msgid "{h} {H} and {m} {M}"
+#~ msgstr "{h} {H} e {m} {M}"
+
+#~ msgid "{m} {M}"
+#~ msgstr "{m} {M}"

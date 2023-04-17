@@ -79,6 +79,9 @@ AC_SUBST(PACKAGE_RELEASE,"$app_cv_release")
 AC_SUBST(PACKAGE_MAJOR_RELEASE,$app_rls_major)
 AC_SUBST(PACKAGE_MINOR_RELEASE,$app_rls_minor)
 
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$PACKAGE",[The gettext package name.])
+AC_SUBST(GETTEXT_PACKAGE,$PACKAGE)
+
 dnl ---------------------------------------------------------------------------
 dnl Check for OS specifics
 dnl ---------------------------------------------------------------------------
@@ -196,6 +199,10 @@ AC_ARG_WITH([product-id], [AS_HELP_STRING([--with-product-id], [Set product id])
 AC_SUBST(PRODUCT_ID,$app_cv_product_id)
 AC_DEFINE_UNQUOTED(PRODUCT_ID,"$app_cv_product_id",[The product id])
 
+app_cv_module_path=`pkg-config --variable=module_path libudjat`
+AC_DEFINE_UNQUOTED(MODULE_PATH, $app_cv_module_path, [The path for module installation])
+AC_SUBST(MODULE_PATH,$app_cv_module_path)
+
 dnl ---------------------------------------------------------------------------
 dnl Check for GTK
 dnl ---------------------------------------------------------------------------
@@ -261,6 +268,7 @@ dnl Configure which files to generate.
 dnl ---------------------------------------------------------------------------
 
 AC_CONFIG_FILES(src/library/Makefile)
+AC_CONFIG_FILES(locale/Makefile)
 AC_CONFIG_FILES(Makefile)
 
 dnl ---------------------------------------------------------------------------
