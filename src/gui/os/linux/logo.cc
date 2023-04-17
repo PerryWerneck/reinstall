@@ -20,8 +20,36 @@
  #include <config.h>
  #include <private/mainwindow.h>
  #include <udjat/tools/configuration.h>
+ #include <udjat/tools/logger.h>
+ #include <iostream>
+ #include <unistd.h>
 
- MainWindow::Logo::Logo() : Gtk::Image{Udjat::Config::Value<std::string>{"MainWindow","sidebar-logo","/usr/share/pixmaps/distribution-logos/square-hicolor.svg"}} {
+ static std::string find_logo() {
+
+	std::string basename{g_application_get_application_id(g_application_get_default())};
+
+	std::string filenames[] {
+		(std::string{"/usr/share/pixmaps/"} + basename + ".svg"),
+		(std::string{"/usr/share/pixmaps/"} + basename + ".png"),
+		(std::string{"/usr/share/icons/"} + basename + ".svg")
+	};
+
+	for(std::string &filename : filenames) {
+
+		if(access(filename.c_str(),R_OK) == 0) {
+			Udjat::Logger::String("Using logo from '",filename.c_str(),"'").trace("MainWindow");
+			return filename;
+		}
+
+	}
+
+	std::cout << "------------------------------------" << std::endl;
+	Udjat::Logger::String("Cant find '",basename,".[svg|png]', using system default").trace("MainWindow");
+
+	return Udjat::Config::Value<std::string>{"MainWindow","sidebar-logo","/usr/share/pixmaps/distribution-logos/square-hicolor.svg"};
+ }
+
+ MainWindow::Logo::Logo() : Gtk::Image{find_logo()} {
 
 	// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
 	set_hexpand(true);
