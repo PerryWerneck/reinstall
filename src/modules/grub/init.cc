@@ -125,8 +125,11 @@
 					debug("Searching for '",key,"' in ",name());
 
 					if(strcasecmp(key,"boot-dir") == 0) {
-						// TODO: Use path relative to boot partition
+#ifdef DEBUG
 						value = "/tmp";
+#else
+						value = "/boot";
+#endif // DEBUG
 						return true;
 					}
 
