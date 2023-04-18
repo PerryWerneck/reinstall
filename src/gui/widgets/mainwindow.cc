@@ -432,6 +432,7 @@
  }
 
  void MainWindow::set_logo(const char *name) {
+ 	logo.set(name);
  }
 
  bool MainWindow::generic(const pugi::xml_node &node) {
