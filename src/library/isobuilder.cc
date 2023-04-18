@@ -266,13 +266,13 @@
 									tmpl->replace((string{mountpoint} + "/" + path).c_str());
 								}
 
-
 							});
 
 						}
 					}
 
 					// Add EFI boot image
+					cout << "isobuilder\tAdding " << filename << " as EFI boot image" << endl;
 					set_efi_boot_image(filename);
 
 					cout << "isobuilder\tAdding " << source->path << " as boot image" << endl;

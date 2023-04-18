@@ -41,8 +41,20 @@
 
 		for(size_t ix = 0; ix < 10; ix++) {
 
-			if(exec(ix+1,10)) {
-				return;
+			try {
+
+				if(exec(ix+1,10)) {
+					return;
+				}
+
+			} catch(const std::exception &e) {
+
+				clog << "disk\t" << e.what() << endl;
+
+			} catch(...) {
+
+				clog << "disk\tUnexpected error" << endl;
+
 			}
 
 			usleep(100);
@@ -194,7 +206,7 @@
 				return true;
 			}
 
-			cerr << "disk\tError '" << strerror(errno) << "' umounting " << handler->loop.name << " ("  << current << "/" << total << ")" << endl;
+			cerr << "disk\tError '" << strerror(errno) << "' (rc=" << errno << ") umounting " << handler->loop.name << " ("  << current << "/" << total << ")" << endl;
 			return false;
 
 		});
