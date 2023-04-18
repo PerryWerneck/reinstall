@@ -183,7 +183,7 @@
 		if(dialog.run() != GTK_RESPONSE_OK) {
 			Gtk::MessageDialog dialog_fail{
 				*this,
-				_("Initializatio has failed"),
+				_("Initialization has failed"),
 				false,
 				Gtk::MESSAGE_ERROR,
 				Gtk::BUTTONS_OK,
@@ -462,6 +462,18 @@
 			"icon",
 			[](MainWindow &hwnd, const char *value){
 				hwnd.set_icon(value);
+			}
+		},
+		{
+			"cancel",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.buttons.cancel.set_label(value);
+			}
+		},
+		{
+			"apply",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.buttons.apply.set_label(value);
 			}
 		}
 	};
