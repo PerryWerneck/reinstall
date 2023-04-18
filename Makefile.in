@@ -355,7 +355,14 @@ install-data:
 	@$(INSTALL_DATA) \
 		templates/isolinux.cfg \
 		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)/templates
-	
+		
+	@$(MKDIR) \
+		$(DESTDIR)/etc/$(PRODUCT_NAME).conf.d
+
+	@$(INSTALL_DATA) \
+		conf.d/0*.conf \
+		$(DESTDIR)/etc/$(PACKAGE_NAME).conf.d
+
 #---[ Debug Targets ]--------------------------------------------------------------------
 
 Debug: \

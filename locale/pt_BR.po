@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: reinstall 5.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-17 09:20-0300\n"
-"PO-Revision-Date: 2023-04-17 10:07-0300\n"
+"PO-Revision-Date: 2023-04-18 14:13-0300\n"
 "Last-Translator: Perry Werneck <perry.werneck@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <perry.werneck@gmail.com>\n"
 "Language: pt_BR\n"
@@ -65,7 +65,7 @@ msgstr "Sem acesso á imagem baixada"
 
 #: src/library/os/linux/source.cc:81
 msgid "Cant find valid mountpoint"
-msgstr ""
+msgstr "Não foi possível encontrar um ponto de montagem válido"
 
 #: src/modules/isowriter/init.cc:155
 msgid "Cant read from image file"
@@ -85,7 +85,7 @@ msgstr "Continuar"
 
 #: src/library/action/action.cc:154
 msgid "DUD Definition requires path or url attribute."
-msgstr ""
+msgstr "Definição de imagem DUD requer atributos 'path' ou 'url'"
 
 #: src/modules/isowriter/init.cc:62
 msgid "Downloading ISO image"
@@ -140,7 +140,7 @@ msgid "Image file name"
 msgstr "Nome do arquivo de imagem"
 
 #: src/gui/widgets/mainwindow.cc:186
-msgid "Initializatio has failed"
+msgid "Initialization has failed"
 msgstr "Inicialização falhou"
 
 #: src/library/action/action.cc:401 src/gui/dialogs/progress.cc:346
@@ -224,9 +224,8 @@ msgid "Rejecting invalid action pointer"
 msgstr "Rejeitando ponteiro de ação inválido"
 
 #: src/library/os/linux/source.cc:42
-#, fuzzy
 msgid "Required attribute 'path' is missing"
-msgstr "Atributo necessário 'cmdline' não foi encontrado"
+msgstr "Atributo necessário 'path' não foi encontrado"
 
 #: src/library/action/action.cc:475
 msgid "Running post scripts"

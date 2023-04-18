@@ -252,7 +252,7 @@ msgstr ""
 "#-#-#-#-#  mainwindow.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-18 14:08-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -378,7 +378,7 @@ msgid "Image file name"
 msgstr ""
 
 #: src/gui/widgets/mainwindow.cc:186
-msgid "Initializatio has failed"
+msgid "Initialization has failed"
 msgstr ""
 
 #: src/library/action/action.cc:401 src/gui/dialogs/progress.cc:346
