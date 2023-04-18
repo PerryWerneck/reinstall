@@ -35,11 +35,11 @@
 
  Udjat::Module * udjat_module_init() {
 
- 	static const Udjat::ModuleInfo moduleinfo { "Basic remote install image builder" };
+ 	static const Udjat::ModuleInfo moduleinfo { "Basic network install image builder" };
 
 	class Module : public Udjat::Module, public Udjat::Factory {
 	public:
-		Module() : Udjat::Module("remote-installer", moduleinfo), Udjat::Factory("remote-installer",moduleinfo) {
+		Module() : Udjat::Module("network-installer", moduleinfo), Udjat::Factory("network-installer",moduleinfo) {
 		}
 
 		bool generic(const pugi::xml_node &node) override {

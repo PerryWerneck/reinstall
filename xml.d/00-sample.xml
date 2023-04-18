@@ -102,7 +102,7 @@
 
 		</local-installer>
  		
- 		<remote-installer name='reinstall-usb' default='no'>
+ 		<network-installer name='reinstall-usb' default='no'>
 
 	 		<attribute name='title' value='Build a simple network install image'/>
 	 		<attribute name='sub-title' value='Build an small usb based boot device for network install' />
@@ -126,7 +126,7 @@
 				This is the secondary text of sucess message.
 			</dialog>
 
-		</remote-installer>
+		</network-installer>
 		
 		<iso-writer name='netinstall' default='no' url='http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Current.iso' cache='yes'>
 	 		<attribute name='title' value='Create USB drive for network install' />
