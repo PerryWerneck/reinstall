@@ -39,7 +39,7 @@ msgstr "Adicionando imagem de boot EFI"
 msgid "Adding el-torito boot image"
 msgstr "Adicionando imagem de boot el-torito"
 
-#: src/library/action/action.cc:437 src/library/action/action.cc:440
+#: src/library/action/action.cc:463 src/library/action/action.cc:466
 msgid "Building"
 msgstr "Construindo"
 
@@ -63,6 +63,10 @@ msgstr "Cancelar"
 msgid "Cant access downloaded image"
 msgstr "Sem acesso á imagem baixada"
 
+#: src/library/os/linux/source.cc:81
+msgid "Cant find valid mountpoint"
+msgstr ""
+
 #: src/modules/isowriter/init.cc:155
 msgid "Cant read from image file"
 msgstr "Não foi possível der do arquivo de imagem"
@@ -71,13 +75,17 @@ msgstr "Não foi possível der do arquivo de imagem"
 msgid "Cant read system area definition file"
 msgstr "Não foi possível ler o arquivo de definição de área do sistema"
 
-#: src/library/action/action.cc:384
+#: src/library/action/action.cc:410
 msgid "Checking for templates"
 msgstr "Verificando templates"
 
 #: src/library/os/linux/usbstorage.cc:254
 msgid "Continue"
 msgstr "Continuar"
+
+#: src/library/action/action.cc:154
+msgid "DUD Definition requires path or url attribute."
+msgstr ""
 
 #: src/modules/isowriter/init.cc:62
 msgid "Downloading ISO image"
@@ -107,7 +115,7 @@ msgstr "Primeira etapa falhou"
 msgid "Getting configuration"
 msgstr "Obtendo a configuração"
 
-#: src/library/action/action.cc:380
+#: src/library/action/action.cc:406
 msgid "Getting file lists"
 msgstr "Obtendo lista de arquivos"
 
@@ -119,7 +127,7 @@ msgstr "Obtendo carregador de instalação"
 msgid "Getting installation kernel"
 msgstr "Obtendo kernel de instalação"
 
-#: src/library/action/action.cc:231 src/library/action/action.cc:427
+#: src/library/action/action.cc:257 src/library/action/action.cc:453
 msgid "Getting required files"
 msgstr "Obtendo arquivos necessários"
 
@@ -135,7 +143,7 @@ msgstr "Nome do arquivo de imagem"
 msgid "Initializatio has failed"
 msgstr "Inicialização falhou"
 
-#: src/library/action/action.cc:375 src/gui/dialogs/progress.cc:346
+#: src/library/action/action.cc:401 src/gui/dialogs/progress.cc:346
 msgid "Initializing"
 msgstr "Inicializando"
 
@@ -143,11 +151,11 @@ msgstr "Inicializando"
 msgid "Insert an storage device <b>NOW</b> "
 msgstr "Insira um dispositivo de armazenamento <b>AGORA</b>"
 
-#: src/library/action/action.cc:157
+#: src/library/action/action.cc:183
 msgid "Invalid 'type' attribute"
 msgstr "Atributo 'type' é inválido"
 
-#: src/library/kernelparameter.cc:66
+#: src/library/kernelparameter.cc:69
 msgid "Invalid kernel parameter value type"
 msgstr "Tipo inválido para parâmetro de kernel"
 
@@ -183,19 +191,19 @@ msgstr "Nenhum diálogo de progresso ativo"
 msgid "No active window"
 msgstr "Nenhuma janela ativa"
 
-#: src/library/action/action.cc:176
+#: src/library/action/action.cc:202
 msgid "No available image builder"
 msgstr "Nenhum construtor de imagem disponível"
 
-#: src/library/action/action.cc:191
+#: src/library/action/action.cc:217
 msgid "No installation media"
 msgstr "Nenhuma mídia de instalação"
 
-#: src/library/action/action.cc:279
+#: src/library/action/action.cc:305
 msgid "No repositories on this action"
 msgstr "Nenhum repositório nesta ação"
 
-#: src/library/action/action.cc:370
+#: src/library/action/action.cc:396
 msgid "Preparing"
 msgstr "Preparando"
 
@@ -215,7 +223,12 @@ msgstr "Reiniciar"
 msgid "Rejecting invalid action pointer"
 msgstr "Rejeitando ponteiro de ação inválido"
 
-#: src/library/action/action.cc:449
+#: src/library/os/linux/source.cc:42
+#, fuzzy
+msgid "Required attribute 'path' is missing"
+msgstr "Atributo necessário 'cmdline' não foi encontrado"
+
+#: src/library/action/action.cc:475
 msgid "Running post scripts"
 msgstr "Executando scripts de finalização"
 
@@ -239,7 +252,7 @@ msgstr "Reinstalar o sistema"
 msgid "Template was not loaded"
 msgstr "Template não foi carregado"
 
-#: src/library/action/action.cc:315
+#: src/library/action/action.cc:341
 msgid "The kernel parameters list is empty"
 msgstr "A lista de parâmetros do kernel está vazia"
 
@@ -283,11 +296,11 @@ msgstr "Nome de arquivo inesperado na imagem de boot EFI"
 msgid "Unexpected filename on el-torito boot image"
 msgstr "Nome de arquivo inesperado na imagem de boot el-torito"
 
-#: src/library/kernelparameter.cc:36
+#: src/library/kernelparameter.cc:39
 msgid "Unnamed kernel parameter"
 msgstr "Parametro de kernel sem nome"
 
-#: src/library/action/action.cc:324
+#: src/library/action/action.cc:350
 msgid "Unnamed kernel parameter, possible misconfiguration"
 msgstr "Parametro de kernel sem nome, possível erro de configuração"
 

@@ -280,7 +280,8 @@ $(BINRLS)/$(SONAME): \
 
 install: \
 	install-@OSNAME@ \
-	install-locale
+	install-locale \
+	install-data
 
 install-linux: \
 	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
@@ -331,6 +332,29 @@ install-windows: \
 		$(BINRLS)/@SONAME@ \
 		$(DESTDIR)$(bindir)/@SONAME@
 				
+install-data:
+
+	@$(MKDIR) \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)
+		
+	@$(INSTALL_DATA) \
+		stylesheet.css \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)
+
+	@$(MKDIR) \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)/templates
+		
+	@$(INSTALL_DATA) \
+		templates/grub2 \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)/templates
+
+	@$(INSTALL_DATA) \
+		templates/grub.cfg \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)/templates
+
+	@$(INSTALL_DATA) \
+		templates/isolinux.cfg \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)/templates
 	
 #---[ Debug Targets ]--------------------------------------------------------------------
 
