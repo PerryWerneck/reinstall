@@ -20,33 +20,46 @@
  #include <config.h>
  #include <private/mainwindow.h>
  #include <udjat/tools/configuration.h>
+ #include <udjat/tools/application.h>
  #include <udjat/tools/logger.h>
  #include <iostream>
  #include <unistd.h>
 
+ using namespace Udjat;
+
  static std::string find_logo() {
 
-	std::string basename{g_application_get_application_id(g_application_get_default())};
+	Udjat::Application::DataDir datadir;
 
-	std::string filenames[] {
-		(std::string{"/usr/share/pixmaps/"} + basename + ".svg"),
-		(std::string{"/usr/share/pixmaps/"} + basename + ".png"),
-		(std::string{"/usr/share/icons/"} + basename + ".svg")
+	std::string names[] {
+		(datadir + "logo"),
+		(datadir + g_application_get_application_id(g_application_get_default()))
 	};
 
-	for(std::string &filename : filenames) {
+	static const char * extnames[] = {
+		"svg",
+		"png"
+	};
 
-		if(access(filename.c_str(),R_OK) == 0) {
-			Udjat::Logger::String("Using logo from '",filename.c_str(),"'").trace("MainWindow");
-			return filename;
+	for(const char *extname : extnames) {
+
+		for(const std::string &name : names) {
+
+			std::string filename{name};
+			filename += ".";
+			filename += extname;
+
+			if(access(filename.c_str(),R_OK) == 0) {
+				Udjat::Logger::String("Using logo from '",filename.c_str(),"'").trace("MainWindow");
+				return filename;
+			}
+
 		}
 
 	}
 
-	std::cout << "------------------------------------" << std::endl;
-	Udjat::Logger::String("Cant find '",basename,".[svg|png]', using system default").trace("MainWindow");
-
 	return Udjat::Config::Value<std::string>{"MainWindow","sidebar-logo","/usr/share/pixmaps/distribution-logos/square-hicolor.svg"};
+
  }
 
  MainWindow::Logo::Logo() : Gtk::Image{find_logo()} {
