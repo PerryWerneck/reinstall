@@ -58,3 +58,4 @@ vgcore.*
 *.[0-9]
 *.png
 .pot
+*.desktop

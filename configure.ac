@@ -125,6 +125,7 @@ dnl		AC_CONFIG_FILES(win/userinfo.nsi)
 		LDFLAGS="$LDFLAGS -pthread"
 		DLL_LDFLAGS="-shared -Wl,-soname,\$(@F)"
 		AC_SUBST(SONAME,libreinstall.so.$app_vrs_major.$app_vrs_minor)
+		AC_CONFIG_FILES(sysconf/launcher.desktop)
 
 esac
 
