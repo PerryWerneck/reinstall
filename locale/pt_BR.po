@@ -43,15 +43,15 @@ msgstr "Adicionando imagem de boot el-torito"
 msgid "Building"
 msgstr "Construindo"
 
-#: src/library/os/linux/disk_image.cc:94
+#: src/library/os/linux/disk_image.cc:106
 msgid "Can't get an available loop device"
 msgstr "Nenhum dispositivo loop disponível"
 
-#: src/library/os/linux/disk_image.cc:136
+#: src/library/os/linux/disk_image.cc:148
 msgid "Can't get loop device status"
 msgstr "Não foi possível obter estado do dispositivo de loop"
 
-#: src/library/os/linux/disk_image.cc:145
+#: src/library/os/linux/disk_image.cc:157
 msgid "Can't update loop device status"
 msgstr "Não foi possível atualizar estado do dispositivo de loop"
 

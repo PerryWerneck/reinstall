@@ -47,6 +47,7 @@ WINDRES=@WINDRES@
 AR=@AR@
 VALGRIND=@VALGRIND@
 DLLTOOL=@DLLTOOL@
+INSTALL_DESKTOP=@INSTALL_DESKTOP@
 
 #---[ Paths ]----------------------------------------------------------------------------
 
@@ -321,6 +322,26 @@ install-linux: \
 	@$(INSTALL_PROGRAM) \
 		$(BINRLS)/modules/grub@DLLEXT@ \
 		$(DESTDIR)@MODULE_PATH@
+
+	@$(MKDIR) \
+		$(DESTDIR)$(datarootdir)/applications
+		
+	@$(INSTALL_DATA) \
+		sysconf/launcher.desktop \
+		$(APPLICATION_ID).desktop
+
+	@$(INSTALL_DESKTOP) \
+		--mode 644 \
+		--delete-original \
+		--dir $(DESTDIR)$(datarootdir)/applications \
+		$(APPLICATION_ID).desktop
+
+	@$(MKDIR) \
+		$(DESTDIR)$(datarootdir)/icons
+
+	@$(INSTALL_DATA) \
+		icon.svg \
+		$(DESTDIR)$(datarootdir)/icons/$(APPLICATION_ID).svg
 
 install-windows: \
 	$(BINRLS)/@SONAME@

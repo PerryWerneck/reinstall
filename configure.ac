@@ -142,6 +142,7 @@ AC_PATH_TOOL([DOXYGEN], [doxygen])
 AC_PATH_TOOL([VALGRIND], [valgrind], [no])
 AC_PATH_TOOL([AR], [ar], [ar])
 AC_PATH_TOOL([CONVERT], [convert], [no])
+AC_PATH_TOOL([INSTALL_DESKTOP],[desktop-file-install],[no])
 
 dnl ---------------------------------------------------------------------------
 dnl test for usefull functions
