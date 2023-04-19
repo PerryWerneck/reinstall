@@ -41,15 +41,6 @@
 		return true;
 	}
 
-	//void Builder::pre(Action &action) {
-	//}
-
-	//void Builder::build(Action &action) {
-	//}
-
-	//void Builder::post(Action &action) {
-	//}
-
 	size_t Builder::size() {
 		return 0;
 	}

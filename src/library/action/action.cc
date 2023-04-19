@@ -133,7 +133,7 @@
 		});
 
 		// Get driver updates
-		scan(node,"driver-installation-disk",[this](const pugi::xml_node &node) {
+		scan(node,"driver-update-disk",[this](const pugi::xml_node &node) {
 
 			if(node.attribute("path")) {
 

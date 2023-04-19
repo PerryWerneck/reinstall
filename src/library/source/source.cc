@@ -95,13 +95,23 @@
 			expander = this->url;
 			expander.expand(object);
 
-			if(expander[0] == '/') {
+			debug(expander);
+
+			if(expander[0] == '/' || expander[0] == '.') {
 
 				// Expand URL based on repository path
-				URL url(object.repository(repository)->url(true));
+				URL url{object.repository(repository)->url(true)};
 				url += expander.c_str();
 				expander = url.c_str();
 				expander.expand(object);
+
+			} else if(strncasecmp(expander.c_str(),"relurl://",9) == 0) {
+
+				URL url{object.repository(repository)->url(true)};
+				url += (expander.c_str()+9);
+				expander = url.c_str();
+				expander.expand(object);
+
 			}
 
 			if(strcmp(expander.c_str(),this->url)) {

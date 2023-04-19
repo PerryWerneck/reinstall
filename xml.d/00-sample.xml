@@ -40,7 +40,8 @@
 		slp-kernel-parameter='slp:/'
 		layout='apache' />
 
-	<driver-installation-disk name='dud' url='http://127.0.0.1/~perry/update.dud' path='/boot/updates.dud' />	
+	<!-- Path for the driver update (Full URL or repository path) -->
+	<driver-update-disk name='dud' url='../update.dud' path='/boot/updates.dud' />	
 
 	<!-- Path for the installation kernel (Full URL or repository path) -->
 	<kernel url='/boot/x86_64/loader/linux' repository='install' />
