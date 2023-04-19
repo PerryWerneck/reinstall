@@ -144,7 +144,7 @@
 				push_back(source);
 
 				// Setup DUD url based on local path.
-				kparms.emplace_back("dud",source->hd_path());
+				kparms.emplace_back("dud", Quark{string{"hd:/"} + source->rpath()}.c_str());
 
 			} else if(node.attribute("url")) {
 

@@ -79,7 +79,8 @@
 			return filenames.saved.c_str();
 		}
 
-		const char * hd_path() const;
+		/// @brief Get path relative to partition.
+		const char * rpath() const;
 
 		inline void set_filename(const char *filename) noexcept {
 			filenames.saved = filename;

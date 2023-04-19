@@ -34,9 +34,7 @@
 
  namespace Reinstall {
 
-	const char * Source::hd_path() const {
-
-		debug("----------------------------------------------------------");
+	const char * Source::rpath() const {
 
 		if(!path) {
 			throw runtime_error(_("Required attribute 'path' is missing"));
@@ -83,7 +81,8 @@
 
 		Logger::String{"Found mountpoint '",mountpoint,"' for '",this->path,"'"}.trace(name());
 
-		return Quark{ (string{"hd:/"} + (this->path + mountpoint.size())).c_str() }.c_str();
+		return (this->path + mountpoint.size());
+
 	}
 
  }
