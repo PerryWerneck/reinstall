@@ -27,6 +27,9 @@
 
  #include <unistd.h>
  #include <pwd.h>
+ #include <sys/types.h>
+ #include <unistd.h>
+ #include <cstdlib>
 
  using namespace std;
  using namespace Udjat;
@@ -76,23 +79,36 @@
 	int Script::run(const Udjat::NamedObject &object) {
 
 		class SubProcess : public Udjat::SubProcess {
+		private:
+			int uid;
+
 		protected:
+
+			void pre() override {
+
+				if(uid != -1) {
+					if(setuid(uid) != 0) {
+						throw system_error(errno,system_category(),"Cant set subprocess user id");
+					}
+					::setenv("UID",std::to_string(uid).c_str(),1);
+				}
+
+			}
 
 			void onStdOut(const char *line) override {
 				Logger::String{line}.write(Logger::Trace,name());
 			}
 
 			void onStdErr(const char *line) override {
-				error() << line << endl;
+				Logger::String{line}.write(Logger::Error,name());
 			}
 
 		public:
-			SubProcess(const NamedObject &obj, const Udjat::String &command) : Udjat::SubProcess(obj.name(),command.c_str()) {
+			SubProcess(int u, const NamedObject &obj, const Udjat::String &command) : Udjat::SubProcess{obj.name(),command.c_str()}, uid{u} {
 			}
-
 		};
 
-		return SubProcess{object,String{cmdline}.expand(object)}.run();
+		return SubProcess{uid,object,String{cmdline}.expand(object)}.run();
 
 	}
 
