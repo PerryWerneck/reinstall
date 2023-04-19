@@ -43,6 +43,26 @@
 		set_secondary_text(settings.secondary);
 	}
 
+	if(settings.destructive) {
+
+		static const int responses[] = {
+			Gtk::RESPONSE_APPLY,
+			Gtk::RESPONSE_YES
+		};
+
+		for(int response : responses) {
+
+			const Widget *widget = get_widget_for_response(response);
+
+			if(widget) {
+				widget->get_style_context()->add_class("destructive-action");
+			}
+
+		}
+
+
+	}
+
 	if(settings.url) {
 		url.set_uri(settings.url.link);
 		url.set_label(settings.url.label);

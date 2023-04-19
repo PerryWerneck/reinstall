@@ -31,6 +31,8 @@
 			const char *message = "";
 			const char *secondary = "";
 
+			bool destructive = false;
+
 			struct {
 				const char *link = "";
 				const char *label = "";

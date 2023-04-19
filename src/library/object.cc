@@ -72,6 +72,8 @@
 
 		const char *group = node.attribute("settings-from").as_string("popup-defaults");
 
+		destructive = Udjat::Object::getAttribute(node,group,"destructive",false);
+
 		message = Udjat::Object::getAttribute(node,group,"message","");
 		if(!(message && *message)) {
 			throw runtime_error("Required attribute 'message' is missing");
