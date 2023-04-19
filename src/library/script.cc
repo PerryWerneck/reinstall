@@ -25,12 +25,46 @@
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
 
+ #include <unistd.h>
+ #include <pwd.h>
+
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	Script::Script(const pugi::xml_node &node) : cmdline{Quark(node,"cmdline","").c_str()},user{Quark(node,"user","").c_str()} {
+ 	static int getuid(const pugi::xml_node &node) {
+
+ 		const char *user = node.attribute("user").as_string("");
+
+ 		if(!(user && *user)) {
+			return -1;
+ 		}
+
+		size_t szBuffer = sysconf(_SC_GETPW_R_SIZE_MAX);
+		if(szBuffer == (size_t) -1) {
+			szBuffer = 16384;
+		}
+
+		char buffer[szBuffer+1];
+		memset(buffer,0,szBuffer+1);
+
+		struct passwd pwd;
+		struct passwd *result;
+
+		if(getpwnam_r(user, &pwd, buffer, szBuffer, &result) != 0) {
+			throw system_error(errno,system_category(),user);
+		};
+
+		if(!result) {
+			throw system_error(ENOENT,system_category(),user);
+		}
+
+		return (int) result->pw_uid;
+
+ 	}
+
+	Script::Script(const pugi::xml_node &node) : cmdline{Quark(node,"cmdline","").c_str()},uid{getuid(node)} {
 		if(!(cmdline && *cmdline)) {
 			throw runtime_error(_("The required attribute 'cmdline' is missing"));
 		}
