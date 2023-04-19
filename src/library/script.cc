@@ -30,7 +30,7 @@
 
  namespace Reinstall {
 
-	Script::Script(const pugi::xml_node &node) : cmdline(Quark(node,"cmdline","").c_str()) {
+	Script::Script(const pugi::xml_node &node) : cmdline{Quark(node,"cmdline","").c_str()},user{Quark(node,"user","").c_str()} {
 		if(!(cmdline && *cmdline)) {
 			throw runtime_error(_("The required attribute 'cmdline' is missing"));
 		}
