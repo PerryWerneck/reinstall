@@ -73,6 +73,10 @@
 		const char *group = node.attribute("settings-from").as_string("popup-defaults");
 
 		message = Udjat::Object::getAttribute(node,group,"message","");
+		if(!(message && *message)) {
+			throw runtime_error("Required attribute 'message' is missing");
+		}
+
 		url.link = Udjat::Object::getAttribute(node,group,"url","");
 		url.label = Udjat::Object::getAttribute(node,group,"url-label",_("More info"));
 

@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: reinstall 5.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-04-17 09:20-0300\n"
-"PO-Revision-Date: 2023-04-18 14:13-0300\n"
+"PO-Revision-Date: 2023-04-19 08:52-0300\n"
 "Last-Translator: Perry Werneck <perry.werneck@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <perry.werneck@gmail.com>\n"
 "Language: pt_BR\n"
@@ -261,7 +261,7 @@ msgstr "Atributo necessário 'cmdline' não foi encontrado"
 
 #: src/library/os/linux/usbstorage.cc:246
 msgid "This action will <b>DELETE ALL CONTENT</b> on the device."
-msgstr "Esta ação irá <b>APAGAR TODO O CONTEÚDO</b>do dispositivo."
+msgstr "Esta ação irá <b>APAGAR TODO O CONTEÚDO</b> do dispositivo."
 
 #: src/modules/isowriter/init.cc:140
 msgid "Unable to get image size"

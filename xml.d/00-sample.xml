@@ -97,7 +97,7 @@
 			</dialog>
 
 			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
-			<dialog name='success' title='Success message' icon='dialog-information' text='Operation complete' allow-reboot='yes'>
+			<dialog name='success' title='Success message' icon='dialog-information' message='Operation complete' allow-reboot='yes'>
 				This is the secondary text of sucess message.
 			</dialog>
 
@@ -123,7 +123,7 @@
 				This is the secondary text on confirmation message.
 			</dialog>
 
-			<dialog name='success' title='Success message' icon='dialog-information' text='Operation complete' url='http://google.com' url-label='More info' allow-reboot='yes'>
+			<dialog name='success' title='Success message' icon='dialog-information' message='Operation complete' url='http://google.com' url-label='More info' allow-reboot='yes'>
 				This is the secondary text of sucess message.
 			</dialog>
 

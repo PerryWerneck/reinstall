@@ -94,33 +94,35 @@
 		}
 
 		// Get dialogs
-		for(pugi::xml_node parent = node; parent; parent = parent.parent()) {
+		scan(node, "dialog", [this](const pugi::xml_node &node){
 
-			for(auto child = parent.child("dialog"); child; child = child.next_sibling("dialog")) {
+			String name{node,"name","unnamed",false};
 
-				switch(String{child,"name"}.select("confirmation","success","failed",nullptr)) {
-				case 0: // confirmation.
-					if(!dialog.confirmation) {
-						dialog.confirmation.set(child);
-					}
-					break;
-				case 1: // success
-					if(!dialog.success) {
-						dialog.success.set(child);
-					}
-					break;
-				case 2: // failed
-					if(!dialog.failed) {
-						dialog.failed.set(child);
-					}
-					break;
-				default:
-					warning() << "Unexpected dialog name '" << String{child,"name"} << "'" << endl;
-				}
+			debug("Dialog: ",name);
+
+			switch(name.select("confirmation","success","failed",nullptr)) {
+			case 0:	// Confirmation
+				info() << "Using customized confirmation dialog" << endl;
+				dialog.confirmation.set(node);
+				break;
+
+			case 1:	// success
+				info() << "Using customized success dialog" << endl;
+				dialog.success.set(node);
+				break;
+
+			case 2:	// failed
+				info() << "Using customized error dialog" << endl;
+				dialog.failed.set(node);
+				break;
+
+			default:
+				warning() << "Unknown dialog '" << name << "'" << endl;
 
 			}
 
-		}
+			return false;
+		});
 
 		scan(node, "source", [this](const pugi::xml_node &node){
 			push_back(make_shared<Source>(node));
