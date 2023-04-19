@@ -254,6 +254,9 @@
 	void Action::load() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
+
+		info() << "Getting " << sources.size() << " required file list" << endl;
+
 		progress.set_sub_title(_("Getting required files"));
 
 		// Expand all sources.
@@ -284,6 +287,8 @@
 			}
 
 		}
+
+		info() << "Got " << sources.size() << " files to get" << endl;
 
 	}
 
@@ -453,16 +458,20 @@
 		dialog.set_sub_title(_("Getting required files"));
 		size_t total = source_count();
 		size_t current = 0;
+
+		info() << "Getting " << total << " required files" << endl;
 		for_each([this,&current,total,&dialog,builder](Source &source) {
 			dialog.set_count(++current,total);
-			debug("Processing source '",source.name(),"'");
+			Logger::String(source.url," (",current,"/",total,")").trace(source.name());
 			builder->apply(source);
 		});
 		dialog.set_count(0,0);
 
+		info() << "Calling 'build' methods" << endl;
 		dialog.set_sub_title(_("Building"));
 		builder->build(*this);
 
+		info() << "Calling 'post' methods" << endl;
 		dialog.set_sub_title(_("Building"));
 		builder->post(*this);
 
