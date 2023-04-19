@@ -120,7 +120,7 @@
 					return make_shared<Reinstall::Writer>(*this);
 				}
 
-				bool getProperty(const char *key, std::string &value) const noexcept override {
+				bool getProperty(const char *key, std::string &value) const override {
 
 					debug("Searching for '",key,"' in ",name());
 
@@ -183,7 +183,12 @@
 						return true;
 					}
 
-					return Reinstall::Action::getProperty(key,value);
+					if(Reinstall::Action::getProperty(key,value)) {
+						return true;
+					}
+
+					throw runtime_error(Logger::Message{_("Unable to get value for '{}'"),key});
+
 				}
 
 			};

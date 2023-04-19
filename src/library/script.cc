@@ -80,27 +80,17 @@
 
 		class SubProcess : public Udjat::SubProcess {
 		private:
-			int uid;
+			int uid = -1;
 
 		protected:
 
 			void pre() override {
-
 				if(uid != -1) {
 					if(setuid(uid) != 0) {
 						throw system_error(errno,system_category(),"Cant set subprocess user id");
 					}
 					::setenv("UID",std::to_string(uid).c_str(),1);
 				}
-
-			}
-
-			void onStdOut(const char *line) override {
-				Logger::String{line}.write(Logger::Trace,name());
-			}
-
-			void onStdErr(const char *line) override {
-				Logger::String{line}.write(Logger::Error,name());
 			}
 
 		public:

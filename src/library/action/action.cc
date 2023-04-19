@@ -323,7 +323,7 @@
 		throw system_error(ENOENT,system_category(),name);
 	}
 
-	bool Action::getProperty(const char *key, std::string &value) const noexcept {
+	bool Action::getProperty(const char *key, std::string &value) const {
 
 		debug("Searching for '",key,"' in ",name());
 

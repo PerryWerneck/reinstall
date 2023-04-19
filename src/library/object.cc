@@ -93,7 +93,7 @@
 
 	}
 
-	bool Abstract::Object::getProperty(const char *key, std::string &value) const noexcept {
+	bool Abstract::Object::getProperty(const char *key, std::string &value) const {
 
 		if(!strcasecmp(key,"template-dir")) {
 

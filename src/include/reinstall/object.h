@@ -45,7 +45,7 @@
 
 			virtual std::string get_label() const = 0;
 
-			bool getProperty(const char *key, std::string &value) const noexcept override;
+			bool getProperty(const char *key, std::string &value) const override;
 
 		};
 
