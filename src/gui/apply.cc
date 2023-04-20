@@ -26,6 +26,7 @@
  #include <reinstall/writer.h>
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/application.h>
+ #include <udjat/tools/configuration.h>
  #include <reinstall/controller.h>
  #include <reinstall/tools.h>
  #include <udjat/tools/logger.h>
@@ -210,25 +211,20 @@
 		}
 
 		// Add extra buttons.
-		if(action.reboot()) {
-
-			// Close button is the suggested action.
-			auto close = popup->get_widget_for_response(Gtk::RESPONSE_CLOSE);
-			close->get_style_context()->add_class("suggested-action");
-			popup->set_default_response(Gtk::RESPONSE_CLOSE);
-
-			// Reboot button is destructive.
-			auto reboot = popup->add_button(_("Reboot"),Gtk::RESPONSE_APPLY);
-			reboot->get_style_context()->add_class("destructive-action");
-
-		}
-
 		if(action.quit()) {
-			auto cancel = popup->add_button(_("Quit application"),Gtk::RESPONSE_CANCEL);
+			Widget *cancel = popup->add_button(Config::Value<string>{"buttons","quit",_("Quit application")},Gtk::RESPONSE_CANCEL);
 			if(!action.reboot()) {
 				cancel->get_style_context()->add_class("suggested-action");
 				popup->set_default_response(Gtk::RESPONSE_CANCEL);
 			}
+		}
+
+		if(action.reboot()) {
+
+			// Reboot button is destructive.
+			Widget *reboot = popup->add_button(Config::Value<string>{"buttons","reboot",_("Reboot now")},Gtk::RESPONSE_APPLY);
+			reboot->get_style_context()->add_class("destructive-action");
+
 		}
 
 		popup->set_title(action.get_label());

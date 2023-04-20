@@ -76,15 +76,16 @@
 	}
 
 	Action::Options::Options(const pugi::xml_node &node)
-		: enabled(Factory(node,"enabled",true)),
-		  visible(Factory(node,"visible",true)),
-		  reboot(Factory(node,"visible",false)),
-		  quit(Factory(node,"visible",true))
+		: enabled{Factory(node,"enabled",true)},
+		  visible{Factory(node,"visible",true)},
+		  reboot{Factory(node,"allow-reboot-when-success",false)},
+		  quit{Factory(node,"allow-quit-application",true)}
 		 {
 	}
 
 	Action::Action(const pugi::xml_node &node, const char *iname)
-		: 	Reinstall::Abstract::Object(node), options{node},
+		: 	Reinstall::Abstract::Object(node),
+			options{node},
 			output_file{getAttribute(node,"output-file","")},
 			icon_name{getAttribute(node,"icon",iname)},
 			item{UserInterface::getInstance().ActionFactory(node,icon_name)} {

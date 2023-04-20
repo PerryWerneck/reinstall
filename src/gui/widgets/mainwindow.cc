@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -191,8 +191,8 @@
 			};
 
 			dialog_fail.set_default_size(500, -1);
-			dialog_fail.set_title("Error");
-			dialog_fail.set_secondary_text("The initialization procedure has failed, the application cant continue");
+			dialog_fail.set_title(_("Error"));
+			dialog_fail.set_secondary_text(_("The initialization procedure has failed, the application cant continue"));
 			dialog_fail.show();
 			dialog_fail.run();
 			Gtk::Application::get_default()->quit();

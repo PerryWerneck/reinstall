@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -73,6 +73,8 @@
 		}
 
 		Reinstall::Abstract::Group::push_back(action);
+
+		widget->set_sensitive(action->enabled());
 
 		Glib::signal_idle().connect([this,widget,action](){
 
