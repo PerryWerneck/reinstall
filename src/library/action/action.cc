@@ -415,6 +415,7 @@
 		load();
 
 		// Apply templates.
+		info() << "Applying " << templates.size() << " template(s)" << endl;
 		dialog.set_sub_title(_("Checking for templates"));
 		for(auto tmpl : templates) {
 

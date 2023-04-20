@@ -51,8 +51,6 @@
 			dir = dirname(buffer);
 		}
 
-		debug("Searching for '",dir,"'");
-
 		FILE *aFile = setmntent("/proc/mounts", "r");
 		if (aFile == NULL) {
 				throw system_error(errno, system_category(),"/proc/mounts");
@@ -65,8 +63,6 @@
 			if(szEnt < mountpoint.size() || szEnt > dir.size()) {
 				continue;
 			}
-
-			debug("Checking '",ent->mnt_dir,"'");
 
 			if(!strncmp(dir.c_str(),ent->mnt_dir,szEnt)) {
 				mountpoint = ent->mnt_dir;

@@ -31,6 +31,7 @@
  #include <unistd.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/configuration.h>
 
  using namespace std;
  using namespace Udjat;
@@ -38,7 +39,22 @@
  namespace Reinstall {
 
 	Action::Template::Template(const pugi::xml_node &node)
-		: Template(Quark{node,"name"}.c_str(), Quark{node,"url"}.c_str(), Quark{node,"path"}.c_str()) {
+		: Template{
+			Quark{node,"name"}.c_str(),
+			Quark{node,"url"}.c_str(),
+			Quark{node,"path"}.c_str()
+		} {
+
+		const char *sMarker = node.attribute("marker").as_string(((std::string) Config::Value<String>("template","marker","@")).c_str());
+
+		if(strlen(sMarker) > 1 || !sMarker[0]) {
+			throw runtime_error("Marker attribute is invalid");
+		}
+
+		this->marker = sMarker[0];
+
+		debug("---------------> '", path, "'");
+
 	}
 
 	Action::Template::~Template() {
@@ -65,7 +81,7 @@
 		});
 
 		// Expand ${} values using object.
-		contents.expand(object,true,true);
+		contents.expand(marker,object,true,true);
 
 		// Save to temporary.
 		filename = Udjat::File::save(contents.c_str());
@@ -97,6 +113,10 @@
 		if(filename.empty()) {
 			throw runtime_error(_("Template was not loaded"));
 		}
+
+		Logger::String{
+			"Saving template '", name, "' as '", path, "'"
+		}.info("template");
 
 		Udjat::File::copy(filename.c_str(),path);
 

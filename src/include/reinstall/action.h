@@ -88,6 +88,9 @@
 			/// @brief Template path (can be null).
 			const char *path = nullptr;
 
+			/// @brief Marker.
+			char marker = '$';
+
 		public:
 
 			Template(const char *n, const char *u, const char *p = nullptr) : name{n}, url{u}, path{p} {
