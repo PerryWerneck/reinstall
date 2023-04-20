@@ -81,6 +81,10 @@
 
 		Logger::String{"Found mountpoint '",mountpoint,"' for '",this->path,"'"}.trace(name());
 
+		if(mountpoint.size() == 1 && mountpoint[0] == '/') {
+			return this->path;
+		}
+
 		return (this->path + mountpoint.size());
 
 	}

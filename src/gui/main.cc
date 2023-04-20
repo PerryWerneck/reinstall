@@ -23,6 +23,7 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/logger.h>
  #include <private/mainwindow.h>
+ #include <reinstall/source.h>
 
  using namespace std;
  using namespace Udjat;
@@ -72,4 +73,5 @@
 	MainWindow window;
 
 	return app->run(window);
+
  }
