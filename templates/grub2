@@ -18,17 +18,15 @@
 #
 
 cat <<EOF
-menuentry '${install-label}'  --class opensuse --class gnu-linux --class gnu --class os {
-    insmod gzio
-    insmod part_gpt
-    insmod btrfs
-    insmod search  
-    insmod part_msdos
-    insmod ext2"
+menuentry '${install-label}' --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-test-${install-version}-install-boot' {
+	load_video
+	set gfxpayload=keep
+	insmod gzio
 
-    linux ${kernel-fspath} ${kernel-parameters}
-    initrd ${initrd-fspath}
-
+	echo	'${install-kloading} ...'
+	linux	${kernel-fspath} ${kernel-parameters}  
+	echo	'${install-iloading} ...'
+	initrd	${initrd-fspath}
 }
 EOF
 exit 0

@@ -365,7 +365,7 @@ install-data:
 	@$(MKDIR) \
 		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)/templates
 		
-	@$(INSTALL_DATA) \
+	@$(INSTALL_PROGRAM) \
 		templates/grub2 \
 		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)/templates
 
