@@ -328,6 +328,28 @@
 
 		debug("Searching for '",key,"' in ",name());
 
+		if(strcasecmp(key,"install-version") == 0) {
+
+			// FIX-ME: Use kernel version.
+			value = PACKAGE_VERSION;
+			return true;
+
+		}
+
+		if(strcasecmp(key,"install-kloading") == 0) {
+
+			value = _("Loading installation kernel");
+			return true;
+
+		}
+
+		if(strcasecmp(key,"install-iloading") == 0) {
+
+			value = _("Loading system installer");
+			return true;
+
+		}
+
 		if(strcasecmp(key,"icon-name") == 0) {
 
 			value = get_icon_name();

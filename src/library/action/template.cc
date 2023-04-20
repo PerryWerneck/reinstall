@@ -45,7 +45,7 @@
 			Quark{node,"path"}.c_str()
 		} {
 
-		const char *sMarker = node.attribute("marker").as_string(((std::string) Config::Value<String>("template","marker","@")).c_str());
+		const char *sMarker = node.attribute("marker").as_string(((std::string) Config::Value<String>("template","marker","$")).c_str());
 
 		if(strlen(sMarker) > 1 || !sMarker[0]) {
 			throw runtime_error("Marker attribute is invalid");
@@ -68,6 +68,7 @@
 	void Action::Template::load(const Udjat::Object &object) {
 
 		if(!filename.empty()) {
+			debug("Template already saved on '",filename,"'");
 			return;
 		}
 
@@ -82,6 +83,8 @@
 
 		// Expand ${} values using object.
 		contents.expand(marker,object,true,true);
+
+		debug("Marker = '",string{marker},"' \n",contents,"\n");
 
 		// Save to temporary.
 		filename = Udjat::File::save(contents.c_str());
