@@ -75,12 +75,12 @@
 			throw runtime_error(_("Cant find valid mountpoint"));
 		}
 
-		Logger::String{"Found mountpoint '",mountpoint,"' for '",this->path,"'"}.trace(name());
-
 		if(mountpoint.size() == 1 && mountpoint[0] == '/') {
+			Logger::String{__FUNCTION__,"(",this->path,")='",this->path,"' (file is on '/' mountpoint)"}.trace(name());
 			return this->path;
 		}
 
+		Logger::String{__FUNCTION__,"(",this->path,")='",(this->path + mountpoint.size()),"' (file is on '",mountpoint,"' mountpoint)"}.trace(name());
 		return (this->path + mountpoint.size());
 
 	}
