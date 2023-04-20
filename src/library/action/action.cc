@@ -258,7 +258,7 @@
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
-		info() << "Getting " << sources.size() << " required file list" << endl;
+		info() << "Get file list for " << sources.size() << " source(s)" << endl;
 
 		progress.set_sub_title(_("Getting required files"));
 
@@ -291,7 +291,7 @@
 
 		}
 
-		info() << "Got " << sources.size() << " files to get" << endl;
+		info() << "Download list has " << sources.size() << " file(s)" << endl;
 
 	}
 
