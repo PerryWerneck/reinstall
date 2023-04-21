@@ -45,6 +45,7 @@
 			Quark{node,"path"}.c_str()
 		} {
 
+		script = node.attribute("script").as_bool(script);
 		const char *sMarker = node.attribute("marker").as_string(((std::string) Config::Value<String>("template","marker","$")).c_str());
 
 		if(strlen(sMarker) > 1 || !sMarker[0]) {
@@ -88,6 +89,8 @@
 
 		// Save to temporary.
 		filename = Udjat::File::save(contents.c_str());
+
+		chmod(filename.c_str(),(script ? 0755 : 0644));
 
 	}
 

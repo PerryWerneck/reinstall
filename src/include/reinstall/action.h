@@ -91,6 +91,9 @@
 			/// @brief Marker.
 			char marker = '$';
 
+			/// @brief Is an script?
+			bool script = false;
+
 		public:
 
 			Template(const char *n, const char *u, const char *p = nullptr) : name{n}, url{u}, path{p} {

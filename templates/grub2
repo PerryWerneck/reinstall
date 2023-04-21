@@ -17,17 +17,22 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-cat <<EOF
-menuentry '${install-label}' --class gnu-linux --class gnu --class os $menuentry_id_option 'gnulinux-test-${install-version}-install-boot' {
-	load_video
-	set gfxpayload=keep
-	insmod gzio
+echo "menuentry '${install-label}' --class gnu-linux --class gnu --class os \$menuentry_id_option 'gnulinux-test-${install-version}-install-boot' {"
+echo "    load_video"
+echo "    set gfxpayload=keep"
+echo "    insmod gzio"
+echo "    insmod part_gpt"
+echo "    insmod btrfs"
+echo "    insmod search"  
+echo "    insmod part_msdos"
+echo "    insmod ext2"
+echo ""
+echo "    echo '${install-kloading} ...'"
+echo "    linux	${kernel-fspath} ${kernel-parameters}"  
+echo "    echo '${install-iloading} ...'"
+echo "    initrd ${initrd-fspath}"
+echo ""
+echo " }"
 
-	echo	'${install-kloading} ...'
-	linux	${kernel-fspath} ${kernel-parameters}  
-	echo	'${install-iloading} ...'
-	initrd	${initrd-fspath}
-}
-EOF
 exit 0
 
