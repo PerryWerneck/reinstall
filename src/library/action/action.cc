@@ -186,7 +186,7 @@
 				throw runtime_error(_("Invalid 'type' attribute"));
 
 			}
-			return true;
+			return false;
 		});
 
 		// Create action id
@@ -508,6 +508,7 @@
 		Dialog::Progress &dialog = Dialog::Progress::getInstance();
 
 		dialog.set_sub_title(_("Running post scripts"));
+		info() << "Running " << scripts.post.size() << " post scripts" << endl;
 		for(Script &script : scripts.post) {
 			script.run(*this);
 		}
