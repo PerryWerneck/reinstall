@@ -94,7 +94,8 @@
 			}
 
 		public:
-			SubProcess(int u, const NamedObject &obj, const Udjat::String &command) : Udjat::SubProcess{obj.name(),command.c_str()}, uid{u} {
+			SubProcess(int u, const NamedObject &obj, const Udjat::String &command)
+				: Udjat::SubProcess{obj.name(),command.c_str(),Logger::Info,Logger::Info}, uid{u} {
 			}
 		};
 
