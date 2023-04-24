@@ -27,6 +27,7 @@
  #include <udjat/tools/logger.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
+ #include <udjat/tools/configuration.h>
 
  using namespace std;
  using namespace Udjat;
@@ -145,7 +146,7 @@
 				push_back(source);
 
 				// Setup DUD url based on local path.
-				kparms.emplace_back("dud", Quark{string{"hd:/"} + source->rpath()}.c_str());
+				kparms.emplace_back("dud", Quark{ ((std::string) Config::Value<string>{"schemes","disk","hd:"}) + source->rpath()}.c_str());
 
 			} else if(node.attribute("url")) {
 
