@@ -359,10 +359,12 @@
 		}
 
 		if(strcasecmp(key,"label") == 0 || strcasecmp(key,"install-label") == 0 ) {
-
 			value = get_label();
+			if(value.empty()) {
+				error() << "Action label is empty" << endl;
+				throw runtime_error(_("Selected installation has no label"));
+			}
 			return true;
-
 		}
 
 		if(strcasecmp(key,"kernel-parameters") == 0) {

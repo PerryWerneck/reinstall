@@ -21,6 +21,12 @@
  #include <udjat/moduleinfo.h>
  #include <udjat/tools/quark.h>
  #include <reinstall/controller.h>
+ #include <udjat/module.h>
+ #include <udjat/tools/application.h>
+ #include <udjat/tools/file.h>
+ #include <udjat/agent/abstract.h>
+
+ using namespace Udjat;
 
  namespace Reinstall {
 
@@ -37,6 +43,15 @@
 	bool Controller::generic(const pugi::xml_node &node) {
 		Abstract::Group::factory(node);
 		return true;
+	}
+
+	void Controller::setup() {
+#ifdef DEBUG
+		Udjat::Module::load(Udjat::File::Path(".bin/Debug/modules"));
+		Udjat::Application::initialize(Udjat::Abstract::Agent::RootFactory(),"./xml.d",true);
+#else
+		Udjat::Application::initialize(Udjat::Abstract::Agent::RootFactory(),nullptr,true);
+#endif // DEBUG
 	}
 
  }

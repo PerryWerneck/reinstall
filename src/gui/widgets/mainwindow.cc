@@ -29,9 +29,7 @@
  #include <reinstall/controller.h>
  #include <reinstall/tools.h>
  #include <udjat/tools/logger.h>
- #include <udjat/tools/file.h>
  #include <private/widgets.h>
- #include <udjat/module.h>
  #include <udjat/tools/configuration.h>
  #include <iostream>
  #include <udjat/tools/object.h>
@@ -154,15 +152,8 @@
 
 			try {
 
-				// First get controller to construct the factories.
-				Reinstall::Controller::getInstance();
-
-#ifdef DEBUG
-				Udjat::Module::load(Udjat::File::Path(".bin/Debug/modules"));
-				Udjat::Application::initialize(Abstract::Agent::RootFactory(),"./xml.d",true);
-#else
-				Udjat::Application::initialize(Abstract::Agent::RootFactory(),nullptr,true);
-#endif // DEBUG
+				// Load xml.d, initialize libudjat.
+				Reinstall::Controller::getInstance().setup();
 
 			} catch(const std::exception &e) {
 

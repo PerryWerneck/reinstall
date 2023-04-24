@@ -70,6 +70,7 @@ fi
 ./mount.sh
 
 sudo setcap cap_dac_override,cap_setuid,cap_setgid,cap_chown,cap_sys_admin+ep .bin/Debug/reinstall 
+sudo rm -f /tmp/51_reinstall
 
 .bin/Debug/reinstall
 if [ "$?" != "0" ]; then

@@ -23,7 +23,10 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/logger.h>
  #include <private/mainwindow.h>
- #include <reinstall/source.h>
+ #include <reinstall/controller.h>
+ #include <udjat/tools/application.h>
+ #include <reinstall/builder.h>
+ #include <reinstall/writer.h>
 
  using namespace std;
  using namespace Udjat;
@@ -57,6 +60,39 @@
 	cerr << message << endl;
  }
 
+ static int gui_mode() {
+	auto app = Gtk::Application::create(PRODUCT_ID "." PACKAGE_NAME);
+	MainWindow window;
+	return app->run(window);
+ }
+
+ static int text_mode(bool) {
+
+	Reinstall::UserInterface interface;
+ 	Reinstall::Controller &controller{Reinstall::Controller::getInstance()};
+
+	controller.setup();
+
+	Reinstall::Action &action = Reinstall::Action::get_selected();
+
+	if(action.interact()) {
+
+		Reinstall::Dialog::Progress progress;
+
+		auto builder = action.pre();
+		auto writer = action.WriterFactory();
+
+		builder->burn(writer);
+		action.post(writer);
+
+	}
+
+ 	Reinstall::Controller::getInstance().clear();
+ 	Udjat::Application::finalize();
+
+ 	return 0;
+ }
+
  int main(int argc, char* argv[]) {
 
 	Udjat::Quark::init();
@@ -65,13 +101,30 @@
 #ifdef DEBUG
 	Udjat::Logger::enable(Udjat::Logger::Trace);
 	Udjat::Logger::enable(Udjat::Logger::Debug);
+	Udjat::Logger::console(true);
+#else
+	Udjat::Logger::console(false);
 #endif // DEBUG
 
 	g_log_set_default_handler(g_syslog,NULL);
 
-	auto app = Gtk::Application::create(PRODUCT_ID "." PACKAGE_NAME);
-	MainWindow window;
+	for(int ix = 1; ix < argc; ix++) {
 
-	return app->run(window);
+		const char *ptr = argv[ix];
+		while(*ptr && *ptr == '-') {
+			ptr++;
+		}
+
+		if(strcasecmp(ptr,"foreground") == 0 || strcasecmp(ptr,"f") == 0 || strcasecmp(ptr,"verbose") == 0 || strcasecmp(ptr,"v") == 0) {
+			Udjat::Logger::console(true);
+		} else if(strcasecmp(ptr,"quiet") == 0 || strcasecmp(ptr,"q") == 0) {
+			Udjat::Logger::console(false);
+		} else if(strcasecmp(ptr,"apply-default") == 0) {
+			return text_mode(false);
+		}
+
+	}
+
+	return gui_mode();
 
  }
