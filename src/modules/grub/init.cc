@@ -176,12 +176,12 @@
 					*/
 
 					if(strcasecmp(key,"kernel-filename") == 0) {
-						value = "kernel-" PACKAGE_NAME;
+						value = "kernel." PACKAGE_NAME;
 						return true;
 					}
 
 					if(strcasecmp(key,"initrd-filename") == 0) {
-						value = "initrd-" PACKAGE_NAME;
+						value = "initrd." PACKAGE_NAME;
 						return true;
 					}
 

@@ -136,7 +136,7 @@ linux_entry ()
 #	  title_correction_code="${title_correction_code}if [ \"x\$default\" = '$quoted' ]; then default='$(echo "$replacement_title" | grub_quote)'; fi;"
 #	  grub_warn "$(gettext_printf "Please don't use old title \`%s' for GRUB_DEFAULT, use \`%s' (for versions before 2.00) or \`%s' (for 2.00 or later)" "$GRUB_ACTUAL_DEFAULT" "$replacement_title" "gnulinux-advanced-$boot_device_id>gnulinux-$version-$type-$boot_device_id")"
 #  fi
-  echo "menuentry '$(echo "$title" | grub_quote)' $(print_hotkey) ${CLASS} \$menuentry_id_option 'gnulinux-$version-$type-$boot_device_id' {" | sed "s/^/$submenu_indentation/"
+  echo "menuentry '$(echo "$title" | grub_quote)' $(print_hotkey) ${CLASS} \$menuentry_id_option 'gnulinux-$type-$boot_device_id' {" | sed "s/^/$submenu_indentation/"
   hotkey=$(incr_hotkey)
 
   if [ x$type != xrecovery ] ; then
@@ -173,7 +173,7 @@ linux_entry ()
     printf '%s\n' "${prepare_boot_cache}" | sed "s/^/$submenu_indentation/"
   fi
  fi
-  message="$(gettext_printf "Loading Linux %s ..." ${version})"
+  message="%{install-kloading}"
   if [ -d /sys/firmware/efi ] && [ "x${GRUB_USE_LINUXEFI}" = "xtrue" ]; then
     sed "s/^/$submenu_indentation/" << EOF
 	echo	'$(echo "$message" | grub_quote)'
@@ -187,7 +187,7 @@ EOF
   fi
   if test -n "${initrd}" ; then
     # TRANSLATORS: ramdisk isn't identifier. Should be translated.
-    message="$(gettext_printf "Loading initial ramdisk ...")"
+    message="%{install-iloading}"
     initrd_path=
     for i in ${initrd}; do
       initrd_path="${initrd_path} ${rel_dirname}/${i}"
@@ -210,19 +210,20 @@ EOF
 }
 
 machine=`uname -m`
-case "x$machine" in
-    xi?86 | xx86_64) klist="/boot/vmlinuz-* /vmlinuz-* /boot/kernel-*" ;;
-    xaarch64) klist="/boot/Image-* /Image-* /boot/kernel-*" ;;
-    xarm*) klist="/boot/zImage-* /zImage-* /boot/kernel-*" ;;
-    xs390 | xs390x)  klist="/boot/image-* /boot/kernel-*" ;;
-    *) klist="/boot/vmlinuz-* /boot/vmlinux-* /vmlinuz-* /vmlinux-* \
-		/boot/kernel-*" ;;
-esac
-list=
-for i in $klist ; do
-    if grub_file_is_not_garbage "$i" ; then list="$list $i" ; fi
-done
+#case "x$machine" in
+#    xi?86 | xx86_64) klist="/boot/vmlinuz-* /vmlinuz-* /boot/kernel-*" ;;
+#    xaarch64) klist="/boot/Image-* /Image-* /boot/kernel-*" ;;
+#    xarm*) klist="/boot/zImage-* /zImage-* /boot/kernel-*" ;;
+#    xs390 | xs390x)  klist="/boot/image-* /boot/kernel-*" ;;
+#    *) klist="/boot/vmlinuz-* /boot/vmlinux-* /vmlinuz-* /vmlinux-* \
+#		/boot/kernel-*" ;;
+#esac
+#list=
+#for i in $klist ; do
+#    if grub_file_is_not_garbage "$i" ; then list="$list $i" ; fi
+#done
 
+list=%{kernel-file}
 case "$machine" in
     i?86) GENKERNEL_ARCH="x86" ;;
     mips|mips64) GENKERNEL_ARCH="mips" ;;
@@ -278,21 +279,7 @@ while [ "x$list" != "x" ] ; do
     fi
   done
 
-  initrd_real=${dirname}/%{initrd-filename}
-
-#  for i in "initrd.img-${version}" "initrd-${version}.img" "initrd-${version}.gz" \
-#	   "initrd-${version}" "initramfs-${version}.img" \
-#	   "initrd.img-${alt_version}" "initrd-${alt_version}.img" \
-#	   "initrd-${alt_version}" "initramfs-${alt_version}.img" \
-#	   "initramfs-genkernel-${version}" \
-#	   "initramfs-genkernel-${alt_version}" \
-#	   "initramfs-genkernel-${GENKERNEL_ARCH}-${version}" \
-#	   "initramfs-genkernel-${GENKERNEL_ARCH}-${alt_version}"; do
-#    if test -e "${dirname}/${i}" ; then
-#      initrd_real="${i}"
-#      break
-#    fi
-#  done
+  initrd_real=%{initrd-filename}
 
   initrd=
   if test -n "${initrd_early}" || test -n "${initrd_real}"; then
@@ -305,21 +292,21 @@ while [ "x$list" != "x" ] ; do
     gettext_printf "Found initrd image: %s\n" "$(echo $initrd_display)" >&2
   fi
 
-  config=
-  for i in "${dirname}/config-${version}" "${dirname}/config-${alt_version}" "/etc/kernels/kernel-config-${version}" "/usr/lib/modules/${version}/config" ; do
-    if test -e "${i}" ; then
-      config="${i}"
-      break
-    fi
-  done
-
-  # try to get the kernel config if $linux is a symlink
-  if test -z "${config}" ; then
-    lnk_version=`basename \`readlink -f $linux\` | sed -e "s,^[^0-9]*-,,g"`
-    if (test -n ${lnk_version} && test -e "${dirname}/config-${lnk_version}") ; then
-      config="${dirname}/config-${lnk_version}"
-    fi
-  fi
+#  config=
+#  for i in "${dirname}/config-${version}" "${dirname}/config-${alt_version}" "/etc/kernels/kernel-config-${version}" "/usr/lib/modules/${version}/config" ; do
+#    if test -e "${i}" ; then
+#      config="${i}"
+#      break
+#    fi
+#  done
+#
+#  # try to get the kernel config if $linux is a symlink
+#  if test -z "${config}" ; then
+#    lnk_version=`basename \`readlink -f $linux\` | sed -e "s,^[^0-9]*-,,g"`
+#    if (test -n ${lnk_version} && test -e "${dirname}/config-${lnk_version}") ; then
+#      config="${dirname}/config-${lnk_version}"
+#    fi
+#  fi
 
   # check if we are in xen domU
   if [ ! -e /proc/xen/xsd_port -a -e /proc/xen ]; then
@@ -348,9 +335,9 @@ while [ "x$list" != "x" ] ; do
   fi
 
   initramfs=
-  if test -n "${config}" ; then
-      initramfs=`grep CONFIG_INITRAMFS_SOURCE= "${config}" | cut -f2 -d= | tr -d \"`
-  fi
+#  if test -n "${config}" ; then
+#      initramfs=`grep CONFIG_INITRAMFS_SOURCE= "${config}" | cut -f2 -d= | tr -d \"`
+#  fi
 
   if test -z "${initramfs}" && test -z "${initrd_real}" ; then
     # "UUID=" and "ZFS=" magic is parsed by initrd or initramfs.  Since there's
@@ -372,7 +359,7 @@ while [ "x$list" != "x" ] ; do
     GRUB_DISABLE_SUBMENU="true"
   fi
 
-  linux_entry "${OS}" "${version}" reinstall \
+  linux_entry "${OS}" "%{install-version}" reinstall \
               "${GRUB_CMDLINE_LINUX} %{kernel-parameters}"
 
   list=`echo $list | tr ' ' '\n' | fgrep -vx "$linux" | tr '\n' ' '`

@@ -338,14 +338,14 @@
 
 		if(strcasecmp(key,"install-kloading") == 0) {
 
-			value = _("Loading installation kernel");
+			value = _("Loading installation kernel ...");
 			return true;
 
 		}
 
 		if(strcasecmp(key,"install-iloading") == 0) {
 
-			value = _("Loading system installer");
+			value = _("Loading system installer ...");
 			return true;
 
 		}
@@ -414,6 +414,12 @@
 			value = "/boot/x86_64/loader/initrd";
 			return true;
 		}
+
+		if(strcasecmp(key,"install-version") == 0) {
+			value = PACKAGE_VERSION;
+			return true;
+		}
+
 
 		return Reinstall::Abstract::Object::getProperty(key,value);
 
