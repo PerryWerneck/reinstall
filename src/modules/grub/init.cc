@@ -120,6 +120,14 @@
 					return make_shared<Reinstall::Writer>(*this);
 				}
 
+				std::string getProperty(const char *key) const {
+					std::string value;
+					if(getProperty(key,value)) {
+						return value;
+					}
+					throw runtime_error(Logger::Message{_("Unable to get value for '{}'"),key});
+				}
+
 				bool getProperty(const char *key, std::string &value) const override {
 
 					debug("Searching for '",key,"' in ",name());
@@ -186,12 +194,12 @@
 					}
 
 					if(strcasecmp(key,"kernel-file") == 0) {
-						value = "${grub-path}/${kernel-filename}";
+						value = getProperty("grub-path") + "/" + getProperty("kernel-filename");
 						return true;
 					}
 
 					if(strcasecmp(key,"initrd-file") == 0) {
-						value = "${grub-path}/${initrd-filename}";
+						value = getProperty("grub-path") + "/" + getProperty("initrd-filename");
 						return true;
 					}
 
