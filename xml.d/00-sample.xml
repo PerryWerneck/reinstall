@@ -80,7 +80,7 @@
 	 		<attribute name='sub-title' value='Do a complete network based reinstall on this workstation withot any external boot device' />
 		
 			<!-- Save configuration for the new boot option -->
-			<template name='grub-config' url='file://${template-dir}/grub2' path='${grub-conf-dir}/90_reinstall' script='yes' />
+			<template name='grub-config' url='file://${template-dir}/grub2' path='${grub-conf-dir}/51_reinstall' script='yes' marker='%' />
 			
 			<!-- Add new boot option to grub.cfg -->
 			<script name='mkconfig' type='post' user='root' cmdline='echo /usr/sbin/grub2-mkconfig -o /boot/grub2/grub.cfg' />
