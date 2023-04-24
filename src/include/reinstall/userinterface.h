@@ -36,6 +36,8 @@
 
 		static UserInterface & getInstance();
 
+		static void textmode();
+
 		/// @brief Get filename (gui thread).
 		virtual std::string FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save);
 

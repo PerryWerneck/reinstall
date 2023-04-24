@@ -125,6 +125,23 @@
 
 	}
 
+#ifndef _WIN32
+	{
+		const char *ptr = strrchr(argv[0],'/');
+		if(ptr) {
+			ptr++;
+		} else {
+			ptr = argv[0];
+		}
+
+		if(!strcasecmp(ptr,"reinstall-enable")) {
+			return text_mode(false);
+		} else if(!strcasecmp(ptr,"reinstall-text") || !getenv("DISPLAY")) {
+			return text_mode(true);
+		}
+	}
+#endif // _WIN32
+
 	return gui_mode();
 
  }

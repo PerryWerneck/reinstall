@@ -19,9 +19,12 @@
 
  #include <config.h>
  #include <reinstall/userinterface.h>
+ #include <udjat/tools/logger.h>
+ #include <reinstall/object.h>
  #include <stdexcept>
 
  using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
@@ -63,11 +66,13 @@
 
 		public:
 			Object(const pugi::xml_node &node) {
-
-				label = get_text(node,"label");
-				body = get_text(node,"sub-title");
 				set(node);
+			}
 
+			void set(const pugi::xml_node &node) override {
+				label = get_text(node,"title");
+				body = get_text(node,"sub-title");
+				Reinstall::Abstract::Object::set(node);
 			}
 
 			std::string get_label() const override {
