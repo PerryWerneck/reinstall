@@ -26,9 +26,12 @@
  #include <udjat/tools/threadpool.h>
  #include <iostream>
  #include <udjat/tools/logger.h>
+ #include <mutex>
 
  using namespace std;
  using namespace Udjat;
+
+ static mutex guard;
 
  Dialog::TaskRunner::TaskRunner(Gtk::Window &parent, const char *message, bool markup)
 	: Gtk::MessageDialog{parent,message,markup,Gtk::MESSAGE_INFO,Gtk::BUTTONS_NONE,true} {
@@ -59,10 +62,13 @@
 
 		response = Reinstall::Dialog::TaskRunner::push(callback,false);
 
-		Glib::signal_idle().connect([mainloop](){
-			mainloop->quit();
-			return 0;
-		});
+		{
+			lock_guard<mutex> lock(guard);
+			Glib::signal_idle().connect([mainloop](){
+				mainloop->quit();
+				return 0;
+			});
+		}
 
 	});
 
@@ -79,6 +85,7 @@
  void Dialog::TaskRunner::set_title(const char *text, bool markup) {
 
  	auto str = make_shared<string>(text);
+	lock_guard<mutex> lock(guard);
 	Glib::signal_idle().connect([this,str,markup](){
 		this->set_message(str->c_str(),markup);
 		return 0;
@@ -89,6 +96,7 @@
  void Dialog::TaskRunner::set_sub_title(const char *text, bool markup) {
 
  	auto str = make_shared<string>(text);
+	lock_guard<mutex> lock(guard);
 	Glib::signal_idle().connect([this,str,markup](){
 		this->set_secondary_text(str->c_str(),markup);
 		return 0;
@@ -111,6 +119,7 @@
 		}
 
 		void enable(bool enabled) override {
+			lock_guard<mutex> lock(guard);
 			Glib::signal_idle().connect([this,enabled](){
 				set_sensitive(enabled);
 				return 0;
@@ -118,6 +127,7 @@
 		}
 
 		void set_destructive() override {
+			lock_guard<mutex> lock(guard);
 			Glib::signal_idle().connect([this](){
 				get_style_context()->add_class("destructive-action");
 				return 0;
@@ -125,6 +135,7 @@
 		}
 
 		void set_suggested() override {
+			lock_guard<mutex> lock(guard);
 			Glib::signal_idle().connect([this](){
 				get_style_context()->add_class("suggested-action");
 				return 0;
@@ -133,6 +144,7 @@
 
 		void activate() override {
 
+			lock_guard<mutex> lock(guard);
 			Glib::signal_idle().connect([this](){
 				try {
 

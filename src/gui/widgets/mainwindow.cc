@@ -355,14 +355,13 @@
 
  	Glib::signal_idle().connect([this,str](){
 
-		cout << "MainWindow\tShowing error popup for '" << str->c_str() << "'" << endl;
-
 		Reinstall::Action &action = Reinstall::Action::get_selected();
 		std::shared_ptr<Gtk::MessageDialog> popup;
 
 		if(action.failed()) {
 
 			// Customized error dialog.
+			cout << "MainWindow\tShowing customized error popup for '" << str->c_str() << "'" << endl;
 
 			popup = make_shared<Dialog::Popup>(
 				*this,
@@ -379,6 +378,7 @@
 		} else {
 
 			// Standard error dialog.
+			cout << "MainWindow\tShowing standard error popup for '" << str->c_str() << "'" << endl;
 
 			popup = make_shared<Gtk::MessageDialog>(
 				*this,
@@ -394,15 +394,21 @@
 		}
 
 		if(action.quit()) {
-			popup->add_button(_("Quit application"),Gtk::RESPONSE_CANCEL);
+			Widget *cancel = popup->add_button(Config::Value<string>{"buttons","quit",_("Quit application")},Gtk::RESPONSE_CANCEL);
+			cancel->get_style_context()->add_class("suggested-action");
+			popup->set_default_response(Gtk::RESPONSE_CANCEL);
 		}
 
 		popup->set_title(action.get_label());
 		popup->set_default_size(500, -1);
-		popup->show();
+		popup->present();
 
+		debug("Running popup");
 		if(popup->run() == Gtk::RESPONSE_CANCEL) {
+			cout << "MainWindow\tUser selected 'cancel' on error popup" << endl;
 			Gtk::Application::get_default()->quit();
+		} else {
+			cout << "MainWindow\tUser selected 'Ok' on error popup" << endl;
 		}
 
 		return 0;

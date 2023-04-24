@@ -110,8 +110,9 @@
 			} catch(const std::exception &e) {
 
 				cerr << e.what() << endl;
-				failed(e.what());
 				dialog.dismiss(Gtk::RESPONSE_CANCEL);
+				sleep(1);
+				failed(e.what());
 
 			}
 
@@ -162,8 +163,9 @@
 			} catch(const std::exception &e) {
 
 				cerr << e.what() << endl;
-				failed(e.what());
 				dialog.dismiss(Gtk::RESPONSE_CANCEL);
+				sleep(1);
+				failed(e.what());
 
 			}
 
