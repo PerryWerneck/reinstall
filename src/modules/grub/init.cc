@@ -134,7 +134,9 @@
 						return true;
 					}
 
-					if(strcasecmp(key,"boot-dir") == 0) {
+					if(strcasecmp(key,"boot-dir") == 0 || strcasecmp(key,"grub-path") == 0) {
+
+						// TODO: Detect boot path ( /proc/cmdline? )
 #ifdef DEBUG
 						value = "/tmp";
 #else
@@ -157,39 +159,39 @@
 						return true;
 					}
 
+					/*
 					if(strcasecmp(key,"kernel-path") == 0) {
-						// TODO: Use path relative to boot partition
-						value = "/boot/kernel." PACKAGE_NAME;
+						// TODO: Detect boot partition
+						value = "/boot/kernel-" PACKAGE_NAME;
 						debug(key,"=",value);
 						return true;
 					}
 
 					if(strcasecmp(key,"initrd-path") == 0) {
-						// TODO: Use path relative to boot partition
-						value = "/boot/initrd." PACKAGE_NAME;
+						// TODO: Detect boot partition
+						value = "/boot/initrd-" PACKAGE_NAME;
 						debug(key,"=",value);
+						return true;
+					}
+					*/
+
+					if(strcasecmp(key,"kernel-filename") == 0) {
+						value = "kernel-" PACKAGE_NAME;
+						return true;
+					}
+
+					if(strcasecmp(key,"initrd-filename") == 0) {
+						value = "initrd-" PACKAGE_NAME;
 						return true;
 					}
 
 					if(strcasecmp(key,"kernel-file") == 0) {
-#ifdef DEBUG
-						value = "/tmp/kernel." PACKAGE_NAME;
-#else
-						// TODO: Detect boot path ( /proc/cmdline? )
-						value = "/boot/kernel." PACKAGE_NAME;
-#endif // DEBUG
-						debug(key,"=",value);
+						value = "${grub-path}/${kernel-filename}";
 						return true;
 					}
 
 					if(strcasecmp(key,"initrd-file") == 0) {
-#ifdef DEBUG
-						value = "/tmp/initrd." PACKAGE_NAME;
-#else
-						// TODO: Detect boot path ( /proc/cmdline? )
-						value = "/boot/initrd." PACKAGE_NAME;
-#endif // DEBUG
-						debug(key,"=",value);
+						value = "${grub-path}/${initrd-filename}";
 						return true;
 					}
 
