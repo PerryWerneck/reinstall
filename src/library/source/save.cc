@@ -53,7 +53,7 @@
 
  		if(strncasecmp(url,"file://",7) == 0) {
 
-			Udjat::File::copy(Udjat::URL{url}.ComponentsFactory().path.c_str(),filename);
+			Udjat::File::copy(Udjat::URL{url}.ComponentsFactory().path.c_str(),filename,true);
 			return;
 
  		}

@@ -54,8 +54,6 @@
 
 		this->marker = sMarker[0];
 
-		debug("---------------> '", path, "'");
-
 	}
 
 	Action::Template::~Template() {
@@ -88,10 +86,25 @@
 		debug("Marker = '",string{marker},"' \n",contents,"\n");
 
 		// Save to temporary.
+		debug("Saving template");
 		filename = Udjat::File::save(contents.c_str());
 
-		chmod(filename.c_str(),(script ? 0755 : 0644));
+		{
+			mode_t mode = 0644;
 
+			if(script) {
+				Logger::String{"Template is script, using exec permission"}.trace(name);
+				mode = 0755;
+			} else {
+				Logger::String{"Template is not script, using standard file permission"}.trace(name);
+				mode = 0644;
+			}
+
+			if(chmod(filename.c_str(),mode) < 0) {
+				throw system_error(errno,system_category(),_("Cant update template permissions"));
+			}
+
+		}
 	}
 
 	bool Action::Template::test(const char *isopath) const noexcept {
