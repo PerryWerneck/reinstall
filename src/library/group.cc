@@ -22,6 +22,7 @@
  #include <reinstall/group.h>
  #include <udjat/tools/logger.h>
  #include <reinstall/userinterface.h>
+ #include <udjat/tools/intl.h>
  #include <memory>
 
  using namespace std;
@@ -55,6 +56,25 @@
 
 		Udjat::Logger::String{"Group '",std::to_string(*rc),"' initialized with id ",rc->id}.trace("group");
 
+		return rc;
+	}
+
+	std::shared_ptr<Abstract::Group> Abstract::Group::find(const unsigned short id) {
+		std::shared_ptr<Abstract::Group> rc;
+
+		Reinstall::Controller::getInstance().for_each([&rc,id](std::shared_ptr<Group> group){
+
+			if(group->id == id) {
+				rc = group;
+				return true;
+			}
+			return false;
+
+		});
+
+		if(!rc) {
+			throw system_error(ENOENT,system_category(),_("Invalid group ID"));
+		}
 		return rc;
 	}
 

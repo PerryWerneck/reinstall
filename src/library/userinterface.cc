@@ -95,7 +95,7 @@
 		public:
 			Group(const pugi::xml_node &node) {
 
-				label = get_text(node,"label");
+				label = get_text(node,"title");
 				body = get_text(node,"sub-title");
 				set(node);
 

@@ -24,9 +24,12 @@
  #include <udjat/tools/logger.h>
  #include <private/mainwindow.h>
  #include <reinstall/controller.h>
+ #include <reinstall/action.h>
  #include <udjat/tools/application.h>
  #include <reinstall/builder.h>
  #include <reinstall/writer.h>
+ #include <cstdio>
+ #include <readline/readline.h>
 
  using namespace std;
  using namespace Udjat;
@@ -66,12 +69,118 @@
 	return app->run(window);
  }
 
- static int text_mode(bool) {
+ static unsigned short get_option() {
+
+	static const char *prompt = _("\nSelect option: ");
+	std::string str;
+
+	write(1,prompt,strlen(prompt));
+	std::getline(cin,str);
+
+	unsigned short rc = atoi(str.c_str());
+
+	if(!rc) {
+		throw runtime_error(_("Cancelled by user"));
+	}
+
+	return rc;
+ }
+
+ static bool text_menu() {
+
+	try {
+
+		size_t groups = 0;
+
+		write(1,"\n",1);
+		Reinstall::Controller::getInstance().for_each([&groups](std::shared_ptr<Reinstall::Abstract::Group> group) {
+
+			String option{group->id," - ",group->get_label(),"\n"};
+			write(1,option.c_str(),option.size());
+			groups++;
+
+			return false;
+		});
+
+		static const char * clear_and_up{"\r\33[1A\r\33[2K"};
+		short option = get_option();
+
+		for(size_t ln = 0; ln < (groups+2); ln++) {
+			write(1,clear_and_up,strlen(clear_and_up));
+		}
+
+		auto group = Reinstall::Abstract::Group::find(option);
+
+		{
+			String option{group->get_label(),":\n\n"};
+			write(1,option.c_str(),option.size());
+		}
+
+		// Select action.
+		size_t actions = 0;
+		group->for_each([&actions](std::shared_ptr<Reinstall::Action> action){
+
+			String option{"  ",action->id," - ",action->get_label(),"\n"};
+			write(1,option.c_str(),option.size());
+			actions++;
+
+			return false;
+		});
+
+		option = get_option();
+
+		for(size_t ln = 0; ln < (actions+4); ln++) {
+			write(1,clear_and_up,strlen(clear_and_up));
+		}
+
+		if(!group->for_each([option](std::shared_ptr<Reinstall::Action> action){
+
+			if(action->id == option) {
+				action->set_selected();
+				return true;
+			}
+
+			return false;
+		})) {
+			throw runtime_error(_("Invalid action id"));
+		};
+
+		{
+			String option{"\33[1m",group->get_label(), " - ", Reinstall::Action::get_selected().get_label(), "\33[0m\n\n"};
+			write(1,option.c_str(),option.size());
+		}
+
+	} catch(const std::exception &e) {
+
+		write(2,"\n\n",2);
+		write(2,e.what(),strlen(e.what()));
+		write(2,"\n",2);
+		return false;
+
+	}
+
+	Logger::console(true);
+	return true;
+ }
+
+ static int text_mode(bool interactive) {
+
+	Logger::console(!interactive);
 
 	Reinstall::UserInterface interface;
  	Reinstall::Controller &controller{Reinstall::Controller::getInstance()};
 
 	controller.setup();
+
+	if(interactive) {
+
+		if(!text_menu()) {
+			Reinstall::Controller::getInstance().clear();
+			Udjat::Application::finalize();
+			return -1;
+		}
+
+	}
 
 	Reinstall::Action &action = Reinstall::Action::get_selected();
 
@@ -87,8 +196,6 @@
 
 	}
 
- 	Reinstall::Controller::getInstance().clear();
- 	Udjat::Application::finalize();
 
  	return 0;
  }
@@ -119,6 +226,8 @@
 			Udjat::Logger::console(true);
 		} else if(strcasecmp(ptr,"quiet") == 0 || strcasecmp(ptr,"q") == 0) {
 			Udjat::Logger::console(false);
+		} else if(strcasecmp(ptr,"text") == 0 || strcasecmp(ptr,"t") == 0) {
+			return text_mode(true);
 		} else if(strcasecmp(ptr,"apply-default") == 0) {
 			return text_mode(false);
 		}
