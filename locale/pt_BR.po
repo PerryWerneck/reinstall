@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: reinstall 5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
-"PO-Revision-Date: 2023-04-19 08:52-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
+"PO-Revision-Date: 2023-04-25 17:05-0300\n"
 "Last-Translator: Perry Werneck <perry.werneck@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <perry.werneck@gmail.com>\n"
 "Language: pt_BR\n"
@@ -23,11 +23,19 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "X-Generator: Gtranslator 40.0\n"
 
-#: src/gui/apply.cc:203
+#: src/gui/main.cc:74
+msgid ""
+"\n"
+"Select option: "
+msgstr ""
+"\n"
+"Selecione opção: "
+
+#: src/gui/apply.cc:206
 msgid "Action completed"
 msgstr "Operação concluída"
 
-#: src/gui/widgets/mainwindow.cc:385
+#: src/gui/widgets/mainwindow.cc:378
 msgid "Action has failed"
 msgstr "Operação falhou"
 
@@ -39,7 +47,7 @@ msgstr "Adicionando imagem de boot EFI"
 msgid "Adding el-torito boot image"
 msgstr "Adicionando imagem de boot el-torito"
 
-#: src/library/action/action.cc:463 src/library/action/action.cc:466
+#: src/library/action/action.cc:506 src/library/action/action.cc:510
 msgid "Building"
 msgstr "Construindo"
 
@@ -59,11 +67,15 @@ msgstr "Não foi possível atualizar estado do dispositivo de loop"
 msgid "Cancel"
 msgstr "Cancelar"
 
+#: src/gui/main.cc:83
+msgid "Cancelled by user"
+msgstr "Cancelado pelo usuário"
+
 #: src/modules/isowriter/init.cc:118
 msgid "Cant access downloaded image"
 msgstr "Sem acesso á imagem baixada"
 
-#: src/library/os/linux/source.cc:81
+#: src/library/os/linux/source.cc:75
 msgid "Cant find valid mountpoint"
 msgstr "Não foi possível encontrar um ponto de montagem válido"
 
@@ -75,7 +87,11 @@ msgstr "Não foi possível der do arquivo de imagem"
 msgid "Cant read system area definition file"
 msgstr "Não foi possível ler o arquivo de definição de área do sistema"
 
-#: src/library/action/action.cc:410
+#: src/library/action/template.cc:104
+msgid "Cant update template permissions"
+msgstr "Erro ao atualizar permissões de modelo"
+
+#: src/library/action/action.cc:450
 msgid "Checking for templates"
 msgstr "Verificando templates"
 
@@ -83,7 +99,7 @@ msgstr "Verificando templates"
 msgid "Continue"
 msgstr "Continuar"
 
-#: src/library/action/action.cc:154
+#: src/library/action/action.cc:158
 msgid "DUD Definition requires path or url attribute."
 msgstr "Definição de imagem DUD requer atributos 'path' ou 'url'"
 
@@ -94,6 +110,10 @@ msgstr "Baixando imagem ISO"
 #: src/library/source/apache_mirror.cc:40
 msgid "Empty response from {}"
 msgstr "Resposta vazia de {}"
+
+#: src/gui/widgets/mainwindow.cc:187
+msgid "Error"
+msgstr "Erro"
 
 #: src/library/iso9660/builder.cc:72
 msgid "Error creating iso image"
@@ -107,7 +127,7 @@ msgstr "Erro lendo área de sistema"
 msgid "Finalizing"
 msgstr "Finalizando"
 
-#: src/gui/apply.cc:59
+#: src/gui/apply.cc:60
 msgid "First step has failed"
 msgstr "Primeira etapa falhou"
 
@@ -115,19 +135,19 @@ msgstr "Primeira etapa falhou"
 msgid "Getting configuration"
 msgstr "Obtendo a configuração"
 
-#: src/library/action/action.cc:406
+#: src/library/action/action.cc:445
 msgid "Getting file lists"
 msgstr "Obtendo lista de arquivos"
 
 #: src/library/source/initrd.cc:37
-msgid "Getting install loader"
-msgstr "Obtendo carregador de instalação"
+msgid "Getting init system"
+msgstr "Obtendo inicializador"
 
 #: src/library/source/kernel.cc:37
 msgid "Getting installation kernel"
 msgstr "Obtendo kernel de instalação"
 
-#: src/library/action/action.cc:257 src/library/action/action.cc:453
+#: src/library/action/action.cc:264 src/library/action/action.cc:493
 msgid "Getting required files"
 msgstr "Obtendo arquivos necessários"
 
@@ -139,11 +159,11 @@ msgstr "Erro de I/O gravando imagem"
 msgid "Image file name"
 msgstr "Nome do arquivo de imagem"
 
-#: src/gui/widgets/mainwindow.cc:186
+#: src/gui/widgets/mainwindow.cc:179
 msgid "Initialization has failed"
 msgstr "Inicialização falhou"
 
-#: src/library/action/action.cc:401 src/gui/dialogs/progress.cc:346
+#: src/library/action/action.cc:440 src/gui/dialogs/progress.cc:319
 msgid "Initializing"
 msgstr "Inicializando"
 
@@ -151,17 +171,33 @@ msgstr "Inicializando"
 msgid "Insert an storage device <b>NOW</b> "
 msgstr "Insira um dispositivo de armazenamento <b>AGORA</b>"
 
-#: src/library/action/action.cc:183
+#: src/library/action/action.cc:187
 msgid "Invalid 'type' attribute"
 msgstr "Atributo 'type' é inválido"
+
+#: src/gui/main.cc:143
+msgid "Invalid action id"
+msgstr "Identificador de ação inválida"
+
+#: src/library/group.cc:76
+msgid "Invalid group ID"
+msgstr "Identificador de grupo inválido"
 
 #: src/library/kernelparameter.cc:69
 msgid "Invalid kernel parameter value type"
 msgstr "Tipo inválido para parâmetro de kernel"
 
+#: src/library/action/action.cc:342
+msgid "Loading installation kernel ..."
+msgstr "Obtendo kernel de instalação ..."
+
 #: src/gui/widgets/mainwindow.cc:144
 msgid "Loading option list"
 msgstr "Lendo lista de opções"
+
+#: src/library/action/action.cc:349
+msgid "Loading system installer ..."
+msgstr "Obtendo instalador ..."
 
 #: src/library/isobuilder.cc:54 src/modules/grub/init.cc:73
 msgid "Missing required entry <init> with the URL for the linuxrc program"
@@ -171,7 +207,7 @@ msgstr "Faltando entrada <init> com a URL do programa linuxrc"
 msgid "Missing required entry <kernel> with the URL for installation kernel"
 msgstr "Faltando entrada <kernel> com a URL do kernel de instalação"
 
-#: src/library/object.cc:77
+#: src/library/object.cc:80
 msgid "More info"
 msgstr "Mais informações"
 
@@ -179,7 +215,7 @@ msgstr "Mais informações"
 msgid "More sources than module expects"
 msgstr "Mais fontes do que o módulo esperava"
 
-#: src/library/action/action.cc:46
+#: src/library/action/action.cc:47
 msgid "No action"
 msgstr "Nenhuma ação"
 
@@ -191,19 +227,19 @@ msgstr "Nenhum diálogo de progresso ativo"
 msgid "No active window"
 msgstr "Nenhuma janela ativa"
 
-#: src/library/action/action.cc:202
+#: src/library/action/action.cc:206
 msgid "No available image builder"
 msgstr "Nenhum construtor de imagem disponível"
 
-#: src/library/action/action.cc:217
+#: src/library/action/action.cc:221
 msgid "No installation media"
 msgstr "Nenhuma mídia de instalação"
 
-#: src/library/action/action.cc:305
+#: src/library/action/action.cc:314
 msgid "No repositories on this action"
 msgstr "Nenhum repositório nesta ação"
 
-#: src/library/action/action.cc:396
+#: src/library/action/action.cc:435
 msgid "Preparing"
 msgstr "Preparando"
 
@@ -211,29 +247,33 @@ msgstr "Preparando"
 msgid "Preparing to write"
 msgstr "Preparando para gravar"
 
-#: src/gui/apply.cc:227 src/gui/widgets/mainwindow.cc:397
+#: src/gui/apply.cc:217 src/gui/widgets/mainwindow.cc:390
 msgid "Quit application"
 msgstr "Sair da aplicação"
 
-#: src/gui/apply.cc:221
-msgid "Reboot"
-msgstr "Reiniciar"
+#: src/gui/apply.cc:227
+msgid "Reboot now"
+msgstr "Reiniciar agora"
 
 #: src/library/isobuilder.cc:196 src/library/isobuilder.cc:217
 msgid "Rejecting invalid action pointer"
 msgstr "Rejeitando ponteiro de ação inválido"
 
-#: src/library/os/linux/source.cc:42
+#: src/library/os/linux/source.cc:40
 msgid "Required attribute 'path' is missing"
 msgstr "Atributo necessário 'path' não foi encontrado"
 
-#: src/library/action/action.cc:475
+#: src/library/action/action.cc:519
 msgid "Running post scripts"
 msgstr "Executando scripts de finalização"
 
 #: src/modules/netinstall/init.cc:65
 msgid "Select target image file"
 msgstr "Selecione arquivo de imagem"
+
+#: src/library/action/action.cc:365
+msgid "Selected installation has no label"
+msgstr "Instalação selecionada não tem nome"
 
 #: src/library/isobuilder.cc:199 src/library/isobuilder.cc:220
 msgid "Setting up ISO image"
@@ -243,19 +283,23 @@ msgstr "Configurando imagem ISO"
 msgid "Storage device is unavailable"
 msgstr "Dispositivo de armazenamento indisponível"
 
-#: src/gui/widgets/mainwindow.cc:56
+#: src/gui/widgets/mainwindow.cc:54
 msgid "System reinstallation"
 msgstr "Reinstalar o sistema"
 
-#: src/library/action/template.cc:98
+#: src/library/action/template.cc:133
 msgid "Template was not loaded"
 msgstr "Template não foi carregado"
 
-#: src/library/action/action.cc:341
+#: src/gui/widgets/mainwindow.cc:188
+msgid "The initialization procedure has failed, the application cant continue"
+msgstr "O processo de inicialização falhou, a aplicação não pode continuar"
+
+#: src/library/action/action.cc:374
 msgid "The kernel parameters list is empty"
 msgstr "A lista de parâmetros do kernel está vazia"
 
-#: src/library/script.cc:35
+#: src/library/script.cc:72
 msgid "The required attribute 'cmdline' is missing"
 msgstr "Atributo necessário 'cmdline' não foi encontrado"
 
@@ -274,6 +318,10 @@ msgstr "Não é possível obter uma fonte com URL vazia"
 #: src/library/source/save.cc:49 src/library/source/save.cc:92
 msgid "Unable to get source with relative URL"
 msgstr "Não é possível obter fonte com URL relativa"
+
+#: src/modules/grub/init.cc:128 src/modules/grub/init.cc:210
+msgid "Unable to get value for '{}'"
+msgstr "Incapaz de obter o valor de '{}'"
 
 #: src/library/source/apache_mirror.cc:48
 msgid "Unable to parse file list from {}"
@@ -299,7 +347,7 @@ msgstr "Nome de arquivo inesperado na imagem de boot el-torito"
 msgid "Unnamed kernel parameter"
 msgstr "Parametro de kernel sem nome"
 
-#: src/library/action/action.cc:350
+#: src/library/action/action.cc:383
 msgid "Unnamed kernel parameter, possible misconfiguration"
 msgstr "Parametro de kernel sem nome, possível erro de configuração"
 
@@ -315,7 +363,7 @@ msgstr "Gravando imagem ISO"
 msgid "Writing image"
 msgstr "Gravando imagem"
 
-#: src/gui/widgets/mainwindow.cc:306
+#: src/gui/widgets/mainwindow.cc:299
 msgid "_Cancel"
 msgstr "_Cancelar"
 
@@ -323,7 +371,7 @@ msgstr "_Cancelar"
 msgid "_Save"
 msgstr "_Salvar"
 
-#: src/library/dialogs/progress.cc:67 src/gui/dialogs/progress.cc:109
+#: src/library/dialogs/progress.cc:67 src/gui/dialogs/progress.cc:112
 msgid "{} of {}"
 msgstr "{} de {}"
 
@@ -360,6 +408,9 @@ msgstr "{} de {}"
 
 #~ msgid "Gb"
 #~ msgstr "Gb"
+
+#~ msgid "Getting install loader"
+#~ msgstr "Obtendo carregador de instalação"
 
 #~ msgid "HTTP Version Not Supported"
 #~ msgstr "Versão HTTP não suportada"

@@ -34,7 +34,7 @@
 	InitRD::InitRD(const pugi::xml_node &node) : Source(node,Source::InitRD,"/boot/x86_64/loader/initrd","${initrd-file}") {
 		debug("Source for '",name(),"' will be ",url);
 		if(!(message && *message)) {
-			message = _("Getting install loader");
+			message = _("Getting init system");
 		}
 	}
 

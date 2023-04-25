@@ -10,7 +10,7 @@ msgstr ""
 "#-#-#-#-#  script.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "#-#-#-#-#  object.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,7 +32,7 @@ msgstr ""
 "#-#-#-#-#  kernelparameter.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-18 10:36-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -43,7 +43,18 @@ msgstr ""
 "#-#-#-#-#  isobuilder.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-18 19:05-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  group.pot (PACKAGE VERSION)  #-#-#-#-#\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,7 +65,7 @@ msgstr ""
 "#-#-#-#-#  builder.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,7 +76,7 @@ msgstr ""
 "#-#-#-#-#  template.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-18 19:05-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -76,7 +87,7 @@ msgstr ""
 "#-#-#-#-#  action.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-18 10:36-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -98,7 +109,7 @@ msgstr ""
 "#-#-#-#-#  progress.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -109,7 +120,7 @@ msgstr ""
 "#-#-#-#-#  save.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -120,7 +131,7 @@ msgstr ""
 "#-#-#-#-#  kernel.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -131,7 +142,7 @@ msgstr ""
 "#-#-#-#-#  initrd.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -142,7 +153,7 @@ msgstr ""
 "#-#-#-#-#  apache_mirror.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -153,7 +164,7 @@ msgstr ""
 "#-#-#-#-#  abstract.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -175,7 +186,7 @@ msgstr ""
 "#-#-#-#-#  source.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-18 10:36-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -186,7 +197,7 @@ msgstr ""
 "#-#-#-#-#  disk_image.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-18 19:05-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -197,7 +208,7 @@ msgstr ""
 "#-#-#-#-#  init.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -208,7 +219,7 @@ msgstr ""
 "#-#-#-#-#  init.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-18 10:36-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -219,7 +230,18 @@ msgstr ""
 "#-#-#-#-#  init.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-18 19:05-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  main.pot (PACKAGE VERSION)  #-#-#-#-#\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -230,7 +252,7 @@ msgstr ""
 "#-#-#-#-#  apply.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -241,7 +263,7 @@ msgstr ""
 "#-#-#-#-#  progress.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-17 09:20-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -252,7 +274,7 @@ msgstr ""
 "#-#-#-#-#  mainwindow.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-04-18 14:08-0300\n"
+"POT-Creation-Date: 2023-04-25 17:01-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -261,11 +283,17 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gui/apply.cc:203
+#: src/gui/main.cc:74
+msgid ""
+"\n"
+"Select option: "
+msgstr ""
+
+#: src/gui/apply.cc:206
 msgid "Action completed"
 msgstr ""
 
-#: src/gui/widgets/mainwindow.cc:385
+#: src/gui/widgets/mainwindow.cc:378
 msgid "Action has failed"
 msgstr ""
 
@@ -277,7 +305,7 @@ msgstr ""
 msgid "Adding el-torito boot image"
 msgstr ""
 
-#: src/library/action/action.cc:463 src/library/action/action.cc:466
+#: src/library/action/action.cc:506 src/library/action/action.cc:510
 msgid "Building"
 msgstr ""
 
@@ -297,11 +325,15 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
+#: src/gui/main.cc:83
+msgid "Cancelled by user"
+msgstr ""
+
 #: src/modules/isowriter/init.cc:118
 msgid "Cant access downloaded image"
 msgstr ""
 
-#: src/library/os/linux/source.cc:81
+#: src/library/os/linux/source.cc:75
 msgid "Cant find valid mountpoint"
 msgstr ""
 
@@ -313,7 +345,11 @@ msgstr ""
 msgid "Cant read system area definition file"
 msgstr ""
 
-#: src/library/action/action.cc:410
+#: src/library/action/template.cc:104
+msgid "Cant update template permissions"
+msgstr ""
+
+#: src/library/action/action.cc:450
 msgid "Checking for templates"
 msgstr ""
 
@@ -321,7 +357,7 @@ msgstr ""
 msgid "Continue"
 msgstr ""
 
-#: src/library/action/action.cc:154
+#: src/library/action/action.cc:158
 msgid "DUD Definition requires path or url attribute."
 msgstr ""
 
@@ -331,6 +367,10 @@ msgstr ""
 
 #: src/library/source/apache_mirror.cc:40
 msgid "Empty response from {}"
+msgstr ""
+
+#: src/gui/widgets/mainwindow.cc:187
+msgid "Error"
 msgstr ""
 
 #: src/library/iso9660/builder.cc:72
@@ -345,7 +385,7 @@ msgstr ""
 msgid "Finalizing"
 msgstr ""
 
-#: src/gui/apply.cc:59
+#: src/gui/apply.cc:60
 msgid "First step has failed"
 msgstr ""
 
@@ -353,19 +393,19 @@ msgstr ""
 msgid "Getting configuration"
 msgstr ""
 
-#: src/library/action/action.cc:406
+#: src/library/action/action.cc:445
 msgid "Getting file lists"
 msgstr ""
 
 #: src/library/source/initrd.cc:37
-msgid "Getting install loader"
+msgid "Getting init system"
 msgstr ""
 
 #: src/library/source/kernel.cc:37
 msgid "Getting installation kernel"
 msgstr ""
 
-#: src/library/action/action.cc:257 src/library/action/action.cc:453
+#: src/library/action/action.cc:264 src/library/action/action.cc:493
 msgid "Getting required files"
 msgstr ""
 
@@ -377,11 +417,11 @@ msgstr ""
 msgid "Image file name"
 msgstr ""
 
-#: src/gui/widgets/mainwindow.cc:186
+#: src/gui/widgets/mainwindow.cc:179
 msgid "Initialization has failed"
 msgstr ""
 
-#: src/library/action/action.cc:401 src/gui/dialogs/progress.cc:346
+#: src/library/action/action.cc:440 src/gui/dialogs/progress.cc:319
 msgid "Initializing"
 msgstr ""
 
@@ -389,16 +429,32 @@ msgstr ""
 msgid "Insert an storage device <b>NOW</b> "
 msgstr ""
 
-#: src/library/action/action.cc:183
+#: src/library/action/action.cc:187
 msgid "Invalid 'type' attribute"
+msgstr ""
+
+#: src/gui/main.cc:143
+msgid "Invalid action id"
+msgstr ""
+
+#: src/library/group.cc:76
+msgid "Invalid group ID"
 msgstr ""
 
 #: src/library/kernelparameter.cc:69
 msgid "Invalid kernel parameter value type"
 msgstr ""
 
+#: src/library/action/action.cc:342
+msgid "Loading installation kernel ..."
+msgstr ""
+
 #: src/gui/widgets/mainwindow.cc:144
 msgid "Loading option list"
+msgstr ""
+
+#: src/library/action/action.cc:349
+msgid "Loading system installer ..."
 msgstr ""
 
 #: src/library/isobuilder.cc:54 src/modules/grub/init.cc:73
@@ -409,7 +465,7 @@ msgstr ""
 msgid "Missing required entry <kernel> with the URL for installation kernel"
 msgstr ""
 
-#: src/library/object.cc:77
+#: src/library/object.cc:80
 msgid "More info"
 msgstr ""
 
@@ -417,7 +473,7 @@ msgstr ""
 msgid "More sources than module expects"
 msgstr ""
 
-#: src/library/action/action.cc:46
+#: src/library/action/action.cc:47
 msgid "No action"
 msgstr ""
 
@@ -429,19 +485,19 @@ msgstr ""
 msgid "No active window"
 msgstr ""
 
-#: src/library/action/action.cc:202
+#: src/library/action/action.cc:206
 msgid "No available image builder"
 msgstr ""
 
-#: src/library/action/action.cc:217
+#: src/library/action/action.cc:221
 msgid "No installation media"
 msgstr ""
 
-#: src/library/action/action.cc:305
+#: src/library/action/action.cc:314
 msgid "No repositories on this action"
 msgstr ""
 
-#: src/library/action/action.cc:396
+#: src/library/action/action.cc:435
 msgid "Preparing"
 msgstr ""
 
@@ -449,28 +505,32 @@ msgstr ""
 msgid "Preparing to write"
 msgstr ""
 
-#: src/gui/apply.cc:227 src/gui/widgets/mainwindow.cc:397
+#: src/gui/apply.cc:217 src/gui/widgets/mainwindow.cc:390
 msgid "Quit application"
 msgstr ""
 
-#: src/gui/apply.cc:221
-msgid "Reboot"
+#: src/gui/apply.cc:227
+msgid "Reboot now"
 msgstr ""
 
 #: src/library/isobuilder.cc:196 src/library/isobuilder.cc:217
 msgid "Rejecting invalid action pointer"
 msgstr ""
 
-#: src/library/os/linux/source.cc:42
+#: src/library/os/linux/source.cc:40
 msgid "Required attribute 'path' is missing"
 msgstr ""
 
-#: src/library/action/action.cc:475
+#: src/library/action/action.cc:519
 msgid "Running post scripts"
 msgstr ""
 
 #: src/modules/netinstall/init.cc:65
 msgid "Select target image file"
+msgstr ""
+
+#: src/library/action/action.cc:365
+msgid "Selected installation has no label"
 msgstr ""
 
 #: src/library/isobuilder.cc:199 src/library/isobuilder.cc:220
@@ -481,19 +541,23 @@ msgstr ""
 msgid "Storage device is unavailable"
 msgstr ""
 
-#: src/gui/widgets/mainwindow.cc:56
+#: src/gui/widgets/mainwindow.cc:54
 msgid "System reinstallation"
 msgstr ""
 
-#: src/library/action/template.cc:98
+#: src/library/action/template.cc:133
 msgid "Template was not loaded"
 msgstr ""
 
-#: src/library/action/action.cc:341
+#: src/gui/widgets/mainwindow.cc:188
+msgid "The initialization procedure has failed, the application cant continue"
+msgstr ""
+
+#: src/library/action/action.cc:374
 msgid "The kernel parameters list is empty"
 msgstr ""
 
-#: src/library/script.cc:35
+#: src/library/script.cc:72
 msgid "The required attribute 'cmdline' is missing"
 msgstr ""
 
@@ -511,6 +575,10 @@ msgstr ""
 
 #: src/library/source/save.cc:49 src/library/source/save.cc:92
 msgid "Unable to get source with relative URL"
+msgstr ""
+
+#: src/modules/grub/init.cc:128 src/modules/grub/init.cc:210
+msgid "Unable to get value for '{}'"
 msgstr ""
 
 #: src/library/source/apache_mirror.cc:48
@@ -537,7 +605,7 @@ msgstr ""
 msgid "Unnamed kernel parameter"
 msgstr ""
 
-#: src/library/action/action.cc:350
+#: src/library/action/action.cc:383
 msgid "Unnamed kernel parameter, possible misconfiguration"
 msgstr ""
 
@@ -553,7 +621,7 @@ msgstr ""
 msgid "Writing image"
 msgstr ""
 
-#: src/gui/widgets/mainwindow.cc:306
+#: src/gui/widgets/mainwindow.cc:299
 msgid "_Cancel"
 msgstr ""
 
@@ -561,6 +629,6 @@ msgstr ""
 msgid "_Save"
 msgstr ""
 
-#: src/library/dialogs/progress.cc:67 src/gui/dialogs/progress.cc:109
+#: src/library/dialogs/progress.cc:67 src/gui/dialogs/progress.cc:112
 msgid "{} of {}"
 msgstr ""

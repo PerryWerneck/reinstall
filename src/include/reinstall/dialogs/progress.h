@@ -34,7 +34,11 @@
 				double total = 0;
 			} values;
 
-			bool url_is_subtitle = true;
+			enum : uint8_t {
+				HIDE_URL,
+				SHOW_URL_ON_SUBTITLE,
+				SHOW_URL_ON_PROGRESS_BAR
+			} url_mode = SHOW_URL_ON_PROGRESS_BAR;
 
 		public:
 			Progress(const Progress &) = delete;

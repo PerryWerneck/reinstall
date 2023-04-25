@@ -43,7 +43,7 @@
 	get_style_context()->add_class("dialog-progress");
 	content_area.get_style_context()->add_class("dialog-contents");
 	content_area.set_border_width(12);
-	content_area.set_spacing(12);
+	content_area.set_spacing(0);
 
 	content_area.set_homogeneous(false);
 	content_area.set_orientation(ORIENTATION_VERTICAL);
@@ -69,18 +69,20 @@
 	widgets.icon.set_vexpand(false);
 	widgets.header.attach(widgets.icon,1,0,2,2);
 
-	content_area.pack_start(widgets.header,false,false,0);
+	content_area.pack_start(widgets.header,false,false,6);
 
 	widgets.progress.set_valign(ALIGN_CENTER);
 	widgets.progress.get_style_context()->add_class("dialog-progress-bar");
-	content_area.pack_start(widgets.progress,true,true,0);
+	content_area.pack_start(widgets.progress,true,true,6);
 
 	widgets.footer.get_style_context()->add_class("dialog-footer");
 	widgets.footer.set_homogeneous(true);
 	widgets.footer.pack_start(widgets.left,true,true,0);
 	widgets.footer.pack_end(widgets.right,true,true,0);
 
-	content_area.pack_end(widgets.footer,false,false,0);
+	content_area.pack_end(widgets.footer,false,false,6);
+
+	widgets.footer.set_valign(ALIGN_END);
 
 	content_area.show_all();
 
@@ -219,10 +221,20 @@
 	auto str = make_shared<string>(url);
 	Glib::signal_idle().connect([this,str](){
 
-		if(url_is_subtitle) {
+		switch(url_mode) {
+		case HIDE_URL:
+			break;
+
+		case SHOW_URL_ON_SUBTITLE:
 			widgets.subtitle.set_text(str->c_str());
-		} else {
+			widgets.progress.set_show_text(false);
+			break;
+
+		case SHOW_URL_ON_PROGRESS_BAR:
 			widgets.progress.set_text(str->c_str());
+			widgets.progress.set_show_text(true);
+			break;
+
 		}
 
 		widgets.progress.set_fraction(0.0);
