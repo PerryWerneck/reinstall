@@ -72,6 +72,7 @@
 	content_area.pack_start(widgets.header,false,false,0);
 
 	widgets.progress.set_valign(ALIGN_CENTER);
+	widgets.progress.get_style_context()->add_class("dialog-progress-bar");
 	content_area.pack_start(widgets.progress,true,true,0);
 
 	widgets.footer.get_style_context()->add_class("dialog-footer");
@@ -213,16 +214,22 @@
 
  void Dialog::Progress::set_url(const char *url) {
 
-	auto str = make_shared<string>(url);
- 	Glib::signal_idle().connect([this,str](){
+	timer.idle = 0;
 
-		timer.idle = 0;
-		widgets.subtitle.set_text(str->c_str());
+	auto str = make_shared<string>(url);
+	Glib::signal_idle().connect([this,str](){
+
+		if(url_is_subtitle) {
+			widgets.subtitle.set_text(str->c_str());
+		} else {
+			widgets.progress.set_text(str->c_str());
+		}
+
 		widgets.progress.set_fraction(0.0);
 		widgets.right.set_text("");
 
 		return 0;
- 	});
+	});
 
  }
 
@@ -292,52 +299,6 @@
 #endif // UDJAT_CORE_BUILD
 
  }
-
- /*
- void Dialog::Progress::set_progress(double current, double total)  {
-
- 	Glib::signal_idle().connect([this,current,total](){
-
-		try {
-
-			if(total > current && total > 1.0) {
-
-				timer.idle = 0;
-				widgets.progress.set_fraction(((gdouble) current) / ((gdouble) total));
-
-				string fcurrent{format_size(current)};
-				string ftotal{format_size(total)};
-
-				widgets.right.set_text(
-					Logger::Message{
-						_("{} of {}"),
-						fcurrent,
-						ftotal
-					}.c_str()
-				);
-
-			} else {
-
-				widgets.right.set_text("");
-
-			}
-
-		} catch(const std::exception &e) {
-
-			cerr << "gtk\t" << e.what() << endl;
-
-		} catch(...) {
-
-			cerr << "gtk\tUnexpected error updating progress dialog" << endl;
-
-		}
-
-		return 0;
-
- 	});
-
- }
- */
 
  void Dialog::Progress::set(const Reinstall::Abstract::Object &object) {
 

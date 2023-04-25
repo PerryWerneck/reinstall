@@ -32,11 +32,13 @@
 		set_hexpand(true);
 		set_halign(ALIGN_FILL);
 
-		set_vexpand(true);
+		set_vexpand(false);
 		set_valign(ALIGN_START);
 
 		label.set_hexpand(true);
 		body.set_hexpand(true);
+		label.set_vexpand(false);
+		body.set_vexpand(false);
 
 		get_style_context()->add_class("group-box");
 		label.get_style_context()->add_class("group-title");

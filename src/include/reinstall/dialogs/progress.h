@@ -34,6 +34,8 @@
 				double total = 0;
 			} values;
 
+			bool url_is_subtitle = true;
+
 		public:
 			Progress(const Progress &) = delete;
 			Progress(const Progress *) = delete;

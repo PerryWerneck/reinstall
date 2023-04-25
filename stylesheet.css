@@ -66,6 +66,10 @@
 	opacity: 1;
 }
 
+.dialog-icon {
+	margin: 6px;
+}
+
 .group-title-box {
 	margin-bottom: 6px;
 }

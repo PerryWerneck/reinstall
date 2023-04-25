@@ -84,6 +84,8 @@
 	layout.title.get_style_context()->add_class("main-title");
 	layout.vbox.pack_start(layout.title,false,false,0);
 
+	layout.view.set_valign(Gtk::ALIGN_START);
+	layout.view.set_halign(Gtk::ALIGN_FILL);
 	layout.view.get_style_context()->add_class("main-view");
 
 	layout.swindow.set_hexpand(true);
