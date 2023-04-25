@@ -86,81 +86,69 @@
 	return rc;
  }
 
- static bool text_menu() {
+ static void text_menu() {
 
-	try {
+	size_t groups = 0;
 
-		size_t groups = 0;
+	write(1,"\n",1);
+	Reinstall::Controller::getInstance().for_each([&groups](std::shared_ptr<Reinstall::Abstract::Group> group) {
 
-		write(1,"\n",1);
-		Reinstall::Controller::getInstance().for_each([&groups](std::shared_ptr<Reinstall::Abstract::Group> group) {
+		String option{group->id," - ",group->get_label(),"\n"};
+		write(1,option.c_str(),option.size());
+		groups++;
 
-			String option{group->id," - ",group->get_label(),"\n"};
-			write(1,option.c_str(),option.size());
-			groups++;
-
-			return false;
-		});
-
-		static const char * clear_and_up{"\r\33[1A\r\33[2K"};
-		short option = get_option();
-
-		for(size_t ln = 0; ln < (groups+2); ln++) {
-			write(1,clear_and_up,strlen(clear_and_up));
-		}
-
-		auto group = Reinstall::Abstract::Group::find(option);
-
-		{
-			String option{group->get_label(),":\n\n"};
-			write(1,option.c_str(),option.size());
-		}
-
-		// Select action.
-		size_t actions = 0;
-		group->for_each([&actions](std::shared_ptr<Reinstall::Action> action){
-
-			String option{"  ",action->id," - ",action->get_label(),"\n"};
-			write(1,option.c_str(),option.size());
-			actions++;
-
-			return false;
-		});
-
-		option = get_option();
-
-		for(size_t ln = 0; ln < (actions+4); ln++) {
-			write(1,clear_and_up,strlen(clear_and_up));
-		}
-
-		if(!group->for_each([option](std::shared_ptr<Reinstall::Action> action){
-
-			if(action->id == option) {
-				action->set_selected();
-				return true;
-			}
-
-			return false;
-		})) {
-			throw runtime_error(_("Invalid action id"));
-		};
-
-		{
-			String option{"\33[1m",group->get_label(), " - ", Reinstall::Action::get_selected().get_label(), "\33[0m\n\n"};
-			write(1,option.c_str(),option.size());
-		}
-
-	} catch(const std::exception &e) {
-
-		write(2,"\n\n",2);
-		write(2,e.what(),strlen(e.what()));
-		write(2,"\n",2);
 		return false;
+	});
 
+	static const char * clear_and_up{"\r\33[1A\r\33[2K"};
+	short option = get_option();
+
+	for(size_t ln = 0; ln < (groups+2); ln++) {
+		write(1,clear_and_up,strlen(clear_and_up));
+	}
+
+	auto group = Reinstall::Abstract::Group::find(option);
+
+	{
+		String option{group->get_label(),":\n\n"};
+		write(1,option.c_str(),option.size());
+	}
+
+	// Select action.
+	size_t actions = 0;
+	group->for_each([&actions](std::shared_ptr<Reinstall::Action> action){
+
+		String option{"  ",action->id," - ",action->get_label(),"\n"};
+		write(1,option.c_str(),option.size());
+		actions++;
+
+		return false;
+	});
+
+	option = get_option();
+
+	for(size_t ln = 0; ln < (actions+4); ln++) {
+		write(1,clear_and_up,strlen(clear_and_up));
+	}
+
+	if(!group->for_each([option](std::shared_ptr<Reinstall::Action> action){
+
+		if(action->id == option) {
+			action->set_selected();
+			return true;
+		}
+
+		return false;
+	})) {
+		throw runtime_error(_("Invalid action id"));
+	};
+
+	{
+		String option{"\33[1m",group->get_label(), " - ", Reinstall::Action::get_selected().get_label(), "\33[0m\n\n"};
+		write(1,option.c_str(),option.size());
 	}
 
 	Logger::console(true);
-	return true;
  }
 
  static int text_mode(bool interactive) {
@@ -172,30 +160,40 @@
 
 	controller.setup();
 
-	if(interactive) {
+	try {
 
-		if(!text_menu()) {
-			Reinstall::Controller::getInstance().clear();
-			Udjat::Application::finalize();
-			return -1;
+		if(interactive) {
+			text_menu();
 		}
 
+		Reinstall::Action &action = Reinstall::Action::get_selected();
+
+		if(action.interact()) {
+
+			Reinstall::Dialog::Progress progress;
+
+			auto builder = action.pre();
+			auto writer = action.WriterFactory();
+
+			builder->burn(writer);
+			action.post(writer);
+
+		}
+
+	} catch(const std::exception &e) {
+
+		write(2,"\n\n",2);
+		write(2,e.what(),strlen(e.what()));
+		write(2,"\n",1);
+
+		Reinstall::Controller::getInstance().clear();
+		Udjat::Application::finalize();
+		return -1;
+
 	}
 
-	Reinstall::Action &action = Reinstall::Action::get_selected();
-
-	if(action.interact()) {
-
-		Reinstall::Dialog::Progress progress;
-
-		auto builder = action.pre();
-		auto writer = action.WriterFactory();
-
-		builder->burn(writer);
-		action.post(writer);
-
-	}
-
+	Reinstall::Controller::getInstance().clear();
+	Udjat::Application::finalize();
 
  	return 0;
  }
