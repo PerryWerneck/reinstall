@@ -73,6 +73,7 @@
 
 	widgets.progress.set_valign(ALIGN_CENTER);
 	widgets.progress.get_style_context()->add_class("dialog-progress-bar");
+	widgets.progress.set_ellipsize(Pango::ELLIPSIZE_START);
 	content_area.pack_start(widgets.progress,true,true,6);
 
 	widgets.footer.get_style_context()->add_class("dialog-footer");
