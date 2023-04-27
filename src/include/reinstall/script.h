@@ -28,7 +28,9 @@
 	class UDJAT_API Script {
 	private:
 		const char *cmdline = "";
+		const char *message = "";
 		int uid = -1;
+		int gid = -1;
 
 	public:
 		Script(const pugi::xml_node &node);

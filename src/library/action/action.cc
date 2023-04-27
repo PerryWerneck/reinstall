@@ -516,9 +516,9 @@
 	void Action::post(std::shared_ptr<Reinstall::Writer> UDJAT_UNUSED(writer)) {
 		Dialog::Progress &dialog = Dialog::Progress::getInstance();
 
-		dialog.set_sub_title(_("Running post scripts"));
 		info() << "Running " << scripts.post.size() << " post scripts" << endl;
 		for(Script &script : scripts.post) {
+			dialog.set_sub_title(_("Running post scripts"));
 			script.run(*this);
 		}
 	}

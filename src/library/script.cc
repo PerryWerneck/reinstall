@@ -24,9 +24,12 @@
  #include <udjat/tools/string.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/object.h>
+ #include <private/dialogs.h>
 
  #include <unistd.h>
  #include <pwd.h>
+ #include <grp.h>
  #include <sys/types.h>
  #include <unistd.h>
  #include <cstdlib>
@@ -67,7 +70,38 @@
 
  	}
 
-	Script::Script(const pugi::xml_node &node) : cmdline{Quark(node,"cmdline","").c_str()},uid{getuid(node)} {
+ 	static int getgid(const pugi::xml_node &node) {
+
+ 		const char *group = node.attribute("group").as_string("");
+
+ 		if(!(group && *group)) {
+			return -1;
+ 		}
+
+		size_t szBuffer = sysconf(_SC_GETPW_R_SIZE_MAX);
+		if(szBuffer == (size_t) -1) {
+			szBuffer = 16384;
+		}
+
+		char buffer[szBuffer+1];
+		memset(buffer,0,szBuffer+1);
+
+		struct group grp;
+		struct group *result;
+
+		if(getgrnam_r(group, &grp, buffer, szBuffer, &result) != 0) {
+			throw system_error(errno,system_category(),group);
+		};
+
+		if(!result) {
+			throw system_error(ENOENT,system_category(),group);
+		}
+
+		return (int) result->gr_gid;
+
+ 	}
+
+	Script::Script(const pugi::xml_node &node) : cmdline{Quark(node,"cmdline","").c_str()},message{Quark(node,"message","").c_str()},uid{getuid(node)},gid{getgid(node)} {
 		if(!(cmdline && *cmdline)) {
 			throw runtime_error(_("The required attribute 'cmdline' is missing"));
 		}
@@ -81,6 +115,7 @@
 		class SubProcess : public Udjat::SubProcess {
 		private:
 			int uid = -1;
+			int gid = -1;
 
 		protected:
 
@@ -89,17 +124,25 @@
 					if(setuid(uid) != 0) {
 						throw system_error(errno,system_category(),"Cant set subprocess user id");
 					}
-					::setenv("UID",std::to_string(uid).c_str(),1);
+				}
+				if(gid != -1) {
+					if(setgid(gid) != 0) {
+						throw system_error(errno,system_category(),"Cant set subprocess group id");
+					}
 				}
 			}
 
 		public:
-			SubProcess(int u, const NamedObject &obj, const Udjat::String &command)
-				: Udjat::SubProcess{obj.name(),command.c_str(),Logger::Info,Logger::Info}, uid{u} {
+			SubProcess(int u, int g, const NamedObject &obj, const Udjat::String &command)
+				: Udjat::SubProcess{obj.name(),command.c_str(),Logger::Info,Logger::Info}, uid{u}, gid{g} {
 			}
 		};
 
-		return SubProcess{uid,object,String{cmdline}.expand(object)}.run();
+		if(message && *message) {
+			Dialog::Progress::getInstance().set_sub_title(message);
+		}
+
+		return SubProcess{uid,gid,object,String{cmdline}.expand(object)}.run();
 
 	}
 
