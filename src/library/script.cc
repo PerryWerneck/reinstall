@@ -101,7 +101,12 @@
 
  	}
 
-	Script::Script(const pugi::xml_node &node) : cmdline{Quark(node,"cmdline","").c_str()},message{Quark(node,"message","").c_str()},uid{getuid(node)},gid{getgid(node)} {
+	Script::Script(const pugi::xml_node &node)
+		: cmdline{Quark(node,"cmdline","").c_str()},
+			message{Quark(node,"message","").c_str()},
+			uid{getuid(node)},
+			gid{getgid(node)},
+			shell{node.attribute("shell").as_bool(false)} {
 		if(!(cmdline && *cmdline)) {
 			throw runtime_error(_("The required attribute 'cmdline' is missing"));
 		}
@@ -140,6 +145,10 @@
 
 		if(message && *message) {
 			Dialog::Progress::getInstance().set_sub_title(message);
+		}
+
+		if(shell) {
+			return SubProcess{uid,gid,object,String{cmdline}.expand(object)}.prun();
 		}
 
 		return SubProcess{uid,gid,object,String{cmdline}.expand(object)}.run();

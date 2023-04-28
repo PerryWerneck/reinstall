@@ -31,6 +31,7 @@
 		const char *message = "";
 		int uid = -1;
 		int gid = -1;
+		bool shell = false;
 
 	public:
 		Script(const pugi::xml_node &node);
