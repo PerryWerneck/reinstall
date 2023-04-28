@@ -519,7 +519,9 @@
 		info() << "Running " << scripts.post.size() << " post scripts" << endl;
 		for(Script &script : scripts.post) {
 			dialog.set_sub_title(_("Running post scripts"));
-			script.run(*this);
+			if(script.run(*this)) {
+				throw runtime_error(_("Post script has failed"));
+			}
 		}
 	}
 

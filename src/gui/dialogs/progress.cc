@@ -277,19 +277,13 @@
 
  std::string format_size(double value) {
 
-#if UDJAT_CORE_BUILD > 22123100
-
-	return Udjat::String{}.set_byte(value,1);
-
-#else
-
 	static const struct {
 		double value;
 		const char *name;
 	} sizes[] = {
-		{ 1073741824.0, "Gb" },
-		{    1048576.0, "Mb" },
-		{       1024.0, "Kb" },
+		{ 1073741824.0D, "GB" },
+		{    1048576.0D, "MB" },
+		{       1024.0D, "KB" },
 	};
 
 	double unit_value = 1;
@@ -305,11 +299,11 @@
 
 	}
 
+	debug("value=",value," unit_name=",unit_name);
+
 	std::stringstream formatted;
 	formatted << std::fixed << std::setprecision(1) << (value/unit_value) << " " << unit_name;
 	return formatted.str();
-
-#endif // UDJAT_CORE_BUILD
 
  }
 
