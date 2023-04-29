@@ -299,8 +299,6 @@
 
 	}
 
-	debug("value=",value," unit_name=",unit_name);
-
 	std::stringstream formatted;
 	formatted << std::fixed << std::setprecision(1) << (value/unit_value) << " " << unit_name;
 	return formatted.str();
