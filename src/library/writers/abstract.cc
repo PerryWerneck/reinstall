@@ -37,6 +37,10 @@
 	Writer::~Writer() {
 	}
 
+	void Writer::setUsbDeviceName(const char *name) {
+		usbdevname = name;
+	}
+
 	void Writer::open() {
 	}
 

@@ -22,12 +22,15 @@
  #include <cstddef>
  #include <memory>
  #include <reinstall/action.h>
+ #include <string>
 
  namespace Reinstall {
 
 	/// @brief Image Writer
 	class UDJAT_API Writer {
 	private:
+
+		static const char * usbdevname;
 
 	protected:
 
@@ -41,8 +44,12 @@
 #endif // _WIN32
 
 	public:
+
 		Writer(const Reinstall::Action &action);
 		virtual ~Writer();
+
+		/// @brief Set USB device name.
+		static void setUsbDeviceName(const char *name);
 
 		/// @brief Open Device for writing
 		virtual void open();
@@ -61,6 +68,23 @@
 		/// @brief Detect USB storage device, create writer for it.
 		/// @param length Required device size (0 to ignore it);
 		static std::shared_ptr<Writer> USBWriterFactory(const Reinstall::Action &action, size_t length = 0);
+
+	};
+
+	class UDJAT_API FileWriter : public Writer {
+	private:
+		int fd = -1;
+		std::string filename;
+
+	public:
+		FileWriter(const Reinstall::Action &action, const char *filename);
+		virtual ~FileWriter();
+
+		void open() override;
+		void close() override;
+		void finalize() override;
+
+		void write(const void *buf, size_t length);
 
 	};
 

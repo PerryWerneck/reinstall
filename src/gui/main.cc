@@ -222,32 +222,22 @@
 
 		if(strcasecmp(ptr,"foreground") == 0 || strcasecmp(ptr,"f") == 0 || strcasecmp(ptr,"verbose") == 0 || strcasecmp(ptr,"v") == 0) {
 			Udjat::Logger::console(true);
+
 		} else if(strcasecmp(ptr,"quiet") == 0 || strcasecmp(ptr,"q") == 0) {
 			Udjat::Logger::console(false);
+
 		} else if(strcasecmp(ptr,"text") == 0 || strcasecmp(ptr,"t") == 0) {
 			return text_mode(true);
+
 		} else if(strcasecmp(ptr,"apply-default") == 0) {
 			return text_mode(false);
+
+		} else if(strncasecmp(ptr,"usb-storage-device=",19) == 0) {
+			// Set usb-storage-device
+			Reinstall::Writer::setUsbDeviceName(ptr+19);
 		}
 
 	}
-
-#ifndef _WIN32
-	{
-		const char *ptr = strrchr(argv[0],'/');
-		if(ptr) {
-			ptr++;
-		} else {
-			ptr = argv[0];
-		}
-
-		if(!strcasecmp(ptr,"reinstall-enable")) {
-			return text_mode(false);
-		} else if(!strcasecmp(ptr,"reinstall-text") || !getenv("DISPLAY")) {
-			return text_mode(true);
-		}
-	}
-#endif // _WIN32
 
 	return gui_mode();
 

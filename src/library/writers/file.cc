@@ -19,6 +19,7 @@
 
  #include <config.h>
  #include <udjat/defs.h>
+
  #include <reinstall/writer.h>
  #include <reinstall/action.h>
  #include <string>
@@ -35,56 +36,48 @@
 
  namespace Reinstall {
 
+	FileWriter::FileWriter(const Reinstall::Action &action, const char *fn) : Reinstall::Writer(action), filename{fn} {
+
+		if(filename.empty()) {
+			throw runtime_error("Invalid filename");
+		}
+
+		debug("Writer for '",filename.c_str(),"' was constructed");
+	}
+
+	FileWriter::~FileWriter() {
+		if(fd > 0) {
+			close();
+		}
+	}
+
+	void FileWriter::open() {
+		debug("Opening '",filename.c_str(),"'");
+		fd = ::open(filename.c_str(),O_CREAT|O_TRUNC|O_APPEND|O_WRONLY,0666);
+		if(fd < 0) {
+			throw system_error(errno,system_category(),filename);
+		}
+	}
+
+	void FileWriter::close() {
+		if(fd > 0) {
+			debug("Closing '",filename.c_str(),"'");
+			::close(fd);
+		}
+		fd = -1;
+	}
+
+	void FileWriter::finalize() {
+		Reinstall::Writer::finalize(fd);
+	}
+
+	void FileWriter::write(const void *buf, size_t length) {
+		Reinstall::Writer::write(fd,buf,length);
+	}
+
 	std::shared_ptr<Writer> Writer::FileWriterFactory(const Reinstall::Action &action, const char *filename) {
 
-		class Writer : public Reinstall::Writer {
-		private:
-			int fd = -1;
-			string filename;
-
-		public:
-			Writer(const Reinstall::Action &action, const char *fn) : Reinstall::Writer(action), filename{fn} {
-
-				if(filename.empty()) {
-					throw runtime_error("Invalid filename");
-				}
-
-				debug("Writer for '",filename.c_str(),"' was constructed");
-			}
-
-			virtual ~Writer() {
-				if(fd > 0) {
-					close();
-				}
-			}
-
-			void open() override {
-				debug("Opening '",filename.c_str(),"'");
-				fd = ::open(filename.c_str(),O_CREAT|O_TRUNC|O_APPEND|O_WRONLY,0666);
-				if(fd < 0) {
-					throw system_error(errno,system_category(),filename);
-				}
-			}
-
-			void close() override {
-				if(fd > 0) {
-					debug("Closing '",filename.c_str(),"'");
-					::close(fd);
-				}
-				fd = -1;
-			}
-
-			void finalize() override {
-				Reinstall::Writer::finalize(fd);
-			}
-
-			void write(const void *buf, size_t length) {
-				Reinstall::Writer::write(fd,buf,length);
-			}
-
-		};
-
-		return make_shared<Writer>(action,filename);
+		return make_shared<FileWriter>(action,filename);
 	}
 
 
