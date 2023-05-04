@@ -90,6 +90,7 @@
  static void text_menu() {
 
 	size_t groups = 0;
+	bool console = Logger::console();
 
 	write(1,"\n",1);
 	Reinstall::Controller::getInstance().for_each([&groups](std::shared_ptr<Reinstall::Abstract::Group> group) {
@@ -149,7 +150,7 @@
 		write(1,option.c_str(),option.size());
 	}
 
-	Logger::console(true);
+	Logger::console(console);
  }
 
  static int text_mode(bool interactive) {
@@ -226,11 +227,13 @@
 
 					line += "] ";
 
-					line += Logger::Message{
-						_("{} of {}"),
-						Udjat::String{}.set_byte(current).c_str(),
-						Udjat::String{}.set_byte(total).c_str()
-					}.c_str();
+					if(current < total) {
+						line += Logger::Message{
+							_("{} of {}"),
+							Udjat::String{}.set_byte(current).c_str(),
+							Udjat::String{}.set_byte(total).c_str()
+						}.c_str();
+					}
 
 					line += "\x1b[8\r";
 
