@@ -30,6 +30,7 @@
  #include <reinstall/writer.h>
  #include <cstdio>
  #include <readline/readline.h>
+ #include <unistd.h>
 
  using namespace std;
  using namespace Udjat;
@@ -170,7 +171,78 @@
 
 		if(action.interact()) {
 
+#ifdef _WIN32
+
 			Reinstall::Dialog::Progress progress;
+
+#else
+
+			class ProgressDialog : Reinstall::Dialog::Progress {
+			private:
+				bool console;
+
+				static void write(int fd, const char *str) {
+					::write(fd,"\r\x1b[2K",5);
+					::write(fd,str,strlen(str));
+					::write(fd,"\n",1);
+				}
+
+				static void info(const char *str) {
+					write(1,str);
+				}
+
+			public:
+				ProgressDialog() : console{Logger::console()} {
+					Logger::console(false);
+				}
+
+				~ProgressDialog() {
+					Logger::console(console);
+				}
+
+				void set_title(const char *title) override {
+					info(title);
+				}
+
+				void set_sub_title(const char *subtitle) override {
+					info(subtitle);
+				}
+
+				void set_url(const char *url) override {
+					info(url);
+				}
+
+				void set_progress(double current, double total) override {
+
+					unsigned int cols = (unsigned int) ((current/total) * 40.0D);
+
+					string line{"\r\x1b[7\x1b[2K"};
+
+					line += " [";
+
+					for(unsigned int col = 0; col < 40; col++) {
+						line += (col < cols ? "#" : " ");
+					}
+
+					line += "] ";
+
+					line += Logger::Message{
+						_("{} of {}"),
+						Udjat::String{}.set_byte(current).c_str(),
+						Udjat::String{}.set_byte(total).c_str()
+					}.c_str();
+
+					line += "\x1b[8\r";
+
+					::write(1,line.c_str(),line.size());
+				}
+
+
+			};
+
+			ProgressDialog progress;
+
+#endif // _WIN32
 
 			auto builder = action.pre();
 			auto writer = action.WriterFactory();
