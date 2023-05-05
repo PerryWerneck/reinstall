@@ -43,7 +43,7 @@
 	get_style_context()->add_class("dialog-progress");
 	content_area.get_style_context()->add_class("dialog-contents");
 	content_area.set_border_width(12);
-	content_area.set_spacing(12);
+	content_area.set_spacing(0);
 
 	content_area.set_homogeneous(false);
 	content_area.set_orientation(ORIENTATION_VERTICAL);
@@ -69,17 +69,21 @@
 	widgets.icon.set_vexpand(false);
 	widgets.header.attach(widgets.icon,1,0,2,2);
 
-	content_area.pack_start(widgets.header,false,false,0);
+	content_area.pack_start(widgets.header,false,false,6);
 
 	widgets.progress.set_valign(ALIGN_CENTER);
-	content_area.pack_start(widgets.progress,true,true,0);
+	widgets.progress.get_style_context()->add_class("dialog-progress-bar");
+	widgets.progress.set_ellipsize(Pango::ELLIPSIZE_START);
+	content_area.pack_start(widgets.progress,true,true,6);
 
 	widgets.footer.get_style_context()->add_class("dialog-footer");
 	widgets.footer.set_homogeneous(true);
 	widgets.footer.pack_start(widgets.left,true,true,0);
 	widgets.footer.pack_end(widgets.right,true,true,0);
 
-	content_area.pack_end(widgets.footer,false,false,0);
+	content_area.pack_end(widgets.footer,false,false,6);
+
+	widgets.footer.set_valign(ALIGN_END);
 
 	content_area.show_all();
 
@@ -213,16 +217,32 @@
 
  void Dialog::Progress::set_url(const char *url) {
 
-	auto str = make_shared<string>(url);
- 	Glib::signal_idle().connect([this,str](){
+	timer.idle = 0;
 
-		timer.idle = 0;
-		widgets.subtitle.set_text(str->c_str());
+	auto str = make_shared<string>(url);
+	Glib::signal_idle().connect([this,str](){
+
+		switch(url_mode) {
+		case HIDE_URL:
+			break;
+
+		case SHOW_URL_ON_SUBTITLE:
+			widgets.subtitle.set_text(str->c_str());
+			widgets.progress.set_show_text(false);
+			break;
+
+		case SHOW_URL_ON_PROGRESS_BAR:
+			widgets.progress.set_text(str->c_str());
+			widgets.progress.set_show_text(true);
+			break;
+
+		}
+
 		widgets.progress.set_fraction(0.0);
 		widgets.right.set_text("");
 
 		return 0;
- 	});
+	});
 
  }
 
@@ -257,19 +277,13 @@
 
  std::string format_size(double value) {
 
-#if UDJAT_CORE_BUILD > 22123100
-
-	return Udjat::String{}.set_byte(value,1);
-
-#else
-
 	static const struct {
 		double value;
 		const char *name;
 	} sizes[] = {
-		{ 1073741824.0, "Gb" },
-		{    1048576.0, "Mb" },
-		{       1024.0, "Kb" },
+		{ 1073741824.0D, "GB" },
+		{    1048576.0D, "MB" },
+		{       1024.0D, "KB" },
 	};
 
 	double unit_value = 1;
@@ -289,55 +303,7 @@
 	formatted << std::fixed << std::setprecision(1) << (value/unit_value) << " " << unit_name;
 	return formatted.str();
 
-#endif // UDJAT_CORE_BUILD
-
  }
-
- /*
- void Dialog::Progress::set_progress(double current, double total)  {
-
- 	Glib::signal_idle().connect([this,current,total](){
-
-		try {
-
-			if(total > current && total > 1.0) {
-
-				timer.idle = 0;
-				widgets.progress.set_fraction(((gdouble) current) / ((gdouble) total));
-
-				string fcurrent{format_size(current)};
-				string ftotal{format_size(total)};
-
-				widgets.right.set_text(
-					Logger::Message{
-						_("{} of {}"),
-						fcurrent,
-						ftotal
-					}.c_str()
-				);
-
-			} else {
-
-				widgets.right.set_text("");
-
-			}
-
-		} catch(const std::exception &e) {
-
-			cerr << "gtk\t" << e.what() << endl;
-
-		} catch(...) {
-
-			cerr << "gtk\tUnexpected error updating progress dialog" << endl;
-
-		}
-
-		return 0;
-
- 	});
-
- }
- */
 
  void Dialog::Progress::set(const Reinstall::Abstract::Object &object) {
 

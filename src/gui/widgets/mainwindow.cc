@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -22,22 +22,24 @@
  #include <private/mainwindow.h>
  #include <private/dialogs.h>
  #include <reinstall/object.h>
- #include <reinstall/worker.h>
+ #include <reinstall/builder.h>
  #include <reinstall/writer.h>
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/application.h>
  #include <reinstall/controller.h>
  #include <reinstall/tools.h>
  #include <udjat/tools/logger.h>
- #include <udjat/tools/file.h>
  #include <private/widgets.h>
- #include <udjat/module.h>
+ #include <udjat/tools/configuration.h>
  #include <iostream>
+ #include <udjat/tools/object.h>
 
  using namespace std;
  using namespace Udjat;
 
- MainWindow::MainWindow() {
+ static const Udjat::ModuleInfo moduleinfo{PACKAGE_NAME " Main window"};
+
+ MainWindow::MainWindow() : Udjat::Factory("MainWindow",moduleinfo) {
 
  	{
 		auto css = Gtk::CssProvider::create();
@@ -49,8 +51,16 @@
 		get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
  	}
 
-	set_title(_("System reinstallation"));
+ 	set_title(Config::Value<string>("MainWindow","title",_("System reinstallation")));
 	set_default_size(800, 600);
+
+	// MainWindow logo
+#ifdef DEBUG
+	set_icon(Config::Value<string>{"MainWindow","icon","./icon.svg"}.c_str());
+#else
+	set_icon(Config::Value<string>{"MainWindow","icon",PRODUCT_ID "." PACKAGE_NAME}.c_str());
+#endif // DEBUG
+
 
 	// Left box
 	{
@@ -74,6 +84,8 @@
 	layout.title.get_style_context()->add_class("main-title");
 	layout.vbox.pack_start(layout.title,false,false,0);
 
+	layout.view.set_valign(Gtk::ALIGN_START);
+	layout.view.set_halign(Gtk::ALIGN_FILL);
 	layout.view.get_style_context()->add_class("main-view");
 
 	layout.swindow.set_hexpand(true);
@@ -118,7 +130,7 @@
 
  MainWindow::~MainWindow() {
  	Reinstall::Controller::getInstance().clear();
-	Udjat::Application::finalize();
+ 	Application::finalize();
  }
 
  void MainWindow::on_show() {
@@ -138,23 +150,47 @@
 
 		Udjat::ThreadPool::getInstance().push([&dialog](){
 
-			// First get controller to construct the factories.
-			Reinstall::Controller::getInstance();
+			int response_id = GTK_RESPONSE_OK;
 
-			// Load application modules
-#ifdef DEBUG
-			Udjat::Module::load(".bin/Debug/modules");
-#endif // DEBUG
+			try {
 
-			// Load image definitions.
-			Udjat::Application::setup("./xml.d",true);
+				// Load xml.d, initialize libudjat.
+				Reinstall::Controller::getInstance().setup();
+
+			} catch(const std::exception &e) {
+
+				cerr << e.what() << endl;
+				response_id = GTK_RESPONSE_CANCEL;
+
+			} catch(...) {
+
+				cerr << "Unexpected error loading configuration" << endl;
+				response_id = GTK_RESPONSE_CANCEL;
+			}
 
 			// And dismiss dialog.
-			dialog.dismiss();
+			dialog.dismiss(response_id);
 
 		});
 
-		dialog.run();
+		if(dialog.run() != GTK_RESPONSE_OK) {
+			Gtk::MessageDialog dialog_fail{
+				*this,
+				_("Initialization has failed"),
+				false,
+				Gtk::MESSAGE_ERROR,
+				Gtk::BUTTONS_OK,
+				true
+			};
+
+			dialog_fail.set_default_size(500, -1);
+			dialog_fail.set_title(_("Error"));
+			dialog_fail.set_secondary_text(_("The initialization procedure has failed, the application cant continue"));
+			dialog_fail.show();
+			dialog_fail.run();
+			Gtk::Application::get_default()->quit();
+			return;
+		}
 	}
 
 	// TODO: Check for disabled actions.
@@ -312,14 +348,13 @@
 
  	Glib::signal_idle().connect([this,str](){
 
-		cout << "MainWindow\tShowing error popup for '" << str->c_str() << "'" << endl;
-
 		Reinstall::Action &action = Reinstall::Action::get_selected();
 		std::shared_ptr<Gtk::MessageDialog> popup;
 
 		if(action.failed()) {
 
 			// Customized error dialog.
+			cout << "MainWindow\tShowing customized error popup for '" << str->c_str() << "'" << endl;
 
 			popup = make_shared<Dialog::Popup>(
 				*this,
@@ -336,6 +371,7 @@
 		} else {
 
 			// Standard error dialog.
+			cout << "MainWindow\tShowing standard error popup for '" << str->c_str() << "'" << endl;
 
 			popup = make_shared<Gtk::MessageDialog>(
 				*this,
@@ -351,19 +387,107 @@
 		}
 
 		if(action.quit()) {
-			popup->add_button(_("Quit application"),Gtk::RESPONSE_CANCEL);
+			Widget *cancel = popup->add_button(Config::Value<string>{"buttons","quit",_("Quit application")},Gtk::RESPONSE_CANCEL);
+			cancel->get_style_context()->add_class("suggested-action");
+			popup->set_default_response(Gtk::RESPONSE_CANCEL);
 		}
 
 		popup->set_title(action.get_label());
 		popup->set_default_size(500, -1);
-		popup->show();
+		popup->present();
 
+		debug("Running popup");
 		if(popup->run() == Gtk::RESPONSE_CANCEL) {
+			cout << "MainWindow\tUser selected 'cancel' on error popup" << endl;
 			Gtk::Application::get_default()->quit();
+		} else {
+			cout << "MainWindow\tUser selected 'Ok' on error popup" << endl;
 		}
 
 		return 0;
  	});
 
  }
+
+ void MainWindow::set_icon(const char *icon) {
+
+	if(access(icon, R_OK)) {
+
+		// File not found, try icon name.
+		debug("icon-name=",icon);
+		set_icon_name(icon);
+		set_default_icon_name(icon);
+
+	} else {
+
+		// File exists, use it.
+		debug("icon-file=",icon);
+		if(!set_icon_from_file(icon)) {
+			cerr << "MainWindow\tUnable to set icon from '" << icon << "'" << endl;
+		}
+
+	}
+
+ }
+
+ void MainWindow::set_logo(const char *name) {
+ 	logo.set(name);
+ }
+
+ bool MainWindow::generic(const pugi::xml_node &node) {
+
+	static const struct {
+		const char *name;
+		const std::function<void(MainWindow &hwnd, const char *value)> call;
+	} attributes[] = {
+		{
+			"title",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.set_title(value);
+			}
+		},
+		{
+			"sub-title",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.layout.title.set_text(value);
+			}
+		},
+		{
+			"logo",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.set_logo(value);
+			}
+		},
+		{
+			"icon",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.set_icon(value);
+			}
+		},
+		{
+			"cancel",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.buttons.cancel.set_label(value);
+			}
+		},
+		{
+			"apply",
+			[](MainWindow &hwnd, const char *value){
+				hwnd.buttons.apply.set_label(value);
+			}
+		}
+	};
+
+	for(auto &attr : attributes) {
+
+		auto &attribute = Udjat::Object::getAttribute(node, attr.name);
+		if(attribute) {
+			attr.call(*this,attribute.as_string());
+		}
+
+	}
+
+	return true;
+ }
+
 

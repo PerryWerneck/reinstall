@@ -70,8 +70,9 @@ fi
 ./mount.sh
 
 sudo setcap cap_dac_override,cap_setuid,cap_setgid,cap_chown,cap_sys_admin+ep .bin/Debug/reinstall 
+sudo rm -f /tmp/51_reinstall
 
-.bin/Debug/reinstall
+.bin/Debug/reinstall usb-storage-device=/tmp/reinstall.iso text
 if [ "$?" != "0" ]; then
 	exit -1
 fi

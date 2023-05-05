@@ -30,15 +30,6 @@
 
 	namespace Dialog {
 
-		/*
-		void Progress::set(const Action &action) {
-			set_icon_name(action.get_icon_name());
-			set_title(action.get_label().c_str());
-			set_step("");
-			set_progress(0.0,0.0);
-		}
-		*/
-
 		Progress::~Progress() {
 		}
 
@@ -71,9 +62,11 @@
 		}
 
 		void Progress::set_title(const char *title) {
+			debug("title: ",title);
 		}
 
 		void Progress::set_sub_title(const char *sub_title) {
+			debug("sub-title: ",sub_title);
 		}
 
 		void Progress::set_url(const char *url) {

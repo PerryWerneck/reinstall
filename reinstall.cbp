@@ -8,7 +8,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output=".bin/Debug/Reinstall Main application" prefix_auto="1" extension_auto="1" />
+				<Option output=".bin/Debug/reinstall" prefix_auto="1" extension_auto="1" />
 				<Option object_output=".obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -49,9 +49,8 @@
 		<Unit filename="src/include/private/mirror.h" />
 		<Unit filename="src/include/private/widgets.h" />
 		<Unit filename="src/include/reinstall/action.h" />
-		<Unit filename="src/include/reinstall/actions/initrd.h" />
 		<Unit filename="src/include/reinstall/actions/isobuilder.h" />
-		<Unit filename="src/include/reinstall/actions/kernel.h" />
+		<Unit filename="src/include/reinstall/builder.h" />
 		<Unit filename="src/include/reinstall/controller.h" />
 		<Unit filename="src/include/reinstall/defs.h" />
 		<Unit filename="src/include/reinstall/dialogs.h" />
@@ -66,38 +65,41 @@
 		<Unit filename="src/include/reinstall/repository.h" />
 		<Unit filename="src/include/reinstall/script.h" />
 		<Unit filename="src/include/reinstall/source.h" />
+		<Unit filename="src/include/reinstall/sources/cached.h" />
 		<Unit filename="src/include/reinstall/sources/initrd.h" />
 		<Unit filename="src/include/reinstall/sources/kernel.h" />
 		<Unit filename="src/include/reinstall/tools.h" />
 		<Unit filename="src/include/reinstall/userinterface.h" />
 		<Unit filename="src/include/reinstall/value.h" />
-		<Unit filename="src/include/reinstall/worker.h" />
 		<Unit filename="src/include/reinstall/writer.h" />
 		<Unit filename="src/library/action/action.cc" />
+		<Unit filename="src/library/action/template.cc" />
 		<Unit filename="src/library/controller.cc" />
 		<Unit filename="src/library/dialogs/button.cc" />
 		<Unit filename="src/library/dialogs/progress.cc" />
 		<Unit filename="src/library/dialogs/taskrunner.cc" />
 		<Unit filename="src/library/dialogs/window.cc" />
 		<Unit filename="src/library/group.cc" />
-		<Unit filename="src/library/iso9660/worker.cc" />
+		<Unit filename="src/library/iso9660/builder.cc" />
 		<Unit filename="src/library/isobuilder.cc" />
 		<Unit filename="src/library/kernelparameter.cc" />
 		<Unit filename="src/library/object.cc" />
 		<Unit filename="src/library/os/linux/disk_image.cc" />
-		<Unit filename="src/library/os/linux/libguestfs.cc" />
+		<Unit filename="src/library/os/linux/private.h" />
 		<Unit filename="src/library/os/linux/reboot.cc" />
+		<Unit filename="src/library/os/linux/source.cc" />
 		<Unit filename="src/library/os/linux/usbstorage.cc" />
 		<Unit filename="src/library/parameters.cc" />
 		<Unit filename="src/library/repository/construct.cc" />
 		<Unit filename="src/library/repository/slpclient.cc" />
 		<Unit filename="src/library/script.cc" />
 		<Unit filename="src/library/source/apache_mirror.cc" />
+		<Unit filename="src/library/source/initrd.cc" />
+		<Unit filename="src/library/source/kernel.cc" />
 		<Unit filename="src/library/source/mirror.cc" />
 		<Unit filename="src/library/source/mirrorcache_mirror.cc" />
 		<Unit filename="src/library/source/save.cc" />
 		<Unit filename="src/library/source/source.cc" />
-		<Unit filename="src/library/template.cc" />
 		<Unit filename="src/library/testprogram/private.h" />
 		<Unit filename="src/library/testprogram/testprogram.cc" />
 		<Unit filename="src/library/userinterface.cc" />

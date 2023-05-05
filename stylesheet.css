@@ -40,12 +40,21 @@
 }
 
 .dialog-title {
-	font-weight: bold;
+	font-size: 120%;
+	font-weight: bolder;
 }
 
 .dialog-subtitle {
+	font-size: 90%;
+	font-weight: bold;
+	opacity: 0.5;
+}
+
+.dialog-progress-bar {
 	font-size: 70%;
 	font-weight: 400;
+	font-style: italic;
+	opacity: 0.5;
 }
 
 .dialog-footer {
@@ -64,6 +73,10 @@
 
 .logo {
 	opacity: 1;
+}
+
+.dialog-icon {
+	margin: 6px;
 }
 
 .group-title-box {

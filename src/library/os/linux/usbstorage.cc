@@ -44,6 +44,8 @@
 
  namespace Reinstall {
 
+	const char * Writer::usbdevname = nullptr;
+
 	/*
 	/// @brief Get the size of the device in fd.
 	static unsigned long long devlen(int fd) {
@@ -59,6 +61,10 @@
 	*/
 
 	std::shared_ptr<Writer> Writer::USBWriterFactory(const Reinstall::Action &action, size_t length) {
+
+		if(usbdevname && *usbdevname) {
+			return make_shared<FileWriter>(action,usbdevname);
+		}
 
 		/// @brief USB storage writer.
 		class Writer : public Reinstall::Writer {

@@ -56,4 +56,6 @@ stamp-h1
 Makefile
 vgcore.*
 *.[0-9]
-
+*.png
+.pot
+*.desktop

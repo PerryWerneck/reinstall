@@ -26,6 +26,7 @@
  #include <reinstall/object.h>
  #include <reinstall/repository.h>
  #include <reinstall/value.h>
+ #include <reinstall/script.h>
  #include <reinstall/source.h>
  #include <reinstall/dialogs/popup.h>
  #include <list>
@@ -38,7 +39,7 @@
 
  	class Worker;
 
-	class UDJAT_API Action : public Udjat::NamedObject {
+	class UDJAT_API Action : public Abstract::Object {
 	public:
 
 		/// @brief Kernel parameters.
@@ -46,27 +47,29 @@
 		private:
 			const char * nm = "";
 			const char * repository = "install";
-			Udjat::String vl;
+			const char * value;
 
 			enum Type : uint8_t {
 				Invalid,
 				Value,			///< @brief Standard string value.
-				Url
+				Url,			///< @brief URL value.
+				Repository		///< @brief Repository.
 			} type = Invalid;
 
 		public:
+			constexpr KernelParameter(const char *n, const char *v) : nm{n}, value{v}, type{Value} {
+			}
+
+			KernelParameter(const char *name, const pugi::xml_node &node);
 			KernelParameter(const pugi::xml_node &node);
 			~KernelParameter();
 
-			void set(const Action &action);
+			std::string expand(const Action &action) const;
 
 			inline const char * name() const noexcept {
 				return nm;
 			}
 
-			const char * value() const noexcept {
-				return vl.c_str();
-			}
 
 		};
 
@@ -82,7 +85,20 @@
 			/// @brief Template file name.
 			std::string filename;
 
+			/// @brief Template path (can be null).
+			const char *path = nullptr;
+
+			/// @brief Marker.
+			char marker = '$';
+
+			/// @brief Is an script?
+			bool script = false;
+
 		public:
+
+			Template(const char *n, const char *u, const char *p = nullptr) : name{n}, url{u}, path{p} {
+			}
+
 			Template(const pugi::xml_node &node);
 			~Template();
 
@@ -90,6 +106,18 @@
 
 			void load(const Udjat::Object &object);
 			void apply(Source &source);
+
+			inline const char * get_path() const noexcept {
+				return path;
+			}
+
+			inline const char * get_filename() const noexcept {
+				return filename.c_str();
+			}
+
+			inline const char * get_url() const noexcept {
+				return url;
+			}
 
 			/// @brief copy loaded template to file.
 			/// @param path Path to filename.
@@ -101,9 +129,9 @@
 
 		};
 
-		std::list<std::shared_ptr<Template>> templates;
-
 	protected:
+
+		std::list<std::shared_ptr<Template>> templates;
 
 		const struct Options {
 
@@ -132,7 +160,7 @@
 		std::unordered_set<std::shared_ptr<Source>, Source::Hash, Source::Equal> sources;
 
 		/// @brief Search for source based on image path
-		std::shared_ptr<Source> source(const char *path);
+		std::shared_ptr<Source> source(const char *path) const;
 
 		/// @brief Scan xml for 'tagname', call lambda in every occurrence.
 		/// @param tagname the <tag> to search for.
@@ -142,13 +170,19 @@
 		bool scan(const pugi::xml_node &node, const char *tagname, const std::function<bool(const pugi::xml_node &node)> &call);
 
 		/// @brief Run first step with worker.
-		virtual void prepare(Reinstall::Worker &worker);
+		//virtual void prepare(Reinstall::Builder &worker);
 
 		/// @brief Icon name (for dialogs and menus).
 		const char *icon_name = "";
 
 		/// @brief Object with the UI definitions.
 		std::shared_ptr<Abstract::Object> item;
+
+		/// @brief Scripts.
+		struct {
+			std::vector<Script> pre;
+			std::vector<Script> post;
+		} scripts;
 
 		Action(const pugi::xml_node &node, const char *icon_name = "");
 
@@ -163,6 +197,11 @@
 
 	public:
 		virtual ~Action();
+
+		virtual std::shared_ptr<Reinstall::Builder> pre();
+		virtual void post(std::shared_ptr<Reinstall::Writer> writer);
+
+		virtual void activate();
 
 		unsigned short id;
 
@@ -201,7 +240,7 @@
 			return item;
 		}
 
-		inline std::string get_label() const {
+		inline std::string get_label() const override {
 			return item->get_label();
 		}
 
@@ -214,18 +253,15 @@
 
 		/// @brief Create image (second step, work thread).
 		/// @return Pointer to action worker.
-		virtual std::shared_ptr<Reinstall::Worker> WorkerFactory();
+		virtual std::shared_ptr<Reinstall::Builder> BuilderFactory();
 
 		/// @brief Construct file writer (Runs on main thread).
 		virtual std::shared_ptr<Reinstall::Writer> WriterFactory();
 
-		bool getProperty(const char *key, std::string &value) const noexcept override;
+		bool getProperty(const char *key, std::string &value) const override;
 
 		/// @brief Load folders.
 		void load();
-
-		/// @brief Apply templates.
-		void applyTemplates();
 
 		/// @brief Return the URL for installation media.
 		virtual const char * install();

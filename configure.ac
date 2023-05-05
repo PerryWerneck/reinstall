@@ -36,6 +36,11 @@ AC_LANG([C++])
 
 AC_PATH_TOOL([STRIP], [strip])
 AC_SUBST(STRIP)
+AC_PATH_TOOL([XGETTEXT], [xgettext], [no])
+AC_PATH_TOOL([MSGCAT], [msgcat], [no])
+AC_PATH_TOOL([MSGINIT], [msginit], [no])
+AC_PATH_TOOL([MSGMERGE], [msgmerge], [no])
+AC_PATH_TOOL([MSGFMT], [msgfmt], [no])
 
 PKG_CHECK_EXISTS
 
@@ -120,6 +125,7 @@ dnl		AC_CONFIG_FILES(win/userinfo.nsi)
 		LDFLAGS="$LDFLAGS -pthread"
 		DLL_LDFLAGS="-shared -Wl,-soname,\$(@F)"
 		AC_SUBST(SONAME,libreinstall.so.$app_vrs_major.$app_vrs_minor)
+		AC_CONFIG_FILES(sysconf/launcher.desktop)
 
 esac
 
@@ -136,6 +142,7 @@ AC_PATH_TOOL([DOXYGEN], [doxygen])
 AC_PATH_TOOL([VALGRIND], [valgrind], [no])
 AC_PATH_TOOL([AR], [ar], [ar])
 AC_PATH_TOOL([CONVERT], [convert], [no])
+AC_PATH_TOOL([INSTALL_DESKTOP],[desktop-file-install],[no])
 
 dnl ---------------------------------------------------------------------------
 dnl test for usefull functions
@@ -186,6 +193,21 @@ dnl ---------------------------------------------------------------------------
 PKG_CHECK_MODULES( [UDJAT], [libudjat], AC_DEFINE(HAVE_UDJAT,,[Do we have udjat?]), AC_MSG_ERROR([UDJAT not present.]) )
 AC_SUBST(UDJAT_LIBS)
 AC_SUBST(UDJAT_CFLAGS)
+
+AC_ARG_WITH([product-name], [AS_HELP_STRING([--with-product-name], [Set product name])], [ app_cv_product="$withval" ],[ app_cv_product=$PACKAGE ])
+AC_DEFINE_UNQUOTED(PRODUCT_NAME, "$app_cv_product",[The product name])
+AC_SUBST(PRODUCT_NAME,"$app_cv_product")
+
+AC_ARG_WITH([product-id], [AS_HELP_STRING([--with-product-id], [Set product id])], [ app_cv_product_id="$withval" ],[ app_cv_product_id="`pkg-config --variable=product_id libudjat`" ])
+AC_SUBST(PRODUCT_ID,$app_cv_product_id)
+AC_DEFINE_UNQUOTED(PRODUCT_ID,"$app_cv_product_id",[The product id])
+
+app_cv_module_path=`pkg-config --variable=module_path libudjat`
+AC_DEFINE_UNQUOTED(MODULE_PATH, $app_cv_module_path, [The path for module installation])
+AC_SUBST(MODULE_PATH,$app_cv_module_path)
+
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$app_cv_product",[The gettext package name.])
+AC_SUBST(GETTEXT_PACKAGE,$app_cv_product)
 
 dnl ---------------------------------------------------------------------------
 dnl Check for GTK
@@ -252,6 +274,7 @@ dnl Configure which files to generate.
 dnl ---------------------------------------------------------------------------
 
 AC_CONFIG_FILES(src/library/Makefile)
+AC_CONFIG_FILES(locale/Makefile)
 AC_CONFIG_FILES(Makefile)
 
 dnl ---------------------------------------------------------------------------

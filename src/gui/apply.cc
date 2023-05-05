@@ -22,10 +22,11 @@
  #include <private/mainwindow.h>
  #include <private/dialogs.h>
  #include <reinstall/object.h>
- #include <reinstall/worker.h>
+ #include <reinstall/builder.h>
  #include <reinstall/writer.h>
  #include <udjat/tools/threadpool.h>
  #include <udjat/tools/application.h>
+ #include <udjat/tools/configuration.h>
  #include <reinstall/controller.h>
  #include <reinstall/tools.h>
  #include <udjat/tools/logger.h>
@@ -94,23 +95,24 @@
 	//
 	// Step 1 - Prepare image get image builder.
 	//
-	std::shared_ptr<Reinstall::Worker> worker;
+	std::shared_ptr<Reinstall::Builder> builder;
 	{
 		Dialog::Progress dialog;
 		show(dialog);
 
-		Udjat::ThreadPool::getInstance().push([this,&dialog,&action,&worker](){
+		Udjat::ThreadPool::getInstance().push([this,&dialog,&action,&builder](){
 
 			try {
 
-				worker = action.WorkerFactory();
+				builder = action.pre();
 				dialog.dismiss(Gtk::RESPONSE_OK);
 
 			} catch(const std::exception &e) {
 
 				cerr << e.what() << endl;
-				failed(e.what());
 				dialog.dismiss(Gtk::RESPONSE_CANCEL);
+				sleep(1);
+				failed(e.what());
 
 			}
 
@@ -150,18 +152,20 @@
 		Dialog::Progress dialog;
 		show(dialog);
 
-		Udjat::ThreadPool::getInstance().push([this,&dialog,writer,worker](){
+		Udjat::ThreadPool::getInstance().push([this,&dialog,writer,builder,&action](){
 
 			try {
 
-				worker->burn(writer);
+				builder->burn(writer);
+				action.post(writer);
 				dialog.dismiss(Gtk::RESPONSE_OK);
 
 			} catch(const std::exception &e) {
 
 				cerr << e.what() << endl;
-				failed(e.what());
 				dialog.dismiss(Gtk::RESPONSE_CANCEL);
+				sleep(1);
+				failed(e.what());
 
 			}
 
@@ -209,25 +213,20 @@
 		}
 
 		// Add extra buttons.
-		if(action.reboot()) {
-
-			// Close button is the suggested action.
-			auto close = popup->get_widget_for_response(Gtk::RESPONSE_CLOSE);
-			close->get_style_context()->add_class("suggested-action");
-			popup->set_default_response(Gtk::RESPONSE_CLOSE);
-
-			// Reboot button is destructive.
-			auto reboot = popup->add_button(_("Reboot"),Gtk::RESPONSE_APPLY);
-			reboot->get_style_context()->add_class("destructive-action");
-
-		}
-
 		if(action.quit()) {
-			auto cancel = popup->add_button(_("Quit application"),Gtk::RESPONSE_CANCEL);
+			Widget *cancel = popup->add_button(Config::Value<string>{"buttons","quit",_("Quit application")},Gtk::RESPONSE_CANCEL);
 			if(!action.reboot()) {
 				cancel->get_style_context()->add_class("suggested-action");
 				popup->set_default_response(Gtk::RESPONSE_CANCEL);
 			}
+		}
+
+		if(action.reboot()) {
+
+			// Reboot button is destructive.
+			Widget *reboot = popup->add_button(Config::Value<string>{"buttons","reboot",_("Reboot now")},Gtk::RESPONSE_APPLY);
+			reboot->get_style_context()->add_class("destructive-action");
+
 		}
 
 		popup->set_title(action.get_label());

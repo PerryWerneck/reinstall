@@ -2,6 +2,8 @@
 #---[ Library configuration ]------------------------------------------------------------
 
 PACKAGE_NAME=@PACKAGE_NAME@
+PRODUCT_NAME=@PRODUCT_NAME@
+APPLICATION_ID=@PRODUCT_ID@.@PACKAGE_NAME@
 LIBRARY_NAME="lib@PACKAGE_NAME@"
 SONAME=@SONAME@
 
@@ -45,6 +47,7 @@ WINDRES=@WINDRES@
 AR=@AR@
 VALGRIND=@VALGRIND@
 DLLTOOL=@DLLTOOL@
+INSTALL_DESKTOP=@INSTALL_DESKTOP@
 
 #---[ Paths ]----------------------------------------------------------------------------
 
@@ -183,14 +186,20 @@ install-%: \
 #---[ Release Targets ]------------------------------------------------------------------
 
 all: \
-	$(BINRLS)/$(PACKAGE_NAME)@DLLEXT@ \
+	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
+	$(BINRLS)/modules/isowriter@DLLEXT@ \
+	$(BINRLS)/modules/netinstall@DLLEXT@ \
+	$(BINRLS)/modules/grub@DLLEXT@ \
 	locale/$(PACKAGE_NAME).pot
 
 Release: \
-	$(BINRLS)/$(PACKAGE_NAME)@DLLEXT@
+	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
+	$(BINRLS)/modules/isowriter@DLLEXT@ \
+	$(BINRLS)/modules/netinstall@DLLEXT@ \
+	$(BINRLS)/modules/grub@DLLEXT@
 
 locale/$(PACKAGE_NAME).pot: \
-	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(POTDIR)/$(SRC).pot)
+	$(foreach SRC, $(basename $(LIBRARY_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES) $(GRUB_SOURCES) $(GUI_SOURCES)), $(POTDIR)/$(SRC).pot)
 
 	@rm -f $@
 	@$(MKDIR) $(dir $@)
@@ -198,6 +207,61 @@ locale/$(PACKAGE_NAME).pot: \
 
 locale: \
 	locale/$(PACKAGE_NAME).pot
+
+$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@: \
+	$(foreach SRC, $(basename $(GUI_SOURCES)), $(OBJRLS)/$(SRC).o) \
+	$(BINRLS)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		-o $@ \
+		$^ \
+		-L$(BINRLS) \
+		$(LDFLAGS) \
+		$(LIBS)
+
+$(BINRLS)/modules/isowriter@DLLEXT@: \
+	$(foreach SRC, $(basename $(ISOWRITER_SOURCES)), $(OBJRLS)/$(SRC).o) \
+	$(BINRLS)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		$(DLL_LDFLAGS) \
+		-o $@ \
+		$^ \
+		-L$(BINRLS) \
+		$(LDFLAGS) \
+		$(LIBS)
+
+$(BINRLS)/modules/netinstall@DLLEXT@: \
+	$(foreach SRC, $(basename $(NETINSTALL_SOURCES)), $(OBJRLS)/$(SRC).o) \
+	$(BINRLS)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		$(DLL_LDFLAGS) \
+		-o $@ \
+		$^ \
+		-L$(BINRLS) \
+		$(LDFLAGS) \
+		$(LIBS)
+
+$(BINRLS)/modules/grub@DLLEXT@: \
+	$(foreach SRC, $(basename $(GRUB_SOURCES)), $(OBJRLS)/$(SRC).o) \
+	$(BINRLS)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		$(DLL_LDFLAGS) \
+		-o $@ \
+		$^ \
+		-L$(BINRLS) \
+		$(LDFLAGS) \
+		$(LIBS)
 
 $(BINRLS)/$(SONAME): \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(OBJRLS)/$(SRC).o)
@@ -210,29 +274,75 @@ $(BINRLS)/$(SONAME): \
 		-o $@ \
 		$(LDFLAGS) \
 		$^ \
+		@ISOFS_LIBS@ \
 		$(LIBS)
 
 #---[ Install Targets ]------------------------------------------------------------------
 
 install: \
 	install-@OSNAME@ \
-	install-locale
+	install-locale \
+	install-data
 
 install-linux: \
-	$(BINRLS)/$(SONAME)
+	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
+	$(BINRLS)/modules/isowriter@DLLEXT@ \
+	$(BINRLS)/modules/netinstall@DLLEXT@ \
+	$(BINRLS)/modules/grub@DLLEXT@ \
+	locale/$(PACKAGE_NAME).pot
 
 	# Install library
-	@$(MKDIR) $(DESTDIR)$(libdir)
+	@$(MKDIR) \
+		$(DESTDIR)$(libdir)
 
 	@$(INSTALL_PROGRAM) \
 		$(BINRLS)/$(SONAME) \
 		$(DESTDIR)$(libdir)/$(SONAME)
+
+	# Install application.
+	@$(MKDIR) \
+		$(DESTDIR)$(bindir)
+
+	@$(INSTALL_PROGRAM) \
+		$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
+		$(DESTDIR)$(bindir)
+
+	# Install modules
+	@$(MKDIR) \
+		$(DESTDIR)@MODULE_PATH@
+
+	@$(INSTALL_PROGRAM) \
+		$(BINRLS)/modules/isowriter@DLLEXT@ \
+		$(DESTDIR)@MODULE_PATH@
+
+	@$(INSTALL_PROGRAM) \
+		$(BINRLS)/modules/netinstall@DLLEXT@ \
+		$(DESTDIR)@MODULE_PATH@
+
+	@$(INSTALL_PROGRAM) \
+		$(BINRLS)/modules/grub@DLLEXT@ \
+		$(DESTDIR)@MODULE_PATH@
+
+	@$(MKDIR) \
+		$(DESTDIR)$(datarootdir)/applications
 		
-	@$(MKDIR) $(DESTDIR)$(sysconfdir)/$(PACKAGE_NAME).conf.d
 	@$(INSTALL_DATA) \
-		conf.d/50-civetweb.conf \
-		$(DESTDIR)$(sysconfdir)/$(PACKAGE_NAME).conf.d		
-		
+		sysconf/launcher.desktop \
+		$(APPLICATION_ID).desktop
+
+	@$(INSTALL_DESKTOP) \
+		--mode 644 \
+		--delete-original \
+		--dir $(DESTDIR)$(datarootdir)/applications \
+		$(APPLICATION_ID).desktop
+
+	@$(MKDIR) \
+		$(DESTDIR)$(datarootdir)/icons
+
+	@$(INSTALL_DATA) \
+		icon.svg \
+		$(DESTDIR)$(datarootdir)/icons/$(APPLICATION_ID).svg
+
 install-windows: \
 	$(BINRLS)/@SONAME@
 
@@ -243,16 +353,46 @@ install-windows: \
 		$(BINRLS)/@SONAME@ \
 		$(DESTDIR)$(bindir)/@SONAME@
 				
-	
+install-data:
+
+	@$(MKDIR) \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)
+		
+	@$(INSTALL_DATA) \
+		stylesheet.css \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)
+
+	@$(MKDIR) \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)/templates
+		
+	@$(INSTALL_PROGRAM) \
+		templates/grub2 \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)/templates
+
+	@$(INSTALL_DATA) \
+		templates/grub.cfg \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)/templates
+
+	@$(INSTALL_DATA) \
+		templates/isolinux.cfg \
+		$(DESTDIR)$(datarootdir)/$(PRODUCT_NAME)/templates
+		
+	@$(MKDIR) \
+		$(DESTDIR)/etc/$(PRODUCT_NAME).conf.d
+
+	@$(INSTALL_DATA) \
+		conf.d/0*.conf \
+		$(DESTDIR)/etc/$(PRODUCT_NAME).conf.d
+
 #---[ Debug Targets ]--------------------------------------------------------------------
 
 Debug: \
-	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ \
 	$(BINDBG)/modules/isowriter@DLLEXT@ \
 	$(BINDBG)/modules/netinstall@DLLEXT@ \
 	$(BINDBG)/modules/grub@DLLEXT@
 
-$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@: \
+$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@: \
 	$(foreach SRC, $(basename $(GUI_SOURCES)), $(OBJDBG)/$(SRC).o) \
 	$(BINDBG)/$(SONAME)
 
@@ -328,33 +468,33 @@ $(BINDBG)/$(SONAME): \
 		
 
 inspect: \
-	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 
-	@GTK_DEBUG=interactive $(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+	@GTK_DEBUG=interactive $(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 
 run: \
-	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@ \
+	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ \
 	$(BINDBG)/modules/isowriter@DLLEXT@ \
 	$(BINDBG)/modules/netinstall@DLLEXT@ \
 	$(BINDBG)/modules/grub@DLLEXT@
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
-		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 
 memcheck: \
-	$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 
 ifeq ($(VALGRIND),no)
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
-		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 
 else
 	@touch valgrind.suppression
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
 		$(VALGRIND) --leak-check=full --track-origins=yes --gen-suppressions=all --suppressions=valgrind.suppression \
-		$(BINDBG)/$(PACKAGE_NAME)@EXEEXT@
+		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
 endif
 
 #---[ Clean Targets ]--------------------------------------------------------------------

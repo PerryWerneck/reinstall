@@ -34,12 +34,22 @@
 
 	bool Source::contents(const Action &action, std::vector<std::shared_ptr<Source>> &contents) {
 
-		if( *(url + strlen(url) - 1) != '/') {
+		URL url{this->url};
+
+		if( *(url.c_str() + url.size() - 1) != '/') {
 			return false;
 		}
 
 		if(url[0] == '/') {
-			throw runtime_error("URL EXPANSION WAS NOT IMPLEMENTED");
+
+			if(!(repository && *repository)) {
+				throw runtime_error(string{"A repository attribute is required to expand url '"} + url + "'");
+			}
+
+			url = action.repository(repository)->url(true);
+			url += this->url;
+
+			debug("url=",this->url," expanded=",url.c_str());
 		}
 
 		if(message && *message) {
@@ -53,12 +63,13 @@
 
 		switch(layout) {
 		case Repository::ApacheLayout:
-			debug("Loading contents from '",url,"' in apache format");
-			Mirror::apache(name(),path,url,contents);
+			debug("Loading contents from '",url.c_str(),"' in apache format");
+			Mirror::apache(name(),path,url.c_str(),contents);
 			break;
 
 		case Repository::MirrorCacheLayout:
-			Mirror::mirrorcache(name(),path,url,contents);
+			debug("Loading contents from '",url.c_str(),"' in MirrorCache format");
+			Mirror::mirrorcache(name(),path,url.c_str(),contents);
 			break;
 
 		default:

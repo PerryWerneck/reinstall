@@ -20,52 +20,94 @@
  #include <config.h>
  #include <udjat/defs.h>
  #include <reinstall/source.h>
- #include <reinstall/worker.h>
+ #include <reinstall/builder.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/protocol.h>
  #include <udjat/tools/intl.h>
+ #include <udjat/tools/logger.h>
+ #include <udjat/tools/file.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	string Source::save() {
+ 	void Source::save(const char *filename) {
+
+		if(!filenames.saved.empty()) {
+			warning() << "Already downloaded" << endl;
+			return;
+		}
 
 		if(!this->url[0]) {
 			error() << "Cant save source with empty URL" << endl;
 			throw runtime_error(_("Unable to get source with an empty URL"));
 		}
 
+		if(this->url[0] == '/') {
+			error() << "Cant save source with relative URL '" << this->url << "'" << endl;
+			throw runtime_error(_("Unable to get source with relative URL"));
+		}
+
+ 		filenames.saved = filename;
+
+ 		if(strncasecmp(url,"file://",7) == 0) {
+
+			Udjat::File::copy(Udjat::URL{url}.ComponentsFactory().path.c_str(),filename,true);
+			return;
+
+ 		}
+
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
 		auto worker = Protocol::WorkerFactory(this->url);
 
+		if(message && *message) {
+			progress.set_sub_title(message);
+		}
 		progress.set_url(worker->url().c_str());
 
-		if(filename) {
+		worker->save(filename,[&progress](double current, double total){
+			progress.set_progress(current,total);
+			return true;
+		},true);
 
-			// Download URL to 'filename'
-			worker->save(filename,[&progress](double current, double total){
-				progress.set_progress(current,total);
-				return true;
-			});
 
-			return filename;
+ 	}
 
-		} else if(tempfilename.empty()) {
+	void Source::save() {
 
-			// Download to temporary file.
-			tempfilename = worker->save([&progress](double current, double total){
-				progress.set_progress(current,total);
-				return true;
-			});
-
-			filename = tempfilename.c_str();
-
+		if(!filenames.saved.empty()) {
+			warning() << "Already downloaded" << endl;
+			return;
 		}
 
-		return string(filename);
+		if(!this->url[0]) {
+			error() << "Cant save source with empty URL" << endl;
+			throw runtime_error(_("Unable to get source with an empty URL"));
+		}
+
+		if(this->url[0] == '/') {
+			error() << "Cant save source with relative URL '" << this->url << "'" << endl;
+			throw runtime_error(_("Unable to get source with relative URL"));
+		}
+
+		Dialog::Progress &progress = Dialog::Progress::getInstance();
+
+		auto worker = Protocol::WorkerFactory(this->url);
+
+		if(message && *message) {
+			progress.set_sub_title(message);
+		}
+		progress.set_url(worker->url().c_str());
+
+		// Download to temporary file.
+		filenames.temp = worker->save([&progress](double current, double total){
+			progress.set_progress(current,total);
+			return true;
+		});
+
+		filenames.saved = filenames.temp;
 
 	}
 

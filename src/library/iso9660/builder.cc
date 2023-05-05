@@ -27,6 +27,7 @@
  #include <udjat/tools/configuration.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/url.h>
 
  #include <sys/stat.h>
  #include <fcntl.h>
@@ -63,7 +64,7 @@
 
 	};
 
-	iso9660::Worker::Worker() {
+	iso9660::Builder::Builder() {
 
 		IsoBuilderSingleTon::getInstance();
 
@@ -79,7 +80,7 @@
 
 	}
 
-	iso9660::Worker::~Worker() {
+	iso9660::Builder::~Builder() {
 		iso_image_unref(image);
 		iso_write_opts_free(opts);
 	}
@@ -117,25 +118,34 @@
 
 	}
 
-	void iso9660::Worker::apply(Source &source) {
+	bool iso9660::Builder::apply(Source &source) {
 
-		if(!(source.path && *source.path)) {
-			// No local path, ignore it.
-			return;
+		if(!Reinstall::Builder::apply(source)) {
+			return false;
 		}
 
-		// Download and apply files.
-		string filename;
-		if(source.filename) {
-			filename = source.filename;
-		}
+		// Download and save to temporary file.
+		if(strncasecmp(source.url,"file://",7)) {
 
-		Logger::String{source.url," -> ",source.path}.trace("iso9660");
+			// It's not file, download it.
+			source.save();
 
-		if(filename.empty()) {
+		} else {
 
-			// No local filename, download the file to get one.
-			filename = source.save();
+			// file:// scheme, is it pointing to an existant file?
+
+			Udjat::URL u{source.url};
+			if(u.test() == 200) {
+
+				// file:// scheme pointing to an existent file, use it.
+				source.set_filename(u.ComponentsFactory().path.c_str());
+
+			} else {
+
+				// The response for 'test()' in a local file should be 200, but, if not try to download it anyway
+				source.warning() << "Test for '" << u << "' failed, downloading" << endl;
+				source.save();
+			}
 
 		}
 
@@ -154,7 +164,7 @@
 				image,
 				getIsoDir(image,string(source.path,pos - source.path).c_str()),
 				pos+1,
-				filename.c_str(),
+				source.filename(),
 				NULL
 			);
 
@@ -165,7 +175,7 @@
 				image,
 				iso_image_get_root(image),
 				source.path,
-				filename.c_str(),
+				source.filename(),
 				NULL
 			);
 
@@ -176,9 +186,11 @@
 			throw runtime_error(iso_error_to_msg(rc));
 		}
 
+		return true;
+
 	}
 
-	void iso9660::Worker::set_system_area(const char *path) {
+	void iso9660::Builder::set_system_area(const char *path) {
 
 		char data[32768];
 		memset(data,0,sizeof(data));
@@ -215,7 +227,7 @@
 
 	}
 
-	void iso9660::Worker::set_volume_id(const char *volume_id) {
+	void iso9660::Builder::set_volume_id(const char *volume_id) {
 
 		if(volume_id && *volume_id) {
 			iso_image_set_volume_id(image, volume_id);
@@ -225,7 +237,7 @@
 
 	}
 
-	void iso9660::Worker::set_publisher_id(const char *publisher_id) {
+	void iso9660::Builder::set_publisher_id(const char *publisher_id) {
 
 		if(publisher_id && *publisher_id) {
 			iso_image_set_publisher_id(image, publisher_id);
@@ -235,7 +247,7 @@
 
 	}
 
-	void iso9660::Worker::set_data_preparer_id(const char *data_preparer_id) {
+	void iso9660::Builder::set_data_preparer_id(const char *data_preparer_id) {
 
 		if(data_preparer_id && *data_preparer_id) {
 
@@ -252,7 +264,7 @@
 
 	}
 
-	void iso9660::Worker::set_application_id(const char *application_id) {
+	void iso9660::Builder::set_application_id(const char *application_id) {
 
 		if(application_id && *application_id) {
 
@@ -266,7 +278,7 @@
 
 	}
 
-	void iso9660::Worker::set_system_id(const char *system_id) {
+	void iso9660::Builder::set_system_id(const char *system_id) {
 
 		if(system_id && *system_id) {
 
@@ -280,23 +292,23 @@
 
 	}
 
-	void iso9660::Worker::set_iso_level(int level) {
+	void iso9660::Builder::set_iso_level(int level) {
 		iso_write_opts_set_iso_level(opts, level);
 	}
 
-	void iso9660::Worker::set_rockridge(int rockridge) {
+	void iso9660::Builder::set_rockridge(int rockridge) {
 		iso_write_opts_set_rockridge(opts, rockridge);
 	}
 
-	void iso9660::Worker::set_joliet(int joliet) {
+	void iso9660::Builder::set_joliet(int joliet) {
 		iso_write_opts_set_joliet(opts, joliet);
 	}
 
-	void iso9660::Worker::set_allow_deep_paths(int deep_paths) {
+	void iso9660::Builder::set_allow_deep_paths(int deep_paths) {
 		iso_write_opts_set_allow_deep_paths(opts, deep_paths);
 	}
 
-	void iso9660::Worker::set_el_torito_boot_image(const char *isopath, const char *catalog, const char *id) {
+	void iso9660::Builder::set_el_torito_boot_image(const char *isopath, const char *catalog, const char *id) {
 
 		ElToritoBootImage *bootimg = NULL;
 		int rc = iso_image_set_boot_image(image,isopath,ELTORITO_NO_EMUL,catalog,&bootimg);
@@ -328,7 +340,7 @@
 
 	}
 
-	void iso9660::Worker::add_boot_image(const char *isopath, uint8_t id) {
+	void iso9660::Builder::add_boot_image(const char *isopath, uint8_t id) {
 		ElToritoBootImage *bootimg = NULL;
 		int rc = iso_image_add_boot_image(image,isopath,ELTORITO_NO_EMUL,0,&bootimg);
 		if(rc < 0) {
@@ -339,7 +351,7 @@
 		el_torito_set_boot_platform_id(bootimg, id);
 	}
 
-	void iso9660::Worker::set_efi_boot_image(const char *boot_image, bool like_iso_hybrid) {
+	void iso9660::Builder::set_efi_boot_image(const char *boot_image, bool like_iso_hybrid) {
 
 		if(like_iso_hybrid) {
 
@@ -368,7 +380,7 @@
 	}
 
 	/*
-	size_t iso9660::Worker::size() {
+	size_t iso9660::Builder::size() {
 
 		rc = iso_image_update_sizes(image);
 		if (rc < 0) {
@@ -379,7 +391,7 @@
 	}
 	*/
 
-	void iso9660::Worker::burn(std::shared_ptr<Writer> writer) {
+	std::shared_ptr<Writer> iso9660::Builder::burn(std::shared_ptr<Writer> writer) {
 
 		debug("Burning ISO image");
 
@@ -441,6 +453,7 @@
 
 		progress.set_sub_title(_(""));
 
+		return writer;
 	}
 
  }

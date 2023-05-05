@@ -35,11 +35,17 @@
 			static const char * get_text(const pugi::xml_node &node, const char *attrname);
 			static pugi::xml_node find(const pugi::xml_node &node, const char *attrname);
 
-			Object() = default;
+			constexpr Object(const char *name = "") : Udjat::NamedObject{name} {
+			}
+
+			Object(const pugi::xml_node &node) : Udjat::NamedObject{node} {
+			}
 
 			virtual void set(const pugi::xml_node &node);
 
 			virtual std::string get_label() const = 0;
+
+			bool getProperty(const char *key, std::string &value) const override;
 
 		};
 

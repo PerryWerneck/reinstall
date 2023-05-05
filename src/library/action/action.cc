@@ -19,7 +19,7 @@
 
  #include <config.h>
  #include <reinstall/action.h>
- #include <reinstall/worker.h>
+ #include <reinstall/builder.h>
  #include <reinstall/dialogs.h>
  #include <reinstall/userinterface.h>
  #include <udjat/tools/quark.h>
@@ -27,6 +27,7 @@
  #include <udjat/tools/logger.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
+ #include <udjat/tools/configuration.h>
 
  using namespace std;
  using namespace Udjat;
@@ -76,15 +77,16 @@
 	}
 
 	Action::Options::Options(const pugi::xml_node &node)
-		: enabled(Factory(node,"enabled",true)),
-		  visible(Factory(node,"visible",true)),
-		  reboot(Factory(node,"visible",false)),
-		  quit(Factory(node,"visible",true))
+		: enabled{Factory(node,"enabled",true)},
+		  visible{Factory(node,"visible",true)},
+		  reboot{Factory(node,"allow-reboot-when-success",false)},
+		  quit{Factory(node,"allow-quit-application",true)}
 		 {
 	}
 
 	Action::Action(const pugi::xml_node &node, const char *iname)
-		: 	Udjat::NamedObject(node), options{node},
+		: 	Reinstall::Abstract::Object(node),
+			options{node},
 			output_file{getAttribute(node,"output-file","")},
 			icon_name{getAttribute(node,"icon",iname)},
 			item{UserInterface::getInstance().ActionFactory(node,icon_name)} {
@@ -94,33 +96,35 @@
 		}
 
 		// Get dialogs
-		for(pugi::xml_node parent = node; parent; parent = parent.parent()) {
+		scan(node, "dialog", [this](const pugi::xml_node &node){
 
-			for(auto child = parent.child("dialog"); child; child = child.next_sibling("dialog")) {
+			String name{node,"name","unnamed",false};
 
-				switch(String{child,"name"}.select("confirmation","success","failed",nullptr)) {
-				case 0: // confirmation.
-					if(!dialog.confirmation) {
-						dialog.confirmation.set(child);
-					}
-					break;
-				case 1: // success
-					if(!dialog.success) {
-						dialog.success.set(child);
-					}
-					break;
-				case 2: // failed
-					if(!dialog.failed) {
-						dialog.failed.set(child);
-					}
-					break;
-				default:
-					warning() << "Unexpected dialog name '" << String{child,"name"} << "'" << endl;
-				}
+			debug("Dialog: ",name);
+
+			switch(name.select("confirmation","success","failed",nullptr)) {
+			case 0:	// Confirmation
+				info() << "Using customized confirmation dialog" << endl;
+				dialog.confirmation.set(node);
+				break;
+
+			case 1:	// success
+				info() << "Using customized success dialog" << endl;
+				dialog.success.set(node);
+				break;
+
+			case 2:	// failed
+				info() << "Using customized error dialog" << endl;
+				dialog.failed.set(node);
+				break;
+
+			default:
+				warning() << "Unknown dialog '" << name << "'" << endl;
 
 			}
 
-		}
+			return false;
+		});
 
 		scan(node, "source", [this](const pugi::xml_node &node){
 			push_back(make_shared<Source>(node));
@@ -132,6 +136,32 @@
 			return false;
 		});
 
+		// Get driver updates
+		scan(node,"driver-update-disk",[this](const pugi::xml_node &node) {
+
+			if(node.attribute("path")) {
+
+				// Has path, setup as a source.
+				auto source = make_shared<Reinstall::Source>(node);
+				push_back(source);
+
+				// Setup DUD url based on local path.
+				kparms.emplace_back("dud", Quark{ ((std::string) Config::Value<string>{"schemes","disk","hd:"}) + source->rpath()}.c_str());
+
+			} else if(node.attribute("url")) {
+
+				// No path, setup only as kernel parameter 'dud=url'.
+				kparms.emplace_back("dud",node);
+
+			} else {
+
+				throw runtime_error(_("DUD Definition requires path or url attribute."));
+
+			}
+
+			return false;
+		});
+
 		scan(node, "repository", [this](const pugi::xml_node &node){
 			repositories.insert(make_shared<Repository>(node));
 			return false;
@@ -139,6 +169,24 @@
 
 		scan(node, "template", [this](const pugi::xml_node &node){
 			push_back(make_shared<Template>(node));
+			return false;
+		});
+
+		// Get scripts.
+		scan(node,"script",[this](const pugi::xml_node &node) {
+			switch(Udjat::String{node.attribute("type").as_string("post")}.select("pre","post",nullptr)) {
+			case 0:	// pre.
+				scripts.pre.emplace_back(node);
+				break;
+
+			case 1: // post.
+				scripts.post.emplace_back(node);
+				break;
+
+			default:
+				throw runtime_error(_("Invalid 'type' attribute"));
+
+			}
 			return false;
 		});
 
@@ -154,8 +202,8 @@
 		}
 	}
 
-	std::shared_ptr<Reinstall::Worker> Action::WorkerFactory() {
-		return make_shared<Reinstall::Worker>();
+	std::shared_ptr<Reinstall::Builder> Action::BuilderFactory() {
+		throw runtime_error(_("No available image builder"));
 	}
 
 	std::shared_ptr<Reinstall::Writer> Action::WriterFactory() {
@@ -207,99 +255,54 @@
 		return true;
 	}
 
-	void Action::prepare(Worker &worker) {
-
-		Dialog::Progress &dialog = Dialog::Progress::getInstance();
-
-		{
-			dialog.set_sub_title(_("Initializing"));
-			worker.pre(*this);
-
-			// Get folder contents.
-			dialog.set_sub_title(_("Getting file lists"));
-			load();
-
-			// Apply templates.
-			dialog.set_sub_title(_("Checking for templates"));
-			applyTemplates();
-
-			// Download files.
-			dialog.set_sub_title(_("Getting required files"));
-			size_t total = source_count();
-			size_t current = 0;
-			for_each([this,&current,total,&dialog,&worker](Source &source) {
-				dialog.set_count(++current,total);
-				worker.apply(source);
-			});
-			dialog.set_count(0,0);
-
-		}
-
-		// Update kernel parameters.
-		{
-			dialog.set_title(_("Getting installation parameters"));
-			for(KernelParameter &kparm : kparms) {
-				kparm.set(*this);
-			}
-		}
-
-		worker.post(*this);
-
-	}
-
 	void Action::load() {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
+
+		info() << "Get file list for " << sources.size() << " source(s)" << endl;
+
 		progress.set_sub_title(_("Getting required files"));
 
-		for(auto source : sources) {
-			source->set(*this);
-		}
+		// Expand all sources.
+		for(auto iter = sources.begin(); iter != sources.end();) {
 
-		{
+			std::shared_ptr<Source> source = *iter;
 			std::vector<std::shared_ptr<Source>> contents;
 
-			// Expand all sources.
-			for(auto source = sources.begin(); source != sources.end();) {
-				if((*source)->contents(*this,contents)) {
-					source = sources.erase(source);
-				} else {
-					source++;
-				}
+			iter = sources.erase(iter);	// Remove it; path can change.
+
+			source->set(*this);
+
+			if(!source->contents(*this,contents)) {
+				contents.push_back(source);
 			}
+
+			Logger::String {
+				"Source '", source->name(), "' has ", contents.size(), " file(s)"
+			}.trace(name());
 
 			// Add expanded elements.
-			for(auto source : contents) {
-				sources.insert(source);
-			}
-
-		}
-
-	}
-
-	void Action::applyTemplates() {
-
-		for(auto tmpl : templates) {
-
-			tmpl->load((Udjat::Object &) *this);
-
-			for(auto source : sources) {
-
-				if(tmpl->test(source->path)) {
-					tmpl->apply(*source);
+			for(std::shared_ptr<Source> source : contents) {
+				if(sources.count(source)) {
+					Logger::String{"Duplicate file '",source->path,"' on source ",source->name()}.trace(name());
+				} else {
+					sources.insert(source);
 				}
-
 			}
 
 		}
 
+		info() << "Download list has " << sources.size() << " file(s)" << endl;
+
 	}
 
-	std::shared_ptr<Source> Action::source(const char *path) {
+	std::shared_ptr<Source> Action::source(const char *path) const {
 		for(auto source : sources) {
+			debug(source->path);
 			if(source->path && *source->path && !strcmp(path,source->path)) {
 				return source;
 			}
+
 		}
 		error() << "Cant find source for path '" << path << "'" << endl;
 		throw system_error(ENOENT,system_category(),path);
@@ -322,7 +325,31 @@
 		throw system_error(ENOENT,system_category(),name);
 	}
 
-	bool Action::getProperty(const char *key, std::string &value) const noexcept {
+	bool Action::getProperty(const char *key, std::string &value) const {
+
+		debug("Searching for '",key,"' in ",name());
+
+		if(strcasecmp(key,"install-version") == 0) {
+
+			// FIX-ME: Use kernel version.
+			value = PACKAGE_VERSION;
+			return true;
+
+		}
+
+		if(strcasecmp(key,"install-kloading") == 0) {
+
+			value = _("Loading installation kernel ...");
+			return true;
+
+		}
+
+		if(strcasecmp(key,"install-iloading") == 0) {
+
+			value = _("Loading system installer ...");
+			return true;
+
+		}
 
 		if(strcasecmp(key,"icon-name") == 0) {
 
@@ -332,10 +359,12 @@
 		}
 
 		if(strcasecmp(key,"label") == 0 || strcasecmp(key,"install-label") == 0 ) {
-
 			value = get_label();
+			if(value.empty()) {
+				error() << "Action label is empty" << endl;
+				throw runtime_error(_("Selected installation has no label"));
+			}
 			return true;
-
 		}
 
 		if(strcasecmp(key,"kernel-parameters") == 0) {
@@ -355,8 +384,10 @@
 						continue;
 					}
 
-					const char * val = kparm.value();
-					if(val && *val) {
+					std::string val = kparm.expand(*this);
+					if(val.empty()) {
+						warning() << "Kernel parameter '" << name << "' is empty, ignoring" << endl;
+					} else {
 
 						if(!value.empty()) {
 							value += " ";
@@ -372,14 +403,130 @@
 			return true;
 		}
 
-		if(Udjat::NamedObject::getProperty(key,value)) {
+		if(strcasecmp(key,"boot-dir") == 0) {
+			value = "/boot/x86_64";
 			return true;
 		}
 
-		error() << "Unknown property '" << key << "'" << endl;
+		if(strcasecmp(key,"kernel-file") == 0) {
+			value = "/boot/x86_64/loader/linux";
+			return true;
+		}
 
-		return false;
+		if(strcasecmp(key,"initrd-file") == 0) {
+			value = "/boot/x86_64/loader/initrd";
+			return true;
+		}
 
+		if(strcasecmp(key,"install-version") == 0) {
+			value = PACKAGE_VERSION;
+			return true;
+		}
+
+
+		return Reinstall::Abstract::Object::getProperty(key,value);
+
+	}
+
+	std::shared_ptr<Reinstall::Builder> Action::pre() {
+
+		Dialog::Progress &dialog = Dialog::Progress::getInstance();
+
+		dialog.set_sub_title(_("Preparing"));
+		for(Script &script : scripts.pre) {
+			script.run(*this);
+		}
+
+		dialog.set_sub_title(_("Initializing"));
+		auto builder = BuilderFactory();
+		builder->pre(*this);
+
+		// Get folder contents.
+		dialog.set_sub_title(_("Getting file lists"));
+		load();
+
+		// Apply templates.
+		info() << "Applying " << templates.size() << " template(s)" << endl;
+		dialog.set_sub_title(_("Checking for templates"));
+		for(auto tmpl : templates) {
+
+			// Load template
+			tmpl->load((Udjat::Object &) *this);
+
+			// Apply it on sources (if necessary).
+			for(auto source : sources) {
+
+				if(tmpl->test(source->path)) {
+					tmpl->apply(*source);
+				}
+
+			}
+
+			{
+				const char *path = tmpl->get_path();
+				if(path && *path) {
+
+					// Template has filename, update or create source
+					Udjat::String str{path};
+					str.expand(*this);
+
+					debug("Template=",tmpl->c_str()," filename=",tmpl->get_filename());
+					auto source = make_shared<Source>(
+							tmpl->c_str(),
+							(string{"file://"} + tmpl->get_filename()).c_str(),
+							str.c_str()
+					);
+
+					auto it = sources.find(source);
+					if(it != sources.end()) {
+						sources.erase(it);
+					}
+
+					sources.insert(source);
+
+				}
+			}
+
+		}
+
+		// Download files.
+		dialog.set_sub_title(_("Getting required files"));
+		size_t total = source_count();
+		size_t current = 0;
+
+		info() << "Getting " << total << " required files" << endl;
+		for_each([this,&current,total,&dialog,builder](Source &source) {
+			dialog.set_count(++current,total);
+			Logger::String(source.url," (",current,"/",total,")").trace(source.name());
+			builder->apply(source);
+		});
+		dialog.set_count(0,0);
+
+		info() << "Calling 'build' methods" << endl;
+		dialog.set_sub_title(_("Building"));
+		builder->build(*this);
+
+		info() << "Calling 'post' methods" << endl;
+		dialog.set_sub_title(_("Building"));
+		builder->post(*this);
+
+		return builder;
+	}
+
+	void Action::post(std::shared_ptr<Reinstall::Writer> UDJAT_UNUSED(writer)) {
+		Dialog::Progress &dialog = Dialog::Progress::getInstance();
+
+		info() << "Running " << scripts.post.size() << " post scripts" << endl;
+		for(Script &script : scripts.post) {
+			dialog.set_sub_title(_("Running post scripts"));
+			if(script.run(*this)) {
+				throw runtime_error(_("Post script has failed"));
+			}
+		}
+	}
+
+	void Action::activate() {
+		post(pre()->burn(WriterFactory()));
 	}
 
  }

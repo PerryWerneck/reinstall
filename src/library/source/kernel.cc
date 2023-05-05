@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,48 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
+ #include <config.h>
  #include <reinstall/defs.h>
+ #include <reinstall/source.h>
+ #include <reinstall/sources/kernel.h>
  #include <pugixml.hpp>
+ #include <udjat/tools/intl.h>
+ #include <iostream>
+ #include <udjat/tools/logger.h>
+
+ using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
-	namespace Dialog {
-
-		/// @brief Dialog box from XML.
-		class UDJAT_API Popup {
-		public:
-			const char *message = "";
-			const char *secondary = "";
-
-			bool destructive = false;
-
-			struct {
-				const char *link = "";
-				const char *label = "";
-
-				inline operator bool() const {
-					return (link && *link);
-				}
-
-			} url;
-
-			Popup() = default;
-
-			void set(const pugi::xml_node &node);
-
-			inline operator bool() const noexcept {
-				return (message && *message);
-			}
-
-			inline bool has_secondary() const noexcept {
-				return secondary && *secondary;
-			}
-
-
-		};
-
+	Kernel::Kernel(const pugi::xml_node &node) : Source(node,Source::Kernel,"/boot/x86_64/loader/linux","${kernel-file}") {
+		debug("Source for '",name(),"' will be ",url);
+		if(!(message && *message)) {
+			message = _("Getting installation kernel");
+		}
 	}
 
  }
-

@@ -19,8 +19,8 @@
 
 
  #include <config.h>
- #include <reinstall/actions/kernel.h>
- #include <reinstall/actions/initrd.h>
+ #include <reinstall/sources/kernel.h>
+ #include <reinstall/sources/initrd.h>
  #include <reinstall/actions/isobuilder.h>
  #include <udjat/tools/subprocess.h>
  #include <udjat/tools/string.h>
@@ -53,12 +53,6 @@
 		})) {
 			throw runtime_error(_("Missing required entry <init> with the URL for the linuxrc program"));
 		}
-
-		// Get post scripts.
-		scan(node,"image-post",[this](const pugi::xml_node &node) {
-			post_scripts.emplace_back(node);
-			return true;
-		});
 
 		// Get options.
 		system_area = getAttribute(
@@ -130,6 +124,7 @@
 	IsoBuilder::~IsoBuilder() {
 	}
 
+	/*
 	void IsoBuilder::post(const char *image) {
 
 		cout << "isobuilder\tRunning post scripts" << endl;
@@ -157,7 +152,7 @@
 
 		}
 
-		/*
+		*/ /*
 		if(efi.isohibrid_cmdline && *efi.isohibrid_cmdline) {
 			// Apply isohybrid
 			cout << "isobuilder\tPatching image" << endl;
@@ -181,16 +176,121 @@
 			cout << "isobuilder\tCommand '" << cmdline << "' runs without error" << endl;
 
 		}
-		*/
+		*/ /*
 
 	}
+	*/
 
-	std::shared_ptr<Reinstall::Worker> IsoBuilder::WorkerFactory() {
+	std::shared_ptr<Reinstall::Builder> IsoBuilder::BuilderFactory() {
 
+		class Builder : public Reinstall::iso9660::Builder {
+		public:
+			Builder() {
+			}
+
+			void pre(const Action &ptr) override {
+
+				const IsoBuilder *action = dynamic_cast<const IsoBuilder *>(&ptr);
+
+				if(!action) {
+					throw runtime_error(_("Rejecting invalid action pointer"));
+				}
+
+				Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Setting up ISO image"));
+
+				set_system_area(action->system_area);
+				set_volume_id(action->volume_id);
+				set_publisher_id(action->publisher_id);
+				set_data_preparer_id(action->data_preparer_id);
+				set_system_id(action->system_id);
+				set_application_id(action->application_id);
+			}
+
+			void build(const Action &ptr) override {
+			}
+
+			void post(const Action &ptr) override {
+
+				const IsoBuilder *action = dynamic_cast<const IsoBuilder *>(&ptr);
+
+				if(!action) {
+					throw runtime_error(_("Rejecting invalid action pointer"));
+				}
+
+				Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Setting up ISO image"));
+
+				set_rockridge();
+				set_joliet();
+				set_allow_deep_paths();
+
+				if(action->eltorito.boot_image && *action->eltorito.boot_image) {
+
+					Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Adding el-torito boot image"));
+
+					// Search to confirm presence of the boot_image.
+					const char *filename = action->source(action->eltorito.boot_image)->filename();
+					if(!(filename && *filename)) {
+						throw runtime_error(_("Unexpected filename on el-torito boot image"));
+					}
+
+					set_el_torito_boot_image(
+						action->eltorito.boot_image,
+						action->eltorito.catalog,
+						action->volume_id
+					);
+
+					cout << "iso9660\tEl-torito boot image set to '" << action->eltorito.boot_image << "'" << endl;
+				}
+
+				if(action->efi.boot_image && *action->efi.boot_image) {
+
+					Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Adding EFI boot image"));
+
+					auto source = action->source(action->efi.boot_image);
+					const char *filename = source->filename();
+					if(!filename[0]) {
+						throw runtime_error(_("Unexpected filename on EFI boot image"));
+					}
+
+					// Apply templates on EFI boot image.
+					{
+						Disk::Image disk(filename);
+
+						for(auto tmpl : action->templates) {
+
+							disk.forEach([this,&tmpl](const char *mountpoint, const char *path){
+
+								if(tmpl->test(path)) {
+									tmpl->load((Udjat::Object &) *this);
+									cout << "efi\tReplacing " << path << " with template " << tmpl->c_str() << endl;
+									tmpl->replace((string{mountpoint} + "/" + path).c_str());
+								}
+
+							});
+
+						}
+					}
+
+					// Add EFI boot image
+					cout << "isobuilder\tAdding " << filename << " as EFI boot image" << endl;
+					set_efi_boot_image(filename);
+
+					cout << "isobuilder\tAdding " << source->path << " as boot image" << endl;
+					add_boot_image(source->path,0xEF);
+
+				}
+
+			}
+
+		};
+
+		return make_shared<Builder>();
+
+		/*
 		Reinstall::Dialog::Progress &progress = Reinstall::Dialog::Progress::getInstance();
 
 		// Create and activate worker
-		auto worker = make_shared<Reinstall::iso9660::Worker>();
+		auto worker = make_shared<Reinstall::iso9660::Builder>();
 
 		progress.set_sub_title(_("Building ISO image"));
 
@@ -262,6 +362,7 @@
 		}
 
 		return worker;
+		*/
 
 	}
 

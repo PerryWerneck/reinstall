@@ -26,30 +26,36 @@
 
  namespace Reinstall {
 
-	class UDJAT_API Worker {
+	class UDJAT_API Builder {
 	protected:
+		const char *name = "builder";
 
 	public:
 
-		Worker();
+		Builder();
+		virtual ~Builder();
 
-		/// @brief First step, initialize image (before download files.
-		virtual void pre(Action &action);
+		/// @brief Step 1, initialize image (before downloads).
+		virtual void pre(const Action &action) = 0;
 
-		/// @brief Second step, insert downloaded file on the target image.
-		virtual void apply(Source &source);
+		/// @brief Step 2, insert source, download it if necessary.
+		/// @return true if source was downloaded.
+		virtual bool apply(Source &source);
 
-		/// @brief Last step, finalize.
-		virtual void post(Action &action);
+		/// @brief Step 3, build (after downloads).
+		virtual void build(const Action &action) = 0;
+
+		/// @brief Step 4, finalize.
+		virtual void post(const Action &action) = 0;
+
+		/// @brief Step 5 (last step, work thread).
+		/// @param Write prepared image @see Action::WriterFactory
+		virtual std::shared_ptr<Writer> burn(std::shared_ptr<Writer> writer);
 
 		/// @brief Get image length.
 		/// @return Image length in bytes.
 		/// @retval 0 Image length is not available.
 		virtual size_t size();
-
-		/// @brief Burn image (last step, work thread).
-		/// @param Write prepared image @see Action::WriterFactory
-		virtual void burn(std::shared_ptr<Writer> writer);
 
 	};
 

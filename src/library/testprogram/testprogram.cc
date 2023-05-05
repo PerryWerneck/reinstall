@@ -11,8 +11,8 @@
  #include <reinstall/dialogs.h>
  #include <reinstall/writer.h>
 
- #include <reinstall/actions/kernel.h>
- #include <reinstall/actions/initrd.h>
+ #include <reinstall/sources/kernel.h>
+ #include <reinstall/sources/initrd.h>
  #include <reinstall/userinterface.h>
 
  #include <udjat/moduleinfo.h>
@@ -78,7 +78,8 @@
 		Reinstall::Action &action = Reinstall::Action::get_selected();
 
 		if(action.interact()) {
-			action.prepare()->burn(action.WriterFactory());
+
+			action.activate();
 		}
 
 	}

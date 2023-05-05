@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,18 +17,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
-
+ #include <config.h>
+ #include <reinstall/defs.h>
  #include <reinstall/source.h>
+ #include <reinstall/sources/initrd.h>
+ #include <pugixml.hpp>
+ #include <udjat/tools/intl.h>
+ #include <iostream>
+ #include <udjat/tools/logger.h>
+
+ using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
-	/// @brief The linuxrc for the installation.
-	class UDJAT_API InitRD : public Source {
-	public:
-		InitRD(const pugi::xml_node &node) : Source(node,Source::InitRD,"","/boot/x86_64/loader/initrd") {
+	InitRD::InitRD(const pugi::xml_node &node) : Source(node,Source::InitRD,"/boot/x86_64/loader/initrd","${initrd-file}") {
+		debug("Source for '",name(),"' will be ",url);
+		if(!(message && *message)) {
+			message = _("Getting init system");
 		}
-
-	};
+	}
 
  }

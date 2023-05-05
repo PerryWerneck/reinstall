@@ -52,10 +52,10 @@
 	protected:
 
 		/// brief Post scripts.
-		std::vector<Script> post_scripts;
+		// std::vector<Script> post_scripts;
 
 		/// @brief Run image post-processing (isohybrid).
-		void post(const char *isoname);
+		// void post(const char *isoname);
 
 	public:
 		IsoBuilder(const pugi::xml_node &node, const char *icon_name = "");
@@ -63,7 +63,7 @@
 
 		/// @brief Build image.
 		/// @return Worker with a prepared iso image.
-		std::shared_ptr<Reinstall::Worker> WorkerFactory() override;
+		std::shared_ptr<Reinstall::Builder> BuilderFactory() override;
 
 		/// @brief Create an image writer.
 		std::shared_ptr<Reinstall::Writer> WriterFactory() override;

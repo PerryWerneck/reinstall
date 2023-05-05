@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -18,47 +18,15 @@
  */
 
  #pragma once
- #include <reinstall/defs.h>
- #include <pugixml.hpp>
+
+ #include <config.h>
+ #include <udjat/udjat/defs.h>
+ #include <reinstall/writer.h>
+
+ using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
-	namespace Dialog {
-
-		/// @brief Dialog box from XML.
-		class UDJAT_API Popup {
-		public:
-			const char *message = "";
-			const char *secondary = "";
-
-			bool destructive = false;
-
-			struct {
-				const char *link = "";
-				const char *label = "";
-
-				inline operator bool() const {
-					return (link && *link);
-				}
-
-			} url;
-
-			Popup() = default;
-
-			void set(const pugi::xml_node &node);
-
-			inline operator bool() const noexcept {
-				return (message && *message);
-			}
-
-			inline bool has_secondary() const noexcept {
-				return secondary && *secondary;
-			}
-
-
-		};
-
-	}
 
  }
-

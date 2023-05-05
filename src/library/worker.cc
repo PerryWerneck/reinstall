@@ -18,30 +18,35 @@
  */
 
  #include <config.h>
- #include <reinstall/worker.h>
+ #include <reinstall/builder.h>
  #include <reinstall/dialogs.h>
+ #include <reinstall/source.h>
  #include <vector>
  #include <udjat/tools/intl.h>
+ #include <udjat/tools/logger.h>
+ #include <string>
+
+ using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
-	Worker::Worker() {
+	Builder::Builder() {
 	}
 
-	void Worker::apply(Source UDJAT_UNUSED(&source)) {
+	Builder::~Builder() {
 	}
 
-	void Worker::pre(Action &action) {
+	bool Builder::apply(Source &source) {
+		return true;
 	}
 
-	void Worker::post(Action &action) {
-	}
-
-	size_t Worker::size() {
+	size_t Builder::size() {
 		return 0;
 	}
 
-	void Worker::burn(std::shared_ptr<Reinstall::Writer> UDJAT_UNUSED(writer)) {
+	std::shared_ptr<Writer> Builder::burn(std::shared_ptr<Reinstall::Writer> writer) {
+		return writer;
 	}
 
  }

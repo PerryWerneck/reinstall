@@ -31,13 +31,29 @@
  #include <unistd.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/configuration.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	Action::Template::Template(const pugi::xml_node &node) : name(Quark(node,"name").c_str()), url(Quark(node,"url").c_str()) {
+	Action::Template::Template(const pugi::xml_node &node)
+		: Template{
+			Quark{node,"name"}.c_str(),
+			Quark{node,"url"}.c_str(),
+			Quark{node,"path"}.c_str()
+		} {
+
+		script = node.attribute("script").as_bool(script);
+		const char *sMarker = node.attribute("marker").as_string(((std::string) Config::Value<String>("template","marker","$")).c_str());
+
+		if(strlen(sMarker) > 1 || !sMarker[0]) {
+			throw runtime_error("Marker attribute is invalid");
+		}
+
+		this->marker = sMarker[0];
+
 	}
 
 	Action::Template::~Template() {
@@ -51,11 +67,12 @@
 	void Action::Template::load(const Udjat::Object &object) {
 
 		if(!filename.empty()) {
+			debug("Template already saved on '",filename,"'");
 			return;
 		}
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		auto worker = Udjat::Protocol::WorkerFactory(this->url);
+		auto worker = Udjat::Protocol::WorkerFactory(String{this->url}.expand(object).c_str());
 
 		progress.set_url(worker->url().c_str());
 		Udjat::String contents = worker->get([&progress](double current, double total){
@@ -64,24 +81,47 @@
 		});
 
 		// Expand ${} values using object.
-		contents.expand(object,true,true);
+		contents.expand(marker,object,true,true);
+
+		debug("Marker = '",string{marker},"' \n",contents,"\n");
 
 		// Save to temporary.
+		debug("Saving template");
 		filename = Udjat::File::save(contents.c_str());
 
+		{
+			mode_t mode = 0644;
+
+			if(script) {
+				Logger::String{"Template is script, using exec permission"}.trace(name);
+				mode = 0755;
+			} else {
+				Logger::String{"Template is not script, using standard file permission"}.trace(name);
+				mode = 0644;
+			}
+
+			if(chmod(filename.c_str(),mode) < 0) {
+				throw system_error(errno,system_category(),_("Cant update template permissions"));
+			}
+
+		}
 	}
 
-	bool Action::Template::test(const char *path) const noexcept {
+	bool Action::Template::test(const char *isopath) const noexcept {
 
-		if(*name == '/') {
-			return strcmp(name,path) == 0;
+		if(this->path && *this->path) {
+			return false;
 		}
 
-		const char *ptr = strrchr(path,'/');
+		if(*name == '/') {
+			return strcmp(name,isopath) == 0;
+		}
+
+		const char *ptr = strrchr(isopath,'/');
 		if(ptr) {
 			ptr++;
 		} else {
-			ptr = path;
+			ptr = isopath;
 		}
 
 		return strcmp(name,ptr) == 0;
@@ -93,6 +133,10 @@
 			throw runtime_error(_("Template was not loaded"));
 		}
 
+		Logger::String{
+			"Saving template '", name, "' as '", path, "'"
+		}.info("template");
+
 		Udjat::File::copy(filename.c_str(),path);
 
 	}
@@ -101,9 +145,9 @@
 
 		Logger::String{
 			"Replacing file '", source.path, "' with '", name, "' template"
-		}.trace("templates");
+		}.trace("template");
 
-		source.filename = this->filename.c_str();
+		source.set_filename(this->filename.c_str());
 
 	}
 

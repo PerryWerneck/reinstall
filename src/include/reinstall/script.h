@@ -21,20 +21,25 @@
 
  #include <pugixml.hpp>
  #include <udjat/defs.h>
+ #include <udjat/tools/object.h>
 
  namespace Reinstall {
 
 	class UDJAT_API Script {
 	private:
-		const char *line = "";
+		const char *cmdline = "";
+		const char *message = "";
+		int uid = -1;
+		int gid = -1;
+		bool shell = false;
 
 	public:
 		Script(const pugi::xml_node &node);
 		~Script();
 
-		inline const char * cmdline() const noexcept {
-			return line;
-		}
+		/// @brief Run script in foreground.
+		/// @return Script return code.
+		int run(const Udjat::NamedObject &object);
 
 	};
 

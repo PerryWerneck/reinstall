@@ -23,18 +23,41 @@
  #include <memory>
  #include <iostream>
  #include <udjat/tools/logger.h>
+ #include <unistd.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
+	static void write(int fd, const char *str) {
+		::write(fd,str,strlen(str));
+		::write(fd,"\n",1);
+	}
+
+	static void info(const char *str) {
+		write(1,str);
+	}
+
+	static void error(const char *str) {
+		write(2,str);
+	}
+
 	std::shared_ptr<Dialog::TaskRunner> UserInterface::TaskRunnerFactory(const char *message, bool markup) {
 
 		class TaskRunner : public Dialog::TaskRunner {
+		private:
+			bool console;
+
 		public:
-			TaskRunner(const char *message, bool markup) {
+			TaskRunner(const char *message, bool markup) : console{Logger::console()} {
+				Logger::console(false);
+				info("\n");
 				set_title(message,markup);
+			}
+
+			virtual ~TaskRunner() {
+				Logger::console(console);
 			}
 
 		};
@@ -67,17 +90,24 @@
 		} catch(std::system_error &e) {
 
 			response = - e.code().value();
-			cerr << e.what() << " (rc=" << response << ")" << endl;
+			Logger::String{e.what()," (rc=",response,")"}.error();
+			error(e.what());
 
 		} catch(std::exception &e) {
 
 			response = -1;
-			cerr << e.what() << endl;
+			Logger::String{e.what()}.error();
+			error(e.what());
 
 		} catch(...) {
 
 			response = -1;
-			cerr << "Unexpected error running background task" << endl;
+
+			Logger::String message{"Unexpected error running background task"};
+
+			message.error();
+			error(message.c_str());
+
 		}
 
 		debug("Background task end");
@@ -109,12 +139,10 @@
 				}
 			}
 
-			cout << text;
+			info(text.c_str());
 		} else {
-			cout << str;
+			info(str);
 		}
-
-		cout << endl;
 
 	}
 

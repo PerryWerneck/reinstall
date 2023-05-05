@@ -44,6 +44,7 @@
 			bool for_each(const std::function<bool (std::shared_ptr<Action> action)> &call) const;
 
 			static std::shared_ptr<Group> find(const pugi::xml_node &node);
+			static std::shared_ptr<Group> find(const unsigned short id);
 			static std::shared_ptr<Group> factory(const pugi::xml_node &node);
 
 		};
