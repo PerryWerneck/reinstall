@@ -155,7 +155,7 @@
 		if(pos) {
 
 			if(!*(pos+1)) {
-				cerr << "iso9660\tCan't insert node '" << source.path << "' it's not a FILE name" << endl;
+				cerr << "iso9660\tCan't insert node '" << source.path << "' it's not a FILE name, looks like a DIRECTORY name" << endl;
 				throw logic_error(_("Unexpanded path in source list"));
 			}
 

@@ -144,7 +144,7 @@
 
 			struct zip_stat sb;
 
-			if (zip_stat_index(container->handler, entry, 0, &sb) != 0) {
+			if (zip_stat_index(container->handler, entry, 0, &sb) != 0 || *(sb.name+strlen(sb.name)-1) == '/')  {
 				continue;
 			}
 
