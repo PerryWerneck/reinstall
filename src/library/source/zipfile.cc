@@ -27,7 +27,7 @@
  #include <udjat/tools/logger.h>
 
 #ifdef HAVE_ZIPLIB
-
+	#include <zip.h>
 #endif // HAVE_ZIPLIB
 
  using namespace std;
@@ -43,6 +43,44 @@
 
 	bool ZipFile::contents(const Action &action, std::vector<std::shared_ptr<Source>> &contents) {
 
+		if(filenames.saved.empty()) {
+			save();
+		}
+
+		zip_t *zipfile = zip_open(filenames.saved.c_str(),ZIP_RDONLY,NULL);
+		if(!zipfile) {
+			throw runtime_error("Cant open zipfile");
+		}
+
+		try {
+
+			// https://gist.github.com/sdasgup3/a0255ebce3e3eec03e6878b47c8c7059
+			for(zip_int64_t entry = 0; entry < zip_get_num_entries(zipfile,0); entry++) {
+
+				struct zip_stat sb;
+
+				if (zip_stat_index(zipfile, entry, 0, &sb) != 0) {
+					continue;
+				}
+
+				debug(sb.name);
+
+
+			}
+
+			throw runtime_error("Working");
+
+		} catch(...) {
+
+			zip_close(zipfile);
+			throw;
+
+		}
+
+
+		zip_close(zipfile);
+
+		return true;
 	}
 
 #endif // HAVE_ZIPLIB
