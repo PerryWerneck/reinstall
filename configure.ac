@@ -210,6 +210,15 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$app_cv_product",[The gettext package name.]
 AC_SUBST(GETTEXT_PACKAGE,$app_cv_product)
 
 dnl ---------------------------------------------------------------------------
+dnl Check for ZIPLIB
+dnl ---------------------------------------------------------------------------
+
+PKG_CHECK_MODULES( [ZIPLIB], [zziplib], AC_DEFINE(HAVE_GTK,,[ "Do we have zziplib?" ]), AC_MSG_ERROR([zziplib not present.]))
+
+AC_SUBST(ZIPLIB_LIBS)
+AC_SUBST(ZIPLIB_CFLAGS)
+
+dnl ---------------------------------------------------------------------------
 dnl Check for GTK
 dnl ---------------------------------------------------------------------------
 
