@@ -48,6 +48,69 @@
 
 	bool ZipFile::contents(const Action &action, std::vector<std::shared_ptr<Source>> &contents) {
 
+		struct Container {
+
+			zip_t *handler;
+
+			Container(const char *filename) : handler{zip_open(filename,ZIP_RDONLY,NULL)} {
+				if(!handler) {
+					throw runtime_error(string("Cant open '") + filename + "'");
+				}
+			}
+
+			~Container() {
+				debug("Closing ZIP file");
+				zip_close(handler);
+			}
+
+		};
+
+		class ZipFileSource : public Reinstall::Source {
+		private:
+			shared_ptr<Container> container;
+			struct zip_stat file;
+
+		public:
+			ZipFileSource(shared_ptr<Container> c, const char *name, struct zip_stat &f)
+				: Reinstall::Source{name,Quark{string{"zip:///"}+f.name}.c_str(),Quark{f.name}.c_str()}, container{c}, file{f} {
+			}
+
+			void save() override {
+
+				if(!filenames.saved.empty()) {
+					warning() << "Already downloaded" << endl;
+					return;
+				}
+
+				throw runtime_error("Work in progress");
+
+			}
+
+		};
+
+		if(filenames.saved.empty()) {
+			save();
+		}
+
+		shared_ptr<Container> container = make_shared<Container>(filenames.saved.c_str());
+
+		// https://gist.github.com/sdasgup3/a0255ebce3e3eec03e6878b47c8c7059
+		auto entries = zip_get_num_entries(container->handler,0);
+		for(zip_int64_t entry = 0; entry < entries; entry++) {
+
+			struct zip_stat sb;
+
+			if (zip_stat_index(container->handler, entry, 0, &sb) != 0) {
+				continue;
+			}
+
+			debug(entry," - ",sb.index," - ",sb.name);
+
+			contents.push_back(make_shared<ZipFileSource>(container,name(),sb));
+
+		}
+
+		/*
 		class ZipFileSource : public Reinstall::Source {
 		public:
 			ZipFileSource(const char *name, zip_t *zipfile, struct zip_stat &stat) : Reinstall::Source{name,"url",Quark{stat.name}.c_str()} {
@@ -64,6 +127,11 @@
 
 				Dialog::Progress &progress = Dialog::Progress::getInstance();
 				progress.set_url(this->path);
+
+				if(message && *message) {
+					progress.set_sub_title(message);
+				}
+
 				try {
 
 					size_t sum = 0;
@@ -96,9 +164,6 @@
 
 		};
 
-		if(filenames.saved.empty()) {
-			save();
-		}
 
 		zip_t *zipfile = zip_open(filenames.saved.c_str(),ZIP_RDONLY,NULL);
 		if(!zipfile) {
@@ -137,6 +202,7 @@
 
 		zip_close(zipfile);
 
+		*/
 		return true;
 	}
 

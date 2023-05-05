@@ -19,8 +19,6 @@
 
 
  #include <config.h>
- #include <reinstall/sources/kernel.h>
- #include <reinstall/sources/initrd.h>
  #include <reinstall/actions/isobuilder.h>
  #include <udjat/tools/subprocess.h>
  #include <udjat/tools/string.h>
@@ -30,29 +28,14 @@
  #include <cstdlib>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/intl.h>
+ #include <reinstall/userinterface.h>
 
  using namespace std;
 
  namespace Reinstall {
 
 	IsoBuilder::IsoBuilder(const pugi::xml_node &node, const char *icon_name)
-		: Reinstall::Action(node,icon_name), filename{getAttribute(node,"output-file","")} {
-
-		// Get URL for installation kernel.
-		if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
-			push_back(make_shared<Reinstall::Kernel>(node));
-			return true;
-		})) {
-			throw runtime_error(_("Missing required entry <kernel> with the URL for installation kernel"));
-		}
-
-		// Get URL for installation init.
-		if(!scan(node,"init",[this](const pugi::xml_node &node) {
-			push_back(make_shared<Reinstall::InitRD>(node));
-			return true;
-		})) {
-			throw runtime_error(_("Missing required entry <init> with the URL for the linuxrc program"));
-		}
+		: Reinstall::Action(node,icon_name) {
 
 		// Get options.
 		system_area = getAttribute(
@@ -232,12 +215,29 @@
 	}
 
 	std::shared_ptr<Reinstall::Writer> IsoBuilder::WriterFactory() {
-		if(filename && *filename) {
-			info() << "Saving image to '" << filename << "'" << endl;
-			return Reinstall::Writer::FileWriterFactory(*this,filename);
-		}
-		info() << "Asking for USB Storage device" << endl;
 		return Reinstall::Writer::USBWriterFactory(*this);
+	}
+
+	bool IsoBuilder::interact() {
+
+		/*
+		if(!(output_file && *output_file)) {
+			return true;
+		}
+
+		isoname = Reinstall::UserInterface::getInstance().FilenameFactory(
+			_("Select target image file"),
+			_("Image file name"),
+			_("_Save"),
+			output_file,
+			true
+		);
+
+		return !isoname.empty();
+		*/
+
+		return true;
+
 	}
 
  }

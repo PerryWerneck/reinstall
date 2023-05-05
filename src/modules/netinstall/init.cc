@@ -23,12 +23,13 @@
  #include <udjat/tools/object.h>
  #include <stdexcept>
  #include <reinstall/actions/isobuilder.h>
- #include <reinstall/userinterface.h>
  #include <reinstall/writer.h>
  #include <reinstall/group.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
+ #include <reinstall/sources/kernel.h>
+ #include <reinstall/sources/initrd.h>
 
  using namespace std;
  using namespace Udjat;
@@ -45,39 +46,28 @@
 		bool generic(const pugi::xml_node &node) override {
 
 			class Action : public Reinstall::IsoBuilder {
-			private:
-				std::string isoname;
-
 			public:
 				Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node,"drive-removable-media") {
+
+					// Get URL for installation kernel.
+					if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
+						push_back(make_shared<Reinstall::Kernel>(node));
+						return true;
+					})) {
+						throw runtime_error(_("Missing required entry <kernel> with the URL for installation kernel"));
+					}
+
+					// Get URL for installation init.
+					if(!scan(node,"init",[this](const pugi::xml_node &node) {
+						push_back(make_shared<Reinstall::InitRD>(node));
+						return true;
+					})) {
+						throw runtime_error(_("Missing required entry <init> with the URL for the linuxrc program"));
+					}
+
 				}
 
 				virtual ~Action() {
-				}
-
-				bool interact() override {
-
-					if(!(output_file && *output_file)) {
-							return true;
-					}
-
-					isoname = Reinstall::UserInterface::getInstance().FilenameFactory(
-						_("Select target image file"),
-						_("Image file name"),
-						_("_Save"),
-						output_file,
-						true
-					);
-
-					return !isoname.empty();
-
-				}
-
-				std::shared_ptr<Reinstall::Writer> WriterFactory() override {
-					if(isoname.empty()) {
-						return Reinstall::Writer::USBWriterFactory(*this);
-					}
-					return Reinstall::Writer::FileWriterFactory(*this,isoname.c_str());
 				}
 
 			};

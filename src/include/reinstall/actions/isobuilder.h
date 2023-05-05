@@ -28,9 +28,6 @@
  namespace Reinstall {
 
 	class UDJAT_API IsoBuilder : public Reinstall::Action {
-	private:
-		const char *filename = nullptr;
-
 	protected:
 
 		const char *system_area = nullptr;
@@ -60,6 +57,10 @@
 	public:
 		IsoBuilder(const pugi::xml_node &node, const char *icon_name = "");
 		virtual ~IsoBuilder();
+
+		/// @brief Get parameters from user (first step, gui thread).
+		/// @return false to cancel action.
+		bool interact() override;
 
 		/// @brief Build image.
 		/// @return Worker with a prepared iso image.
