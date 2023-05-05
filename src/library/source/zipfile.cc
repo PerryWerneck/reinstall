@@ -21,10 +21,15 @@
  #include <reinstall/defs.h>
  #include <reinstall/source.h>
  #include <reinstall/sources/zipfile.h>
+ #include <reinstall/dialogs/progress.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
  #include <iostream>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/file.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <unistd.h>
 
 #ifdef HAVE_ZIPLIB
 	#include <zip.h>
@@ -43,6 +48,54 @@
 
 	bool ZipFile::contents(const Action &action, std::vector<std::shared_ptr<Source>> &contents) {
 
+		class ZipFileSource : public Reinstall::Source {
+		public:
+			ZipFileSource(const char *name, zip_t *zipfile, struct zip_stat &stat) : Reinstall::Source{name,"url",Quark{stat.name}.c_str()} {
+
+				filenames.temp = File::Temporary::create();
+
+#ifdef _WIN32
+				int out = ::open(filenames.temp.c_str(),O_WRONLY|O_CREAT|O_TRUNC|O_BINARY,0644);
+#else
+				int out = ::open(filenames.temp.c_str(),O_WRONLY|O_CREAT|O_TRUNC,0644);
+#endif // _WIN32
+
+				zip_file *zf = zip_fopen_index(zipfile, stat.index, 0);
+
+				Dialog::Progress &progress = Dialog::Progress::getInstance();
+				progress.set_url(this->path);
+				try {
+
+					size_t sum = 0;
+					char buffer[4096];
+					while (sum != stat.size) {
+						auto bufferlength = zip_fread(zf, buffer, 4096);
+
+						if(::write(out,buffer,bufferlength) != bufferlength) {
+							throw system_error(errno,system_category(),"Can't write image contents");
+						}
+
+						// fwrite(buffer, sizeof(char), bufferlength, file);
+						sum += bufferlength;
+						progress.set_progress((double) sum,(double) stat.size);
+					}
+
+				} catch(...) {
+
+					::close(out);
+					zip_fclose(zf);
+
+					throw;
+				}
+
+                ::close(out);
+				zip_fclose(zf);
+				progress.set_url("");
+
+			}
+
+		};
+
 		if(filenames.saved.empty()) {
 			save();
 		}
@@ -54,21 +107,25 @@
 
 		try {
 
+			Dialog::Progress &progress = Dialog::Progress::getInstance();
+
 			// https://gist.github.com/sdasgup3/a0255ebce3e3eec03e6878b47c8c7059
-			for(zip_int64_t entry = 0; entry < zip_get_num_entries(zipfile,0); entry++) {
+			auto entries = zip_get_num_entries(zipfile,0);
+			for(zip_int64_t entry = 0; entry < entries; entry++) {
 
 				struct zip_stat sb;
+
+				progress.set_count(entry,entries);
 
 				if (zip_stat_index(zipfile, entry, 0, &sb) != 0) {
 					continue;
 				}
 
-				debug(sb.name);
+				debug(entry," - ",sb.index," - ",sb.name);
 
+				contents.push_back(make_shared<ZipFileSource>(name(),zipfile,sb));
 
 			}
-
-			throw runtime_error("Working");
 
 		} catch(...) {
 
