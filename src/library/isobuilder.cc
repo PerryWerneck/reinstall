@@ -80,6 +80,14 @@
 							system_id
 						);
 
+
+		eltorito.enabled = getAttribute(
+							node,
+							"iso-9660",
+							"eltorito",
+							eltorito.enabled
+						);
+
 		eltorito.boot_image = getAttribute(
 							node,
 							"iso-9660",
@@ -94,6 +102,12 @@
 							eltorito.catalog
 						);
 
+		efi.enabled = getAttribute(
+							node,
+							"iso-9660",
+							"efi",
+							efi.enabled
+						);
 		efi.boot_image = getAttribute(
 							node,
 							"iso-9660",
@@ -149,7 +163,7 @@
 				set_joliet();
 				set_allow_deep_paths();
 
-				if(action->eltorito.boot_image && *action->eltorito.boot_image) {
+				if(action->eltorito.enabled) {
 
 					Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Adding el-torito boot image"));
 
@@ -168,7 +182,7 @@
 					cout << "iso9660\tEl-torito boot image set to '" << action->eltorito.boot_image << "'" << endl;
 				}
 
-				if(action->efi.boot_image && *action->efi.boot_image) {
+				if(action->efi.enabled) {
 
 					Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Adding EFI boot image"));
 
