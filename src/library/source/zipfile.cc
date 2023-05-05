@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,39 +17,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
-
- #include <udjat/defs.h>
+ #include <config.h>
+ #include <reinstall/defs.h>
  #include <reinstall/source.h>
+ #include <reinstall/sources/zipfile.h>
  #include <pugixml.hpp>
- #include <udjat/tools/application.h>
  #include <udjat/tools/intl.h>
- #include <stdexcept>
+ #include <iostream>
+ #include <udjat/tools/logger.h>
+
+#ifdef HAVE_ZIPLIB
+
+#endif // HAVE_ZIPLIB
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	/// @brief Source for file in application cache.
-	class UDJAT_API CachedFileSource : public Source {
-	protected:
-		bool cache = true;
+#ifdef HAVE_ZIPLIB
 
-	public:
-		CachedFileSource(const pugi::xml_node &node, const char *defmessage = nullptr) : Source(node), cache{getAttribute(node,"cache",true)} {
-			if(!(url && *url)) {
-				throw runtime_error(_("Required attribute 'URL' is missing"));
-			}
-			if(!(message && *message)) {
-				message = defmessage;
-			}
-		}
+	ZipFile::ZipFile(const pugi::xml_node &node) : CachedFileSource{node} {
 
-		void save() override {
-			Reinstall::Source::save(Udjat::Application::CacheDir().build_filename(url).c_str());
-		}
+	}
 
-	};
+	bool ZipFile::contents(const Action &action, std::vector<std::shared_ptr<Source>> &contents) {
+
+	}
+
+#endif // HAVE_ZIPLIB
 
  }

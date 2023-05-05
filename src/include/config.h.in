@@ -36,6 +36,9 @@
 /* Do we have udjat? */
 #undef HAVE_UDJAT
 
+/* "Do we have zziplib?" */
+#undef HAVE_ZIPLIB
+
 /* Define as const if the declaration of iconv() needs const. */
 #undef ICONV_CONST
 

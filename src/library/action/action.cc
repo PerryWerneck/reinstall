@@ -28,6 +28,7 @@
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/configuration.h>
+ #include <reinstall/sources/zipfile.h>
 
  using namespace std;
  using namespace Udjat;
@@ -128,6 +129,11 @@
 
 		scan(node, "source", [this](const pugi::xml_node &node){
 			push_back(make_shared<Source>(node));
+			return false;
+		});
+
+		scan(node, "zip-file", [this](const pugi::xml_node &node){
+			push_back(make_shared<ZipFile>(node));
 			return false;
 		});
 

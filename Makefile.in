@@ -20,6 +20,9 @@ LIBRARY_SOURCES = \
 ISOWRITER_SOURCES = \
 		$(wildcard src/modules/isowriter/*.cc)
 
+ISOBUILDER_SOURCES = \
+		$(wildcard src/modules/isobuilder/*.cc)
+
 NETINSTALL_SOURCES = \
 		$(wildcard src/modules/netinstall/*.cc)
 
@@ -201,7 +204,7 @@ Release: \
 	$(BINRLS)/modules/grub@DLLEXT@
 
 locale/$(PACKAGE_NAME).pot: \
-	$(foreach SRC, $(basename $(LIBRARY_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES) $(GRUB_SOURCES) $(GUI_SOURCES)), $(POTDIR)/$(SRC).pot)
+	$(foreach SRC, $(basename $(LIBRARY_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES) $(ISOBUILDER_SOURCES) $(GRUB_SOURCES) $(GUI_SOURCES)), $(POTDIR)/$(SRC).pot)
 
 	@rm -f $@
 	@$(MKDIR) $(dir $@)
@@ -236,6 +239,21 @@ $(BINRLS)/modules/isowriter@DLLEXT@: \
 		-L$(BINRLS) \
 		$(LDFLAGS) \
 		$(LIBS)
+
+$(BINRLS)/modules/isobuilder@DLLEXT@: \
+	$(foreach SRC, $(basename $(ISOBUILDER_SOURCES)), $(OBJRLS)/$(SRC).o) \
+	$(BINRLS)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		$(DLL_LDFLAGS) \
+		-o $@ \
+		$^ \
+		-L$(BINRLS) \
+		$(LDFLAGS) \
+		$(LIBS)
+
 
 $(BINRLS)/modules/netinstall@DLLEXT@: \
 	$(foreach SRC, $(basename $(NETINSTALL_SOURCES)), $(OBJRLS)/$(SRC).o) \
@@ -391,6 +409,7 @@ install-data:
 Debug: \
 	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ \
 	$(BINDBG)/modules/isowriter@DLLEXT@ \
+	$(BINDBG)/modules/isobuilder@DLLEXT@ \
 	$(BINDBG)/modules/netinstall@DLLEXT@ \
 	$(BINDBG)/modules/grub@DLLEXT@
 
@@ -410,6 +429,21 @@ $(BINDBG)/$(PRODUCT_NAME)@EXEEXT@: \
 
 $(BINDBG)/modules/isowriter@DLLEXT@: \
 	$(foreach SRC, $(basename $(ISOWRITER_SOURCES)), $(OBJDBG)/$(SRC).o) \
+	$(BINDBG)/$(SONAME)
+
+	@$(MKDIR) $(@D)
+	@echo $< ...
+	@$(LD) \
+		$(DLL_LDFLAGS) \
+		-o $@ \
+		$^ \
+		-L$(BINDBG) \
+		-Wl,-rpath,$(BINDBG) \
+		$(LDFLAGS) \
+		$(LIBS)
+
+$(BINDBG)/modules/isobuilder@DLLEXT@: \
+	$(foreach SRC, $(basename $(ISOBUILDER_SOURCES)), $(OBJDBG)/$(SRC).o) \
 	$(BINDBG)/$(SONAME)
 
 	@$(MKDIR) $(@D)
@@ -477,6 +511,7 @@ inspect: \
 run: \
 	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ \
 	$(BINDBG)/modules/isowriter@DLLEXT@ \
+	$(BINDBG)/modules/isobuilder@DLLEXT@ \
 	$(BINDBG)/modules/netinstall@DLLEXT@ \
 	$(BINDBG)/modules/grub@DLLEXT@
 
@@ -519,6 +554,6 @@ clean: \
 	cleanDebug \
 	cleanRelease
 
--include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES) $(GRUB_SOURCES)), $(OBJDBG)/$(SRC).d)
--include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES) $(GRUB_SOURCES)), $(OBJRLS)/$(SRC).d)
+-include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES) $(ISOBUILDER_SOURCES) $(NETINSTALL_SOURCES) $(GRUB_SOURCES)), $(OBJDBG)/$(SRC).d)
+-include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES) $(ISOBUILDER_SOURCES) $(NETINSTALL_SOURCES) $(GRUB_SOURCES)), $(OBJRLS)/$(SRC).d)
 
