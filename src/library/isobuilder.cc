@@ -102,19 +102,7 @@
 							eltorito.catalog
 						);
 
-		efi.enabled = getAttribute(
-							node,
-							"iso-9660",
-							"efi",
-							efi.enabled
-						);
-		efi.boot_image = getAttribute(
-							node,
-							"iso-9660",
-							"efi-boot-image",
-							efi.boot_image
-						);
-
+		efibootimage = make_shared<EFIBootImage>(node);
 
 	}
 
@@ -182,11 +170,11 @@
 					cout << "iso9660\tEl-torito boot image set to '" << action->eltorito.boot_image << "'" << endl;
 				}
 
-				if(action->efi.enabled) {
+				if(action->efibootimage->enabled()) {
 
 					Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Adding EFI boot image"));
 
-					auto source = action->source(action->efi.boot_image);
+					auto source = action->source(action->efibootimage->path());
 					const char *filename = source->filename();
 					if(!filename[0]) {
 						throw runtime_error(_("Unexpected filename on EFI boot image"));

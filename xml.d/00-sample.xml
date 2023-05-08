@@ -56,6 +56,9 @@
 	<kernel-parameter name='insecure' value='1' /> 
 	<kernel-parameter name='self_update' value='0' />
 	
+	<!-- Path for EFI boot-image -->
+	<efi-boot-image path='/boot/x86_64/efi' />
+
 	<!-- Setup the kernel parameter based on repository 'install' settings, can be an URL or 'slp:/' for automatic detection -->
 	<kernel-parameter name='install' repository='install' />
 

@@ -23,6 +23,8 @@
  #include <reinstall/iso9660.h>
  #include <reinstall/script.h>
  #include <reinstall/writer.h>
+ #include <reinstall/sources/efiboot.h>
+ #include <memory>
  #include <vector>
 
  namespace Reinstall {
@@ -43,10 +45,14 @@
             const char *catalog = "/boot/x86_64/loader/boot.cat";
 		} eltorito;
 
+		std::shared_ptr<EFIBootImage> efibootimage;
+
+		/*
 		struct {
 			bool enabled = true;
 			const char *boot_image = "/boot/x86_64/efi";
 		} efi;
+		*/
 
 	protected:
 

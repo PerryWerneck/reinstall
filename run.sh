@@ -77,7 +77,9 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-# ${VM_TYPE}
+if [ ! -z ${1} ]; then
+	${1}
+fi
 
 
 
