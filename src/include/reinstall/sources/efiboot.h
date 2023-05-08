@@ -20,9 +20,10 @@
  #pragma once
 
  #include <udjat/defs.h>
- #include <reinstall/source.h>
+ #include <reinstall/action.h>
  #include <pugixml.hpp>
  #include <udjat/tools/object.h>
+ #include <memory>
 
  namespace Reinstall {
 
@@ -36,10 +37,21 @@
 			/// @brief Path for EFI boot inside image.
 			const char *path = "/boot/x86_64/efi";
 
+			/// @brief Size of image in bytes
+			unsigned long size = 0;
+
+			/// @brief Filesystem for image.
+			enum FileSystem : uint8_t {
+				FAT32
+			} filesystem = FAT32;
+
 		} options;
 
 	public:
+
 		EFIBootImage(const pugi::xml_node &node);
+
+		static std::shared_ptr<EFIBootImage> factory(const pugi::xml_node &node);
 
 		inline bool enabled() const noexcept {
 			return options.enabled;
@@ -48,6 +60,9 @@
 		inline const char * path() const noexcept {
 			return options.path;
 		}
+
+		/// @brief Build image (if necessary), add source to action.
+		virtual void build(Reinstall::Action &action);
 
 	};
 

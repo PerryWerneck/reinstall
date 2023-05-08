@@ -27,10 +27,11 @@
  #include <reinstall/diskimage.h>
  #include <cstdlib>
  #include <udjat/tools/intl.h>
- #include <udjat/tools/intl.h>
+ #include <udjat/tools/logger.h>
  #include <reinstall/userinterface.h>
 
  using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
@@ -102,7 +103,17 @@
 							eltorito.catalog
 						);
 
-		efibootimage = make_shared<EFIBootImage>(node);
+		{
+			auto bootnode = node.child("efi-boot-image");
+			if(bootnode) {
+				Logger::String{"Using customized EFI Boot image"}.trace(name());
+				efibootimage = EFIBootImage::factory(bootnode);
+			} else {
+				Logger::String{"Using default EFI Boot image"}.trace(name());
+				efibootimage = make_shared<EFIBootImage>(node);
+			}
+		}
+
 
 	}
 
@@ -212,6 +223,10 @@
 
 		};
 
+		if(efibootimage->enabled()) {
+			efibootimage->build(*this);
+		}
+
 		return make_shared<Builder>();
 
 	}
@@ -221,22 +236,6 @@
 	}
 
 	bool IsoBuilder::interact() {
-
-		/*
-		if(!(output_file && *output_file)) {
-			return true;
-		}
-
-		isoname = Reinstall::UserInterface::getInstance().FilenameFactory(
-			_("Select target image file"),
-			_("Image file name"),
-			_("_Save"),
-			output_file,
-			true
-		);
-
-		return !isoname.empty();
-		*/
 
 		return true;
 

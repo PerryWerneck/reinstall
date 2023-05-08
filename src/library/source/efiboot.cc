@@ -19,18 +19,27 @@
 
  #include <config.h>
  #include <reinstall/defs.h>
- #include <reinstall/source.h>
+ #include <reinstall/action.h>
  #include <reinstall/sources/efiboot.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
  #include <iostream>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/object.h>
+ #include <ctype.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
+
+	std::shared_ptr<EFIBootImage> EFIBootImage::factory(const pugi::xml_node &node) {
+
+
+		// Create default object.
+		return make_shared<EFIBootImage>(node);
+
+	}
 
 	EFIBootImage::EFIBootImage(const pugi::xml_node &node) : NamedObject{node} {
 
@@ -48,7 +57,57 @@
 						options.path
 		);
 
+
+		// Get target image size.
+		{
+			debug("------------------------------------------------------------------");
+			Udjat::String attr {node.attribute("size").as_string()};
+			attr.strip();
+
+			if(!attr.empty()) {
+
+				options.size = 0;
+
+				const char *ptr = attr.c_str();
+				while(*ptr && isdigit(*ptr)) {
+					options.size *= 10;
+					options.size += (*ptr - '0');
+					ptr++;
+				}
+
+				while(*ptr && isspace(*ptr)) {
+					ptr++;
+				}
+
+				if(*ptr) {
+					static const char *units[] = { "B", "KB", "MB", "GB" };
+
+					bool found = false;
+					for(const char *unit : units) {
+						if(!strcasecmp(ptr,unit)) {
+							found = true;
+							break;
+						}
+						options.size *= 1024;
+					}
+
+					if(!found) {
+						throw runtime_error(Logger::String{"Unexpected size unit: '",ptr,"'"});
+					}
+
+				}
+
+				Logger::String{"Will build a ",String{}.set_byte((unsigned long long) options.size)," boot image"}.trace(name());
+
+			}
+
+
+		}
+
 	}
 
+	void EFIBootImage::build(Reinstall::Action &action) {
+
+	}
 
  }
