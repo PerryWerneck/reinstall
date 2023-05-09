@@ -23,6 +23,7 @@
 
  #include <config.h>
  #include <reinstall/diskimage.h>
+ #include <reinstall/dialogs.h>
  #include <udjat/tools/file.h>
  #include <stdexcept>
  #include <iostream>
@@ -265,7 +266,25 @@
 
 		filename += to;
 
-		debug(from," -> ",filename);
+		Dialog::Progress &dialog = Dialog::Progress::getInstance();
+
+		dialog.set_url(to);
+
+		{
+			const char *str = filename.c_str();
+			const char *ptr = strrchr(str,'/');
+			if(!ptr) {
+				throw runtime_error("Unexpected filename");
+			}
+
+			std::string dirname{str,(size_t) (ptr-str)};
+			File::Path::mkdir(dirname.c_str());
+		}
+
+		File::copy(from,filename.c_str(),[&dialog](double current, double total){
+			dialog.set_progress(current,total);
+			return true;
+		});
 
 	}
 

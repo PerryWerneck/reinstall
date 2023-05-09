@@ -116,28 +116,43 @@
 
 		if(options.size) {
 
-			Dialog::Progress &dialog = Dialog::Progress::getInstance();
+			Dialog::Progress::getInstance().set_sub_title(_("Building EFI Boot image"));
 
-			dialog.set_sub_title(_("Building EFI Boot image"));
+			std::string imgfilename{File::Temporary::create()};
 
-			// Create disk
-			Disk::Image disk{
-				File::Temporary::create().c_str(),
-				Config::Value<string>{"efi","filesystem","vfat"}.c_str(),
-				options.size
-			};
+			// Create disk.
+			{
+				// Create disk
+				Disk::Image disk{
+					imgfilename.c_str(),
+					Config::Value<string>{"efi","filesystem","vfat"}.c_str(),
+					options.size
+				};
 
-			// Copy EFI files
-			action.for_each([&disk,&dialog](Source &source){
+				// Copy EFI files
+				action.for_each([&disk](Source &source){
 
-				if(strncasecmp(source.path,"efi/",4)) {
-					return;
-				}
+					if(strncasecmp(source.path,"efi/",4)) {
+						return;
+					}
 
-				dialog.set_url(source.path);
-				disk.copy(source.filename(),source.path);
+					disk.copy(source.filename(),source.path);
 
-			});
+				});
+			}
+
+			// Add it to action.
+			{
+				class EFIBootSource : public Reinstall::Source {
+				public:
+					EFIBootSource(const char *filename, const char *path) : Reinstall::Source{"efiboot","disk://efi",path} {
+						filenames.temp = filenames.saved = filename;
+					}
+				};
+
+				action.push_back(make_shared<EFIBootSource>(imgfilename.c_str(),options.path));
+
+			}
 
 
 		}
