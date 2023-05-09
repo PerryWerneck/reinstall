@@ -28,7 +28,7 @@
  namespace Reinstall {
 
 	/// @brief The EFI Boot Image;
-	class UDJAT_API EFIBootImage : Udjat::NamedObject {
+	class UDJAT_API EFIBootImage : public Udjat::NamedObject {
 	private:
 
 		struct {

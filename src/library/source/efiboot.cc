@@ -21,11 +21,16 @@
  #include <reinstall/defs.h>
  #include <reinstall/action.h>
  #include <reinstall/sources/efiboot.h>
+ #include <reinstall/source.h>
+ #include <reinstall/dialogs.h>
+ #include <reinstall/diskimage.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
  #include <iostream>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/object.h>
+ #include <udjat/tools/file.h>
+ #include <udjat/tools/configuration.h>
  #include <ctype.h>
 
  using namespace std;
@@ -60,7 +65,6 @@
 
 		// Get target image size.
 		{
-			debug("------------------------------------------------------------------");
 			Udjat::String attr {node.attribute("size").as_string()};
 			attr.strip();
 
@@ -107,6 +111,36 @@
 	}
 
 	void EFIBootImage::build(Reinstall::Action &action) {
+
+		debug("-----------------------------------------------------------------");
+
+		if(options.size) {
+
+			Dialog::Progress &dialog = Dialog::Progress::getInstance();
+
+			dialog.set_sub_title(_("Building EFI Boot image"));
+
+			// Create disk
+			Disk::Image disk{
+				File::Temporary::create().c_str(),
+				Config::Value<string>{"efi","filesystem","vfat"}.c_str(),
+				options.size
+			};
+
+			// Copy EFI files
+			action.for_each([&disk,&dialog](Source &source){
+
+				if(strncasecmp(source.path,"efi/",4)) {
+					return;
+				}
+
+				dialog.set_url(source.path);
+				disk.copy(source.filename(),source.path);
+
+			});
+
+
+		}
 
 	}
 

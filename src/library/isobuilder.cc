@@ -123,8 +123,11 @@
 	std::shared_ptr<Reinstall::Builder> IsoBuilder::BuilderFactory() {
 
 		class Builder : public Reinstall::iso9660::Builder {
+		private:
+			std::shared_ptr<EFIBootImage> efibootimage;
+
 		public:
-			Builder() {
+			Builder(std::shared_ptr<EFIBootImage> e) : efibootimage{e} {
 			}
 
 			void pre(const Action &ptr) override {
@@ -145,7 +148,11 @@
 				set_application_id(action->application_id);
 			}
 
-			void build(const Action &ptr) override {
+			void build(Action &action) override {
+
+				if(efibootimage->enabled()) {
+					efibootimage->build(action);
+				}
 			}
 
 			void post(const Action &ptr) override {
@@ -223,11 +230,7 @@
 
 		};
 
-		if(efibootimage->enabled()) {
-			efibootimage->build(*this);
-		}
-
-		return make_shared<Builder>();
+		return make_shared<Builder>(efibootimage);
 
 	}
 

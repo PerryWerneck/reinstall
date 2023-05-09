@@ -304,7 +304,7 @@
 
 	std::shared_ptr<Source> Action::source(const char *path) const {
 		for(auto source : sources) {
-			debug(source->path);
+//			debug(source->path);
 			if(source->path && *source->path && !strcmp(path,source->path)) {
 				return source;
 			}

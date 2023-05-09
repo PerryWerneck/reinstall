@@ -33,11 +33,15 @@
 			Handler *handler = nullptr;
 
 		public:
-			Image(const char *filename, const char *filesystemtype = "vfat");
+
+			/// @brief Open disk image, create it if size is != 0
+			Image(const char *filename, const char *filesystemtype = "vfat", size_t szimage = 0);
 			~Image();
 
 			void forEach(const std::function<void (const char *mountpoint, const char *path)> &call);
 			static void forEach(const char *mountpoint, const char *path, const std::function<void (const char *mountpoint, const char *path)> &call);
+
+			void copy(const char *from, const char *to);
 
 		};
 
