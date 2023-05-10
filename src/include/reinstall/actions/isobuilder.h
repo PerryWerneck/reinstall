@@ -40,12 +40,22 @@
 		const char *system_id = nullptr;
 
 		struct {
-			bool enabled = true;
-			const char *boot_image = "/boot/x86_64/loader/isolinux.bin";
-            const char *catalog = "/boot/x86_64/loader/boot.cat";
-		} eltorito;
 
-		std::shared_ptr<EFIBootImage> efibootimage;
+			const char *catalog = "/boot/x86_64/loader/boot.cat";
+
+			struct {
+				bool enabled = true;
+				const char *image = "/boot/x86_64/loader/isolinux.bin";
+
+				inline operator bool() const {
+					return enabled;
+				}
+
+			} eltorito;
+
+			std::shared_ptr<EFIBootImage> efi;
+
+		} boot;
 
 		/*
 		struct {
