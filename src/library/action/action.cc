@@ -535,5 +535,48 @@
 		post(pre()->burn(WriterFactory()));
 	}
 
+	unsigned long long Action::getImageSize(const pugi::xml_node &node, const char *attrname) {
+
+		Udjat::String attr {node.attribute(attrname).as_string()};
+		attr.strip();
+
+		if(attr.empty()) {
+			return 0LL;
+		}
+
+		unsigned long long imagesize = 0LL;
+
+		const char *ptr = attr.c_str();
+		while(*ptr && isdigit(*ptr)) {
+			imagesize *= 10;
+			imagesize += (*ptr - '0');
+			ptr++;
+		}
+
+		while(*ptr && isspace(*ptr)) {
+			ptr++;
+		}
+
+		if(*ptr) {
+			static const char *units[] = { "B", "KB", "MB", "GB" };
+
+			bool found = false;
+			for(const char *unit : units) {
+				if(!strcasecmp(ptr,unit)) {
+					found = true;
+					break;
+				}
+				imagesize *= 1024;
+			}
+
+			if(!found) {
+				throw runtime_error(Logger::String{"Unexpected size unit: '",ptr,"'"});
+			}
+
+		}
+
+		return imagesize;
+	}
+
  }
 

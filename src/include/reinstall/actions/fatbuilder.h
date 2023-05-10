@@ -20,61 +20,21 @@
  #pragma once
 
  #include <reinstall/action.h>
- #include <reinstall/iso9660.h>
- #include <reinstall/script.h>
  #include <reinstall/writer.h>
- #include <reinstall/sources/efiboot.h>
- #include <memory>
- #include <vector>
 
  namespace Reinstall {
 
-	class UDJAT_API IsoBuilder : public Reinstall::Action {
-	protected:
+	class UDJAT_API FatBuilder : public Reinstall::Action {
+	private:
+		/// @brief The image size.
+		unsigned long long imglen = 0;
 
-		const char *system_area = nullptr;
-		const char *volume_id = nullptr;
-		const char *publisher_id = nullptr;
-		const char *data_preparer_id = nullptr;
-		const char *application_id = nullptr;
-		const char *system_id = nullptr;
-
-		struct {
-
-			const char *catalog = "/boot/x86_64/loader/boot.cat";
-
-			struct {
-				bool enabled = true;
-				const char *image = "/boot/x86_64/loader/isolinux.bin";
-
-				inline operator bool() const {
-					return enabled;
-				}
-
-			} eltorito;
-
-			std::shared_ptr<EFIBootImage> efi;
-
-		} boot;
-
-		/*
-		struct {
-			bool enabled = true;
-			const char *boot_image = "/boot/x86_64/efi";
-		} efi;
-		*/
-
-	protected:
-
-		/// brief Post scripts.
-		// std::vector<Script> post_scripts;
-
-		/// @brief Run image post-processing (isohybrid).
-		// void post(const char *isoname);
+		/// @brief The image filename.
+		std::string filename;
 
 	public:
-		IsoBuilder(const pugi::xml_node &node, const char *icon_name = "drive-removable-media");
-		virtual ~IsoBuilder();
+		FatBuilder(const pugi::xml_node &node, const char *icon_name = "drive-removable-media");
+		virtual ~FatBuilder();
 
 		/// @brief Get parameters from user (first step, gui thread).
 		/// @return false to cancel action.

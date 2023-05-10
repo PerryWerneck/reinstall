@@ -20,16 +20,10 @@
  #include <config.h>
  #include <udjat/module.h>
  #include <udjat/factory.h>
- #include <udjat/tools/object.h>
- #include <stdexcept>
+ #include <udjat/tools/string.h>
+
  #include <reinstall/actions/isobuilder.h>
- #include <reinstall/writer.h>
- #include <reinstall/group.h>
- #include <udjat/tools/quark.h>
- #include <udjat/tools/logger.h>
- #include <udjat/tools/intl.h>
- #include <reinstall/sources/kernel.h>
- #include <reinstall/sources/initrd.h>
+ #include <reinstall/actions/fatbuilder.h>
 
  using namespace std;
  using namespace Udjat;
@@ -45,17 +39,20 @@
 
 		bool generic(const pugi::xml_node &node) override {
 
-			class Action : public Reinstall::IsoBuilder {
-			public:
-				Action(const pugi::xml_node &node) : Reinstall::IsoBuilder(node,"drive-removable-media") {
-				}
+			switch(String{node,"filesystem","iso-9660"}.select("iso-9660","fat32",nullptr)) {
+			case 0:	// iso9660
+				Reinstall::push_back(node,make_shared<Reinstall::IsoBuilder>(node));
+				break;
 
-				virtual ~Action() {
-				}
+			case 1: // fat32
+				Reinstall::push_back(node,make_shared<Reinstall::FatBuilder>(node));
+				break;
 
-			};
+			default:
+				throw runtime_error("The attribute 'filesystem' is invalid");
 
-			Reinstall::push_back(node,make_shared<Action>(node));
+			}
+
 
 			return true;
 		}

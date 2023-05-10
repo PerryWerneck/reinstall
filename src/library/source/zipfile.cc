@@ -75,21 +75,14 @@
 				: Reinstall::Source{name,Quark{string{"zip:///"}+f.name}.c_str(),Quark{f.name}.c_str()}, container{c}, file{f} {
 			}
 
-			void save() override {
+			void save(const char *filename) override {
 
-				if(!filenames.saved.empty()) {
-					warning() << "Already downloaded" << endl;
-					return;
-				}
-
-				filenames.temp = File::Temporary::create();
-
-				debug(path," -> ",filenames.temp);
+				debug(path," -> ",filename);
 
 #ifdef _WIN32
-				int out = ::open(filenames.temp.c_str(),O_WRONLY|O_CREAT|O_TRUNC|O_BINARY,0644);
+				int out = ::open(filename,O_WRONLY|O_CREAT|O_TRUNC|O_BINARY,0644);
 #else
-				int out = ::open(filenames.temp.c_str(),O_WRONLY|O_CREAT|O_TRUNC,0644);
+				int out = ::open(filename,O_WRONLY|O_CREAT|O_TRUNC,0644);
 #endif // _WIN32
 
 				zip_file *zf = zip_fopen_index(container->handler, file.index, 0);
@@ -124,6 +117,17 @@
 				zip_fclose(zf);
 				progress.set_url("");
 
+			}
+
+			void save() override {
+
+				if(!filenames.saved.empty()) {
+					warning() << "Already downloaded" << endl;
+					return;
+				}
+
+				filenames.temp = File::Temporary::create();
+				save(filenames.temp.c_str());
 				filenames.saved = filenames.temp;
 
 				container.reset();

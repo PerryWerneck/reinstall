@@ -193,11 +193,11 @@
 
 	};
 
-	Disk::Image::Image(const char *filename, const char *filesystemtype, size_t szimage) {
+	Disk::Image::Image(const char *filename, const char *filesystemtype, unsigned long long szimage) {
 
 		if(szimage) {
 
-			Logger::String{"Creating ",filesystemtype," image with ",String{}.set_byte((unsigned long long) szimage).c_str()}.trace("disk");
+			Logger::String{"Creating ",filesystemtype," image with ",String{}.set_byte(szimage).c_str()}.trace("disk");
 
 			int fd = ::open(filename,O_CREAT|O_TRUNC|O_WRONLY,0644);
 			if(fd < 0) {
@@ -226,7 +226,7 @@
 
 		handler = new Handler(filename);
 
-		if(mount(handler->loop.name.c_str(), handler->mountpoint.c_str(), filesystemtype, MS_SYNCHRONOUS, "") == -1) {
+		if(mount(handler->loop.name.c_str(), handler->mountpoint.c_str(), Config::Value<string>{"fsname",filesystemtype,"vfat"}.c_str(), MS_SYNCHRONOUS, "") == -1) {
 			delete handler;
 			throw system_error(errno, system_category(),Logger::String{"Cant mount ",filesystemtype," image"});
 		}
@@ -334,5 +334,37 @@
 
 	}
 
+	void Disk::Image::insert(Reinstall::Source &source) {
+
+		string filename{handler->mountpoint};
+
+		if(*source.path != '/') {
+			filename += '/';
+		}
+
+		filename += source.path;
+
+		Dialog::Progress &dialog = Dialog::Progress::getInstance();
+
+		dialog.set_url(source.path);
+
+		debug(source.path," -> ",filename);
+
+		{
+			const char *str = filename.c_str();
+			const char *ptr = strrchr(str,'/');
+			if(!ptr) {
+				throw runtime_error("Unexpected filename");
+			}
+
+			std::string dirname{str,(size_t) (ptr-str)};
+			File::Path::mkdir(dirname.c_str());
+		}
+
+		source.save(filename.c_str());
+
+	}
+
  }
+
 

@@ -110,7 +110,7 @@
 		virtual void save();
 
 		/// @brief Download to defined file.
-		void save(const char *filename);
+		virtual void save(const char *filename);
 
 		/// @brief Get folders contents.
 		/// @param action The current action.

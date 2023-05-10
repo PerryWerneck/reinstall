@@ -21,6 +21,7 @@
 
  #include <udjat/defs.h>
  #include <functional>
+ #include <reinstall/source.h>
 
  namespace Reinstall {
 
@@ -35,13 +36,14 @@
 		public:
 
 			/// @brief Open disk image, create it if size is != 0
-			Image(const char *filename, const char *filesystemtype = "vfat", size_t szimage = 0);
+			Image(const char *filename, const char *filesystemtype = "vfat", unsigned long long szimage = 0);
 			~Image();
 
 			void forEach(const std::function<void (const char *mountpoint, const char *path)> &call);
 			static void forEach(const char *mountpoint, const char *path, const std::function<void (const char *mountpoint, const char *path)> &call);
 
 			void copy(const char *from, const char *to);
+			void insert(Reinstall::Source &source);
 
 		};
 
