@@ -56,13 +56,15 @@ CFLAGS= \
 	@CXXFLAGS@ \
 	-I../../include \
 	-DBUILD_DATE=`date +%Y%m%d` \
-	-DLOCALEDIR=$(localedir)
+	-DLOCALEDIR=$(localedir) \
+	@UDF_CFLAGS@
 
 LDFLAGS=\
 	@LDFLAGS@ @DLL_LDFLAGS@
 
 LIBS= \
-	@LIBS@
+	@LIBS@ \
+	@UDF_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 

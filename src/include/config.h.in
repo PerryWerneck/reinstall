@@ -33,6 +33,9 @@
 /* Define to 1 if you have the `pwrite' function. */
 #undef HAVE_PWRITE
 
+/* Do we have libudf? */
+#undef HAVE_UDF
+
 /* Do we have udjat? */
 #undef HAVE_UDJAT
 

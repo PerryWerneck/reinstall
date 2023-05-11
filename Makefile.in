@@ -5,6 +5,7 @@ PACKAGE_NAME=@PACKAGE_NAME@
 PRODUCT_NAME=@PRODUCT_NAME@
 APPLICATION_ID=@PRODUCT_ID@.@PACKAGE_NAME@
 LIBRARY_NAME="lib@PACKAGE_NAME@"
+MODULES=@MODULES@
 SONAME=@SONAME@
 
 LIBRARY_SOURCES = \
@@ -16,18 +17,6 @@ LIBRARY_SOURCES = \
 	$(wildcard src/library/source/*.cc) \
 	$(wildcard src/library/writers/*.cc) \
 	$(wildcard src/library/os/@OSNAME@/*.cc)
-
-ISOWRITER_SOURCES = \
-		$(wildcard src/modules/isowriter/*.cc)
-
-ISOBUILDER_SOURCES = \
-		$(wildcard src/modules/isobuilder/*.cc)
-
-NETINSTALL_SOURCES = \
-		$(wildcard src/modules/netinstall/*.cc)
-
-GRUB_SOURCES = \
-		$(wildcard src/modules/grub/*.cc)
 
 GUI_SOURCES= \
 	$(wildcard src/gui/*.cc) \
@@ -192,16 +181,12 @@ install-%: \
 
 all: \
 	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
-	$(BINRLS)/modules/isowriter@DLLEXT@ \
-	$(BINRLS)/modules/netinstall@DLLEXT@ \
-	$(BINRLS)/modules/grub@DLLEXT@ \
+	$(foreach MODULE, $(MODULES), $(BINRLS)/modules/$(MODULE)@DLLEXT@) \
 	locale/$(PACKAGE_NAME).pot
 
 Release: \
 	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
-	$(BINRLS)/modules/isowriter@DLLEXT@ \
-	$(BINRLS)/modules/netinstall@DLLEXT@ \
-	$(BINRLS)/modules/grub@DLLEXT@
+	$(foreach MODULE, $(MODULES), $(BINRLS)/modules/$(MODULE)@DLLEXT@)
 
 locale/$(PACKAGE_NAME).pot: \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES) $(ISOBUILDER_SOURCES) $(GRUB_SOURCES) $(GUI_SOURCES)), $(POTDIR)/$(SRC).pot)
@@ -240,49 +225,6 @@ $(BINRLS)/modules/isowriter@DLLEXT@: \
 		$(LDFLAGS) \
 		$(LIBS)
 
-$(BINRLS)/modules/isobuilder@DLLEXT@: \
-	$(foreach SRC, $(basename $(ISOBUILDER_SOURCES)), $(OBJRLS)/$(SRC).o) \
-	$(BINRLS)/$(SONAME)
-
-	@$(MKDIR) $(@D)
-	@echo $< ...
-	@$(LD) \
-		$(DLL_LDFLAGS) \
-		-o $@ \
-		$^ \
-		-L$(BINRLS) \
-		$(LDFLAGS) \
-		$(LIBS)
-
-
-$(BINRLS)/modules/netinstall@DLLEXT@: \
-	$(foreach SRC, $(basename $(NETINSTALL_SOURCES)), $(OBJRLS)/$(SRC).o) \
-	$(BINRLS)/$(SONAME)
-
-	@$(MKDIR) $(@D)
-	@echo $< ...
-	@$(LD) \
-		$(DLL_LDFLAGS) \
-		-o $@ \
-		$^ \
-		-L$(BINRLS) \
-		$(LDFLAGS) \
-		$(LIBS)
-
-$(BINRLS)/modules/grub@DLLEXT@: \
-	$(foreach SRC, $(basename $(GRUB_SOURCES)), $(OBJRLS)/$(SRC).o) \
-	$(BINRLS)/$(SONAME)
-
-	@$(MKDIR) $(@D)
-	@echo $< ...
-	@$(LD) \
-		$(DLL_LDFLAGS) \
-		-o $@ \
-		$^ \
-		-L$(BINRLS) \
-		$(LDFLAGS) \
-		$(LIBS)
-
 $(BINRLS)/$(SONAME): \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(OBJRLS)/$(SRC).o)
 
@@ -306,9 +248,7 @@ install: \
 
 install-linux: \
 	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
-	$(BINRLS)/modules/isowriter@DLLEXT@ \
-	$(BINRLS)/modules/netinstall@DLLEXT@ \
-	$(BINRLS)/modules/grub@DLLEXT@ \
+	$(foreach MODULE, $(MODULES), $(BINRLS)/modules/$(MODULE)@DLLEXT@) \
 	locale/$(PACKAGE_NAME).pot
 
 	# Install library
@@ -408,10 +348,8 @@ install-data:
 
 Debug: \
 	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ \
-	$(BINDBG)/modules/isowriter@DLLEXT@ \
-	$(BINDBG)/modules/isobuilder@DLLEXT@ \
-	$(BINDBG)/modules/netinstall@DLLEXT@ \
-	$(BINDBG)/modules/grub@DLLEXT@
+	$(BINDBG)/$(SONAME) \
+	$(foreach MODULE, $(MODULES), $(BINDBG)/modules/$(MODULE)@DLLEXT@)
 
 $(BINDBG)/$(PRODUCT_NAME)@EXEEXT@: \
 	$(foreach SRC, $(basename $(GUI_SOURCES)), $(OBJDBG)/$(SRC).o) \
@@ -455,10 +393,7 @@ inspect: \
 
 run: \
 	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ \
-	$(BINDBG)/modules/isowriter@DLLEXT@ \
-	$(BINDBG)/modules/isobuilder@DLLEXT@ \
-	$(BINDBG)/modules/netinstall@DLLEXT@ \
-	$(BINDBG)/modules/grub@DLLEXT@
+	$(foreach MODULE, $(MODULES), $(BINDBG)/modules/$(MODULE)@DLLEXT@)
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
 		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@

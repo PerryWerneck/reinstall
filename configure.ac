@@ -267,21 +267,22 @@ AC_SUBST(ISOFS_CFLAGS)
 dnl ---------------------------------------------------------------------------
 dnl Check for Libudf
 dnl ---------------------------------------------------------------------------
-dnl 
-dnl PKG_CHECK_MODULES( [UDF], [libudf], AC_DEFINE(HAVE_UDF,[],[Do we have libudf?]), AC_MSG_NOTICE([libudf not present.]) )
-dnl 
-dnl AC_SUBST(UDF_LIBS)
-dnl AC_SUBST(UDF_CFLAGS)
-dnl 
-dnl if test "x$pkg_cv_UDF_LIBS" != "x" ; then
-dnl 	app_cv_modules="$app_cv_modules udfbuilder"
-dnl fi
+ 
+PKG_CHECK_MODULES( [UDF], [libudf], AC_DEFINE(HAVE_UDF,[],[Do we have libudf?]), AC_MSG_NOTICE([libudf not present.]) )
+
+AC_SUBST(UDF_LIBS)
+AC_SUBST(UDF_CFLAGS)
+
+if test "x$pkg_cv_UDF_LIBS" != "x" ; then
+	app_cv_modules="$app_cv_modules udfbuilder"
+	AC_CONFIG_FILES(src/modules/udfbuilder/Makefile)
+fi
 
 dnl ---------------------------------------------------------------------------
 dnl Check for libdbus
 dnl ---------------------------------------------------------------------------
 
-PKG_CHECK_MODULES( [DBUS], [dbus-1], AC_DEFINE(HAVE_DBUS,[],[Do we have d-bus?]), AC_MSG_ERROR([ No DBUS support.]) )
+PKG_CHECK_MODULES( [DBUS], [dbus-1], AC_DEFINE(HAVE_DBUS,[],[Do we have d-bus?]), AC_MSG_NOTICE([ No DBUS support.]) )
 AC_SUBST(DBUS_LIBS)
 AC_SUBST(DBUS_CFLAGS)
 
