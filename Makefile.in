@@ -427,66 +427,11 @@ $(BINDBG)/$(PRODUCT_NAME)@EXEEXT@: \
 		$(LDFLAGS) \
 		$(LIBS)
 
-$(BINDBG)/modules/isowriter@DLLEXT@: \
-	$(foreach SRC, $(basename $(ISOWRITER_SOURCES)), $(OBJDBG)/$(SRC).o) \
-	$(BINDBG)/$(SONAME)
+$(BINDBG)/modules/%@DLLEXT@: \
+	$(BINDBG)/$(SONAME) \
+	src/modules/%/* \
 
-	@$(MKDIR) $(@D)
-	@echo $< ...
-	@$(LD) \
-		$(DLL_LDFLAGS) \
-		-o $@ \
-		$^ \
-		-L$(BINDBG) \
-		-Wl,-rpath,$(BINDBG) \
-		$(LDFLAGS) \
-		$(LIBS)
-
-$(BINDBG)/modules/isobuilder@DLLEXT@: \
-	$(foreach SRC, $(basename $(ISOBUILDER_SOURCES)), $(OBJDBG)/$(SRC).o) \
-	$(BINDBG)/$(SONAME)
-
-	@$(MKDIR) $(@D)
-	@echo $< ...
-	@$(LD) \
-		$(DLL_LDFLAGS) \
-		-o $@ \
-		$^ \
-		-L$(BINDBG) \
-		-Wl,-rpath,$(BINDBG) \
-		$(LDFLAGS) \
-		$(LIBS)
-
-$(BINDBG)/modules/netinstall@DLLEXT@: \
-	$(foreach SRC, $(basename $(NETINSTALL_SOURCES)), $(OBJDBG)/$(SRC).o) \
-	$(BINDBG)/$(SONAME)
-
-	@$(MKDIR) $(@D)
-	@echo $< ...
-	@$(LD) \
-		$(DLL_LDFLAGS) \
-		-o $@ \
-		$^ \
-		-L$(BINDBG) \
-		-Wl,-rpath,$(BINDBG) \
-		$(LDFLAGS) \
-		$(LIBS)
-
-$(BINDBG)/modules/grub@DLLEXT@: \
-	$(foreach SRC, $(basename $(GRUB_SOURCES)), $(OBJDBG)/$(SRC).o) \
-	$(BINDBG)/$(SONAME)
-
-	@$(MKDIR) $(@D)
-	@echo $< ...
-	@$(LD) \
-		$(DLL_LDFLAGS) \
-		-o $@ \
-		$^ \
-		-L$(BINDBG) \
-		-Wl,-rpath,$(BINDBG) \
-		$(LDFLAGS) \
-		$(LIBS)
-
+	@$(MAKE) -C src/modules/$(notdir $(basename $@)) Debug
 
 $(BINDBG)/$(SONAME): \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(OBJDBG)/$(SRC).o)

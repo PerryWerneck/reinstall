@@ -83,6 +83,10 @@ dnl ---------------------------------------------------------------------------
 dnl Check for OS specifics
 dnl ---------------------------------------------------------------------------
 
+app_cv_modules="isowriter isobuilder"
+AC_CONFIG_FILES(src/modules/isowriter/Makefile)
+AC_CONFIG_FILES(src/modules/isobuilder/Makefile)
+
 case "$host" in
 	*-mingw32|*-pc-msys)
 		EXEEXT=".exe"
@@ -126,6 +130,11 @@ dnl		AC_CONFIG_FILES(win/userinfo.nsi)
 		DLL_LDFLAGS="-shared -Wl,-soname,\$(@F)"
 		AC_SUBST(SONAME,libreinstall.so.$app_vrs_major.$app_vrs_minor)
 		AC_CONFIG_FILES(sysconf/launcher.desktop)
+
+		app_cv_modules="$app_cv_modules netinstall grub"
+
+		AC_CONFIG_FILES(src/modules/netinstall/Makefile)
+		AC_CONFIG_FILES(src/modules/grub/Makefile)
 
 esac
 
@@ -256,6 +265,19 @@ AC_SUBST(ISOFS_LIBS)
 AC_SUBST(ISOFS_CFLAGS)
 
 dnl ---------------------------------------------------------------------------
+dnl Check for Libudf
+dnl ---------------------------------------------------------------------------
+dnl 
+dnl PKG_CHECK_MODULES( [UDF], [libudf], AC_DEFINE(HAVE_UDF,[],[Do we have libudf?]), AC_MSG_NOTICE([libudf not present.]) )
+dnl 
+dnl AC_SUBST(UDF_LIBS)
+dnl AC_SUBST(UDF_CFLAGS)
+dnl 
+dnl if test "x$pkg_cv_UDF_LIBS" != "x" ; then
+dnl 	app_cv_modules="$app_cv_modules udfbuilder"
+dnl fi
+
+dnl ---------------------------------------------------------------------------
 dnl Check for libdbus
 dnl ---------------------------------------------------------------------------
 
@@ -277,6 +299,8 @@ dnl Output config
 dnl ---------------------------------------------------------------------------
 
 AC_SUBST(SRCDIR,$ac_pwd)
+AC_SUBST(BINDIR,$ac_pwd/.bin)
+AC_SUBST(MODULES,$app_cv_modules)
 
 dnl ---------------------------------------------------------------------------
 dnl Configure which files to generate.
