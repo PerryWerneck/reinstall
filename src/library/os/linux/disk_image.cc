@@ -260,7 +260,7 @@
 
 		for(const Worker &worker : workers) {
 
-			if(strcasecmp(filesystemtype,worker.name)) {
+			if(strcasecmp(filesystemtype,worker.name) == 0) {
 				return worker;
 			}
 
