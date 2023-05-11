@@ -24,17 +24,21 @@
 
  namespace Reinstall {
 
-	class UDJAT_API FatBuilder : public Reinstall::Action {
+	/// @brief Generic filesystem builder.
+	class UDJAT_API FSBuilder : public Reinstall::Action {
 	private:
 		/// @brief The image size.
 		unsigned long long imglen = 0;
+
+		/// @brief The filesystem name.
+		const char *fsname;
 
 		/// @brief The image filename.
 		std::string filename;
 
 	public:
-		FatBuilder(const pugi::xml_node &node, const char *icon_name = "drive-removable-media");
-		virtual ~FatBuilder();
+		FSBuilder(const pugi::xml_node &node, const char *icon_name = "drive-removable-media");
+		virtual ~FSBuilder();
 
 		/// @brief Get parameters from user (first step, gui thread).
 		/// @return false to cancel action.

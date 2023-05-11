@@ -193,42 +193,95 @@
 
 	};
 
+
+	static const struct Worker {
+		const char *name;
+		const char *fsname;
+		const std::function<void(const char *dev, unsigned long long szimage)> format;
+	} workers[] = {
+		{
+			"fat32",
+			"vfat",
+			[](const char *dev, unsigned long long szimage) {
+
+				Logger::String{"Creating fat32 image with ",String{}.set_byte(szimage).c_str()}.trace("disk");
+
+				int fd = ::open(dev,O_CREAT|O_TRUNC|O_WRONLY,0644);
+				if(fd < 0) {
+					throw system_error(errno,system_category(),"Cant create FAT32 image");
+				}
+
+				if(fallocate(fd,0,0,szimage)) {
+					int err = errno;
+					::close(fd);
+					throw system_error(err,system_category(),"Cant allocate FAT32 image");
+				}
+
+				::close(fd);
+
+				// Format.
+				SubProcess{
+					Logger::Message{
+						Config::Value<string>{
+							"mkfs","fat32","/sbin/mkfs.vfat -F32 {}"
+						}.c_str(),
+						dev
+					}.c_str()
+				}.run();
+
+			}
+		},
+		{
+			"udf",
+			"udf",
+			[](const char *dev, unsigned long long szimage) {
+
+				unsigned long long blocksize = 2048LL;
+				unsigned long long blocks = (szimage/blocksize)+1;
+
+				Logger::String{"Creating fat32 image with ",blocks," blocks of ",blocksize," bytes"}.trace("disk");
+
+				SubProcess{
+					Logger::Message{
+						Config::Value<string>{
+							"mkfs","udf","/usr/sbin/mkfs.udf {} --blocksize={} {}"
+						}.c_str(),
+						dev,
+						std::to_string(blocksize).c_str(),
+						std::to_string(blocks).c_str()
+					}.c_str()
+				}.run();
+
+			}
+		}
+	};
+
+	const Worker & WorkerFactory(const char *filesystemtype) {
+
+		for(const Worker &worker : workers) {
+
+			if(strcasecmp(filesystemtype,worker.name)) {
+				return worker;
+			}
+
+		}
+
+		throw runtime_error("Invalid filesystemtype");
+	}
+
 	Disk::Image::Image(const char *filename, const char *filesystemtype, unsigned long long szimage) {
 
+		const Worker &worker = WorkerFactory(filesystemtype);
+
 		if(szimage) {
-
-			Logger::String{"Creating ",filesystemtype," image with ",String{}.set_byte(szimage).c_str()}.trace("disk");
-
-			int fd = ::open(filename,O_CREAT|O_TRUNC|O_WRONLY,0644);
-			if(fd < 0) {
-				throw system_error(errno,system_category(),String{"Cant create ",filesystemtype," disk image"});
-			}
-
-			if(fallocate(fd,0,0,szimage)) {
-				int err = errno;
-				::close(fd);
-				throw system_error(err,system_category(),String{"Cant alocate ",filesystemtype," disk image"});
-			}
-
-			::close(fd);
-
-			// Format.
-			SubProcess{
-				Logger::Message{
-					Config::Value<string>{
-						"mkfs",filesystemtype,"/sbin/mkfs.vfat -F32 {}"
-					}.c_str(),
-					filename
-				}.c_str()
-			}.run();
-
+			worker.format(filename,szimage);
 		}
 
 		handler = new Handler(filename);
 
-		if(mount(handler->loop.name.c_str(), handler->mountpoint.c_str(), Config::Value<string>{"fsname",filesystemtype,"vfat"}.c_str(), MS_SYNCHRONOUS, "") == -1) {
+		if(mount(handler->loop.name.c_str(), handler->mountpoint.c_str(), Config::Value<string>{"fsname",filesystemtype,worker.fsname}.c_str(), MS_SYNCHRONOUS, "") == -1) {
 			delete handler;
-			throw system_error(errno, system_category(),Logger::String{"Cant mount ",filesystemtype," image"});
+			throw system_error(errno, system_category(),Logger::String{"Cant mount ",filesystemtype," image using ",worker.fsname," filesystem"});
 		}
 
 		cout << "disk\tFile '" << filename << "' mounted on " << handler->mountpoint << endl;

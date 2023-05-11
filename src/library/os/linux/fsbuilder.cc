@@ -20,34 +20,35 @@
 
  #include <config.h>
  #include <reinstall/builder.h>
- #include <reinstall/actions/fatbuilder.h>
+ #include <reinstall/actions/fsbuilder.h>
  #include <reinstall/diskimage.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/file.h>
  #include <udjat/tools/configuration.h>
+ #include <udjat/tools/quark.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	FatBuilder::FatBuilder(const pugi::xml_node &node, const char *icon_name)
-		: Reinstall::Action(node,icon_name), imglen{getImageSize(node)} {
+	FSBuilder::FSBuilder(const pugi::xml_node &node, const char *icon_name)
+		: Reinstall::Action(node,icon_name), imglen{getImageSize(node)}, fsname{Quark{node,"filesystem","fat32"}.c_str()} {
 
 	}
 
-	FatBuilder::~FatBuilder() {
+	FSBuilder::~FSBuilder() {
 	}
 
-	std::shared_ptr<Reinstall::Builder> FatBuilder::BuilderFactory() {
+	std::shared_ptr<Reinstall::Builder> FSBuilder::BuilderFactory() {
 
 		class Builder : public Reinstall::Builder, private Disk::Image {
 		public:
-			Builder(const char *filename, unsigned long long length)
+			Builder(const char *filename, const char *fsname, unsigned long long length)
 				: Disk::Image{
 					filename,
-					Config::Value<string>{"fatbuilder","filesystem","fat32"}.c_str(),
+					fsname,
 					length
 				} {
 			}
@@ -69,15 +70,15 @@
 		};
 
 		filename = File::Temporary::create();
-		return make_shared<Builder>(filename.c_str(),imglen);
+		return make_shared<Builder>(filename.c_str(),fsname,imglen);
 
 	}
 
-	std::shared_ptr<Reinstall::Writer> FatBuilder::WriterFactory() {
+	std::shared_ptr<Reinstall::Writer> FSBuilder::WriterFactory() {
 		return Reinstall::Writer::USBWriterFactory(*this);
 	}
 
-	bool FatBuilder::interact() {
+	bool FSBuilder::interact() {
 		return true;
 	}
 

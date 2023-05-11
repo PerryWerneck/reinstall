@@ -265,20 +265,6 @@ AC_SUBST(ISOFS_LIBS)
 AC_SUBST(ISOFS_CFLAGS)
 
 dnl ---------------------------------------------------------------------------
-dnl Check for Libudf
-dnl ---------------------------------------------------------------------------
- 
-PKG_CHECK_MODULES( [UDF], [libudf], AC_DEFINE(HAVE_UDF,[],[Do we have libudf?]), AC_MSG_NOTICE([libudf not present.]) )
-
-AC_SUBST(UDF_LIBS)
-AC_SUBST(UDF_CFLAGS)
-
-if test "x$pkg_cv_UDF_LIBS" != "x" ; then
-	app_cv_modules="$app_cv_modules udfbuilder"
-	AC_CONFIG_FILES(src/modules/udfbuilder/Makefile)
-fi
-
-dnl ---------------------------------------------------------------------------
 dnl Check for libdbus
 dnl ---------------------------------------------------------------------------
 
