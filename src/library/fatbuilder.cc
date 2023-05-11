@@ -63,6 +63,7 @@
 
 			bool apply(Source &source) override {
 				Disk::Image::insert(source);
+				return true;
 			}
 
 		};
