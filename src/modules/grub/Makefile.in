@@ -150,8 +150,7 @@ Release: \
 	$(BINRLS)/modules/$(MODULE_NAME)@DLLEXT@
 
 $(BINRLS)/modules/$(MODULE_NAME)@DLLEXT@: \
-	$(foreach SRC, $(basename $(SOURCES)), $(OBJRLS)/$(SRC).o) \
-	$(BINRLS)/$(SONAME)
+	$(foreach SRC, $(basename $(SOURCES)), $(OBJRLS)/$(SRC).o)
 
 	@$(MKDIR) $(@D)
 	@echo $< ...

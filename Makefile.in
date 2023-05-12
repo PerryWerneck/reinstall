@@ -181,6 +181,7 @@ install-%: \
 
 all: \
 	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
+	$(BINRLS)/$(SONAME) \
 	$(foreach MODULE, $(MODULES), $(BINRLS)/modules/$(MODULE)@DLLEXT@) \
 	locale/$(PACKAGE_NAME).pot
 
@@ -211,19 +212,11 @@ $(BINRLS)/$(PRODUCT_NAME)@EXEEXT@: \
 		$(LDFLAGS) \
 		$(LIBS)
 
-$(BINRLS)/modules/isowriter@DLLEXT@: \
-	$(foreach SRC, $(basename $(ISOWRITER_SOURCES)), $(OBJRLS)/$(SRC).o) \
-	$(BINRLS)/$(SONAME)
+$(BINRLS)/modules/%@DLLEXT@: \
+	$(BINRLS)/$(SONAME) \
+	src/modules/%/* \
 
-	@$(MKDIR) $(@D)
-	@echo $< ...
-	@$(LD) \
-		$(DLL_LDFLAGS) \
-		-o $@ \
-		$^ \
-		-L$(BINRLS) \
-		$(LDFLAGS) \
-		$(LIBS)
+	@$(MAKE) -C src/modules/$(notdir $(basename $@)) Release
 
 $(BINRLS)/$(SONAME): \
 	$(foreach SRC, $(basename $(LIBRARY_SOURCES)), $(OBJRLS)/$(SRC).o)
