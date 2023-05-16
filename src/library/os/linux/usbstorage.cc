@@ -214,17 +214,11 @@
 			}
 
 			void format(const char *fsname) override {
-#ifndef DEBUG
-	#error Incomplete.
-#endif // DEBUG
-				throw runtime_error{"Incomplete"};
+				throw system_error(ENOTSUP,system_category(),"Method not available");
 			}
 
 			std::shared_ptr<Disk::Image> DiskImageFactory(const char *fsname) override {
-#ifndef DEBUG
-	#error Incomplete.
-#endif // DEBUG
-				throw runtime_error{"Incomplete"};
+				throw system_error(ENOTSUP,system_category(),"Method not available");
 			}
 
 			void open() override {

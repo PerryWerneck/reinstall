@@ -35,6 +35,9 @@
 
 	FSBuilder::FSBuilder(const pugi::xml_node &node, const char *icon_name)
 		: Reinstall::Action(node,icon_name), imglen{getImageSize(node)}, fsname{Quark{node,"filesystem","fat32"}.c_str()} {
+		if(!imglen) {
+			throw runtime_error("Required attribute 'size' is missing");
+		}
 
 	}
 
@@ -51,6 +54,7 @@
 					fsname,
 					length
 				} {
+
 			}
 
 			void pre(const Action &action) override {

@@ -281,7 +281,7 @@
 
 		handler = new Handler(filename);
 
-		if(mount(handler->loop.name.c_str(), handler->mountpoint.c_str(), Config::Value<string>{"fsname",filesystemtype,worker.fsname}.c_str(), MS_SYNCHRONOUS, "") == -1) {
+		if(mount(handler->loop.name.c_str(), handler->mountpoint.c_str(), Config::Value<string>{"fsname",filesystemtype,worker.fsname}.c_str(), MS_NOATIME|MS_NODIRATIME, "") == -1) {
 			delete handler;
 			throw system_error(errno, system_category(),Logger::String{"Cant mount ",filesystemtype," image using ",worker.fsname," filesystem"});
 		}

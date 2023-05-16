@@ -73,26 +73,22 @@
 
 	Dialog::Progress &progress = Dialog::Progress::getInstance();
 
-	{
-		progress.set_sub_title(_("Formatting image"));
-		writer->format(fsname);
+	progress.set_sub_title(_("Formatting image"));
+
+	writer->format(fsname);
+
+	progress.set_sub_title(_("Writing image"));
+
+	auto disk = writer->DiskImageFactory(fsname);
+
+	size_t item = 0;
+	for(std::shared_ptr<Source> source : sources) {
+
+		progress.set_count(++item,sources.size());
+		progress.set_url(source->url);
+		disk->insert(*source);
+
 	}
-
-	{
-		progress.set_sub_title(_("Writing image"));
-		auto disk = writer->DiskImageFactory(fsname);
-		size_t item = 0;
-		for(std::shared_ptr<Source> source : sources) {
-
-			progress.set_count(++item,sources.size());
-			progress.set_url(source->url);
-			disk->insert(*source);
-
-
-		}
-	}
-
- 	throw runtime_error("Still incomplete");
 
  }
 
