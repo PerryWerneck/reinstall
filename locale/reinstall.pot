@@ -87,7 +87,7 @@ msgstr ""
 "#-#-#-#-#  action.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-11 23:15-0300\n"
+"POT-Creation-Date: 2023-05-16 08:05-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -175,7 +175,7 @@ msgstr ""
 "#-#-#-#-#  abstract.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-11 23:15-0300\n"
+"POT-Creation-Date: 2023-05-16 08:05-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -186,7 +186,7 @@ msgstr ""
 "#-#-#-#-#  usbstorage.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-11 23:15-0300\n"
+"POT-Creation-Date: 2023-05-16 08:05-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -219,7 +219,7 @@ msgstr ""
 "#-#-#-#-#  main.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-11 23:15-0300\n"
+"POT-Creation-Date: 2023-05-16 08:05-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -230,7 +230,7 @@ msgstr ""
 "#-#-#-#-#  apply.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-11 23:15-0300\n"
+"POT-Creation-Date: 2023-05-16 08:05-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -261,13 +261,13 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/gui/main.cc:75
+#: src/gui/main.cc:76
 msgid ""
 "\n"
 "Select option: "
 msgstr ""
 
-#: src/gui/apply.cc:210
+#: src/gui/apply.cc:208
 msgid "Action completed"
 msgstr ""
 
@@ -303,11 +303,11 @@ msgstr ""
 msgid "Can't update loop device status"
 msgstr ""
 
-#: src/library/os/linux/usbstorage.cc:256
+#: src/library/os/linux/usbstorage.cc:278
 msgid "Cancel"
 msgstr ""
 
-#: src/gui/main.cc:84
+#: src/gui/main.cc:85
 msgid "Cancelled by user"
 msgstr ""
 
@@ -327,7 +327,7 @@ msgstr ""
 msgid "Checking for templates"
 msgstr ""
 
-#: src/library/os/linux/usbstorage.cc:260
+#: src/library/os/linux/usbstorage.cc:282
 msgid "Continue"
 msgstr ""
 
@@ -379,7 +379,7 @@ msgstr ""
 msgid "Getting required files"
 msgstr ""
 
-#: src/library/writers/abstract.cc:61
+#: src/library/writers/abstract.cc:65
 msgid "I/O error writing image"
 msgstr ""
 
@@ -391,7 +391,7 @@ msgstr ""
 msgid "Initializing"
 msgstr ""
 
-#: src/library/os/linux/usbstorage.cc:250
+#: src/library/os/linux/usbstorage.cc:272
 msgid "Insert an storage device <b>NOW</b> "
 msgstr ""
 
@@ -399,7 +399,7 @@ msgstr ""
 msgid "Invalid 'type' attribute"
 msgstr ""
 
-#: src/gui/main.cc:145
+#: src/gui/main.cc:146
 msgid "Invalid action id"
 msgstr ""
 
@@ -463,11 +463,11 @@ msgstr ""
 msgid "Preparing to write"
 msgstr ""
 
-#: src/gui/apply.cc:221 src/gui/widgets/mainwindow.cc:390
+#: src/gui/apply.cc:219 src/gui/widgets/mainwindow.cc:390
 msgid "Quit application"
 msgstr ""
 
-#: src/gui/apply.cc:231
+#: src/gui/apply.cc:229
 msgid "Reboot now"
 msgstr ""
 
@@ -491,7 +491,7 @@ msgstr ""
 msgid "Setting up ISO image"
 msgstr ""
 
-#: src/library/os/linux/usbstorage.cc:195
+#: src/library/os/linux/usbstorage.cc:217
 msgid "Storage device is unavailable"
 msgstr ""
 
@@ -515,7 +515,7 @@ msgstr ""
 msgid "The required attribute 'cmdline' is missing"
 msgstr ""
 
-#: src/library/os/linux/usbstorage.cc:252
+#: src/library/os/linux/usbstorage.cc:274
 msgid "This action will <b>DELETE ALL CONTENT</b> on the device."
 msgstr ""
 
@@ -563,7 +563,7 @@ msgstr ""
 msgid "_Cancel"
 msgstr ""
 
-#: src/library/dialogs/progress.cc:58 src/gui/main.cc:232
+#: src/library/dialogs/progress.cc:58 src/gui/main.cc:233
 #: src/gui/dialogs/progress.cc:113
 msgid "{} of {}"
 msgstr ""

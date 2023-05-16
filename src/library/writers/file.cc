@@ -42,26 +42,35 @@
 			throw runtime_error("Invalid filename");
 		}
 
-		debug("Writer for '",filename.c_str(),"' was constructed");
+		Logger::String{"Writer for '",filename.c_str(),"' was constructed"}.trace(PACKAGE_NAME);
 	}
 
 	FileWriter::~FileWriter() {
 		if(fd > 0) {
 			close();
 		}
+		Logger::String{"Writer for '",filename.c_str(),"' was destroyed"}.trace(PACKAGE_NAME);
 	}
 
 	void FileWriter::open() {
-		debug("Opening '",filename.c_str(),"'");
+		Logger::String{"Writer for '",filename.c_str(),"' was open"}.trace(PACKAGE_NAME);
 		fd = ::open(filename.c_str(),O_CREAT|O_TRUNC|O_APPEND|O_WRONLY,0666);
 		if(fd < 0) {
 			throw system_error(errno,system_category(),filename);
 		}
 	}
 
+	void FileWriter::format(const char *fsname) {
+		super::format(filename.c_str(),fsname);
+	}
+
+	std::shared_ptr<Disk::Image> FileWriter::DiskImageFactory(const char *fsname) {
+		return super::DiskImageFactory(filename.c_str(),fsname);
+	}
+
 	void FileWriter::close() {
 		if(fd > 0) {
-			debug("Closing '",filename.c_str(),"'");
+			Logger::String{"Writer for '",filename.c_str(),"' was closed"}.trace(PACKAGE_NAME);
 			::close(fd);
 		}
 		fd = -1;

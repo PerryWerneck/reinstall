@@ -170,6 +170,8 @@
 
 		~Handler() {
 
+			debug("Destroying disk handler");
+
 			retry([this](int current, int total){
 
 				if (ioctl(loop.fd, LOOP_CLR_FD, 0) == 0) {
@@ -289,6 +291,8 @@
 	}
 
 	Disk::Image::~Image() {
+
+		debug("Destroying disk image");
 
 		retry([this](int current, int total){
 

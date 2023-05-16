@@ -36,7 +36,7 @@
 		public:
 
 			/// @brief Open disk image, create it if size is != 0
-			Image(const char *filename, const char *filesystemtype = "vfat", unsigned long long szimage = 0);
+			Image(const char *filename, const char *filesystemtype = "fat32", unsigned long long szimage = 0);
 			~Image();
 
 			void forEach(const std::function<void (const char *mountpoint, const char *path)> &call);

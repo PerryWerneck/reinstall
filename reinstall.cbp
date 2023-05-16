@@ -83,12 +83,12 @@
 		<Unit filename="src/library/dialogs/progress.cc" />
 		<Unit filename="src/library/dialogs/taskrunner.cc" />
 		<Unit filename="src/library/dialogs/window.cc" />
-		<Unit filename="src/library/fatbuilder.cc" />
 		<Unit filename="src/library/group.cc" />
 		<Unit filename="src/library/iso9660/builder.cc" />
 		<Unit filename="src/library/isobuilder.cc" />
 		<Unit filename="src/library/kernelparameter.cc" />
 		<Unit filename="src/library/object.cc" />
+		<Unit filename="src/library/os/linux/abstract_writer.cc" />
 		<Unit filename="src/library/os/linux/disk_image.cc" />
 		<Unit filename="src/library/os/linux/fsbuilder.cc" />
 		<Unit filename="src/library/os/linux/private.h" />
@@ -117,7 +117,10 @@
 		<Unit filename="src/library/writers/file.cc" />
 		<Unit filename="src/modules/grub/init.cc" />
 		<Unit filename="src/modules/isobuilder/init.cc" />
+		<Unit filename="src/modules/isowriter/diskwriter.cc" />
 		<Unit filename="src/modules/isowriter/init.cc" />
+		<Unit filename="src/modules/isowriter/isowriter.cc" />
+		<Unit filename="src/modules/isowriter/private.h" />
 		<Unit filename="src/modules/netinstall/init.cc" />
 		<Unit filename="src/modules/netinstall/private.h" />
 		<Unit filename="src/modules/udfbuilder/init.cc" />

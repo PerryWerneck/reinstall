@@ -132,6 +132,8 @@
 		/// @brief Convenience method to get image sizes.
 		static unsigned long long getImageSize(const pugi::xml_node &node, const char *attrname = "size");
 
+		static unsigned long long getImageSize(const char *str);
+
 	protected:
 
 		std::list<std::shared_ptr<Template>> templates;

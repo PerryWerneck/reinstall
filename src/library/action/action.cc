@@ -535,18 +535,14 @@
 		post(pre()->burn(WriterFactory()));
 	}
 
-	unsigned long long Action::getImageSize(const pugi::xml_node &node, const char *attrname) {
+	unsigned long long Action::getImageSize(const char *ptr) {
 
-		Udjat::String attr {node.attribute(attrname).as_string()};
-		attr.strip();
-
-		if(attr.empty()) {
+		if(!(ptr && *ptr)) {
 			return 0LL;
 		}
 
 		unsigned long long imagesize = 0LL;
 
-		const char *ptr = attr.c_str();
 		while(*ptr && isdigit(*ptr)) {
 			imagesize *= 10;
 			imagesize += (*ptr - '0');
@@ -576,6 +572,15 @@
 		}
 
 		return imagesize;
+
+	}
+
+	unsigned long long Action::getImageSize(const pugi::xml_node &node, const char *attrname) {
+
+		Udjat::String attr {node.attribute(attrname).as_string()};
+		attr.strip();
+		return getImageSize(attr.c_str());
+
 	}
 
  }

@@ -44,6 +44,7 @@
 
  namespace Reinstall {
 
+	unsigned long long Writer::usbdevlength = 0;
 	const char * Writer::usbdevname = nullptr;
 
 	/*
@@ -62,7 +63,31 @@
 
 	std::shared_ptr<Writer> Writer::USBWriterFactory(const Reinstall::Action &action, size_t length) {
 
-		if(usbdevname && *usbdevname) {
+		if(!length) {
+			length = usbdevlength;	// No length, use the command-line set.
+		}
+
+		if(usbdevname && *usbdevname && length) {
+
+			if(length) {
+
+				int fd = ::open(usbdevname,O_CREAT|O_TRUNC|O_WRONLY,0644);
+				if(fd < 0) {
+					int err = errno;
+					Logger::String{"Error opening '",usbdevname,"': ",strerror(err)," (rc=",err,")"}.error("usbdev");
+					throw system_error(err,system_category(),"Cant create USB storage image");
+				}
+
+				if(fallocate(fd,0,0,length)) {
+					int err = errno;
+					::close(fd);
+					Logger::String{"Error allocating '",usbdevname,"': ",strerror(err)," (rc=",err,")"}.error("usbdev");
+					throw system_error(err,system_category(),"Cant allocate USB storage image");
+				}
+
+				::close(fd);
+			}
+
 			return make_shared<FileWriter>(action,usbdevname);
 		}
 
@@ -186,6 +211,20 @@
 				}
 				fd = -1;
 				return false;
+			}
+
+			void format(const char *fsname) override {
+#ifndef DEBUG
+	#error Incomplete.
+#endif // DEBUG
+				throw runtime_error{"Incomplete"};
+			}
+
+			std::shared_ptr<Disk::Image> DiskImageFactory(const char *fsname) override {
+#ifndef DEBUG
+	#error Incomplete.
+#endif // DEBUG
+				throw runtime_error{"Incomplete"};
 			}
 
 			void open() override {

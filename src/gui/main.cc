@@ -31,6 +31,7 @@
  #include <cstdio>
  #include <readline/readline.h>
  #include <unistd.h>
+ #include <reinstall/action.h>
 
  using namespace std;
  using namespace Udjat;
@@ -310,6 +311,11 @@
 		} else if(strncasecmp(ptr,"usb-storage-device=",19) == 0) {
 			// Set usb-storage-device
 			Reinstall::Writer::setUsbDeviceName(ptr+19);
+
+		} else if(strncasecmp(ptr,"usb-storage-length=",19) == 0) {
+			// Set usb-storage-device
+			Reinstall::Writer::setUsbDeviceLength(Reinstall::Action::getImageSize(ptr+19));
+
 		}
 
 	}

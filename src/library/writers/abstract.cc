@@ -20,6 +20,7 @@
  #include <config.h>
  #include <reinstall/defs.h>
  #include <reinstall/writer.h>
+ #include <reinstall/diskimage.h>
  #include <system_error>
  #include <udjat/tools/intl.h>
 
@@ -41,6 +42,10 @@
 		usbdevname = name;
 	}
 
+	void Writer::setUsbDeviceLength(unsigned long long length) {
+		usbdevlength = length;
+	}
+
 	void Writer::open() {
 	}
 
@@ -54,18 +59,8 @@
 	void Writer::close() {
 	}
 
-#ifndef _WIN32
-
-	void Writer::write(int fd, const void *buf, size_t length) {
-		if(::write(fd,buf,length) != (ssize_t) length) {
-			throw system_error(errno, system_category(),_("I/O error writing image"));
-		}
+	std::shared_ptr<Disk::Image> Writer::DiskImageFactory(const char *devname, const char *fsname) {
+		return std::make_shared<Disk::Image>(devname,fsname);
 	}
-
-	void Writer::finalize(int fd) {
-		::fsync(fd);
-	}
-
-#endif // _WIN32
 
  }

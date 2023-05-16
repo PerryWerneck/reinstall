@@ -104,9 +104,7 @@
 
 			try {
 
-				debug("-----------[ PRE ]----------------------------");
 				builder = action.pre();
-
 				dialog.dismiss(Gtk::RESPONSE_OK);
 
 			} catch(const std::exception &e) {
