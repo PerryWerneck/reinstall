@@ -186,7 +186,7 @@ msgstr ""
 "#-#-#-#-#  usbstorage.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-16 08:05-0300\n"
+"POT-Creation-Date: 2023-05-17 09:00-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -208,7 +208,18 @@ msgstr ""
 "#-#-#-#-#  disk_image.pot (PACKAGE VERSION)  #-#-#-#-#\n"
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-11 23:15-0300\n"
+"POT-Creation-Date: 2023-05-17 09:00-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+"#-#-#-#-#  abstract_writer.pot (PACKAGE VERSION)  #-#-#-#-#\n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-05-17 09:00-0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -303,7 +314,7 @@ msgstr ""
 msgid "Can't update loop device status"
 msgstr ""
 
-#: src/library/os/linux/usbstorage.cc:278
+#: src/library/os/linux/usbstorage.cc:289
 msgid "Cancel"
 msgstr ""
 
@@ -327,7 +338,7 @@ msgstr ""
 msgid "Checking for templates"
 msgstr ""
 
-#: src/library/os/linux/usbstorage.cc:282
+#: src/library/os/linux/usbstorage.cc:293
 msgid "Continue"
 msgstr ""
 
@@ -380,6 +391,7 @@ msgid "Getting required files"
 msgstr ""
 
 #: src/library/writers/abstract.cc:65
+#: src/library/os/linux/abstract_writer.cc:38
 msgid "I/O error writing image"
 msgstr ""
 
@@ -391,7 +403,7 @@ msgstr ""
 msgid "Initializing"
 msgstr ""
 
-#: src/library/os/linux/usbstorage.cc:272
+#: src/library/os/linux/usbstorage.cc:283
 msgid "Insert an storage device <b>NOW</b> "
 msgstr ""
 
@@ -491,7 +503,7 @@ msgstr ""
 msgid "Setting up ISO image"
 msgstr ""
 
-#: src/library/os/linux/usbstorage.cc:217
+#: src/library/os/linux/usbstorage.cc:228
 msgid "Storage device is unavailable"
 msgstr ""
 
@@ -515,7 +527,7 @@ msgstr ""
 msgid "The required attribute 'cmdline' is missing"
 msgstr ""
 
-#: src/library/os/linux/usbstorage.cc:274
+#: src/library/os/linux/usbstorage.cc:285
 msgid "This action will <b>DELETE ALL CONTENT</b> on the device."
 msgstr ""
 

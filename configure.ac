@@ -211,7 +211,8 @@ AC_ARG_WITH([product-id], [AS_HELP_STRING([--with-product-id], [Set product id])
 AC_SUBST(PRODUCT_ID,$app_cv_product_id)
 AC_DEFINE_UNQUOTED(PRODUCT_ID,"$app_cv_product_id",[The product id])
 
-app_cv_module_path=`pkg-config --variable=module_path libudjat`
+AC_ARG_WITH([module-path], [AS_HELP_STRING([--with-module-path], [Set module-path])], [ app_cv_module_path="$withval" ],[ app_cv_module_path=`pkg-config --variable=module_path libudjat` ])
+
 AC_DEFINE_UNQUOTED(MODULE_PATH, $app_cv_module_path, [The path for module installation])
 AC_SUBST(MODULE_PATH,$app_cv_module_path)
 
