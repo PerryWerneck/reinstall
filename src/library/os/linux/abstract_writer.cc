@@ -88,4 +88,15 @@
 		WorkerFactory(fsname).format(devname);
 	}
 
+	void Writer::format(const char *) {
+		Logger::String{"Pure virtual method '",__FUNCTION__,"' called on writer object"}.error(PACKAGE_NAME);
+		throw system_error(ENOTSUP,system_category(),"Method not available");
+	}
+
+	/// @brief Get disk image.
+	std::shared_ptr<Disk::Image> Writer::DiskImageFactory(const char *) {
+		Logger::String{"Pure virtual method '",__FUNCTION__,"' called on writer object"}.error(PACKAGE_NAME);
+		throw system_error(ENOTSUP,system_category(),"Method not available");
+	}
+
  }

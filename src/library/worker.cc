@@ -37,7 +37,7 @@
 	Builder::~Builder() {
 	}
 
-	bool Builder::apply(Source &source) {
+	bool Builder::apply(Source &) {
 		return true;
 	}
 

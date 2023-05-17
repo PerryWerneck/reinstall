@@ -427,6 +427,6 @@ clean: \
 	cleanDebug \
 	cleanRelease
 
--include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES) $(ISOBUILDER_SOURCES) $(NETINSTALL_SOURCES) $(GRUB_SOURCES)), $(OBJDBG)/$(SRC).d)
--include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES) $(ISOWRITER_SOURCES) $(ISOBUILDER_SOURCES) $(NETINSTALL_SOURCES) $(GRUB_SOURCES)), $(OBJRLS)/$(SRC).d)
+-include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES)), $(OBJDBG)/$(SRC).d)
+-include $(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES)), $(OBJRLS)/$(SRC).d)
 

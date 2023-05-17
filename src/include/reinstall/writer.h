@@ -79,10 +79,10 @@
 		static std::shared_ptr<Writer> USBWriterFactory(const Reinstall::Action &action, size_t length = 0);
 
 		/// @brief Format USB storage device.
-		virtual void format(const char *fsname) = 0;
+		virtual void format(const char *fsname);
 
 		/// @brief Get disk image.
-		virtual std::shared_ptr<Disk::Image> DiskImageFactory(const char *fsname) = 0;
+		virtual std::shared_ptr<Disk::Image> DiskImageFactory(const char *fsname);
 	};
 
 	class UDJAT_API FileWriter : public Writer {
