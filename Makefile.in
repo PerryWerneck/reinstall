@@ -177,6 +177,11 @@ install-%: \
 
 	@$(MAKE) -C `dirname $<` DESTDIR=$(DESTDIR) install
 
+install-module-%: \
+	src/modules/%/Makefile
+
+	@$(MAKE) -C `dirname $<` DESTDIR=$(DESTDIR) install
+
 #---[ Release Targets ]------------------------------------------------------------------
 
 all: \
@@ -237,11 +242,11 @@ $(BINRLS)/$(SONAME): \
 install: \
 	install-@OSNAME@ \
 	install-locale \
+	$(foreach MODULE, $(MODULES), install-module-$(MODULE)) \
 	install-data
 
 install-linux: \
 	$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
-	$(foreach MODULE, $(MODULES), $(BINRLS)/modules/$(MODULE)@DLLEXT@) \
 	locale/$(PACKAGE_NAME).pot
 
 	# Install library
@@ -259,22 +264,6 @@ install-linux: \
 	@$(INSTALL_PROGRAM) \
 		$(BINRLS)/$(PRODUCT_NAME)@EXEEXT@ \
 		$(DESTDIR)$(bindir)
-
-	# Install modules
-	@$(MKDIR) \
-		$(DESTDIR)@MODULE_PATH@
-
-	@$(INSTALL_PROGRAM) \
-		$(BINRLS)/modules/isowriter@DLLEXT@ \
-		$(DESTDIR)@MODULE_PATH@
-
-	@$(INSTALL_PROGRAM) \
-		$(BINRLS)/modules/netinstall@DLLEXT@ \
-		$(DESTDIR)@MODULE_PATH@
-
-	@$(INSTALL_PROGRAM) \
-		$(BINRLS)/modules/grub@DLLEXT@ \
-		$(DESTDIR)@MODULE_PATH@
 
 	@$(MKDIR) \
 		$(DESTDIR)$(datarootdir)/applications
