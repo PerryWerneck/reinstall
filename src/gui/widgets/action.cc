@@ -21,6 +21,7 @@
 
  #include <private/widgets.h>
  #include <udjat/tools/quark.h>
+ #include <reinstall/action.h>
 
  using namespace Gtk;
  using namespace std;

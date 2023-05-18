@@ -37,8 +37,9 @@
 
  	};
 
- 	class Label : public Gtk::Label {
+	class Label : public Gtk::Label {
 	public:
+
 		Label(const pugi::xml_node &node, const char *attrname, Gtk::Align halign = Gtk::ALIGN_START, Gtk::Align valign=Gtk::ALIGN_START);
 
 		operator bool() const {
@@ -47,7 +48,7 @@
 
 	};
 
-	class Group : public Gtk::Grid, public Reinstall::Abstract::Group {
+ 	class Group : public Gtk::Grid, public Reinstall::Abstract::Group {
 	private:
 		Label label, body;
 		Icon icon;

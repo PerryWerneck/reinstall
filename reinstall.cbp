@@ -43,6 +43,7 @@
 		<Unit filename="src/gui/widgets/group.cc" />
 		<Unit filename="src/gui/widgets/label.cc" />
 		<Unit filename="src/gui/widgets/mainwindow.cc" />
+		<Unit filename="src/gui/widgets/url.cc" />
 		<Unit filename="src/include/config.h" />
 		<Unit filename="src/include/private/dialogs.h" />
 		<Unit filename="src/include/private/mainwindow.h" />
