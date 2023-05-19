@@ -42,12 +42,17 @@
 	Repository::~Repository() {
 	}
 
-	const char * Repository::url(bool expand) {
-#ifdef HAVE_OPENSLP
-		#error Implement SLP query.
-#else
+	const std::string Repository::get_url(bool expand) {
+
+		if(expand && slp) {
+			std::string url = slp.get_url();
+			if(!url.empty()) {
+				return url;
+			}
+		}
+
 		return path.url;
-#endif // HAVE_OPENSLP
+
 	}
 
  }

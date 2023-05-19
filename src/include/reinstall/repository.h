@@ -55,15 +55,27 @@
 			/// @brief URL for kernel parameter when SLP server was detected.
 			const char *kparm = "";
 
+			/// @brief User message while detecting.
+			const char *message = "";
+
+			/// @brief Allow local address?
+			bool allow_local = false;
+
+			/// @brief Resolved url
+			std::string url;
+
 		public:
-			constexpr SlpClient() {
-			}
+			SlpClient() = default;
 
 			SlpClient(const pugi::xml_node &node);
 
 			inline operator bool() const noexcept {
 				return (service_type && *service_type);
 			}
+
+			/// @brief Resolve SLP service, return URL
+			/// @return SLP response (empty if not found).
+			const char * get_url();
 
 		} slp;
 
@@ -93,7 +105,7 @@
 		/// @brief Get repository URL.
 		/// @param expand If true resolve the real URL using SLP.
 		/// @param Repository URL.
-		const char * url(bool expand = false);
+		const std::string get_url(bool expand = false);
 
 	};
 

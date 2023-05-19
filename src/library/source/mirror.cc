@@ -46,7 +46,7 @@
 				throw runtime_error(string{"A repository attribute is required to expand url '"} + url + "'");
 			}
 
-			url = action.repository(repository)->url(true);
+			url = action.repository(repository)->get_url(true);
 			url += this->url;
 
 			debug("url=",this->url," expanded=",url.c_str());
