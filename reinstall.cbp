@@ -81,6 +81,7 @@
 		<Unit filename="src/library/action/template.cc" />
 		<Unit filename="src/library/controller.cc" />
 		<Unit filename="src/library/dialogs/button.cc" />
+		<Unit filename="src/library/dialogs/popup.cc" />
 		<Unit filename="src/library/dialogs/progress.cc" />
 		<Unit filename="src/library/dialogs/taskrunner.cc" />
 		<Unit filename="src/library/dialogs/window.cc" />
