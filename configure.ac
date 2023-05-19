@@ -220,6 +220,21 @@ AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$app_cv_product",[The gettext package name.]
 AC_SUBST(GETTEXT_PACKAGE,$app_cv_product)
 
 dnl ---------------------------------------------------------------------------
+dnl Check for libslp
+dnl ---------------------------------------------------------------------------
+
+AC_CHECK_HEADER(slp.h, [app_cv_libslp="yes"], [AC_MSG_NOTICE([Can't find required file slp.h])])
+
+if test x$app_cv_libslp = xyes; then
+        AC_DEFINE(HAVE_LIBSLP, 1, [OpenSLP is available])
+        AC_SUBST(LIBSLP_LIBS,"-lslp")
+else
+        AC_SUBST(LIBSLP_LIBS,"")
+fi
+
+AC_SUBST(LIBSLP_CFLAGS)
+
+dnl ---------------------------------------------------------------------------
 dnl Check for ZIPLIB
 dnl ---------------------------------------------------------------------------
 
