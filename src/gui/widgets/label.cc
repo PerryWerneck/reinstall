@@ -20,6 +20,7 @@
  #include <config.h>
  #include <private/widgets.h>
  #include <udjat/tools/quark.h>
+ #include <udjat/tools/object.h>
 
  using namespace Gtk;
  using namespace std;

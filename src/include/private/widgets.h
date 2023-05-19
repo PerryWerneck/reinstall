@@ -66,6 +66,7 @@
 	private:
 		static Gtk::RadioButton::Group group;
 		Gtk::Grid grid;
+		Gtk::LinkButton help_button;
 		Label label, body;
 		Icon icon;
 

@@ -22,6 +22,7 @@
  #include <private/widgets.h>
  #include <udjat/tools/quark.h>
  #include <reinstall/action.h>
+ #include <reinstall/object.h>
 
  using namespace Gtk;
  using namespace std;
@@ -48,7 +49,35 @@
 		grid.get_style_context()->add_class("action-container");
 		label.get_style_context()->add_class("action-title");
 
-		grid.attach(label,1,0,1,1);
+		grid.attach(label,1,0,2,1);
+
+		// Do we have URL attribute
+		{
+			pugi::xml_node child = Reinstall::Abstract::Object::find(node, "help");
+			if(child) {
+
+				// Has help button
+				help_button.get_style_context()->add_class("action-title-help");
+
+				const char *url = child.attribute("url").as_string();
+
+				if(url && *url) {
+					help_button.set_uri(url);
+				}
+
+				const char *text = child.attribute("label").as_string();
+
+				if(text && *text) {
+					help_button.set_label(text);
+				} else {
+					// https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
+					help_button.set_image_from_icon_name(child.attribute("icon-name").as_string("help-faq"));
+				}
+
+			}
+
+		}
+
 		if(body) {
 			body.get_style_context()->add_class("action-subtitle");
 			grid.attach(body,1,1,2,1);
