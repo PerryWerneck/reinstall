@@ -145,6 +145,10 @@
 	timer.source->destroy();
  }
 
+ void Dialog::Progress::pulse()  {
+	timer.idle = 1000;
+ }
+
  void Dialog::Progress::footer(bool enable) {
 	if(enable) {
 		widgets.footer.show_all();

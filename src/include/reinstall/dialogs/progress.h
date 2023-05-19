@@ -56,6 +56,7 @@
 			virtual void set_sub_title(const char *subtitle);
 			virtual void set_step(const char *step);
 			virtual void set_icon_name(const char *icon_name);
+			virtual void pulse();
 
 			// Extends Udjat::Protocol::Watcher.
 			virtual void set_url(const char *url);

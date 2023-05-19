@@ -90,6 +90,7 @@
 		}
 
 		progress.set_url(service_type);
+		progress.pulse();
 
 		// https://github.com/ManageIQ/slp/blob/master/examples/raw_example.c
 		// https://docs.oracle.com/cd/E19455-01/806-0628/6j9vie80v/index.html

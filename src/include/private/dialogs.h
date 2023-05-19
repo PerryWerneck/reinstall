@@ -116,6 +116,7 @@
 		// Interface with libreinstall.
 		void show() override;
 		void hide() override;
+		void pulse() override;
 		void set_title(const char *title) override;
 		void set_sub_title(const char *title) override;
 		void set_step(const char *step) override;

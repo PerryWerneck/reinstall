@@ -73,6 +73,9 @@
 			set_sub_title(url);
 		}
 
+		void Progress::pulse() {
+		}
+
 		void Progress::set_step(const char *step) {
 		}
 
