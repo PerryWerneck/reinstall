@@ -43,7 +43,21 @@
 			text.expand(node,group);
 			text.strip();
 			if(!text.empty()) {
-				secondary = text.as_quark();
+				String str;
+				char *ptr = (char *) text.c_str();
+				while(*ptr) {
+					char *next = strchr(ptr,'\n');
+					if(next) {
+						*(next++) = 0;
+						str += strip(ptr);
+						ptr = next;
+					} else {
+						str += strip(ptr);
+						break;
+					}
+					str += '\n';
+				}
+				secondary = str.as_quark();
 			}
 		}
 
