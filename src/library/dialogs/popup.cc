@@ -32,7 +32,7 @@
 		const char *group = node.attribute("settings-from").as_string("popup-defaults");
 
 		destructive = Udjat::Object::getAttribute(node,group,"destructive",false);
-
+		markup = Udjat::Object::getAttribute(node,group,"markup",false);
 		message = Udjat::Object::getAttribute(node,group,"message","");
 
 		url.link = Udjat::Object::getAttribute(node,group,"url","");

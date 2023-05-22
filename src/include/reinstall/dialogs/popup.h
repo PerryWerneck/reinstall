@@ -32,6 +32,7 @@
 			const char *secondary = "";
 
 			bool destructive = false;
+			bool markup = false;
 
 			struct {
 				const char *link = "";

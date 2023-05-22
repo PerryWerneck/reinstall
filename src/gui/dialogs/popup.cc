@@ -40,7 +40,7 @@
  void Dialog::Popup::set(const Reinstall::Dialog::Popup &settings) {
 
 	if(settings.secondary) {
-		set_secondary_text(settings.secondary);
+		set_secondary_text(settings.secondary,settings.markup);
 	}
 
 	if(settings.destructive) {
