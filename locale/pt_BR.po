@@ -152,7 +152,7 @@ msgstr "Erro de I/O gravando imagem"
 msgid "Initialization has failed"
 msgstr "Inicialização falhou"
 
-#: src/library/action/action.cc:446 src/gui/dialogs/progress.cc:312
+#: src/library/action/action.cc:446 src/gui/dialogs/progress.cc:316
 msgid "Initializing"
 msgstr "Inicializando"
 
@@ -188,7 +188,7 @@ msgstr "Lendo lista de opções"
 msgid "Loading system installer ..."
 msgstr "Obtendo instalador ..."
 
-#: src/library/object.cc:80
+#: src/library/object.cc:80 src/library/dialogs/popup.cc:39
 msgid "More info"
 msgstr "Mais informações"
 
