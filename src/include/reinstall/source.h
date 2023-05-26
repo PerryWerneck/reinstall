@@ -75,9 +75,7 @@
 			return !filenames.saved.empty();
 		}
 
-		inline const char *filename() const noexcept {
-			return filenames.saved.c_str();
-		}
+		const char *filename(bool rw = false);
 
 		/// @brief Get path relative to partition.
 		const char * rpath() const;

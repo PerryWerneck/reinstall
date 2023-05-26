@@ -196,13 +196,15 @@
 					Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Adding EFI boot image"));
 
 					auto source = action->source(action->boot.efi->path());
-					const char *filename = source->filename();
+					const char *filename = source->filename(true);
 					if(!filename[0]) {
 						throw runtime_error(_("Unexpected filename on EFI boot image"));
 					}
 
 					// Apply templates on EFI boot image.
 					{
+						debug("Applying templates on EFI boot image at '",filename,"'");
+
 						Disk::Image disk(filename);
 
 						for(auto tmpl : action->templates) {

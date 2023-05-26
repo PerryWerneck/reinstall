@@ -32,6 +32,25 @@
 
  namespace Reinstall {
 
+	const char * Source::filename(bool rw) {
+
+		if(!rw) {
+			return filenames.saved.c_str();
+		}
+
+		if(filenames.temp.empty()) {
+
+			// Will change contents, create a temporary file name.
+			filenames.temp = File::Temporary::create();
+			filenames.saved.clear();
+			save(filenames.temp.c_str());
+
+		}
+
+		return filenames.saved.c_str();
+
+	}
+
  	void Source::save(const char *filename) {
 
 		if(!filenames.saved.empty()) {
@@ -102,6 +121,7 @@
 		progress.set_url(worker->url().c_str());
 
 		// Download to temporary file.
+		debug("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
 		filenames.temp = worker->save([&progress](double current, double total){
 			progress.set_progress(current,total);
 			return true;
