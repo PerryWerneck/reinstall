@@ -95,6 +95,11 @@
 
 		} widgets;
 
+		struct {
+			std::string title;
+			std::string subtitle;
+		} text;
+
 	public:
 		Progress();
 		virtual ~Progress();
@@ -123,6 +128,9 @@
 		void set_icon_name(const char *icon_name) override;
 		void set(const Reinstall::Abstract::Object &object) override;
 		void set_url(const char *url) override;
+
+		const char * get_title() const override;
+		const char * get_sub_title() const override;
 
 	};
 

@@ -23,6 +23,7 @@
  #include <reinstall/dialogs/progress.h>
  #include <udjat/tools/logger.h>
  #include <udjat/net/ip/address.h>
+ #include <udjat/tools/intl.h>
  #include <vector>
  #include <sys/types.h>
  #include <sys/socket.h>
@@ -85,9 +86,9 @@
 		// Detect URL
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
-		if(message && *message) {
-			progress.set_sub_title(message);
-		}
+		std::string dialog_sub_title{progress.get_sub_title()};
+
+		progress.set_sub_title((message && *message) ? message : _("Searching for server"));
 
 		progress.set_url(service_type);
 		progress.pulse();
@@ -198,6 +199,9 @@
 		}
 
 		SLPClose(hSlp);
+
+		progress.set_sub_title(dialog_sub_title.c_str());
+		progress.set_url(url.c_str());
 
 		return url.c_str();
 	}

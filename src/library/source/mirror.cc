@@ -84,6 +84,8 @@
 				layout = action.repository(repository)->layout;
 			}
 
+			Dialog::Progress::getInstance().set_url(url.c_str());
+
 			switch(layout) {
 			case Repository::ApacheLayout:
 				debug("Loading contents from '",url.c_str(),"' in apache format");
