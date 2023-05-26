@@ -206,7 +206,7 @@
 			"vfat",
 			[](const char *dev, unsigned long long szimage) {
 
-				Logger::String{"Creating fat32 image with ",String{}.set_byte(szimage).c_str()}.trace("disk");
+				Logger::String{"Creating fat32 image '",dev,"' with ",String{}.set_byte(szimage).c_str()}.trace("disk");
 
 				int fd = ::open(dev,O_CREAT|O_TRUNC|O_WRONLY,0644);
 				if(fd < 0) {

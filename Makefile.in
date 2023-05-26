@@ -286,6 +286,14 @@ install-linux: \
 	@$(INSTALL_DATA) \
 		icon.svg \
 		$(DESTDIR)$(datarootdir)/icons/$(APPLICATION_ID).svg
+		
+	# Install tmpfiles.d
+	@$(MKDIR) \
+		$(DESTDIR)/etc/tmpfiles.d
+	
+	@$(INSTALL_DATA) \
+		sysconf/tmpfiles.d \
+		$(DESTDIR)/etc/tmpfiles.d/@PACKAGE_NAME@
 
 install-windows: \
 	$(BINRLS)/@SONAME@

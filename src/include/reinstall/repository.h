@@ -33,7 +33,10 @@
 		struct Path {
 
 			/// @brief Repository URL got from XML definition.
-			const char * url = "";
+			const char * remote = "";
+
+			/// @brief Repository PATH on local harddisk from xml definition.
+			const char * local = "";
 
 			Path(const pugi::xml_node &node);
 
