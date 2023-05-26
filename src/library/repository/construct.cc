@@ -23,17 +23,18 @@
  #include <udjat/tools/string.h>
  #include <udjat/tools/object.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/xml.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	static Repository::Layout LayoutFactory(const pugi::xml_node &node) {
-		return (Repository::Layout) Udjat::String{node,"layout","apache"}.select("apache","mirrorcache",nullptr);
+	static inline Repository::Layout LayoutFactory(const pugi::xml_node &node) {
+		return (Repository::Layout) XML::StringFactory(node,"layout","value","apache").select("apache","mirrorcache",nullptr);
 	}
 
-	Repository::Path::Path(const pugi::xml_node &node) : url(Quark(node,"url").c_str()) {
+	Repository::Path::Path(const pugi::xml_node &node) : url{XML::QuarkFactory(node,"url").c_str()} {
 	}
 
 	Repository::Repository(const pugi::xml_node &node) : NamedObject(node), path(node), slp(node), layout{LayoutFactory(node)} {

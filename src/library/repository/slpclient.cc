@@ -38,12 +38,12 @@
  namespace Reinstall {
 
 	Repository::SlpClient::SlpClient(const pugi::xml_node &node)
-		: service_type{Quark(node,"slp-service-type").c_str()},
-			scope{Quark(node,"slp-scope").c_str()},
-			filter{Quark(node,"slp-filter").c_str()},
-			kparm{Quark(node,"slp-kernel-parameter","").c_str()},
-			message{Quark(node,"slp-search-message","").c_str()},
-			allow_local{node.attribute("allow-local").as_bool(false)} {
+		: service_type{XML::QuarkFactory(node,"slp-service-type").c_str()},
+			scope{XML::QuarkFactory(node,"slp-scope").c_str()},
+			filter{XML::QuarkFactory(node,"slp-filter").c_str()},
+			kparm{XML::QuarkFactory(node,"slp-kernel-parameter").c_str()},
+			message{XML::QuarkFactory(node,"slp-search-message").c_str()},
+			allow_local{XML::StringFactory(node,"slp-allow-local").as_bool(false)} {
 	}
 
  #ifdef HAVE_LIBSLP
