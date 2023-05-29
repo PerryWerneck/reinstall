@@ -46,6 +46,7 @@
 	}
 
 	std::shared_ptr<Writer> Builder::burn(std::shared_ptr<Reinstall::Writer> writer) {
+		debug("Empty burner");
 		return writer;
 	}
 

@@ -57,20 +57,7 @@
 
 		} boot;
 
-		/*
-		struct {
-			bool enabled = true;
-			const char *boot_image = "/boot/x86_64/efi";
-		} efi;
-		*/
-
 	protected:
-
-		/// brief Post scripts.
-		// std::vector<Script> post_scripts;
-
-		/// @brief Run image post-processing (isohybrid).
-		// void post(const char *isoname);
 
 	public:
 		IsoBuilder(const pugi::xml_node &node, const char *icon_name = "drive-removable-media");

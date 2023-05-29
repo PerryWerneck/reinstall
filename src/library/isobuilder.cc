@@ -244,6 +244,7 @@
 	}
 
 	std::shared_ptr<Reinstall::Writer> IsoBuilder::WriterFactory() {
+		debug("Returning USB writer");
 		return Reinstall::Writer::USBWriterFactory(*this);
 	}
 

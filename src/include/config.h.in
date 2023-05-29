@@ -9,6 +9,9 @@
 /* Do we have d-bus? */
 #undef HAVE_DBUS
 
+/* Do we have libfdisk? */
+#undef HAVE_FDISK
+
 /* Define to 1 if gmtime_r is available. */
 #undef HAVE_GMTIME_R
 

@@ -264,6 +264,14 @@ AC_SUBST(PUGIXML_LIBS)
 AC_SUBST(PUGIXML_CFLAGS)
 
 dnl ---------------------------------------------------------------------------
+dnl Check for fdisk
+dnl ---------------------------------------------------------------------------
+
+PKG_CHECK_MODULES(FDISK, fdisk, AC_DEFINE(HAVE_FDISK,[],[Do we have libfdisk?]),AC_MSG_ERROR(libfdisk is required))
+AC_SUBST(FDISK_LIBS)
+AC_SUBST(FDISK_CFLAGS)
+
+dnl ---------------------------------------------------------------------------
 dnl Check for libburn
 dnl ---------------------------------------------------------------------------
 

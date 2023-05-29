@@ -27,6 +27,7 @@
  #include <udjat/tools/file.h>
  #include <udjat/tools/configuration.h>
  #include <udjat/tools/quark.h>
+ #include <cstdio>
 
  using namespace std;
  using namespace Udjat;
@@ -47,14 +48,21 @@
 	std::shared_ptr<Reinstall::Builder> FSBuilder::BuilderFactory() {
 
 		class Builder : public Reinstall::Builder, private Disk::Image {
+		private:
+			std::string filename;
+
 		public:
-			Builder(const char *filename, const char *fsname, unsigned long long length)
+			Builder(const std::string &fname, const char *fsname, unsigned long long length)
 				: Disk::Image{
-					filename,
+					fname.c_str(),
 					fsname,
 					length
-				} {
+				}, filename{fname} {
 
+			}
+
+			virtual ~Builder() {
+				remove(filename.c_str());
 			}
 
 			void pre(const Action &action) override {
@@ -71,14 +79,21 @@
 				return true;
 			}
 
+			std::shared_ptr<Writer> burn(std::shared_ptr<Writer> writer) override {
+
+				throw runtime_error("Incomplete");
+
+			}
+
 		};
 
-		filename = File::Temporary::create();
-		return make_shared<Builder>(filename.c_str(),fsname,imglen);
+
+		return make_shared<Builder>(File::Temporary::create(),fsname,imglen);
 
 	}
 
 	std::shared_ptr<Reinstall::Writer> FSBuilder::WriterFactory() {
+		debug("Returning USB writer");
 		return Reinstall::Writer::USBWriterFactory(*this);
 	}
 

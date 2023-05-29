@@ -83,7 +83,8 @@ CFLAGS= \
 	@GTK_CFLAGS@ \
 	@ZIPLIB_CFLAGS@ \
 	@JSON_CFLAGS@ \
-	@LIBSLP_CFLAGS@
+	@LIBSLP_CFLAGS@ \
+	@FDISK_CFLAGS@
 
 LDFLAGS=\
 	@LDFLAGS@
@@ -95,7 +96,8 @@ LIBS= \
 	@GTK_LIBS@ \
 	@ZIPLIB_LIBS@ \
 	@JSON_LIBS@ \
-	@LIBSLP_LIBS@
+	@LIBSLP_LIBS@ \
+	@FDISK_CFLAGS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 
