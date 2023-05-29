@@ -20,7 +20,7 @@
  #pragma once
 
  #include <config.h>
- #include <udjat/udjat/defs.h>
+ #include <udjat/defs.h>
  #include <reinstall/writer.h>
 
  using namespace std;
@@ -28,5 +28,34 @@
 
  namespace Reinstall {
 
+	namespace Device {
+
+		/// @brief Loop device.
+		class UDJAT_PRIVATE Loop : public std::string {
+		private:
+
+			long devnumber; ///< @brief Loop device number.
+
+			struct {
+				int control = -1;
+				int image = -1;
+				int device = -1;
+			} fd;
+
+		public:
+			Loop();
+			Loop(const char *filename);
+			~Loop();
+
+			/// @brief Bind filename in loop device.
+			void bind(const char *filename);
+
+			/// @brief Disconnect device from file.
+			void unbind();
+
+		};
+
+
+	}
 
  }

@@ -47,39 +47,47 @@
 
 	std::shared_ptr<Reinstall::Builder> FSBuilder::BuilderFactory() {
 
-		class Builder : public Reinstall::Builder, private Disk::Image {
+		class Builder : public Reinstall::Builder {
 		private:
+			Disk::Image *disk;
 			std::string filename;
 
 		public:
 			Builder(const std::string &fname, const char *fsname, unsigned long long length)
-				: Disk::Image{
-					fname.c_str(),
-					fsname,
-					length
-				}, filename{fname} {
-
+				: disk{new Disk::Image(fname.c_str(),fsname,length)}, filename{fname} {
 			}
 
 			virtual ~Builder() {
+				if(disk) {
+					delete disk;
+					disk = nullptr;
+				}
+#ifndef DEBUG
 				remove(filename.c_str());
+#endif // DEBUG
 			}
 
-			void pre(const Action &action) override {
+			void pre(const Action &) override {
 			}
 
-			void post(const Action &action) override {
+			void post(const Action &) override {
 			}
 
-			void build(Action &action) override {
+			void build(Action &) override {
 			}
 
 			bool apply(Source &source) override {
-				Disk::Image::insert(source);
+				disk->insert(source);
 				return true;
 			}
 
 			std::shared_ptr<Writer> burn(std::shared_ptr<Writer> writer) override {
+
+				// Close disk image
+				delete disk;
+				disk = nullptr;
+
+				// Burk disk image.
 
 				throw runtime_error("Incomplete");
 

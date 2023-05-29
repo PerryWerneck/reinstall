@@ -93,6 +93,7 @@
 		<Unit filename="src/library/os/linux/abstract_writer.cc" />
 		<Unit filename="src/library/os/linux/disk_image.cc" />
 		<Unit filename="src/library/os/linux/fsbuilder.cc" />
+		<Unit filename="src/library/os/linux/loop.cc" />
 		<Unit filename="src/library/os/linux/private.h" />
 		<Unit filename="src/library/os/linux/reboot.cc" />
 		<Unit filename="src/library/os/linux/source.cc" />

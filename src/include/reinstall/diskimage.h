@@ -29,8 +29,7 @@
 
 		class UDJAT_API Image {
 		private:
-			struct Handler;
-
+			class Handler;
 			Handler *handler = nullptr;
 
 		public:
@@ -44,6 +43,8 @@
 
 			void copy(const char *from, const char *to);
 			void insert(Reinstall::Source &source);
+
+			void umount();
 
 		};
 

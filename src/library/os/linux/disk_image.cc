@@ -22,6 +22,7 @@
  #endif // !_GNU_SOURCE
 
  #include <config.h>
+ #include "private.h"
  #include <reinstall/diskimage.h>
  #include <reinstall/dialogs.h>
  #include <udjat/tools/file.h>
@@ -46,151 +47,21 @@
 
  namespace Reinstall {
 
-	static void retry(const std::function<bool(int current, int total)> &exec) {
+	// @brief Abstract disk image handler.
+	class Disk::Image::Handler {
+	public:
 
-		for(size_t ix = 0; ix < 10; ix++) {
-
-			try {
-
-				if(exec(ix+1,10)) {
-					return;
-				}
-
-			} catch(const std::exception &e) {
-
-				clog << "disk\t" << e.what() << endl;
-
-			} catch(...) {
-
-				clog << "disk\tUnexpected error" << endl;
-
-			}
-
-			usleep(100);
-
-		}
-
-		cerr << "disk\tAborting disk image cleanup due too many retries" << endl;
-
-	}
-
-	struct Disk::Image::Handler {
+		/// @brief Loop device.
+		Device::Loop device;
 
 		/// @brief Mountpoint.
 		std::string mountpoint;
 
-		struct {
-			int fd;
-			int ctl;
-			long devnr;			///< @brief Loop device number.
-			std::string name;	///< @brief Name of the loop device.
-		} loop;
-
-		struct {
-			int fd;				///< @brief Image fd.
-		} image;
-
-		Handler(const char *imgpath) : mountpoint(File::Temporary::mkdir()) {
-
-			//
-			// https://stackoverflow.com/questions/11295154/how-do-i-loop-mount-programmatically
-			//
-
-#ifdef DEBUG
-			cout << "disk\tUsing '" << mountpoint << "' for mountpoint" << endl;
-#endif // DEBUG
-
-			//
-			// Get a free loop device
-			//
-			loop.ctl = open("/dev/loop-control", O_RDWR);
-			if(loop.ctl == -1) {
-				throw system_error(errno, system_category(),"/dev/loop-control");
-			}
-
-			loop.devnr = ioctl(loop.ctl, LOOP_CTL_GET_FREE);
-
-			if (loop.devnr == -1) {
-				close(loop.ctl);
-				throw system_error(errno, system_category(),_("Can't get an available loop device"));
-			}
-
-			//
-			// Open loop device
-			//
-			loop.name = "/dev/loop";
-			loop.name += to_string(loop.devnr);
-
-			loop.fd = open(loop.name.c_str(), O_RDWR);
-			if(loop.fd == -1) {
-				close(loop.ctl);
-				throw system_error(errno, system_category(),loop.name);
-			}
-
-			//
-			// Connect image
-			//
-			image.fd = open(imgpath, O_RDWR);
-			if (image.fd == -1) {
-				close(loop.fd);
-				close(loop.ctl);
-				throw system_error(errno, system_category(),imgpath);
-			}
-
-			if (ioctl(loop.fd, LOOP_SET_FD, image.fd) == -1) {
-				close(image.fd);
-				close(loop.fd);
-				close(loop.ctl);
-				throw system_error(errno, system_category(),imgpath);
-			}
-
-			//
-			// Setup auto cleanup.
-			//
-			struct loop_info loopinfo;
-			memset(&loopinfo,0,sizeof(loopinfo));
-
-			if (ioctl(loop.fd, LOOP_GET_STATUS, &loopinfo) == -1) {
-				close(image.fd);
-				close(loop.fd);
-				close(loop.ctl);
-				throw system_error(errno, system_category(),_("Can't get loop device status"));
-			}
-
-			loopinfo.lo_flags |= LO_FLAGS_AUTOCLEAR;
-
-			if (ioctl(loop.fd, LOOP_SET_STATUS, &loopinfo) == -1) {
-				close(image.fd);
-				close(loop.fd);
-				close(loop.ctl);
-				throw system_error(errno, system_category(),_("Can't update loop device status"));
-			}
-
+		Handler(const char *imgpath) : device{imgpath}, mountpoint{File::Temporary::mkdir()} {
 		}
 
 		~Handler() {
-
-			debug("Destroying disk handler");
-
-			retry([this](int current, int total){
-
-				if (ioctl(loop.fd, LOOP_CLR_FD, 0) == 0) {
-					cout << "disk\tDevice '" << loop.name << "' released" << endl;
-					return true;
-				}
-
-				cerr << "disk\tError '" << strerror(errno) << "' releasing '" << loop.name << "' (" << current << "/" << total << ")" << endl;
-
-				return false;
-
-			});
-
-			close(image.fd);
-			close(loop.fd);
-			close(loop.ctl);
-
 			rmdir(mountpoint.c_str());
-
 		}
 
 	};
@@ -281,7 +152,7 @@
 
 		handler = new Handler(filename);
 
-		if(mount(handler->loop.name.c_str(), handler->mountpoint.c_str(), Config::Value<string>{"fsname",filesystemtype,worker.fsname}.c_str(), MS_NOATIME|MS_NODIRATIME, "") == -1) {
+		if(mount(handler->device.c_str(), handler->mountpoint.c_str(), Config::Value<string>{"fsname",filesystemtype,worker.fsname}.c_str(), MS_NOATIME|MS_NODIRATIME, "") == -1) {
 			delete handler;
 			throw system_error(errno, system_category(),Logger::String{"Cant mount ",filesystemtype," image using ",worker.fsname," filesystem"});
 		}
@@ -294,17 +165,17 @@
 
 		debug("Destroying disk image");
 
-		retry([this](int current, int total){
+		for(size_t i = 0; i < 200; i++) {
 
 			if(umount2(handler->mountpoint.c_str(),MNT_FORCE)) {
-				cout << "disk\tDevice '" << handler->loop.name << "' umounted" << endl;
-				return true;
+				cout << "disk\tDevice '" << handler->device.c_str() << "' umounted" << endl;
+				break;
 			}
 
-			cerr << "disk\tError '" << strerror(errno) << "' (rc=" << errno << ") umounting " << handler->loop.name << " ("  << current << "/" << total << ")" << endl;
-			return false;
+			cerr << "disk\tError '" << strerror(errno) << "' (rc=" << errno << ") umounting " << handler->device.c_str() << " ("  << i << "/" << 200 << ")" << endl;
+			sleep(10);
 
-		});
+		}
 
 		delete handler;
 	}
