@@ -63,7 +63,7 @@
 		/// @brief Open Device for writing
 		virtual void open();
 
-		/// @brief Write data do device.
+		/// @brief Write data to device.
 		virtual void write(const void *buf, size_t count);
 
 		virtual void finalize();

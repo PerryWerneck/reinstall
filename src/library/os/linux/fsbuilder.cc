@@ -88,6 +88,16 @@
 				disk = nullptr;
 
 				// Burk disk image.
+				debug("Fat image='",filename,"'");
+
+#ifdef HAVE_FDISK
+				if(parted) {
+					// Create Tempfile
+					std::string header{File::Temporary::create(512)};
+
+				}
+#endif // HAVE_FDISK
+
 
 				throw runtime_error("Incomplete");
 

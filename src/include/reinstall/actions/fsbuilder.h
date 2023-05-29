@@ -36,6 +36,9 @@
 		/// @brief The image filename.
 		std::string filename;
 
+		/// @brief Create partition header?
+		bool parted = true;
+
 	public:
 		FSBuilder(const pugi::xml_node &node, const char *icon_name = "drive-removable-media");
 		virtual ~FSBuilder();
