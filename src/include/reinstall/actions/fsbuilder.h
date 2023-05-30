@@ -37,7 +37,12 @@
 		std::string filename;
 
 		/// @brief Create partition header?
-		bool parted = true;
+		enum PartitionType : uint8_t {
+			NoPartition,
+			DosPartition,
+
+			InvalidPartitionType
+		} part;
 
 	public:
 		FSBuilder(const pugi::xml_node &node, const char *icon_name = "drive-removable-media");
