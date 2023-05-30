@@ -23,6 +23,7 @@
  #include <reinstall/actions/fsbuilder.h>
  #include <reinstall/diskimage.h>
  #include <reinstall/dialogs/progress.h>
+ #include <reinstall/writer.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/file.h>
@@ -66,7 +67,7 @@
 	}
 
 #ifdef HAVE_FDISK
-	static int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask, void *data) {
+	static int ask_callback(struct fdisk_context *, struct fdisk_ask *ask, void *) {
 
 		switch(fdisk_ask_get_type(ask)) {
 		case FDISK_ASKTYPE_INFO:
@@ -129,12 +130,8 @@
 
 			std::shared_ptr<Writer> burn(std::shared_ptr<Writer> writer) override {
 
-				int rc = 0;
-				char buffer[512];
-
 				Dialog::Progress &progress = Dialog::Progress::getInstance();
 				progress.set_sub_title(_("Preparing to write"));
-				double imgsize, current = 0;
 
 				// Close disk image
 				delete disk;
@@ -156,17 +153,16 @@
 					throw system_error(err,system_category(),"Cant get FAT32 stat");
 				}
 
-				imgsize = imgStat.st_size;
-
 				try {
 
 #ifdef HAVE_FDISK
 					if(part != NoPartition) {
 
-						// Create partition on the first sector.
-						imgsize += 512;
-						std::string device{File::Temporary::create(512)};
+						progress.set_sub_title(_("Building partition table"));
 
+						// https://fossies.org/linux/util-linux/libfdisk/samples/mkpart.c
+
+						// Create partition on the first sector.
 						struct fdisk_context *cxt = fdisk_new_context();
 						if(!cxt) {
 							throw runtime_error("Unexpected error on fdisk_new_context");
@@ -179,34 +175,74 @@
 							throw runtime_error("Unexpected error on fdisk_new_partition");
 						}
 
+						// std::string device{File::Temporary::create(2048)};
+						std::string device{File::Temporary::create(4096 + imgStat.st_size)};
+
+						debug("Device: ",device);
+
 						if(fdisk_assign_device(cxt, device.c_str(), 0)) {
 							fdisk_unref_context(cxt);
 							fdisk_unref_partition(pa);
 							throw runtime_error("Unexpected error on fdisk_new_partition");
 						}
 
+						if(fdisk_create_disklabel(cxt, "dos")) {
+							fdisk_unref_context(cxt);
+							fdisk_unref_partition(pa);
+							throw runtime_error("Unexpected error on fdisk_create_disklabel");
+						}
+
 						try {
 
-							unsigned int sectorsize = fdisk_get_sector_size(cxt);
+							// https://cdn.kernel.org/pub/linux/utils/util-linux/v2.28/libfdisk-docs/libfdisk-Partition.html
+
+							uint64_t sectorsize = fdisk_get_sector_size(cxt);
+							uint64_t sectors = ((uint64_t) imgStat.st_size) / sectorsize;
 							fdisk_disable_dialogs(cxt, 1);
 
-							fdisk_partition_start_follow_default(pa, 1);
-							fdisk_partition_partno_follow_default(pa, 0);
-							fdisk_partition_end_follow_default(pa, 0);
+							debug("sectors=",sectors);
 
-							fdisk_partition_set_size(pa, imgStat.st_size / sectorsize);
-							fdisk_partition_set_partno(pa, 0);
+							fdisk_partition_start_follow_default(pa, 0);
+							if(fdisk_partition_set_start(pa, 2048) < 0) {
+								throw runtime_error("Unexpected error on fdisk_partition_set_start");
+							}
+
+							fdisk_partition_end_follow_default(pa, 0);
+							if(fdisk_partition_set_size(pa, sectors) < 0) {
+								throw runtime_error("Unexpected error on fdisk_partition_set_size");
+							}
+
+							fdisk_partition_partno_follow_default(pa, 0);
+							if(fdisk_partition_set_partno(pa, 0) < 0) {
+								throw runtime_error("Unexpected error on fdisk_partition_set_partno");
+							}
 
 							{
 								struct fdisk_parttype *type = fdisk_label_parse_parttype(fdisk_get_label(cxt, NULL), parttype);
-								throw runtime_error("Cant parse partition type");
+								if(!type) {
+									throw runtime_error(String{"Cant parse partition type '",parttype,"'"});
+								}
 								fdisk_partition_set_type(pa, type);
 								fdisk_unref_parttype(type);
 							}
 
+							Logger::String{
+								"Partition ",
+								fdisk_partition_get_partno(pa),
+								" from ",
+								fdisk_partition_get_start(pa),
+								" to ",
+								fdisk_partition_get_end(pa),
+								" with ",
+								fdisk_partition_get_size(pa),
+								" sectors of ",
+								sectorsize,
+								" bytes"
+							}.trace("fdisk");
+
 							errno = - fdisk_add_partition(cxt, pa, NULL);
 							if(errno) {
-								throw system_error(errno,system_category(),"Cant write partition");
+								throw system_error(errno,system_category(),"Cant add partition");
 							}
 
 							if(fdisk_write_disklabel(cxt)) {
@@ -218,6 +254,9 @@
 							fdisk_deassign_device(cxt, 1);
 							fdisk_unref_context(cxt);
 							fdisk_unref_partition(pa);
+#ifndef DEBUG
+							remove(device.c_str());
+#endif // DEBUG
 							throw;
 
 						}
@@ -227,7 +266,28 @@
 						fdisk_unref_partition(pa);
 
 						// Write partition.
-						progress.set_sub_title(_("Writing partition table"));
+						{
+							int fd = ::open(device.c_str(),O_RDONLY);
+							if(fd < 0) {
+								throw system_error(errno,system_category(),"Unexpected error opening partition image");
+							}
+
+							char buffer[2048];
+							if(read(fd, buffer, 2048) != 2048) {
+								int err = errno;
+								::close(fd);
+								throw system_error(err,system_category(),"Unexpected error reading partition image");
+							}
+
+							::close(fd);
+
+#ifndef DEBUG
+							remove(device.c_str());
+#endif // DEBUG
+
+							writer->write(buffer,2048);
+
+						}
 
 					}
 

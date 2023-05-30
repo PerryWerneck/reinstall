@@ -97,7 +97,7 @@ LIBS= \
 	@ZIPLIB_LIBS@ \
 	@JSON_LIBS@ \
 	@LIBSLP_LIBS@ \
-	@FDISK_CFLAGS@
+	@FDISK_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 
