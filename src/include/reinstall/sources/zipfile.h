@@ -21,13 +21,12 @@
 
  #include <udjat/defs.h>
  #include <reinstall/source.h>
- #include <reinstall/sources/cached.h>
  #include <pugixml.hpp>
 
  namespace Reinstall {
 
 	/// @brief The source for the installation kernel;
-	class UDJAT_API ZipFile : public CachedFileSource {
+	class UDJAT_API ZipFile : public Source {
 	public:
 		ZipFile(const pugi::xml_node &node);
 

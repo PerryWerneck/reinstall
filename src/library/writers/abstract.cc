@@ -98,6 +98,7 @@
 
 	void Writer::make_partition(int fd, uint64_t length, const char *parttype) {
 
+		int rc = 0;
 		ssize_t dataoffset = 1048576;	// 2048 sectors
 
 		// Am I writing to block device?
@@ -121,19 +122,11 @@
 					throw system_error(errno,system_category(),"Cant allocate disk space");
 				}
 
+				// Just in case.
+				lseek(fd,0,SEEK_SET);
+
 			}
 
-		}
-
-		// Clear first block, just in case
-		{
-			char buffer[512];
-			memset(buffer,0,512);
-			for(ssize_t offset = 0; offset < dataoffset;offset += 512) {
-				if(pwrite(fd,buffer,512,offset) != 512) {
-					throw system_error(ENOENT,system_category(),"Error cleaning partition table");
-				}
-			}
 		}
 
 		// Create partition on the first sector.
@@ -143,6 +136,9 @@
 		}
 		fdisk_set_ask(cxt, ask_callback, NULL);
 
+		// https://cdn.kernel.org/pub/linux/utils/util-linux/v2.28/libfdisk-docs/libfdisk-Context.html#fdisk-enable-wipe
+		fdisk_enable_wipe(cxt,1);
+
 		struct fdisk_partition *pa = fdisk_new_partition();
 		if(!pa) {
 			fdisk_unref_context(cxt);
@@ -150,7 +146,9 @@
 		}
 		fdisk_partition_size_explicit(pa,1);
 
-		debug("----------> fd=",fd," /proc/",getpid(),"/fd/",fd);
+		/*
+
+		TODO: Find why fdisk_assign_device_by_fd doesnt work.
 
 		errno = - fdisk_assign_device_by_fd(cxt, fd, "diskimage", 0);
 		if(errno) {
@@ -158,14 +156,28 @@
 			fdisk_unref_partition(pa);
 			throw system_error(errno,system_category(),"fdisk_assign_device_by_fd has failed");
 		}
-
-		/*
-		if(fdisk_assign_device(cxt, devname, 0)) {
-			fdisk_unref_context(cxt);
-			fdisk_unref_partition(pa);
-			throw runtime_error("Unexpected error on fdisk_new_partition");
-		}
 		*/
+
+		{
+			// For some reason assing by fd doesnt work, then, I'm using the filename.
+			char fn[4097];
+
+			ssize_t sz = readlink(String{"/proc/self/fd/",fd}.c_str(),fn,4096);
+			if(sz < 0) {
+				throw system_error(errno,system_category(),"Cant get device path");
+			}
+
+			Logger::String{"Writing partition table to '",fn,"'"}.trace("fdisk");
+
+			fn[sz] = 0;
+			rc = fdisk_assign_device(cxt, fn, 0);
+			if(rc) {
+				fdisk_unref_context(cxt);
+				fdisk_unref_partition(pa);
+				throw system_error(-rc,system_category(),"fdisk_assign_device has failed");
+			}
+
+		}
 
 		if(fdisk_create_disklabel(cxt, "dos")) {
 			fdisk_unref_context(cxt);
@@ -226,7 +238,7 @@
 				" bytes"
 			}.trace("fdisk");
 
-			debug("Required length=",((fdisk_partition_get_end(pa)+1)*512));
+			dataoffset = fdisk_partition_get_start(pa) * sectorsize;
 
 			errno = - fdisk_add_partition(cxt, pa, NULL);
 			if(errno) {
@@ -235,10 +247,29 @@
 			}
 
 			// https://cdn.kernel.org/pub/linux/utils/util-linux/v2.35/libfdisk-docs/libfdisk-Label.html#fdisk-write-disklabel
-			errno = - fdisk_write_disklabel(cxt);
-			if(errno) {
-				throw system_error(errno,system_category(),"fdisk_write_disklabel has failed");
+			rc = fdisk_write_disklabel(cxt);
+			if(rc) {
+				throw system_error(-rc,system_category(),"fdisk_write_disklabel has failed");
 			}
+
+			/*
+			if(Logger::enabled(Logger::Trace)) {
+
+				struct fdisk_parition *pa;
+				char *data;
+
+				fdisk_get_partition(cxt, 0, &pa);
+				fdisk_partition_to_string(pa, FDISK_FIELD_UUID, &data);
+
+				if(data && *data) {
+					Logger::String{data}.trace("fdisk");
+
+				}
+				free(data);
+				fdisk_unref_partition(pa);
+
+			}
+			*/
 
 		} catch(...) {
 

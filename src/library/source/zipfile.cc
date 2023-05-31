@@ -42,7 +42,7 @@
 
 #ifdef HAVE_ZIPLIB
 
-	ZipFile::ZipFile(const pugi::xml_node &node) : CachedFileSource{node} {
+	ZipFile::ZipFile(const pugi::xml_node &node) : Source{node} {
 
 	}
 
@@ -50,16 +50,18 @@
 
 		struct Container {
 
+			std::string filename;
 			zip_t *handler;
 
-			Container(const char *filename) : handler{zip_open(filename,ZIP_RDONLY,NULL)} {
+			Container(const char *name) : filename{name}, handler{zip_open(name,ZIP_RDONLY,NULL)} {
+				Logger::String{"Opening ",filename}.trace("zip");
 				if(!handler) {
 					throw runtime_error(string("Cant open '") + filename + "'");
 				}
 			}
 
 			~Container() {
-				debug("Closing ZIP file");
+				Logger::String{"Closing ",filename}.trace("zip");
 				zip_close(handler);
 			}
 
@@ -116,19 +118,6 @@
                 ::close(out);
 				zip_fclose(zf);
 				progress.set_url("");
-
-			}
-
-			void save() override {
-
-				if(!filenames.saved.empty()) {
-					warning() << "Already downloaded" << endl;
-					return;
-				}
-
-				filenames.temp = File::Temporary::create();
-				save(filenames.temp.c_str());
-				filenames.saved = filenames.temp;
 
 				container.reset();
 

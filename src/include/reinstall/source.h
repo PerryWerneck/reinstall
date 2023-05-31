@@ -105,7 +105,7 @@
 		void set(const Reinstall::Action &object);
 
 		/// @brief Download to temporary file.
-		virtual void save();
+		void save();
 
 		/// @brief Download to defined file.
 		virtual void save(const char *filename);

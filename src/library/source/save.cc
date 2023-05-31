@@ -70,26 +70,33 @@
 
  		filenames.saved = filename;
 
- 		if(strncasecmp(url,"file://",7) == 0) {
-
-			Udjat::File::copy(Udjat::URL{url}.ComponentsFactory().path.c_str(),filename,true);
-			return;
-
- 		}
-
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
-
-		auto worker = Protocol::WorkerFactory(this->url);
 
 		if(message && *message) {
 			progress.set_sub_title(message);
 		}
-		progress.set_url(worker->url().c_str());
 
-		worker->save(filename,[&progress](double current, double total){
-			progress.set_progress(current,total);
-			return true;
-		},true);
+		progress.set_url(url);
+
+ 		if(strncasecmp(url,"file://",7) == 0) {
+
+			// It's a file, just copy it.
+			Udjat::File::copy(Udjat::URL{url}.ComponentsFactory().path.c_str(),filename,
+			[&progress](double current, double total){
+				progress.set_progress(current,total);
+				return true;
+			},true);
+
+ 		} else {
+
+			// Not a file, download it.
+			Protocol::WorkerFactory(this->url)->save(filename,[&progress](double current, double total){
+				progress.set_progress(current,total);
+				return true;
+			},true);
+
+ 		}
+
 
 
  	}
@@ -111,6 +118,11 @@
 			throw runtime_error(_("Unable to get source with relative URL"));
 		}
 
+		if(strncasecmp(url,"file://",7) == 0) {
+			filenames.saved = (url + 7);
+			return;
+		}
+
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
 		auto worker = Protocol::WorkerFactory(this->url);
@@ -121,12 +133,8 @@
 		progress.set_url(worker->url().c_str());
 
 		// Download to temporary file.
-		debug("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-		filenames.temp = worker->save([&progress](double current, double total){
-			progress.set_progress(current,total);
-			return true;
-		});
-
+		filenames.temp = File::Temporary::create();
+		save(filenames.temp.c_str());
 		filenames.saved = filenames.temp;
 
 	}
