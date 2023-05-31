@@ -16,7 +16,9 @@ LIBRARY_SOURCES = \
 	$(wildcard src/library/repository/*.cc) \
 	$(wildcard src/library/source/*.cc) \
 	$(wildcard src/library/writers/*.cc) \
-	$(wildcard src/library/os/@OSNAME@/*.cc)
+	$(wildcard src/library/os/@OSNAME@/*.cc) \
+	$(wildcard src/library/os/@OSNAME@/*.cc) \
+	$(wildcard src/fatfs/source/*.c)	
 
 GUI_SOURCES= \
 	$(wildcard src/gui/*.cc) \
@@ -27,6 +29,7 @@ GUI_SOURCES= \
 #---[ Tools ]----------------------------------------------------------------------------
 
 CXX=@CXX@
+CC=@CC@
 LD=@CXX@
 LN_S=@LN_S@
 MKDIR=@MKDIR_P@
@@ -71,10 +74,11 @@ POTDIR=.pot
 DEPENDS= \
 	Makefile
 
-CFLAGS= \
+CXXFLAGS= \
 	-fPIC \
 	@CXXFLAGS@ \
 	-Isrc/include \
+	-Isrc/fatfs/source \
 	-DBUILD_DATE=`date +%Y%m%d` \
 	-DLOCALEDIR=$(localedir) \
 	@UDJAT_CFLAGS@ \
@@ -85,6 +89,14 @@ CFLAGS= \
 	@JSON_CFLAGS@ \
 	@LIBSLP_CFLAGS@ \
 	@FDISK_CFLAGS@
+
+CFLAGS= \
+	-fPIC \
+	@CFLAGS@ \
+	-Isrc/include \
+	-Isrc/fatfs/source \
+	-DBUILD_DATE=`date +%Y%m%d` \
+	-DLOCALEDIR=$(localedir)
 
 LDFLAGS=\
 	@LDFLAGS@
@@ -109,11 +121,30 @@ $(OBJDBG)/%.o: \
 	@$(MKDIR) $(@D)
 
 	@$(CXX) \
-		$(CFLAGS) \
+		$(CXXFLAGS) \
 		-DDEBUG=1 \
 		-MM -MT $@ -MF $(patsubst %.o,%.d,$@) $<
 
 	@$(CXX) \
+		$(CXXFLAGS) \
+		-Wall -Wextra -fstack-check \
+		-DDEBUG=1 \
+		-o $@ \
+		-c $<
+
+$(OBJDBG)/%.o: \
+	%.c \
+	$(DEPENDS)
+
+	@echo $< ...
+	@$(MKDIR) $(@D)
+
+	@$(CC) \
+		$(CFLAGS) \
+		-DDEBUG=1 \
+		-MM -MT $@ -MF $(patsubst %.o,%.d,$@) $<
+
+	@$(CC) \
 		$(CFLAGS) \
 		-Wall -Wextra -fstack-check \
 		-DDEBUG=1 \
@@ -137,12 +168,12 @@ $(OBJRLS)/%.o: \
 	@$(MKDIR) $(@D)
 
 	@$(CXX) \
-		$(CFLAGS) \
+		$(CXXFLAGS) \
 		-DNDEBUG=1 \
 		-MM -MT $@ -MF $(patsubst %.o,%.d,$@) $<
 
 	@$(CXX) \
-		$(CFLAGS) \
+		$(CXXFLAGS) \
 		-DNDEBUG=1 \
 		-o $@ \
 		-c $<
