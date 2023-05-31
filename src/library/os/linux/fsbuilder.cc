@@ -39,10 +39,6 @@
 	#include <unistd.h>
  #endif // HAVE_UNISTD_H
 
- #ifdef HAVE_FDISK
-	#include <libfdisk.h>
- #endif // HAVE_FDISK
-
  using namespace std;
  using namespace Udjat;
 
@@ -65,30 +61,6 @@
 
 	FSBuilder::~FSBuilder() {
 	}
-
-#ifdef HAVE_FDISK
-	static int ask_callback(struct fdisk_context *, struct fdisk_ask *ask, void *) {
-
-		switch(fdisk_ask_get_type(ask)) {
-		case FDISK_ASKTYPE_INFO:
-			Logger::String{fdisk_ask_print_get_mesg(ask)}.info("fdisk");
-			break;
-
-		case FDISK_ASKTYPE_WARNX:
-			Logger::String{fdisk_ask_print_get_mesg(ask)}.error("fdisk");
-			break;
-
-		case FDISK_ASKTYPE_WARN:
-			Logger::String{fdisk_ask_print_get_mesg(ask),": ",strerror(fdisk_ask_print_get_errno(ask))}.error("fdisk");
-			break;
-
-		default:
-			break;
-		}
-
-		return 0;
-	}
-#endif // HAVE_FDISK
 
 	std::shared_ptr<Reinstall::Builder> FSBuilder::BuilderFactory() {
 
@@ -153,155 +125,53 @@
 					throw system_error(err,system_category(),"Cant get FAT32 stat");
 				}
 
-				try {
+				writer->open();
 
 #ifdef HAVE_FDISK
-					if(part != NoPartition) {
+				if(part != NoPartition) {
 
-						progress.set_sub_title(_("Building partition table"));
+					// Create partition.
+					progress.set_sub_title(_("Writing partition table"));
+					writer->make_partition(imgStat.st_size);
 
-						// https://fossies.org/linux/util-linux/libfdisk/samples/mkpart.c
+				}
+#endif // HAVE_FDISK
 
-						// Create partition on the first sector.
-						struct fdisk_context *cxt = fdisk_new_context();
-						if(!cxt) {
-							throw runtime_error("Unexpected error on fdisk_new_context");
-						}
-						fdisk_set_ask(cxt, ask_callback, NULL);
+				/*
+				// Write image.
+				{
+					progress.set_sub_title(_("Writing system image"));
 
-						struct fdisk_partition *pa = fdisk_new_partition();
-						if(!pa) {
-							fdisk_unref_context(cxt);
-							throw runtime_error("Unexpected error on fdisk_new_partition");
-						}
+					debug("fs-length=",imgStat.st_size," bytes");
 
-						// std::string device{File::Temporary::create(2048)};
-						std::string device{File::Temporary::create(4096 + imgStat.st_size)};
+					int64_t current = 0;
+					char buffer[2048];
+					while(current < imgStat.st_size) {
 
-						debug("Device: ",device);
-
-						if(fdisk_assign_device(cxt, device.c_str(), 0)) {
-							fdisk_unref_context(cxt);
-							fdisk_unref_partition(pa);
-							throw runtime_error("Unexpected error on fdisk_new_partition");
+						progress.set_progress(current,imgStat.st_size);
+						ssize_t bytes = read(fdImage,buffer,2048);
+						if(bytes < 0) {
+							throw system_error(errno,system_category(),"Error reading FS image");
+						} else if(bytes == 0) {
+							throw runtime_error("Unexpected EOF reading FS image");
 						}
 
-						if(fdisk_create_disklabel(cxt, "dos")) {
-							fdisk_unref_context(cxt);
-							fdisk_unref_partition(pa);
-							throw runtime_error("Unexpected error on fdisk_create_disklabel");
-						}
-
-						try {
-
-							// https://cdn.kernel.org/pub/linux/utils/util-linux/v2.28/libfdisk-docs/libfdisk-Partition.html
-
-							uint64_t sectorsize = fdisk_get_sector_size(cxt);
-							uint64_t sectors = ((uint64_t) imgStat.st_size) / sectorsize;
-							fdisk_disable_dialogs(cxt, 1);
-
-							debug("sectors=",sectors);
-
-							fdisk_partition_start_follow_default(pa, 0);
-							if(fdisk_partition_set_start(pa, 2048) < 0) {
-								throw runtime_error("Unexpected error on fdisk_partition_set_start");
-							}
-
-							fdisk_partition_end_follow_default(pa, 0);
-							if(fdisk_partition_set_size(pa, sectors) < 0) {
-								throw runtime_error("Unexpected error on fdisk_partition_set_size");
-							}
-
-							fdisk_partition_partno_follow_default(pa, 0);
-							if(fdisk_partition_set_partno(pa, 0) < 0) {
-								throw runtime_error("Unexpected error on fdisk_partition_set_partno");
-							}
-
-							{
-								struct fdisk_parttype *type = fdisk_label_parse_parttype(fdisk_get_label(cxt, NULL), parttype);
-								if(!type) {
-									throw runtime_error(String{"Cant parse partition type '",parttype,"'"});
-								}
-								fdisk_partition_set_type(pa, type);
-								fdisk_unref_parttype(type);
-							}
-
-							Logger::String{
-								"Partition ",
-								fdisk_partition_get_partno(pa),
-								" from ",
-								fdisk_partition_get_start(pa),
-								" to ",
-								fdisk_partition_get_end(pa),
-								" with ",
-								fdisk_partition_get_size(pa),
-								" sectors of ",
-								sectorsize,
-								" bytes"
-							}.trace("fdisk");
-
-							errno = - fdisk_add_partition(cxt, pa, NULL);
-							if(errno) {
-								throw system_error(errno,system_category(),"Cant add partition");
-							}
-
-							if(fdisk_write_disklabel(cxt)) {
-								throw runtime_error("Unexpected error on fdisk_write_disklabel");
-							}
-
-						} catch(...) {
-
-							fdisk_deassign_device(cxt, 1);
-							fdisk_unref_context(cxt);
-							fdisk_unref_partition(pa);
-#ifndef DEBUG
-							remove(device.c_str());
-#endif // DEBUG
-							throw;
-
-						}
-
-						fdisk_deassign_device(cxt, 1);
-						fdisk_unref_context(cxt);
-						fdisk_unref_partition(pa);
-
-						// Write partition.
-						{
-							int fd = ::open(device.c_str(),O_RDONLY);
-							if(fd < 0) {
-								throw system_error(errno,system_category(),"Unexpected error opening partition image");
-							}
-
-							char buffer[2048];
-							if(read(fd, buffer, 2048) != 2048) {
-								int err = errno;
-								::close(fd);
-								throw system_error(err,system_category(),"Unexpected error reading partition image");
-							}
-
-							::close(fd);
-
-#ifndef DEBUG
-							remove(device.c_str());
-#endif // DEBUG
-
-							writer->write(buffer,2048);
-
-						}
+						writer->write(buffer,bytes);
+						current += bytes;
 
 					}
 
-#endif // HAVE_FDISK
-
-
-					throw runtime_error("Incomplete");
-
-				} catch(...) {
-
-					::close(fdImage);
-					throw;
-
 				}
+				*/
+
+				progress.set_sub_title(_("Finalizing"));
+
+				writer->finalize();
+				writer->close();
+
+				progress.set_sub_title(_(""));
+
+				return writer;
 
 			}
 

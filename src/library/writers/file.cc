@@ -54,7 +54,7 @@
 
 	void FileWriter::open() {
 		Logger::String{"Writer for '",filename.c_str(),"' was open"}.trace(PACKAGE_NAME);
-		fd = ::open(filename.c_str(),O_CREAT|O_TRUNC|O_APPEND|O_WRONLY,0666);
+		fd = ::open(filename.c_str(),O_CREAT|O_TRUNC|O_APPEND|O_RDWR,0666);
 		if(fd < 0) {
 			throw system_error(errno,system_category(),filename);
 		}
@@ -62,6 +62,10 @@
 
 	void FileWriter::format(const char *fsname) {
 		super::format(filename.c_str(),fsname);
+	}
+
+	void FileWriter::make_partition(uint64_t length, const char *parttype) {
+		Reinstall::Writer::make_partition(fd,length,parttype);
 	}
 
 	std::shared_ptr<Disk::Image> FileWriter::DiskImageFactory(const char *fsname) {

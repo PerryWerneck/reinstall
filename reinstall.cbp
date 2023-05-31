@@ -103,6 +103,7 @@
 		<Unit filename="src/library/repository/slpclient.cc" />
 		<Unit filename="src/library/script.cc" />
 		<Unit filename="src/library/source/apache_mirror.cc" />
+		<Unit filename="src/library/source/cached.cc" />
 		<Unit filename="src/library/source/efiboot.cc" />
 		<Unit filename="src/library/source/initrd.cc" />
 		<Unit filename="src/library/source/kernel.cc" />

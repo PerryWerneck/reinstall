@@ -17,37 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
-
- #include <udjat/defs.h>
+ #include <config.h>
  #include <reinstall/source.h>
- #include <pugixml.hpp>
- #include <udjat/tools/application.h>
- #include <udjat/tools/intl.h>
- #include <stdexcept>
+ #include <reinstall/sources/cached.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	/// @brief Source for file in application cache.
-	class UDJAT_API CachedFileSource : public Source {
-	protected:
-		bool cache = true;
+	void CachedFileSource::save() {
 
-	public:
-		CachedFileSource(const pugi::xml_node &node, const char *defmessage = nullptr) : Source(node), cache{getAttribute(node,"cache",true)} {
-			if(!(url && *url)) {
-				throw runtime_error(_("Required attribute 'URL' is missing"));
-			}
-			if(!(message && *message)) {
-				message = defmessage;
-			}
+		if(strncasecmp(url,"file://",7)) {
+			Reinstall::Source::save(Udjat::Application::CacheDir().build_filename(url).c_str());
+		} else {
+			filenames.saved = url + 7;
 		}
 
-		void save() override;
-
-	};
+	}
 
  }
+

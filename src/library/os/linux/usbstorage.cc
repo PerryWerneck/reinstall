@@ -67,9 +67,11 @@
 			length = usbdevlength;	// No length, use the command-line set.
 		}
 
-		if(usbdevname && *usbdevname && length) {
+		if(usbdevname && *usbdevname) {
 
 			if(length) {
+
+				debug("Allocating ",length," bytes on ",usbdevname);
 
 				int fd = ::open(usbdevname,O_CREAT|O_TRUNC|O_WRONLY,0644);
 				if(fd < 0) {
@@ -88,6 +90,7 @@
 				::close(fd);
 			}
 
+			debug("Constructing usb file writer for '",usbdevname,"'");
 			return make_shared<FileWriter>(action,usbdevname);
 		}
 
@@ -232,6 +235,10 @@
 			/// @brief Write data do device.
 			void write(const void *buf, size_t count) override {
 				super::write(fd,buf,count);
+			}
+
+			void make_partition(uint64_t length, const char *parttype) override {
+				Reinstall::Writer::make_partition(fd,length,parttype);
 			}
 
 			void finalize() override {

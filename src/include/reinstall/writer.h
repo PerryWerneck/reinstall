@@ -49,10 +49,16 @@
 
 		static std::shared_ptr<Disk::Image> DiskImageFactory(const char *devname, const char *fsname);
 
+		/// @brief Create partition to open device.
+		static void make_partition(int fd, uint64_t length, const char *parttype);
+
 	public:
 
 		Writer(const Reinstall::Action &action);
 		virtual ~Writer();
+
+		/// @brief Create partition.
+		virtual void make_partition(uint64_t length, const char *parttype = "0c") = 0;
 
 		/// @brief Set USB device name.
 		static void setUsbDeviceName(const char *name);
@@ -94,6 +100,7 @@
 		FileWriter(const Reinstall::Action &action, const char *filename);
 		virtual ~FileWriter();
 
+		void make_partition(uint64_t length, const char *parttype = "0c") override;
 		void format(const char *fsname) override;
 		void open() override;
 		void close() override;
