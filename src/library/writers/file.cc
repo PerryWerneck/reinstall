@@ -64,9 +64,11 @@
 		super::format(filename.c_str(),fsname);
 	}
 
+	/*
 	void FileWriter::make_partition(uint64_t length, const char *parttype) {
 		Reinstall::Writer::make_partition(fd,length,parttype);
 	}
+	*/
 
 	std::shared_ptr<Disk::Image> FileWriter::DiskImageFactory(const char *fsname) {
 		return super::DiskImageFactory(filename.c_str(),fsname);

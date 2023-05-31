@@ -23,7 +23,7 @@
  #include <udjat/tools/string.h>
 
  #include <reinstall/actions/isobuilder.h>
- #include <reinstall/actions/fsbuilder.h>
+ #include <reinstall/actions/fatbuilder.h>
 
  using namespace std;
  using namespace Udjat;
@@ -45,7 +45,7 @@
 				break;
 
 			case 1: // fat32
-				Reinstall::push_back(node,make_shared<Reinstall::FSBuilder>(node));
+				Reinstall::push_back(node,make_shared<Reinstall::FatBuilder>(node));
 				break;
 
 			default:
@@ -53,8 +53,8 @@
 
 			}
 
-
 			return true;
+
 		}
 
 	};

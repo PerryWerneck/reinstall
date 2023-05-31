@@ -68,8 +68,8 @@
 		private:
 			Disk::Image *disk;
 			std::string filename;
-			const char *parttype = "0c";
-			FSBuilder::PartitionType part = FSBuilder::DosPartition; // FIX-ME
+			// const char *parttype = "0c";
+			// FSBuilder::PartitionType part = FSBuilder::DosPartition; // FIX-ME
 
 		public:
 			Builder(const std::string &fname, const char *fsname, unsigned long long length)
@@ -127,6 +127,7 @@
 
 				writer->open();
 
+/*
 #ifdef HAVE_FDISK
 				if(part != NoPartition) {
 
@@ -136,6 +137,7 @@
 
 				}
 #endif // HAVE_FDISK
+*/
 
 				// Write image.
 				{

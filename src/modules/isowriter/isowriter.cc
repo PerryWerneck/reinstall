@@ -27,7 +27,6 @@
  #include <sys/types.h>
  #include <sys/stat.h>
  #include <fcntl.h>
- #include <reinstall/sources/cached.h>
 
  #ifndef _WIN32
 	#include <unistd.h>
@@ -39,12 +38,24 @@
 
  IsoWriter::IsoWriter(const pugi::xml_node &node) : Reinstall::Action(node,"drive-removable-media") {
 
+	class Source : public Reinstall::Source {
+	public:
+		Source(const pugi::xml_node &node, const char *defmessage) : Reinstall::Source{node} {
+			if(!(url && *url)) {
+				throw runtime_error(_("Required attribute 'URL' is missing"));
+			}
+			if(!(message && *message)) {
+				message = defmessage;
+			}
+		}
+	};
+
  	if(!sources.empty()) {
 		Logger::String{"Discarding ",sources.size()," sources"}.warning(name());
  	}
 
 	sources.clear(); // Remove other sources.
-	sources.insert(make_shared<CachedFileSource>(node,_("Downloading ISO image")));
+	sources.insert(make_shared<Source>(node,_("Downloading ISO image")));
 
  }
 

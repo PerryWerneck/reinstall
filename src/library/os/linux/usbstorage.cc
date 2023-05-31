@@ -237,9 +237,11 @@
 				super::write(fd,buf,count);
 			}
 
+			/*
 			void make_partition(uint64_t length, const char *parttype) override {
 				Reinstall::Writer::make_partition(fd,length,parttype);
 			}
+			*/
 
 			void finalize() override {
 				debug("Finalizing");
