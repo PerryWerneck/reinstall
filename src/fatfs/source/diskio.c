@@ -25,32 +25,12 @@
 
 #define SECTOR_LENGTH 512
 
-/*-----------------------------------------------------------------------*/
-/*                                                                       */
-/*-----------------------------------------------------------------------*/
-
-DWORD get_fattime (void) {
-    time_t t;
-    struct tm *stm;
-
-
-    t = time(0);
-    stm = localtime(&t);
-
-    return (DWORD)(stm->tm_year - 80) << 25 |
-           (DWORD)(stm->tm_mon + 1) << 21 |
-           (DWORD)stm->tm_mday << 16 |
-           (DWORD)stm->tm_hour << 11 |
-           (DWORD)stm->tm_min << 5 |
-           (DWORD)stm->tm_sec >> 1;
-}
-
-
+/
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
 /*-----------------------------------------------------------------------*/
 
-static int disks[] = { -1, -1, -1 };
+static int disks[] = { -1 };
 
 #define MAX_DISKS (sizeof(disks)/sizeof(disks[0]))
 
@@ -62,33 +42,6 @@ DSTATUS disk_status (
 		return STA_NODISK;
 	}
 
-	/*
-	DSTATUS stat;
-	int result;
-
-	switch (pdrv) {
-	case DEV_RAM :
-		result = RAM_disk_status();
-
-		// translate the reslut code here
-
-		return stat;
-
-	case DEV_MMC :
-		result = MMC_disk_status();
-
-		// translate the reslut code here
-
-		return stat;
-
-	case DEV_USB :
-		result = USB_disk_status();
-
-		// translate the reslut code here
-
-		return stat;
-	}
-	*/
 	return RES_OK;
 }
 
@@ -105,7 +58,6 @@ DSTATUS disk_initialize (
 	if(pdrv > MAX_DISKS) {
 		return STA_NODISK;
 	}
-
 
 	return RES_OK;
 }
@@ -136,6 +88,7 @@ DRESULT disk_read (
 		}
 
 		count -= bytes;
+		offset += bytes;
 		buf = (((char *) buf) + count);
 
 	}
@@ -172,6 +125,7 @@ DRESULT disk_write (
 		}
 
 		count -= bytes;
+		offset += bytes;
 		buf = (((char *) buf) + count);
 
 	}
@@ -206,6 +160,51 @@ DRESULT disk_ioctl (
 		return STA_NODISK;
 	}
 
-	return RES_PARERR;
+	switch(cmd) {
+	case CTRL_SYNC:
+		fsync(disks[pdrv]);
+		break;
+
+	case GET_SECTOR_COUNT:
+		{
+			struct stat st;
+			if(fstat(disks[pdrv],&st) < 0) {
+				return RES_ERROR;
+			}
+			*((UINT *) buff) = st.st_blocks;
+		}
+		break;
+
+	case GET_SECTOR_SIZE:
+	case GET_BLOCK_SIZE
+		*((UINT *) buff) = 512;
+		break;
+
+	case CTRL_TRIM
+		break;
+
+	default:
+		return RES_PARERR;
+
+	}
+
+	return RES_OK;
+
+}
+
+DWORD get_fattime (void) {
+    time_t t;
+    struct tm *stm;
+
+
+    t = time(0);
+    stm = localtime(&t);
+
+    return (DWORD)(stm->tm_year - 80) << 25 |
+           (DWORD)(stm->tm_mon + 1) << 21 |
+           (DWORD)stm->tm_mday << 16 |
+           (DWORD)stm->tm_hour << 11 |
+           (DWORD)stm->tm_min << 5 |
+           (DWORD)stm->tm_sec >> 1;
 }
 

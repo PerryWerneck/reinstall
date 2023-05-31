@@ -28,7 +28,13 @@
 	class UDJAT_API FatBuilder : public Reinstall::Action {
 	private:
 
+		/// @brief The image size.
+		unsigned long long imglen = 0;
+
 	public:
+
+		class Disk;
+
 		FatBuilder(const pugi::xml_node &node, const char *icon_name = "drive-removable-media");
 		virtual ~FatBuilder();
 

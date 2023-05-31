@@ -20,15 +20,34 @@
 
  #include <config.h>
  #include <reinstall/actions/fatbuilder.h>
+ #include <reinstall/builder.h>
+ #include <udjat/tools/file.h>
+
+ #ifndef _GNU_SOURCE
+		#define _GNU_SOURCE             /* See feature_test_macros(7) */
+ #endif // _GNU_SOURCE
+
+ #include <fcntl.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
+	class UDJAT_PRIVATE FatBuilder::Disk : public Udjat::File::Temporary {
+	public:
+		Disk(unsigned long long imglen) {
+
+			if(imglen && fallocate(fd,0,0,imglen)) {
+				throw system_error(errno,system_category(),"Cant allocate FAT image");
+			}
+
+
+		}
+	};
+
 	FatBuilder::FatBuilder(const pugi::xml_node &node, const char *icon_name)
 		: Reinstall::Action(node,icon_name) {
-
 
 	}
 
@@ -36,7 +55,34 @@
 	}
 
 	std::shared_ptr<Reinstall::Builder> FatBuilder::BuilderFactory() {
-		throw runtime_error("Incomplete");
+
+		class Builder : public Reinstall::Builder {
+		private:
+			std::shared_ptr<FatBuilder::Disk> disk;
+
+		public:
+			Builder(const FatBuilder &action) : disk{make_shared<FatBuilder::Disk>(action.imglen)} {
+			}
+
+			void pre(const Action &action) override {
+			}
+
+			/// @brief Step 2, insert source, download it if necessary.
+			/// @return true if source was downloaded.
+			bool apply(Source &source) override {
+			}
+
+			/// @brief Step 3, build (after downloads).
+			void build(Action &action) override {
+			}
+
+			/// @brief Step 4, finalize.
+			void post(const Action &action) override {
+			}
+
+		};
+
+		return make_shared<Builder>(*this);
 	}
 
 	std::shared_ptr<Reinstall::Writer> FatBuilder::WriterFactory() {
