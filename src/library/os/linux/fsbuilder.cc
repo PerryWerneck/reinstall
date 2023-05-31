@@ -137,7 +137,6 @@
 				}
 #endif // HAVE_FDISK
 
-				/*
 				// Write image.
 				{
 					progress.set_sub_title(_("Writing system image"));
@@ -162,7 +161,6 @@
 					}
 
 				}
-				*/
 
 				progress.set_sub_title(_("Finalizing"));
 
