@@ -273,7 +273,6 @@
 		filename += source.path;
 
 		Dialog::Progress &dialog = Dialog::Progress::getInstance();
-
 		dialog.set_url(source.path);
 
 		debug(source.path," -> ",filename);

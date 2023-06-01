@@ -110,6 +110,9 @@
 		/// @brief Download to defined file.
 		virtual void save(const char *filename);
 
+		/// @brief Save file with custom writer.
+		virtual void save(const std::function<void(const void *buf, size_t length)> &write);
+
 		/// @brief Get folders contents.
 		/// @param action The current action.
 		/// @param contents Vector for the folder contents.

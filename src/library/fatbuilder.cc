@@ -27,6 +27,7 @@
  #include <reinstall/actions/fatbuilder.h>
  #include <reinstall/builder.h>
  #include <udjat/tools/file.h>
+ #include <reinstall/dialogs/progress.h>
  #include <ff.h>
  #include <diskio.h>
 
@@ -44,6 +45,10 @@
 	FatBuilder::FatBuilder(const pugi::xml_node &node, const char *icon_name)
 		: Reinstall::Action(node,icon_name), imglen{getImageSize(node)} {
 
+		if(!imglen) {
+			throw runtime_error("Required attribute 'size' is missing or invalid");
+		}
+
 	}
 
 	FatBuilder::~FatBuilder() {
@@ -53,41 +58,12 @@
 
 		class Builder : public Reinstall::Builder, private File::Temporary {
 		private:
+			FATFS fs;
 
 		public:
 			Builder(const FatBuilder &action) {
-
-				debug("---------------------- FATFS builder imglen=",action.imglen);
-
-				if(action.imglen && fallocate(fd,0,0,action.imglen)) {
+				if(fallocate(fd,0,0,action.imglen)) {
 					throw system_error(errno,system_category(),"Cant allocate FAT image");
-				}
-
-				if(disk_ioctl(0, CTRL_FORMAT, &this->fd) != RES_OK) {
-					throw runtime_error("Cant bind fatfs to disk image");
-				}
-
-				/*
-				// Create partition
-				{
-					BYTE work[FF_MAX_SS];
-					memset(work,0,sizeof(work));
-					LBA_t plist[] = {50, 50, 0};
-
-					f_fdisk(0, plist, work);
-				}
-				*/
-
-				// Format
-				{
-					BYTE work[FF_MAX_SS];
-					memset(work,0,sizeof(work));
-					auto rc = f_mkfs("0:", 0, work, sizeof work);
-
-					if(rc != FR_OK) {
-						throw runtime_error(Logger::String{"Unexpected error '",rc,"' on fatfs.mkfs"});
-					}
-
 				}
 
 #ifdef DEBUG
@@ -95,24 +71,101 @@
 #endif // DEBUG
 
 
-				throw runtime_error("Incomplete");
-
 			}
 
-			void pre(const Action &action) override {
+			void pre(const Action &) override {
+
+				if(disk_ioctl(0, CTRL_FORMAT, &this->fd) != RES_OK) {
+					throw runtime_error("Cant bind fatfs to disk image");
+				}
+
+				// Format
+				{
+					static const MKFS_PARM parm = {FM_FAT32, 0, 0, 0, 0};
+
+					BYTE work[FF_MAX_SS];
+					memset(work,0,sizeof(work));
+					auto rc = f_mkfs("0:", &parm, work, sizeof work);
+
+					if(rc != FR_OK) {
+						throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_mkfs"});
+					}
+
+				}
+
+				// Mount
+				{
+					auto rc = f_mount(&fs, "0:", 1);
+					if(rc != FR_OK) {
+						throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_mount"});
+					}
+				}
+
+
 			}
 
 			/// @brief Step 2, insert source, download it if necessary.
 			/// @return true if source was downloaded.
 			bool apply(Source &source) override {
+
+				Dialog::Progress &dialog = Dialog::Progress::getInstance();
+				dialog.set_url(source.path);
+
+				string filename{"0:"};
+
+				if(*source.path != '/') {
+					filename += '/';
+				}
+
+				filename += source.path;
+
+				debug(filename);
+
+				FIL fil;
+				memset(&fil,0,sizeof(fil));
+
+				auto rc = f_open(&fil, filename.c_str(), FA_CREATE_NEW);
+				if(rc == FR_NO_PATH) {
+
+					// Create directory.
+					const char *from = filename.c_str();
+					const char *to = strchr(from+3,'/');
+					while(to) {
+
+						auto res = f_mkdir(string{from,(size_t) (to-from)}.c_str());
+						if(!(res == FR_OK || res == FR_EXIST)) {
+							throw runtime_error(Logger::String{"Unexpected error '",res,"' on f_mkdir(",string{from,(size_t) (to-from)},")"});
+						}
+
+						to = strchr(to+1,'/');
+					}
+
+					// And try again...
+					rc = f_open(&fil, filename.c_str(), FA_CREATE_NEW);
+				}
+
+				if(rc != FR_OK) {
+					throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_open"});
+				}
+
+				f_close(&fil);
+
+
+				return false;
+
 			}
 
 			/// @brief Step 3, build (after downloads).
 			void build(Action &action) override {
+				throw runtime_error("Incomplete");
 			}
 
 			/// @brief Step 4, finalize.
 			void post(const Action &action) override {
+				auto rc = f_mount(NULL, "", 0);
+				if(rc != FR_OK) {
+					throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_umount"});
+				}
 			}
 
 		};
