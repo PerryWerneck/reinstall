@@ -65,12 +65,6 @@
 				if(fallocate(fd,0,0,action.imglen)) {
 					throw system_error(errno,system_category(),"Cant allocate FAT image");
 				}
-
-#ifdef DEBUG
-				link("/tmp/fatfs.bin");
-#endif // DEBUG
-
-
 			}
 
 			void pre(const Action &) override {
@@ -158,9 +152,6 @@
 					source.save([&fil](const void *buf, size_t length){
 
 						UINT wrote = 0;
-
-						debug("length=",length);
-
 						auto rc = f_write(&fil,buf,length,&wrote);
 						if(rc != FR_OK) {
 							throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_write"});
