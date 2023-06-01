@@ -124,6 +124,7 @@
 				FIL fil;
 				memset(&fil,0,sizeof(fil));
 
+				// Create file (and directory), open it ...
 				auto rc = f_open(&fil, filename.c_str(), FA_CREATE_NEW);
 				if(rc == FR_NO_PATH) {
 
@@ -140,7 +141,7 @@
 						to = strchr(to+1,'/');
 					}
 
-					// And try again...
+					// try again...
 					rc = f_open(&fil, filename.c_str(), FA_CREATE_NEW);
 				}
 
@@ -148,6 +149,32 @@
 					throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_open"});
 				}
 
+				// ... write file contents ...
+				source.save([&fil](const void *buf, size_t length){
+
+					while(length) {
+
+						UINT wrote = 0;
+						UINT bytes = (length < 512 ? length : 512);
+
+						debug("length=",length," bytes=",bytes);
+
+						auto rc = f_write(&fil,buf,bytes,&wrote);
+						if(rc != FR_OK) {
+							throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_write"});
+						}
+
+						if(wrote != bytes) {
+							throw runtime_error("Unable to write on fat disk");
+						}
+
+						length -= bytes;
+						buf = (((char *) buf) + bytes);
+
+					}
+				});
+
+				// ... and close it
 				f_close(&fil);
 
 
