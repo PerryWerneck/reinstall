@@ -7,7 +7,10 @@
 /* storage control modules to the FatFs module with a defined API.       */
 /*-----------------------------------------------------------------------*/
 
-#include <ctime>
+#include "ffconf.h"
+#include <time.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #ifdef _WIN32
 
@@ -25,12 +28,12 @@
 
 #define SECTOR_LENGTH 512
 
-/
+
 /*-----------------------------------------------------------------------*/
 /* Get Drive Status                                                      */
 /*-----------------------------------------------------------------------*/
 
-static int disks[] = { -1 };
+static int disks[FF_VOLUMES] = { -1 };
 
 #define MAX_DISKS (sizeof(disks)/sizeof(disks[0]))
 
@@ -79,17 +82,18 @@ DRESULT disk_read (
 		return STA_NODISK;
 	}
 
-	size_t offset = sector * SECTOR_LENGTH;
-	while(count > 0) {
+	size_t offset = ((size_t) sector) * SECTOR_LENGTH;
+	size_t length = ((size_t) count) * SECTOR_LENGTH;
+	while(length > 0) {
 
-		ssize_t bytes = pread(disks[pdrv], buf, size_t count, offset);
+		ssize_t bytes = pread(disks[pdrv], buff, length, offset);
 		if(bytes < 1) {
 			return RES_ERROR;
 		}
 
-		count -= bytes;
+		length -= bytes;
 		offset += bytes;
-		buf = (((char *) buf) + count);
+		buff += bytes;
 
 	}
 
@@ -116,17 +120,18 @@ DRESULT disk_write (
 		return STA_NOINIT;
 	}
 
-	size_t offset = sector * SECTOR_LENGTH;
-	while(count > 0) {
+	size_t offset = ((size_t) sector) * SECTOR_LENGTH;
+	size_t length = ((size_t) count) * SECTOR_LENGTH;
+	while(length > 0) {
 
-		ssize_t bytes = pwrite(disks[pdrv], buf, size_t count, offset);
+		ssize_t bytes = pwrite(disks[pdrv], buff, length, offset);
 		if(bytes < 1) {
 			return RES_ERROR;
 		}
 
-		count -= bytes;
+		length -= bytes;
 		offset += bytes;
-		buf = (((char *) buf) + count);
+		buff += bytes;
 
 	}
 
@@ -153,7 +158,7 @@ DRESULT disk_ioctl (
 
 	if(cmd == CTRL_FORMAT) {
 		disks[pdrv] = *((int *) buff);
-		return 0;
+		return RES_OK;
 	}
 
 	if(disks[pdrv] < 0) {
@@ -176,11 +181,11 @@ DRESULT disk_ioctl (
 		break;
 
 	case GET_SECTOR_SIZE:
-	case GET_BLOCK_SIZE
-		*((UINT *) buff) = 512;
+	case GET_BLOCK_SIZE:
+		*((UINT *) buff) = (UINT) 512;
 		break;
 
-	case CTRL_TRIM
+	case CTRL_TRIM:
 		break;
 
 	default:

@@ -162,6 +162,10 @@
 		<Unit filename="src/modules/netinstall/init.cc" />
 		<Unit filename="src/modules/netinstall/private.h" />
 		<Unit filename="src/modules/udfbuilder/init.cc" />
-		<Extensions />
+		<Extensions>
+			<code_completion>
+				<search_path add="src/fatfs/source" />
+			</code_completion>
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

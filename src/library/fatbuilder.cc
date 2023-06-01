@@ -17,11 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ // References:
+ //
+ //		http://elm-chan.org/fsw/ff/00index_e.html
+ //
+
 
  #include <config.h>
  #include <reinstall/actions/fatbuilder.h>
  #include <reinstall/builder.h>
  #include <udjat/tools/file.h>
+ #include <ff.h>
+ #include <diskio.h>
 
  #ifndef _GNU_SOURCE
 		#define _GNU_SOURCE             /* See feature_test_macros(7) */
@@ -34,20 +41,8 @@
 
  namespace Reinstall {
 
-	class UDJAT_PRIVATE FatBuilder::Disk : public Udjat::File::Temporary {
-	public:
-		Disk(unsigned long long imglen) {
-
-			if(imglen && fallocate(fd,0,0,imglen)) {
-				throw system_error(errno,system_category(),"Cant allocate FAT image");
-			}
-
-
-		}
-	};
-
 	FatBuilder::FatBuilder(const pugi::xml_node &node, const char *icon_name)
-		: Reinstall::Action(node,icon_name) {
+		: Reinstall::Action(node,icon_name), imglen{getImageSize(node)} {
 
 	}
 
@@ -56,12 +51,52 @@
 
 	std::shared_ptr<Reinstall::Builder> FatBuilder::BuilderFactory() {
 
-		class Builder : public Reinstall::Builder {
+		class Builder : public Reinstall::Builder, private File::Temporary {
 		private:
-			std::shared_ptr<FatBuilder::Disk> disk;
 
 		public:
-			Builder(const FatBuilder &action) : disk{make_shared<FatBuilder::Disk>(action.imglen)} {
+			Builder(const FatBuilder &action) {
+
+				debug("---------------------- FATFS builder imglen=",action.imglen);
+
+				if(action.imglen && fallocate(fd,0,0,action.imglen)) {
+					throw system_error(errno,system_category(),"Cant allocate FAT image");
+				}
+
+				if(disk_ioctl(0, CTRL_FORMAT, &this->fd) != RES_OK) {
+					throw runtime_error("Cant bind fatfs to disk image");
+				}
+
+				/*
+				// Create partition
+				{
+					BYTE work[FF_MAX_SS];
+					memset(work,0,sizeof(work));
+					LBA_t plist[] = {50, 50, 0};
+
+					f_fdisk(0, plist, work);
+				}
+				*/
+
+				// Format
+				{
+					BYTE work[FF_MAX_SS];
+					memset(work,0,sizeof(work));
+					auto rc = f_mkfs("0:", 0, work, sizeof work);
+
+					if(rc != FR_OK) {
+						throw runtime_error(Logger::String{"Unexpected error '",rc,"' on fatfs.mkfs"});
+					}
+
+				}
+
+#ifdef DEBUG
+				link("/tmp/fatfs.bin");
+#endif // DEBUG
+
+
+				throw runtime_error("Incomplete");
+
 			}
 
 			void pre(const Action &action) override {
