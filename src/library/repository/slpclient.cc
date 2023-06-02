@@ -117,84 +117,89 @@
 				);
 
 		if(cbinfo.urls.empty()) {
-			Logger::String{"No SLP response for ",service_type}.info("slpclient");
+
+			Logger::String{"No SLP response for ",service_type}.warning("slpclient");
+
 		} else {
+
 			Logger::String{cbinfo.urls.size()," SLP response(s) for ",service_type}.info("slpclient");
-		}
 
-		if(err != SLP_OK) {
+			if(err != SLP_OK) {
 
-			Logger::String{"SLPFindSrvs has failed"}.warning("slpclient");
+				Logger::String{"SLPFindSrvs has failed"}.warning("slpclient");
 
-		} else if(!allow_local) {
+			} else if(!allow_local) {
 
-			// Ignore local addresses.
-			vector<IP::Addresses> addresses; ///< @brief IP Addresses.
-			IP::for_each([&addresses](const IP::Addresses &addr){
-				addresses.push_back(addr);
-				return false;
-			});
+				// Ignore local addresses.
+				vector<IP::Addresses> addresses; ///< @brief IP Addresses.
+				IP::for_each([&addresses](const IP::Addresses &addr){
+					addresses.push_back(addr);
+					return false;
+				});
 
-			for(auto url=cbinfo.urls.begin(); url != cbinfo.urls.end() && this->url.empty(); url++) {
+				for(auto url=cbinfo.urls.begin(); url != cbinfo.urls.end() && this->url.empty(); url++) {
 
-				SLPSrvURL *parsedurl = NULL;
-				if(SLPParseSrvURL(url->c_str(),&parsedurl) != SLP_OK) {
+					SLPSrvURL *parsedurl = NULL;
+					if(SLPParseSrvURL(url->c_str(),&parsedurl) != SLP_OK) {
 
-					Logger::String{"Cant parse ",url->c_str()}.error("slpclient");
-
-				} else {
-
-					struct addrinfo *ai;
-					struct addrinfo hints;
-
-					memset(&hints,0,sizeof(hints));
-					hints.ai_family   = AF_UNSPEC;
-					hints.ai_socktype = SOCK_STREAM;
-					hints.ai_protocol = 0;
-					hints.ai_flags    = AI_NUMERICSERV;
-
-					string port;
-					if(parsedurl->s_iPort) {
-						port = std::to_string(parsedurl->s_iPort);
-					}
-
-					if(getaddrinfo(parsedurl->s_pcHost, port.c_str(), &hints, &ai)) {
-
-						Logger::String{"Error resolving ",parsedurl->s_pcHost}.error("slpclient");
+						Logger::String{"Cant parse ",url->c_str()}.error("slpclient");
 
 					} else {
 
-						for(auto rp = ai;rp != NULL && this->url.empty(); rp = rp->ai_next) {
+						struct addrinfo *ai;
+						struct addrinfo hints;
 
-							sockaddr_storage addr{IP::Factory(rp->ai_addr)};
-							bool remote = true;
+						memset(&hints,0,sizeof(hints));
+						hints.ai_family   = AF_UNSPEC;
+						hints.ai_socktype = SOCK_STREAM;
+						hints.ai_protocol = 0;
+						hints.ai_flags    = AI_NUMERICSERV;
 
-							for(IP::Addresses &local : addresses) {
-								if(local.address == addr) {
-									remote = false;
-									Logger::String {"Ignoring response ",std::to_string(addr)}.trace("slpclient");
+						string port;
+						if(parsedurl->s_iPort) {
+							port = std::to_string(parsedurl->s_iPort);
+						}
+
+						if(getaddrinfo(parsedurl->s_pcHost, port.c_str(), &hints, &ai)) {
+
+							Logger::String{"Error resolving ",parsedurl->s_pcHost}.error("slpclient");
+
+						} else {
+
+							for(auto rp = ai;rp != NULL && this->url.empty(); rp = rp->ai_next) {
+
+								sockaddr_storage addr{IP::Factory(rp->ai_addr)};
+								bool remote = true;
+
+								for(IP::Addresses &local : addresses) {
+									if(local.address == addr) {
+										remote = false;
+										Logger::String {"Ignoring response ",std::to_string(addr)}.trace("slpclient");
+									}
+								}
+
+								if(remote) {
+									this->url = url->c_str();
 								}
 							}
 
-							if(remote) {
-								this->url = url->c_str();
-							}
+							freeaddrinfo(ai);
 						}
 
-						freeaddrinfo(ai);
-					}
+						SLPFree(parsedurl);
 
-					SLPFree(parsedurl);
+					}
 
 				}
 
+
+			} else {
+
+				// Get first address.
+				this->url = *cbinfo.urls.begin();
+
 			}
 
-
-		} else {
-
-			// Get first address.
-			this->url = *cbinfo.urls.begin();
 
 		}
 
