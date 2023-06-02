@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -26,13 +26,16 @@
  #include <config.h>
  #include <reinstall/actions/fatbuilder.h>
  #include <reinstall/builder.h>
- #include <udjat/tools/file.h>
+ #include <reinstall/writer.h>
+ #include <udjat/tools/file/handler.h>
+ #include <udjat/tools/file/temporary.h>
  #include <reinstall/dialogs/progress.h>
+ #include <udjat/tools/intl.h>
  #include <ff.h>
  #include <diskio.h>
 
  #ifndef _GNU_SOURCE
-		#define _GNU_SOURCE             /* See feature_test_macros(7) */
+	#define _GNU_SOURCE             /* See feature_test_macros(7) */
  #endif // _GNU_SOURCE
 
  #include <fcntl.h>
@@ -64,6 +67,14 @@
 			Builder(const FatBuilder &action) {
 				if(fallocate(fd,0,0,action.imglen)) {
 					throw system_error(errno,system_category(),"Cant allocate FAT image");
+				}
+			}
+
+			virtual ~Builder() {
+				debug("Ummounting FAT image");
+				auto rc = f_mount(NULL, "", 0);
+				if(rc != FR_OK) {
+					Logger::String{"Unexpected error '",rc,"' on f_umount"}.error(name);
 				}
 			}
 
@@ -178,16 +189,33 @@
 			}
 
 			/// @brief Step 3, build (after downloads).
-			void build(Action &action) override {
-				throw runtime_error("Incomplete");
+			void build(Action &) override {
 			}
 
 			/// @brief Step 4, finalize.
-			void post(const Action &action) override {
-				auto rc = f_mount(NULL, "", 0);
-				if(rc != FR_OK) {
-					throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_umount"});
-				}
+			void post(const Action &) override {
+			}
+
+			std::shared_ptr<Writer> burn(std::shared_ptr<Reinstall::Writer> writer) {
+
+				debug("Burning FAT image");
+
+				Dialog::Progress &progress = Dialog::Progress::getInstance();
+				progress.set_sub_title(_("Writing image"));
+
+				writer->open();
+				File::Handler::save([&progress,writer](unsigned long long current, unsigned long long total, const void *buf, size_t length) {
+					progress.set_progress(current,total);
+					writer->write(buf, length);
+				});
+
+				progress.set_sub_title(_("Finalizing"));
+				writer->finalize();
+				writer->close();
+
+				progress.set_sub_title("");
+
+				return writer;
 			}
 
 		};
@@ -196,7 +224,7 @@
 	}
 
 	std::shared_ptr<Reinstall::Writer> FatBuilder::WriterFactory() {
-		throw runtime_error("Incomplete");
+		return Reinstall::Writer::USBWriterFactory(*this);
 	}
 
 

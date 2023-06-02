@@ -16,6 +16,7 @@ LIBRARY_SOURCES = \
 	$(wildcard src/library/repository/*.cc) \
 	$(wildcard src/library/source/*.cc) \
 	$(wildcard src/library/writers/*.cc) \
+	$(wildcard src/library/builders/*.cc) \
 	$(wildcard src/library/os/@OSNAME@/*.cc) \
 	$(wildcard src/library/os/@OSNAME@/*.cc) \
 	$(wildcard src/fatfs/source/*.cc) \

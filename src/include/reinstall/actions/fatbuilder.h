@@ -24,7 +24,7 @@
 
  namespace Reinstall {
 
-	/// @brief Generic filesystem builder.
+	/// @brief Action to build and write a FAT32 disk.
 	class UDJAT_API FatBuilder : public Reinstall::Action {
 	private:
 

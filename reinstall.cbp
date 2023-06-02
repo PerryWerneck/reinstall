@@ -112,6 +112,8 @@
 		<Unit filename="src/include/reinstall/writer.h" />
 		<Unit filename="src/library/action/action.cc" />
 		<Unit filename="src/library/action/template.cc" />
+		<Unit filename="src/library/builders/fat.cc" />
+		<Unit filename="src/library/builders/iso9660.cc" />
 		<Unit filename="src/library/controller.cc" />
 		<Unit filename="src/library/dialogs/button.cc" />
 		<Unit filename="src/library/dialogs/popup.cc" />
