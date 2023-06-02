@@ -32,13 +32,16 @@
 		https://download.opensuse.org/distribution/leap/15.4/repo/oss
 		
 	-->
-	<repository name='install' url='http://127.0.0.1/~perry/openSUSE-Leap-15.4-NET-x86_64' 
-		slp-service-type='service:install.suse' 
-		slp-scope-list='' 
-		slp-filter='' 
-		slp-allow-local='no' 
-		slp-kernel-parameter='slp:/'
-		layout='apache' />
+	<repository name='install'>
+		<attribute name='remote' value='http://127.0.0.1/~perry/openSUSE-Leap-15.4-NET-x86_64' />
+		<attribute name='local' value='/home/perry/Público/openSUSE-Leap-15.4-NET-x86_64' valid-if='file:///home/perry/Público/update.dud' />
+		<attribute name='slp-service-type' value='service:install.suse' />
+		<attribute name='slp-scope-list' value='' />
+		<attribute name='slp-filter' value='' />
+		<attribute name='slp-allow-local' value='no' />
+		<attribute name='slp-kernel-parameter' value='slp:/' />
+		<attribute name='layout' value='apache' />
+	</repository>
 
 	<!-- Path for the driver update (Full URL or repository path) -->
 	<driver-update-disk name='dud' url='../update.dud' path='/tmp/updates.dud' />	
@@ -56,6 +59,9 @@
 	<kernel-parameter name='insecure' value='1' /> 
 	<kernel-parameter name='self_update' value='0' />
 	
+	<!-- Path for EFI boot-image -->
+	<efi-boot-image path='/boot/x86_64/efi' />
+
 	<!-- Setup the kernel parameter based on repository 'install' settings, can be an URL or 'slp:/' for automatic detection -->
 	<kernel-parameter name='install' repository='install' />
 

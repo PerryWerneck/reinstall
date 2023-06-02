@@ -23,7 +23,6 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
  #include <udjat/tools/logger.h>
- #include <reinstall/dialogs.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/application.h>
@@ -65,28 +64,6 @@
 		value.expand(node,child.attribute("settings-from").as_string("widget-defaults"));
 
 		return value.as_quark();
-
-	}
-
-	void Dialog::Popup::set(const pugi::xml_node &node) {
-
-		const char *group = node.attribute("settings-from").as_string("popup-defaults");
-
-		destructive = Udjat::Object::getAttribute(node,group,"destructive",false);
-
-		message = Udjat::Object::getAttribute(node,group,"message","");
-
-		url.link = Udjat::Object::getAttribute(node,group,"url","");
-		url.label = Udjat::Object::getAttribute(node,group,"url-label",_("More info"));
-
-		{
-			Udjat::String text{node.child_value()};
-			text.expand(node,group);
-			text.strip();
-			if(!text.empty()) {
-				secondary = text.as_quark();
-			}
-		}
 
 	}
 

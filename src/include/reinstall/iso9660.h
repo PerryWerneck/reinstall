@@ -62,6 +62,7 @@
 			void set_el_torito_boot_image(const char *boot_image, const char *catalog, const char *id = nullptr);
 			void set_efi_boot_image(const char *isopath, bool like_iso_hybrid = true);
 			void add_boot_image(const char *isopath, uint8_t id);
+			void set_part_like_isohybrid();
 
 		};
 

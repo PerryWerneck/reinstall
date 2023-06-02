@@ -88,7 +88,7 @@
 			if(value[0] == '/') {
 
 				// Fix URL with repository.
-				URL url(action.repository(repository)->url(false));
+				URL url{action.repository(repository)->get_url(false)};
 				url += value;
 				response = url.c_str();
 
@@ -100,7 +100,7 @@
 			break;
 
 		case Repository:
-			response = action.repository(value)->url(false);
+			response = action.repository(value)->get_url(false);
 			break;
 
 		}

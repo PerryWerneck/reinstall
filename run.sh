@@ -67,17 +67,19 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-./mount.sh
+# ./mount.sh
 
 sudo setcap cap_dac_override,cap_setuid,cap_setgid,cap_chown,cap_sys_admin+ep .bin/Debug/reinstall 
 sudo rm -f /tmp/51_reinstall
 
-.bin/Debug/reinstall usb-storage-device=/tmp/reinstall.iso text
+.bin/Debug/reinstall usb-storage-device=/tmp/test.iso usb-storage-length=21Gb
 if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-# ${VM_TYPE}
+if [ ! -z ${1} ]; then
+	${1}
+fi
 
 
 

@@ -9,6 +9,9 @@
 /* Do we have d-bus? */
 #undef HAVE_DBUS
 
+/* Do we have libfdisk? */
+#undef HAVE_FDISK
+
 /* Define to 1 if gmtime_r is available. */
 #undef HAVE_GMTIME_R
 
@@ -21,11 +24,20 @@
 /* Define if you have the iconv() function and it works. */
 #undef HAVE_ICONV
 
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
 /* Do we have libisofs? */
 #undef HAVE_ISOFS
 
+/* OpenSLP is available */
+#undef HAVE_LIBSLP
+
 /* Define to 1 if localtime_r is available. */
 #undef HAVE_LOCALTIME_R
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
 
 /* Do we have PUGIXML? */
 #undef HAVE_PUGIXML
@@ -33,8 +45,32 @@
 /* Define to 1 if you have the `pwrite' function. */
 #undef HAVE_PWRITE
 
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
 /* Do we have udjat? */
 #undef HAVE_UDJAT
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* "Do we have zziplib?" */
+#undef HAVE_ZIPLIB
 
 /* Define as const if the declaration of iconv() needs const. */
 #undef ICONV_CONST
@@ -86,6 +122,9 @@
 
 /* The product name */
 #undef PRODUCT_NAME
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
 
 /* Version number of package */
 #undef VERSION

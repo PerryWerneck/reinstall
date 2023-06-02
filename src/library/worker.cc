@@ -37,7 +37,7 @@
 	Builder::~Builder() {
 	}
 
-	bool Builder::apply(Source &source) {
+	bool Builder::apply(Source &) {
 		return true;
 	}
 
@@ -46,6 +46,7 @@
 	}
 
 	std::shared_ptr<Writer> Builder::burn(std::shared_ptr<Reinstall::Writer> writer) {
+		debug("Empty burner");
 		return writer;
 	}
 

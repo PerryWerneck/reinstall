@@ -75,9 +75,7 @@
 			return !filenames.saved.empty();
 		}
 
-		inline const char *filename() const noexcept {
-			return filenames.saved.c_str();
-		}
+		const char *filename(bool rw = false);
 
 		/// @brief Get path relative to partition.
 		const char * rpath() const;
@@ -107,10 +105,13 @@
 		void set(const Reinstall::Action &object);
 
 		/// @brief Download to temporary file.
-		virtual void save();
+		void save();
 
 		/// @brief Download to defined file.
-		void save(const char *filename);
+		virtual void save(const char *filename);
+
+		/// @brief Save file with custom writer.
+		virtual void save(const std::function<void(const void *buf, size_t length)> &write);
 
 		/// @brief Get folders contents.
 		/// @param action The current action.

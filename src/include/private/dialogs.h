@@ -95,6 +95,11 @@
 
 		} widgets;
 
+		struct {
+			std::string title;
+			std::string subtitle;
+		} text;
+
 	public:
 		Progress();
 		virtual ~Progress();
@@ -116,12 +121,16 @@
 		// Interface with libreinstall.
 		void show() override;
 		void hide() override;
+		void pulse() override;
 		void set_title(const char *title) override;
 		void set_sub_title(const char *title) override;
 		void set_step(const char *step) override;
 		void set_icon_name(const char *icon_name) override;
 		void set(const Reinstall::Abstract::Object &object) override;
 		void set_url(const char *url) override;
+
+		const char * get_title() const override;
+		const char * get_sub_title() const override;
 
 	};
 

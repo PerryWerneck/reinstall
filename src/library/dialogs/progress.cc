@@ -65,12 +65,23 @@
 			debug("title: ",title);
 		}
 
+		const char * Progress::get_title() const {
+			return "";
+		}
+
 		void Progress::set_sub_title(const char *sub_title) {
 			debug("sub-title: ",sub_title);
 		}
 
+		const char * Progress::get_sub_title() const {
+			return "";
+		}
+
 		void Progress::set_url(const char *url) {
 			set_sub_title(url);
+		}
+
+		void Progress::pulse() {
 		}
 
 		void Progress::set_step(const char *step) {

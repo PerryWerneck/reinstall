@@ -23,14 +23,13 @@
  #include <reinstall/iso9660.h>
  #include <reinstall/script.h>
  #include <reinstall/writer.h>
+ #include <reinstall/sources/efiboot.h>
+ #include <memory>
  #include <vector>
 
  namespace Reinstall {
 
 	class UDJAT_API IsoBuilder : public Reinstall::Action {
-	private:
-		const char *filename = nullptr;
-
 	protected:
 
 		const char *system_area = nullptr;
@@ -41,25 +40,32 @@
 		const char *system_id = nullptr;
 
 		struct {
-			const char *boot_image = "/boot/x86_64/loader/isolinux.bin";
-            const char *catalog = "/boot/x86_64/loader/boot.cat";
-		} eltorito;
 
-		struct {
-			const char *boot_image = "/boot/x86_64/efi";
-		} efi;
+			const char *catalog = "/boot/x86_64/loader/boot.cat";
+
+			struct {
+				bool enabled = true;
+				const char *image = "/boot/x86_64/loader/isolinux.bin";
+
+				inline operator bool() const {
+					return enabled;
+				}
+
+			} eltorito;
+
+			std::shared_ptr<EFIBootImage> efi;
+
+		} boot;
 
 	protected:
 
-		/// brief Post scripts.
-		// std::vector<Script> post_scripts;
-
-		/// @brief Run image post-processing (isohybrid).
-		// void post(const char *isoname);
-
 	public:
-		IsoBuilder(const pugi::xml_node &node, const char *icon_name = "");
+		IsoBuilder(const pugi::xml_node &node, const char *icon_name = "drive-removable-media");
 		virtual ~IsoBuilder();
+
+		/// @brief Get parameters from user (first step, gui thread).
+		/// @return false to cancel action.
+		bool interact() override;
 
 		/// @brief Build image.
 		/// @return Worker with a prepared iso image.

@@ -131,6 +131,7 @@
 	std::shared_ptr<Reinstall::Writer> writer;
 	try {
 
+		debug("-----------[ Get Writer ]----------------------------");
 		writer = action.WriterFactory();
 		if(!writer) {
 			clog << "apply\tAborting due to invalid writer" << endl;
@@ -156,6 +157,7 @@
 
 			try {
 
+				debug("-----------[ Burn ]----------------------------");
 				builder->burn(writer);
 				action.post(writer);
 				dialog.dismiss(Gtk::RESPONSE_OK);

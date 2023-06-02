@@ -98,7 +98,7 @@
 
 						}
 
-						void build(const Reinstall::Action &action) override {
+						void build(Reinstall::Action &action) override {
 						}
 
 						void post(const Reinstall::Action &action) override {

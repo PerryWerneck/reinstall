@@ -145,6 +145,10 @@
 	timer.source->destroy();
  }
 
+ void Dialog::Progress::pulse()  {
+	timer.idle = 1000;
+ }
+
  void Dialog::Progress::footer(bool enable) {
 	if(enable) {
 		widgets.footer.show_all();
@@ -188,12 +192,20 @@
 
  }
 
+ const char * Dialog::Progress::get_title() const {
+	return text.title.c_str();
+ }
+
+ const char * Dialog::Progress::get_sub_title() const {
+	return text.subtitle.c_str();
+ }
+
  void Dialog::Progress::set_title(const char *title)  {
 
-	auto str = make_shared<string>(title);
+	text.title = title;
 
- 	Glib::signal_idle().connect([this,str](){
-		widgets.title.set_text(str->c_str());
+ 	Glib::signal_idle().connect([this](){
+		widgets.title.set_text(text.title.c_str());
 		return 0;
  	});
 
@@ -201,13 +213,13 @@
 
  void Dialog::Progress::set_sub_title(const char *sub_title)  {
 
-	auto str = make_shared<string>(sub_title);
+	text.subtitle = sub_title;
 
- 	Glib::signal_idle().connect([this,str](){
-		if(str->empty()) {
+ 	Glib::signal_idle().connect([this](){
+		if(text.subtitle.empty()) {
 			widgets.subtitle.hide();
 		} else {
-			widgets.subtitle.set_text(str->c_str());
+			widgets.subtitle.set_text(text.subtitle.c_str());
 			widgets.subtitle.show();
 		}
 		return 0;

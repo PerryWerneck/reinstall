@@ -43,7 +43,7 @@
 		virtual bool apply(Source &source);
 
 		/// @brief Step 3, build (after downloads).
-		virtual void build(const Action &action) = 0;
+		virtual void build(Action &action) = 0;
 
 		/// @brief Step 4, finalize.
 		virtual void post(const Action &action) = 0;

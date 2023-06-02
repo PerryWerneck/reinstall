@@ -23,17 +23,31 @@
  #include <udjat/tools/string.h>
  #include <udjat/tools/object.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/xml.h>
+
+ #ifdef HAVE_UNISTD_H
+	#include <unistd.h>
+ #endif // HAVE_UNISTD_H
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	static Repository::Layout LayoutFactory(const pugi::xml_node &node) {
-		return (Repository::Layout) Udjat::String{node,"layout","apache"}.select("apache","mirrorcache",nullptr);
+	static inline Repository::Layout LayoutFactory(const pugi::xml_node &node) {
+		return (Repository::Layout) XML::StringFactory(node,"layout","value","apache").select("apache","mirrorcache",nullptr);
 	}
 
-	Repository::Path::Path(const pugi::xml_node &node) : url(Quark(node,"url").c_str()) {
+	Repository::Path::Path(const pugi::xml_node &node)
+		: remote{XML::QuarkFactory(node,"remote").c_str()}, local{XML::QuarkFactory(node,"local").c_str()} {
+
+		if(!(remote && *remote)) {
+			remote = XML::QuarkFactory(node,"url").c_str();
+			if(remote && *remote) {
+				Logger::String{"Got url from deprecated attribure 'url', please replace it with 'remote'"}.warning(node.attribute("name").as_string("repository"));
+			}
+		}
+
 	}
 
 	Repository::Repository(const pugi::xml_node &node) : NamedObject(node), path(node), slp(node), layout{LayoutFactory(node)} {
@@ -42,12 +56,21 @@
 	Repository::~Repository() {
 	}
 
-	const char * Repository::url(bool expand) {
-#ifdef HAVE_OPENSLP
-		#error Implement SLP query.
-#else
-		return path.url;
-#endif // HAVE_OPENSLP
+	const std::string Repository::get_url(bool expand) {
+
+		if(path.local && *path.local && access(path.local,R_OK) == 0) {
+			return String{"file://",path.local};
+		}
+
+		if(expand && slp) {
+			std::string url = slp.get_url();
+			if(!url.empty()) {
+				return url;
+			}
+		}
+
+		return path.remote;
+
 	}
 
  }

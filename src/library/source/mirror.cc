@@ -25,6 +25,7 @@
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
+ #include <udjat/tools/file.h>
  #include <private/mirror.h>
 
  using namespace std;
@@ -46,7 +47,7 @@
 				throw runtime_error(string{"A repository attribute is required to expand url '"} + url + "'");
 			}
 
-			url = action.repository(repository)->url(true);
+			url = action.repository(repository)->get_url(true);
 			url += this->url;
 
 			debug("url=",this->url," expanded=",url.c_str());
@@ -56,24 +57,50 @@
 			Dialog::Progress::getInstance().set_title(message);
 		}
 
-		Repository::Layout layout = Repository::ApacheLayout;
-		if(repository && *repository) {
-			layout = action.repository(repository)->layout;
-		}
+		if(strncasecmp(url.c_str(),"file://",7) == 0) {
 
-		switch(layout) {
-		case Repository::ApacheLayout:
-			debug("Loading contents from '",url.c_str(),"' in apache format");
-			Mirror::apache(name(),path,url.c_str(),contents);
-			break;
+			const char *path = url.c_str()+7;
 
-		case Repository::MirrorCacheLayout:
-			debug("Loading contents from '",url.c_str(),"' in MirrorCache format");
-			Mirror::mirrorcache(name(),path,url.c_str(),contents);
-			break;
+			File::Path{path}.for_each([&contents,path,this](const File::Path &file){
 
-		default:
-			throw runtime_error("The repository layout is invalid");
+				if(file.dir()) {
+					return false;
+				}
+
+				String remote{"file://",file.c_str()};
+				String local{this->path,file.c_str()+strlen(path)};
+
+				debug(remote);
+				contents.push_back(std::make_shared<Source>(this->name(),remote.c_str(),local.c_str()));
+
+				return false;
+
+			},true);
+
+		} else {
+
+			Repository::Layout layout = Repository::ApacheLayout;
+			if(repository && *repository) {
+				layout = action.repository(repository)->layout;
+			}
+
+			Dialog::Progress::getInstance().set_url(url.c_str());
+
+			switch(layout) {
+			case Repository::ApacheLayout:
+				debug("Loading contents from '",url.c_str(),"' in apache format");
+				Mirror::apache(name(),path,url.c_str(),contents);
+				break;
+
+			case Repository::MirrorCacheLayout:
+				debug("Loading contents from '",url.c_str(),"' in MirrorCache format");
+				Mirror::mirrorcache(name(),path,url.c_str(),contents);
+				break;
+
+			default:
+				throw runtime_error("The repository layout is invalid");
+			}
+
 		}
 
 		debug("Source ",name()," was loaded");

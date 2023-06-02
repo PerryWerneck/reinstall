@@ -53,7 +53,7 @@
 		}
 	}
 
-	std::string UserInterface::FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save) {
+	std::string UserInterface::FilenameFactory(const char *, const char *, const char *, const char *, bool) {
 		throw system_error(ENOTSUP,system_category(),"Cant get filename");
 	}
 

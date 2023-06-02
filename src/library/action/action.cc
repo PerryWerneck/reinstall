@@ -28,6 +28,7 @@
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/configuration.h>
+ #include <reinstall/sources/zipfile.h>
 
  using namespace std;
  using namespace Udjat;
@@ -128,6 +129,11 @@
 
 		scan(node, "source", [this](const pugi::xml_node &node){
 			push_back(make_shared<Source>(node));
+			return false;
+		});
+
+		scan(node, "zip-file", [this](const pugi::xml_node &node){
+			push_back(make_shared<ZipFile>(node));
 			return false;
 		});
 
@@ -298,7 +304,7 @@
 
 	std::shared_ptr<Source> Action::source(const char *path) const {
 		for(auto source : sources) {
-			debug(source->path);
+//			debug(source->path);
 			if(source->path && *source->path && !strcmp(path,source->path)) {
 				return source;
 			}
@@ -527,6 +533,54 @@
 
 	void Action::activate() {
 		post(pre()->burn(WriterFactory()));
+	}
+
+	unsigned long long Action::getImageSize(const char *ptr) {
+
+		if(!(ptr && *ptr)) {
+			return 0LL;
+		}
+
+		unsigned long long imagesize = 0LL;
+
+		while(*ptr && isdigit(*ptr)) {
+			imagesize *= 10;
+			imagesize += (*ptr - '0');
+			ptr++;
+		}
+
+		while(*ptr && isspace(*ptr)) {
+			ptr++;
+		}
+
+		if(*ptr) {
+			static const char *units[] = { "B", "KB", "MB", "GB" };
+
+			bool found = false;
+			for(const char *unit : units) {
+				if(!strcasecmp(ptr,unit)) {
+					found = true;
+					break;
+				}
+				imagesize *= 1024;
+			}
+
+			if(!found) {
+				throw runtime_error(Logger::String{"Unexpected size unit: '",ptr,"'"});
+			}
+
+		}
+
+		return imagesize;
+
+	}
+
+	unsigned long long Action::getImageSize(const pugi::xml_node &node, const char *attrname) {
+
+		Udjat::String attr {node.attribute(attrname).as_string()};
+		attr.strip();
+		return getImageSize(attr.c_str());
+
 	}
 
  }

@@ -155,7 +155,7 @@
 		if(pos) {
 
 			if(!*(pos+1)) {
-				cerr << "iso9660\tCan't insert node '" << source.path << "' it's not a FILE name" << endl;
+				cerr << "iso9660\tCan't insert node '" << source.path << "' it's not a FILE name, looks like a DIRECTORY name" << endl;
 				throw logic_error(_("Unexpanded path in source list"));
 			}
 
@@ -308,6 +308,10 @@
 		iso_write_opts_set_allow_deep_paths(opts, deep_paths);
 	}
 
+	void iso9660::Builder::set_part_like_isohybrid() {
+		iso_write_opts_set_part_like_isohybrid(opts, 1);
+	}
+
 	void iso9660::Builder::set_el_torito_boot_image(const char *isopath, const char *catalog, const char *id) {
 
 		ElToritoBootImage *bootimg = NULL;
@@ -316,9 +320,10 @@
 			cerr << "iso9660\tError '" << iso_error_to_msg(rc) << "' setting el-torito boot image" << endl;
 			throw runtime_error(iso_error_to_msg(rc));
 		}
+
 		el_torito_set_load_size(bootimg, 4);
 		el_torito_patch_isolinux_image(bootimg);
-		iso_write_opts_set_part_like_isohybrid(opts, 1);
+		set_part_like_isohybrid();
 
 		{
 			uint8_t id_string[28];
@@ -354,6 +359,8 @@
 	void iso9660::Builder::set_efi_boot_image(const char *boot_image, bool like_iso_hybrid) {
 
 		if(like_iso_hybrid) {
+
+			set_part_like_isohybrid();
 
 			// Isohybrid, set partition
 			int rc = iso_write_opts_set_partition_img(opts,2,0xef,(char *) boot_image,0);
@@ -451,7 +458,7 @@
 		writer->finalize();
 		writer->close();
 
-		progress.set_sub_title(_(""));
+		progress.set_sub_title("");
 
 		return writer;
 	}

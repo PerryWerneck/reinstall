@@ -17,8 +17,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ #ifndef _GNU_SOURCE
+	#define _GNU_SOURCE             /* See feature_test_macros(7) */
+ #endif // !_GNU_SOURCE
+
  #include <config.h>
+ #include "private.h"
  #include <reinstall/diskimage.h>
+ #include <reinstall/dialogs.h>
  #include <udjat/tools/file.h>
  #include <stdexcept>
  #include <iostream>
@@ -31,166 +37,124 @@
  #include <sys/mount.h>
  #include <dirent.h>
  #include <udjat/tools/intl.h>
+ #include <udjat/tools/logger.h>
+ #include <udjat/tools/configuration.h>
+ #include <udjat/tools/subprocess.h>
+ #include <udjat/tools/string.h>
 
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	static void retry(const std::function<bool(int current, int total)> &exec) {
+	// @brief Abstract disk image handler.
+	class Disk::Image::Handler {
+	public:
 
-		for(size_t ix = 0; ix < 10; ix++) {
-
-			try {
-
-				if(exec(ix+1,10)) {
-					return;
-				}
-
-			} catch(const std::exception &e) {
-
-				clog << "disk\t" << e.what() << endl;
-
-			} catch(...) {
-
-				clog << "disk\tUnexpected error" << endl;
-
-			}
-
-			usleep(100);
-
-		}
-
-		cerr << "disk\tAborting disk image cleanup due too many retries" << endl;
-
-	}
-
-	struct Disk::Image::Handler {
+		/// @brief Loop device.
+		Device::Loop device;
 
 		/// @brief Mountpoint.
 		std::string mountpoint;
 
-		struct {
-			int fd;
-			int ctl;
-			long devnr;			///< @brief Loop device number.
-			std::string name;	///< @brief Name of the loop device.
-		} loop;
-
-		struct {
-			int fd;				///< @brief Image fd.
-		} image;
-
-		Handler(const char *imgpath) : mountpoint(File::Temporary::mkdir()) {
-
-			//
-			// https://stackoverflow.com/questions/11295154/how-do-i-loop-mount-programmatically
-			//
-
-#ifdef DEBUG
-			cout << "disk\tUsing '" << mountpoint << "' for mountpoint" << endl;
-#endif // DEBUG
-
-			//
-			// Get a free loop device
-			//
-			loop.ctl = open("/dev/loop-control", O_RDWR);
-			if(loop.ctl == -1) {
-				throw system_error(errno, system_category(),"/dev/loop-control");
-			}
-
-			loop.devnr = ioctl(loop.ctl, LOOP_CTL_GET_FREE);
-
-			if (loop.devnr == -1) {
-				close(loop.ctl);
-				throw system_error(errno, system_category(),_("Can't get an available loop device"));
-			}
-
-			//
-			// Open loop device
-			//
-			loop.name = "/dev/loop";
-			loop.name += to_string(loop.devnr);
-
-			loop.fd = open(loop.name.c_str(), O_RDWR);
-			if(loop.fd == -1) {
-				close(loop.ctl);
-				throw system_error(errno, system_category(),loop.name);
-			}
-
-			//
-			// Connect image
-			//
-			image.fd = open(imgpath, O_RDWR);
-			if (image.fd == -1) {
-				close(loop.fd);
-				close(loop.ctl);
-				throw system_error(errno, system_category(),imgpath);
-			}
-
-			if (ioctl(loop.fd, LOOP_SET_FD, image.fd) == -1) {
-				close(image.fd);
-				close(loop.fd);
-				close(loop.ctl);
-				throw system_error(errno, system_category(),imgpath);
-			}
-
-			//
-			// Setup auto cleanup.
-			//
-			struct loop_info loopinfo;
-			memset(&loopinfo,0,sizeof(loopinfo));
-
-			if (ioctl(loop.fd, LOOP_GET_STATUS, &loopinfo) == -1) {
-				close(image.fd);
-				close(loop.fd);
-				close(loop.ctl);
-				throw system_error(errno, system_category(),_("Can't get loop device status"));
-			}
-
-			loopinfo.lo_flags |= LO_FLAGS_AUTOCLEAR;
-
-			if (ioctl(loop.fd, LOOP_SET_STATUS, &loopinfo) == -1) {
-				close(image.fd);
-				close(loop.fd);
-				close(loop.ctl);
-				throw system_error(errno, system_category(),_("Can't update loop device status"));
-			}
-
+		Handler(const char *imgpath) : device{imgpath}, mountpoint{File::Temporary::mkdir()} {
 		}
 
 		~Handler() {
-
-			retry([this](int current, int total){
-
-				if (ioctl(loop.fd, LOOP_CLR_FD, 0) == 0) {
-					cout << "disk\tDevice '" << loop.name << "' released" << endl;
-					return true;
-				}
-
-				cerr << "disk\tError '" << strerror(errno) << "' releasing '" << loop.name << "' (" << current << "/" << total << ")" << endl;
-
-				return false;
-
-			});
-
-			close(image.fd);
-			close(loop.fd);
-			close(loop.ctl);
-
 			rmdir(mountpoint.c_str());
-
 		}
 
 	};
 
-	Disk::Image::Image(const char *filename, const char *filesystemtype) {
+
+	static const struct Worker {
+		const char *name;
+		const char *fsname;
+		const std::function<void(const char *dev, unsigned long long szimage)> format;
+	} workers[] = {
+		{
+			"fat32",
+			"vfat",
+			[](const char *dev, unsigned long long szimage) {
+
+				Logger::String{"Creating fat32 image '",dev,"' with ",String{}.set_byte(szimage).c_str()}.trace("disk");
+
+				int fd = ::open(dev,O_CREAT|O_TRUNC|O_WRONLY,0644);
+				if(fd < 0) {
+					throw system_error(errno,system_category(),"Cant create FAT32 image");
+				}
+
+				if(fallocate(fd,0,0,szimage)) {
+					int err = errno;
+					::close(fd);
+					throw system_error(err,system_category(),"Cant allocate FAT32 image");
+				}
+
+				::close(fd);
+
+				// Format.
+				SubProcess{
+					Logger::Message{
+						Config::Value<string>{
+							"mkfs","fat32","/sbin/mkfs.vfat -F32 {}"
+						}.c_str(),
+						dev
+					}.c_str()
+				}.run();
+
+			}
+		},
+		{
+			"udf",
+			"udf",
+			[](const char *dev, unsigned long long szimage) {
+
+				unsigned long long blocksize = 2048LL;
+				unsigned long long blocks = (szimage/blocksize)+1;
+
+				Logger::String{"Creating fat32 image with ",blocks," blocks of ",blocksize," bytes"}.trace("disk");
+
+				SubProcess{
+					Logger::Message{
+						Config::Value<string>{
+							"mkfs","udf","/usr/sbin/mkfs.udf {} --blocksize={} {}"
+						}.c_str(),
+						dev,
+						std::to_string(blocksize).c_str(),
+						std::to_string(blocks).c_str()
+					}.c_str()
+				}.run();
+
+			}
+		}
+	};
+
+	const Worker & WorkerFactory(const char *filesystemtype) {
+
+		for(const Worker &worker : workers) {
+
+			if(strcasecmp(filesystemtype,worker.name) == 0) {
+				return worker;
+			}
+
+		}
+
+		throw runtime_error("Invalid filesystemtype");
+	}
+
+	Disk::Image::Image(const char *filename, const char *filesystemtype, unsigned long long szimage) {
+
+		const Worker &worker = WorkerFactory(filesystemtype);
+
+		if(szimage) {
+			worker.format(filename,szimage);
+		}
 
 		handler = new Handler(filename);
 
-		if(mount(handler->loop.name.c_str(), handler->mountpoint.c_str(), filesystemtype, MS_SYNCHRONOUS, "") == -1) {
+		if(mount(handler->device.c_str(), handler->mountpoint.c_str(), Config::Value<string>{"fsname",filesystemtype,worker.fsname}.c_str(), MS_NOATIME|MS_NODIRATIME, "") == -1) {
 			delete handler;
-			throw system_error(errno, system_category(),filename);
+			throw system_error(errno, system_category(),Logger::String{"Cant mount ",filesystemtype," image using ",worker.fsname," filesystem"});
 		}
 
 		cout << "disk\tFile '" << filename << "' mounted on " << handler->mountpoint << endl;
@@ -199,23 +163,57 @@
 
 	Disk::Image::~Image() {
 
-		retry([this](int current, int total){
+		debug("Destroying disk image");
+
+		for(size_t i = 0; i < 200; i++) {
 
 			if(umount2(handler->mountpoint.c_str(),MNT_FORCE)) {
-				cout << "disk\tDevice '" << handler->loop.name << "' umounted" << endl;
-				return true;
+				cout << "disk\tDevice '" << handler->device.c_str() << "' umounted" << endl;
+				break;
 			}
 
-			cerr << "disk\tError '" << strerror(errno) << "' (rc=" << errno << ") umounting " << handler->loop.name << " ("  << current << "/" << total << ")" << endl;
-			return false;
+			cerr << "disk\tError '" << strerror(errno) << "' (rc=" << errno << ") umounting " << handler->device.c_str() << " ("  << i << "/" << 200 << ")" << endl;
+			sleep(10);
 
-		});
+		}
 
 		delete handler;
 	}
 
 	void Disk::Image::forEach(const std::function<void (const char *mountpoint, const char *path)> &call) {
 		forEach(handler->mountpoint.c_str(),nullptr,call);
+	}
+
+	void Disk::Image::copy(const char *from, const char *to) {
+
+		string filename{handler->mountpoint};
+
+		if(*to != '/') {
+			filename += '/';
+		}
+
+		filename += to;
+
+		Dialog::Progress &dialog = Dialog::Progress::getInstance();
+
+		dialog.set_url(to);
+
+		{
+			const char *str = filename.c_str();
+			const char *ptr = strrchr(str,'/');
+			if(!ptr) {
+				throw runtime_error("Unexpected filename");
+			}
+
+			std::string dirname{str,(size_t) (ptr-str)};
+			File::Path::mkdir(dirname.c_str());
+		}
+
+		File::copy(from,filename.c_str(),[&dialog](double current, double total){
+			dialog.set_progress(current,total);
+			return true;
+		});
+
 	}
 
 	void Disk::Image::forEach(const char *mountpoint, const char *path, const std::function<void (const char *mountpoint, const char *path)> &call) {
@@ -264,285 +262,36 @@
 
 	}
 
- }
+	void Disk::Image::insert(Reinstall::Source &source) {
 
+		string filename{handler->mountpoint};
 
-/*
- #include <bbreinstall/disk.h>
- #include <bbreinstall/activity.h>
- #include <cstdlib>
- #include <sys/mount.h>
- #include <cstring>
- #include <system_error>
- #include <unistd.h>
- #include <linux/loop.h>
- #include <fcntl.h>
- #include <iostream>
- #include <sys/types.h>
- #include <dirent.h>
- #include <sys/stat.h>
- #include <sys/types.h>
-
- using namespace std;
-
- namespace Reinstall {
-
-	Disk::Image::Image(const char *filename, const char *filesystemtype) {
-
-		//
-		// Cria diretório temporário
-		//
-		mountpoint = Activity::mkdtemp();
-
-		//
-		// Monta imagem no diretório
-		//
-		// https://stackoverflow.com/questions/11295154/how-do-i-loop-mount-programmatically
-		//
-
-		try {
-
-			//
-			// Obtém dispositivo /dev/loop disponível
-			//
-			fd.loopctl = open("/dev/loop-control", O_RDWR);
-			if(fd.loopctl == -1) {
-				cerr << "Erro ao abrir '/dev/loop-control'" << endl;
-				throw system_error(errno, system_category(),filename);
-			}
-
-			devnr = ioctl(fd.loopctl, LOOP_CTL_GET_FREE);
-
-			if (devnr == -1) {
-				close(fd.loopctl);
-				throw system_error(errno, system_category(),filename);
-			}
-
-			loopname = "/dev/loop";
-			loopname += to_string(devnr);
-
-			fd.loop = open(loopname.c_str(), O_RDWR);
-			if(fd.loop == -1) {
-				close(fd.loop);
-				cerr << "Erro ao abrir '" << loopname << "'" << endl;
-				throw system_error(errno, system_category(),filename);
-			}
-
-			//
-			// Associa dispositivo loop com a imagem
-			//
-			fd.image = open(filename, O_RDWR);
-			if (fd.image == -1) {
-				close(fd.loop);
-				throw system_error(errno, system_category(),filename);
-			}
-
-			if (ioctl(fd.loop, LOOP_SET_FD, fd.image) == -1) {
-				close(fd.loop);
-				close(fd.image);
-				throw system_error(errno, system_category(),filename);
-			}
-
-			//
-			// Configura dispositivo para limpeza automática.
-			//
-			struct loop_info loopinfo;
-			memset(&loopinfo,0,sizeof(loopinfo));
-
-			if (ioctl(fd.loop, LOOP_GET_STATUS, &loopinfo) == -1) {
-				close(fd.loop);
-				close(fd.image);
-				throw system_error(errno, system_category(),filename);
-			}
-
-			loopinfo.lo_flags |= LO_FLAGS_AUTOCLEAR;
-
-			if (ioctl(fd.loop, LOOP_SET_STATUS, &loopinfo) == -1) {
-				cerr << "Error '" << strerror(errno) << "' ao ativar 'Auto clear' em " << loopname << endl;
-			} else {
-				cout << "'Auto clear' foi ativado no dispositivo " << loopname << endl;
-			}
-
-			//
-			// Monta
-			//
-			if(mount(loopname.c_str(), mountpoint.c_str(), filesystemtype, MS_SYNCHRONOUS, "") == -1) {
-				close(fd.loop);
-				close(fd.image);
-				cerr << "Erro ao mountar '" << filename << "' usando '" << loopname << "'" << endl;
-				throw system_error(errno, system_category(),filename);
-			}
-
-#ifdef DEBUG
-			cout << "Imagem " << filename << " montada em " << loopname << endl;
-#endif // DEBUG
-
-		} catch(...) {
-			rmdir(mountpoint.c_str());
-			throw;
+		if(*source.path != '/') {
+			filename += '/';
 		}
 
-	}
+		filename += source.path;
 
-	static void retry(std::function<bool(int current, int total)> exec) {
+		Dialog::Progress &dialog = Dialog::Progress::getInstance();
+		dialog.set_url(source.path);
 
-		for(size_t ix = 0; ix < 10; ix++) {
+		debug(source.path," -> ",filename);
 
-			if(exec(ix+1,10)) {
-#ifdef DEBUG
-				cout << "Encerrando na tentativa " << ix+1 << endl;
-#endif // DEBUG
-				return;
+		{
+			const char *str = filename.c_str();
+			const char *ptr = strrchr(str,'/');
+			if(!ptr) {
+				throw runtime_error("Unexpected filename");
 			}
 
-			usleep(100);
-
+			std::string dirname{str,(size_t) (ptr-str)};
+			File::Path::mkdir(dirname.c_str());
 		}
 
-		cerr << "Número máximo de tentativas atingido" << endl;
-
-	}
-
-	Disk::Image::~Image() {
-
-#ifdef DEBUG
-			cout << "Imagem '" << mountpoint << "' desmontada de '" << loopname << "'" << endl;
-#endif // DEBUG
-
-		retry([this](int current, int total){
-
-			if(umount2(mountpoint.c_str(),MNT_FORCE)) {
-				cout << "Dispositivo '" << loopname << "' desmontado com sucesso na tentativa nº " << current << endl;
-				return true;
-			}
-
-			cerr	<< "Erro ao desmontar '" << loopname << "': " << strerror(errno)
-					<< " (tentativa " << current << " de " << total << ")"
-					<< endl;
-
-			return false;
-
-		});
-
-		retry([this](int current, int total){
-
-			if (ioctl(fd.loop, LOOP_CLR_FD, 0) == 0) {
-				cout << "Dispositivo '" << loopname << "' liberado com sucesso na tentativa nº " << current << endl;
-				return true;
-			}
-
-			cerr	<< "Erro ao liberar '" << loopname << "': " << strerror(errno)
-					<< " (tentativa " << current << " de " << total << ")"
-					<< endl;
-
-			return false;
-
-		});
-
-		// Libera o dispositivo.
-		close(fd.loop);
-		close(fd.image);
-
-		retry([this](int current, int total){
-
-			if(ioctl(fd.loopctl, LOOP_CTL_REMOVE, devnr) != -1) {
-				cout << "Dispositivo '" << loopname << "' removido com sucesso na tentativa nº " << current << endl;
-				return true;
-			}
-
-			cerr	<< "Erro ao remover '" << loopname << "': " << strerror(errno)
-					<< " (tentativa " << current << " de " << total << ")"
-					<< endl;
-
-			return false;
-
-		});
-
-		close(fd.loopctl);
-
-		// Remove o diretório.
-		rmdir(mountpoint.c_str());
-	}
-
-	/// @brief Executa função em todos os arquivos da imagem.
-	void Disk::Image::forEach(std::function<void (const std::string &mountpoint, const std::string &dirname, const char *basename)> call) {
-
-		DIR *dir = opendir(mountpoint.c_str());
-		if(!dir) {
-			cerr << "Can't open '" << mountpoint << "'" << endl;
-			throw system_error(errno, system_category(),"Can't open mountpoint");
-		}
-
-		try {
-
-			for(struct dirent *entry = readdir(dir); entry; entry = readdir(dir)) {
-
-				if(entry->d_name[0] == '.')
-					continue;
-
-
-				if(entry->d_type == DT_DIR) {
-
-					forEach(entry->d_name,call);
-
-				} else {
-
-					call(mountpoint,"/",entry->d_name);
-				}
-
-
-			}
-
-		} catch(...) {
-
-			closedir(dir);
-			throw;
-
-		}
-
-		closedir(dir);
-
-	}
-
-	/// @brief Executa função a partir de um diretporio da imagem.
-	void Disk::Image::forEach(const char *dirname, std::function<void (const std::string &mountpoint, const std::string &dirname, const char *basename)> call) {
-
-		DIR *dir = opendir( (mountpoint + "/" + dirname).c_str());
-		if(!dir) {
-			throw system_error(errno, system_category(),"Can't open image path");
-		}
-
-		try {
-
-			for(struct dirent *entry = readdir(dir); entry; entry = readdir(dir)) {
-
-				if(entry->d_name[0] == '.')
-					continue;
-
-				if(entry->d_type == DT_DIR) {
-
-					forEach( (string(dirname) + "/" + entry->d_name).c_str(),call);
-
-				} else {
-
-					call(mountpoint,dirname,entry->d_name);
-
-				}
-
-			}
-
-		} catch(...) {
-
-			closedir(dir);
-			throw;
-
-		}
-
-		closedir(dir);
-
+		source.save(filename.c_str());
 
 	}
 
  }
 
-*/
+
