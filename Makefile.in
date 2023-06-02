@@ -412,7 +412,13 @@ endif
 
 clean: \
 	cleanDebug \
-	cleanRelease
+	cleanRelease \
+	$(foreach MODULE, $(MODULES), clean-module-$(MODULE))
+
+clean-module-%: \
+	src/modules/%/Makefile
+
+	@$(MAKE) -C `dirname $<` clean
 
 cleanDebug:
 

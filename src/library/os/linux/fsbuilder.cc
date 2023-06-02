@@ -127,6 +127,7 @@
 
 				writer->open();
 
+				/*
 #ifdef HAVE_FDISK
 				if(part != NoPartition) {
 
@@ -136,6 +137,7 @@
 
 				}
 #endif // HAVE_FDISK
+				*/
 
 				// Write image.
 				{
