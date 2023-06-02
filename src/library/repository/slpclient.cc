@@ -24,7 +24,7 @@
  #include <udjat/tools/logger.h>
  #include <udjat/net/ip/address.h>
  #include <udjat/tools/intl.h>
- #include <vector>
+ #include <list>
  #include <sys/types.h>
  #include <sys/socket.h>
  #include <netdb.h>
@@ -51,27 +51,45 @@
 
 	struct SRV_URL_CB_INFO  {
 		SLPError callbackerr;
-		vector<string> urls;
+		list<String> responses;
 	};
 
 	static SLPBoolean slpcallback( SLPHandle hslp, const char* srvurl, unsigned short lifetime, SLPError errcode, void *cookie ) {
 
-		if(srvurl && *srvurl) {
+		// http://www.openslp.org/doc/html/ProgrammersGuide/SLPFindSrvs.html
 
-			const char *ptr = strstr(srvurl,"http");
-			if(!ptr) {
-				Logger::String{"Invalid URL from SLP: '",srvurl,"'"}.warning("slpclient");
+		if(errcode == SLP_OK || errcode == SLP_LAST_CALL) {
+
+			if(srvurl && *srvurl) {
+				Logger::String{"Got response '",srvurl,"'"}.trace("slp");
+				((SRV_URL_CB_INFO *) cookie)->responses.emplace_back(srvurl);
 			}
 
-			SRV_URL_CB_INFO * info = (SRV_URL_CB_INFO *) cookie;
+			*(SLPError*)cookie = SLP_OK;
 
-			Logger::String{"Got ",ptr," from SLP service"}.trace("slpclient");
+		} else {
 
-			info->urls.emplace_back(ptr);
+			Logger::String{"Got error '",errcode,"' on query"}.error("slp");
+			*(SLPError*)cookie = errcode;
 
 		}
 
 		return SLP_TRUE;
+
+	}
+
+	static void extract_url_from_response(const std::string &from, std::string &to) {
+
+		const char *ptr = from.c_str();
+		for(size_t ix = 0; ix < 2; ix++) {
+			ptr = strchr(ptr,':');
+			if(!ptr) {
+				Logger::String{"Rejecting bad formatted response '",from,"'"}.warning("slp");
+			}
+			ptr++;
+		}
+
+		to.assign(ptr);
 
 	}
 
@@ -106,6 +124,7 @@
 
 		SRV_URL_CB_INFO cbinfo;
 
+
 		Logger::String{"Searching for ",service_type}.info("slpclient");
 		err = SLPFindSrvs(
 					hSlp,
@@ -116,13 +135,35 @@
 					&cbinfo
 				);
 
-		if(cbinfo.urls.empty()) {
+		// Check prefixes
+		size_t prefix_length = strlen(service_type);
 
-			Logger::String{"No SLP response for ",service_type}.warning("slpclient");
+		cbinfo.responses.remove_if([this,prefix_length](String &url){
+
+			const char *str = url.c_str();
+			if(strncmp(str,service_type,prefix_length)) {
+				Logger::String{"Ignoring invalid response '",url,"'"}.warning("slp");
+				return true;
+			}
+
+			str += prefix_length;
+			if(*str != ':') {
+				Logger::String{"Ignoring unexpected response '",url,"'"}.warning("slp");
+				return true;
+			}
+
+			Logger::String{"Accepting valid response '",url,"'"}.trace("slp");
+
+			return false;
+		});
+
+		if(cbinfo.responses.empty()) {
+
+			Logger::String{"No valid SLP response for ",service_type}.warning("slpclient");
 
 		} else {
 
-			Logger::String{cbinfo.urls.size()," SLP response(s) for ",service_type}.info("slpclient");
+			Logger::String{cbinfo.responses.size()," SLP response(s) for ",service_type}.info("slpclient");
 
 			if(err != SLP_OK) {
 
@@ -137,14 +178,14 @@
 					return false;
 				});
 
-				for(auto url=cbinfo.urls.begin(); url != cbinfo.urls.end() && this->url.empty(); url++) {
+				for(auto url=cbinfo.responses.begin(); url != cbinfo.responses.end() && this->url.empty(); url++) {
 
 					SLPSrvURL *parsedurl = NULL;
 					if(SLPParseSrvURL(url->c_str(),&parsedurl) != SLP_OK) {
 
 						Logger::String{"Cant parse ",url->c_str()}.error("slpclient");
 
-					} else {
+					} else if(parsedurl->s_pcHost && *parsedurl->s_pcHost) {
 
 						struct addrinfo *ai;
 						struct addrinfo hints;
@@ -179,7 +220,7 @@
 								}
 
 								if(remote) {
-									this->url = url->c_str();
+									extract_url_from_response(*url, this->url);
 								}
 							}
 
@@ -187,6 +228,10 @@
 						}
 
 						SLPFree(parsedurl);
+
+					} else {
+
+						Logger::String{"Ignoring response '",*url,"'"}.info("slp");
 
 					}
 
@@ -196,7 +241,25 @@
 			} else {
 
 				// Get first address.
-				this->url = *cbinfo.urls.begin();
+				for(String &response : cbinfo.responses) {
+					SLPSrvURL *parsedurl = NULL;
+					if(SLPParseSrvURL(response.c_str(),&parsedurl) != SLP_OK) {
+
+						Logger::String{"Cant parse ",response.c_str()}.error("slp");
+
+					} else {
+
+						extract_url_from_response(response, this->url);
+
+						SLPFree(parsedurl);
+
+						if(!this->url.empty()) {
+							break;
+						}
+					}
+
+				}
+//				this->url = *cbinfo.responses.begin();
 
 			}
 
