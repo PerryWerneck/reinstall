@@ -4,13 +4,12 @@
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 # Perry Werneck <perry.werneck@gmail.com>, 2022-2023.
 #
-#: src/library/iso9660/builder.cc:461
 msgid ""
 msgstr ""
 "Project-Id-Version: reinstall 5.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-05-11 23:15-0300\n"
-"PO-Revision-Date: 2023-05-16 08:06-0300\n"
+"PO-Revision-Date: 2023-06-05 09:31-0300\n"
 "Last-Translator: Perry Werneck <perry.werneck@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <perry.werneck@gmail.com>\n"
 "Language: pt_BR\n"
@@ -39,11 +38,11 @@ msgstr "Operação concluída"
 msgid "Action has failed"
 msgstr "Operação falhou"
 
-#: src/library/isobuilder.cc:196
+#: src/library/builders/iso9660.cc:196
 msgid "Adding EFI boot image"
 msgstr "Adicionando imagem de boot EFI"
 
-#: src/library/isobuilder.cc:177
+#: src/library/builders/iso9660.cc:177
 msgid "Adding el-torito boot image"
 msgstr "Adicionando imagem de boot el-torito"
 
@@ -55,7 +54,7 @@ msgstr "Construindo"
 msgid "Building EFI Boot image"
 msgstr "Criando imagem de boot EFI"
 
-#: src/library/os/linux/disk_image.cc:115
+#: src/library/os/linux/loop.cc:50 src/library/os/linux/disk_image.cc:115
 msgid "Can't get an available loop device"
 msgstr "Nenhum dispositivo loop disponível"
 
@@ -67,7 +66,7 @@ msgstr "Não foi possível obter estado do dispositivo de loop"
 msgid "Can't update loop device status"
 msgstr "Não foi possível atualizar estado do dispositivo de loop"
 
-#: src/library/os/linux/usbstorage.cc:289
+#: src/library/os/linux/usbstorage.cc:298
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -91,7 +90,7 @@ msgstr "Erro ao atualizar permissões de modelo"
 msgid "Checking for templates"
 msgstr "Verificando templates"
 
-#: src/library/os/linux/usbstorage.cc:293
+#: src/library/os/linux/usbstorage.cc:302
 msgid "Continue"
 msgstr "Continuar"
 
@@ -115,7 +114,8 @@ msgstr "Erro criando imagem iso"
 msgid "Error loading system area"
 msgstr "Erro lendo área de sistema"
 
-#: src/library/iso9660/builder.cc:457
+#: src/library/iso9660/builder.cc:457 src/library/builders/fat.cc:212
+#: src/library/os/linux/fsbuilder.cc:167
 msgid "Finalizing"
 msgstr "Finalizando"
 
@@ -152,11 +152,11 @@ msgstr "Erro de I/O gravando imagem"
 msgid "Initialization has failed"
 msgstr "Inicialização falhou"
 
-#: src/library/action/action.cc:446 src/gui/dialogs/progress.cc:316
+#: src/library/action/action.cc:446 src/gui/dialogs/progress.cc:324
 msgid "Initializing"
 msgstr "Inicializando"
 
-#: src/library/os/linux/usbstorage.cc:283
+#: src/library/os/linux/usbstorage.cc:292
 msgid "Insert an storage device <b>NOW</b> "
 msgstr "Insira um dispositivo de armazenamento <b>AGORA</b>"
 
@@ -224,7 +224,7 @@ msgstr "Script de finalização falhou"
 msgid "Preparing"
 msgstr "Preparando"
 
-#: src/library/iso9660/builder.cc:408
+#: src/library/iso9660/builder.cc:408 src/library/os/linux/fsbuilder.cc:106
 msgid "Preparing to write"
 msgstr "Preparando para gravar"
 
@@ -236,7 +236,7 @@ msgstr "Sair da aplicação"
 msgid "Reboot now"
 msgstr "Reiniciar agora"
 
-#: src/library/isobuilder.cc:141 src/library/isobuilder.cc:166
+#: src/library/builders/iso9660.cc:141 src/library/builders/iso9660.cc:166
 msgid "Rejecting invalid action pointer"
 msgstr "Rejeitando ponteiro de ação inválido"
 
@@ -248,15 +248,19 @@ msgstr "Atributo necessário 'path' não foi encontrado"
 msgid "Running post scripts"
 msgstr "Executando scripts de finalização"
 
+#: src/library/repository/slpclient.cc:109
+msgid "Searching for server"
+msgstr ""
+
 #: src/library/action/action.cc:371
 msgid "Selected installation has no label"
 msgstr "Instalação selecionada não tem nome"
 
-#: src/library/isobuilder.cc:144 src/library/isobuilder.cc:169
+#: src/library/builders/iso9660.cc:144 src/library/builders/iso9660.cc:169
 msgid "Setting up ISO image"
 msgstr "Configurando imagem ISO"
 
-#: src/library/os/linux/usbstorage.cc:228
+#: src/library/os/linux/usbstorage.cc:231
 msgid "Storage device is unavailable"
 msgstr "Dispositivo de armazenamento indisponível"
 
@@ -280,15 +284,15 @@ msgstr "A lista de parâmetros do kernel está vazia"
 msgid "The required attribute 'cmdline' is missing"
 msgstr "Atributo necessário 'cmdline' não foi encontrado"
 
-#: src/library/os/linux/usbstorage.cc:285
+#: src/library/os/linux/usbstorage.cc:294
 msgid "This action will <b>DELETE ALL CONTENT</b> on the device."
 msgstr "Esta ação irá <b>APAGAR TODO O CONTEÚDO</b> do dispositivo."
 
-#: src/library/source/save.cc:44 src/library/source/save.cc:87
+#: src/library/source/save.cc:67 src/library/source/save.cc:117
 msgid "Unable to get source with an empty URL"
 msgstr "Não é possível obter uma fonte com URL vazia"
 
-#: src/library/source/save.cc:49 src/library/source/save.cc:92
+#: src/library/source/save.cc:72 src/library/source/save.cc:122
 msgid "Unable to get source with relative URL"
 msgstr "Não é possível obter fonte com URL relativa"
 
@@ -300,11 +304,11 @@ msgstr "Incapaz de processar lista de arquivos em {}"
 msgid "Unexpanded path in source list"
 msgstr "Caminho incorreto na lista de fontes"
 
-#: src/library/isobuilder.cc:201
+#: src/library/builders/iso9660.cc:201
 msgid "Unexpected filename on EFI boot image"
 msgstr "Nome de arquivo inesperado na imagem de boot EFI"
 
-#: src/library/isobuilder.cc:182
+#: src/library/builders/iso9660.cc:182
 msgid "Unexpected filename on el-torito boot image"
 msgstr "Nome de arquivo inesperado na imagem de boot el-torito"
 
@@ -320,9 +324,13 @@ msgstr "Parametro de kernel sem nome, possível erro de configuração"
 msgid "Window stack mismatch"
 msgstr "Divergência na pilha de janelas"
 
-#: src/library/iso9660/builder.cc:426
+#: src/library/iso9660/builder.cc:426 src/library/builders/fat.cc:204
 msgid "Writing image"
 msgstr "Gravando imagem"
+
+#: src/library/os/linux/fsbuilder.cc:144
+msgid "Writing system image"
+msgstr "Gravando imagem de sistema"
 
 #: src/gui/widgets/mainwindow.cc:299
 msgid "_Cancel"

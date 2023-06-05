@@ -179,6 +179,24 @@ $(OBJRLS)/%.o: \
 		-c $<
 
 $(OBJRLS)/%.o: \
+	%.c \
+	$(DEPENDS)
+
+	@echo $< ...
+	@$(MKDIR) $(@D)
+
+	@$(CC) \
+		$(CFLAGS) \
+		-DNDEBUG=1 \
+		-MM -MT $@ -MF $(patsubst %.o,%.d,$@) $<
+
+	@$(CC) \
+		$(CFLAGS) \
+		-DNDEBUG=1 \
+		-o $@ \
+		-c $<
+
+$(OBJRLS)/%.o: \
 	%.rc
 
 	@echo $< ...
@@ -187,6 +205,21 @@ $(OBJRLS)/%.o: \
 
 $(POTDIR)/%.pot: \
 	%.cc
+
+	@echo $(notdir $@) ...
+	@$(MKDIR) $(dir $@)
+	@$(XGETTEXT) \
+		--from-code=UTF-8 \
+		--language=C \
+		--keyword=_ \
+		--keyword=N_ \
+		--keyword=MSG_:2 \
+		--output=$@ \
+		$<
+	@touch $@
+
+$(POTDIR)/%.pot: \
+	%.c
 
 	@echo $(notdir $@) ...
 	@$(MKDIR) $(dir $@)
