@@ -356,6 +356,9 @@ install-linux: \
 	# Install tmpfiles.d
 	@$(MKDIR) \
 		$(DESTDIR)/usr/lib/tmpfiles.d
+
+	@$(MKDIR) \
+		$(DESTDIR)/var/tmp/@PACKAGE_NAME@
 	
 	@$(INSTALL_DATA) \
 		sysconf/tmpfiles.d \
