@@ -277,7 +277,7 @@
  int main(int argc, char* argv[]) {
 
 #ifndef _WIN32
-	setenv("TMPDIR","/var/tmp/" PACKAGE_NAME "/",1);
+	setenv("TMPDIR","/var/tmp/",1);
 #endif // _WIN32
 
 	Udjat::Quark::init();
