@@ -32,6 +32,39 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="src/fatfs/documents/res/app1.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/fatfs/documents/res/app2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/fatfs/documents/res/app3.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/fatfs/documents/res/app4.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/fatfs/documents/res/app5.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/fatfs/documents/res/app6.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/fatfs/source/diskio.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/fatfs/source/diskio.h" />
+		<Unit filename="src/fatfs/source/ff.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/fatfs/source/ff.h" />
+		<Unit filename="src/fatfs/source/ffconf.h" />
+		<Unit filename="src/fatfs/source/ffsystem.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/fatfs/source/ffunicode.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="src/gui/apply.cc" />
 		<Unit filename="src/gui/dialogs/popup.cc" />
 		<Unit filename="src/gui/dialogs/progress.cc" />
@@ -79,12 +112,15 @@
 		<Unit filename="src/include/reinstall/writer.h" />
 		<Unit filename="src/library/action/action.cc" />
 		<Unit filename="src/library/action/template.cc" />
+		<Unit filename="src/library/builders/fat.cc" />
+		<Unit filename="src/library/builders/iso9660.cc" />
 		<Unit filename="src/library/controller.cc" />
 		<Unit filename="src/library/dialogs/button.cc" />
 		<Unit filename="src/library/dialogs/popup.cc" />
 		<Unit filename="src/library/dialogs/progress.cc" />
 		<Unit filename="src/library/dialogs/taskrunner.cc" />
 		<Unit filename="src/library/dialogs/window.cc" />
+		<Unit filename="src/library/fatbuilder.cc" />
 		<Unit filename="src/library/group.cc" />
 		<Unit filename="src/library/iso9660/builder.cc" />
 		<Unit filename="src/library/isobuilder.cc" />
@@ -103,7 +139,6 @@
 		<Unit filename="src/library/repository/slpclient.cc" />
 		<Unit filename="src/library/script.cc" />
 		<Unit filename="src/library/source/apache_mirror.cc" />
-		<Unit filename="src/library/source/cached.cc" />
 		<Unit filename="src/library/source/efiboot.cc" />
 		<Unit filename="src/library/source/initrd.cc" />
 		<Unit filename="src/library/source/kernel.cc" />
@@ -128,6 +163,10 @@
 		<Unit filename="src/modules/netinstall/init.cc" />
 		<Unit filename="src/modules/netinstall/private.h" />
 		<Unit filename="src/modules/udfbuilder/init.cc" />
-		<Extensions />
+		<Extensions>
+			<code_completion>
+				<search_path add="src/fatfs/source" />
+			</code_completion>
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

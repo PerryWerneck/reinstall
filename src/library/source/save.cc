@@ -51,6 +51,10 @@
 
 	}
 
+	void Source::save(const std::function<void(const void *buf, size_t length)> &write) {
+		throw runtime_error("Custom saver is unsupported for this source");
+	}
+
  	void Source::save(const char *filename) {
 
 		if(!filenames.saved.empty()) {

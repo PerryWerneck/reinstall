@@ -38,12 +38,24 @@
 
  IsoWriter::IsoWriter(const pugi::xml_node &node) : Reinstall::Action(node,"drive-removable-media") {
 
+	class Source : public Reinstall::Source {
+	public:
+		Source(const pugi::xml_node &node, const char *defmessage) : Reinstall::Source{node} {
+			if(!(url && *url)) {
+				throw runtime_error(_("Required attribute 'URL' is missing"));
+			}
+			if(!(message && *message)) {
+				message = defmessage;
+			}
+		}
+	};
+
  	if(!sources.empty()) {
 		Logger::String{"Discarding ",sources.size()," sources"}.warning(name());
  	}
 
 	sources.clear(); // Remove other sources.
-	sources.insert(make_shared<Source>(node));
+	sources.insert(make_shared<Source>(node,_("Downloading ISO image")));
 
  }
 

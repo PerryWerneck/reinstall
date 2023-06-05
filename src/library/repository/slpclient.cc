@@ -24,7 +24,7 @@
  #include <udjat/tools/logger.h>
  #include <udjat/net/ip/address.h>
  #include <udjat/tools/intl.h>
- #include <vector>
+ #include <list>
  #include <sys/types.h>
  #include <sys/socket.h>
  #include <netdb.h>
@@ -51,27 +51,45 @@
 
 	struct SRV_URL_CB_INFO  {
 		SLPError callbackerr;
-		vector<string> urls;
+		list<String> responses;
 	};
 
 	static SLPBoolean slpcallback( SLPHandle hslp, const char* srvurl, unsigned short lifetime, SLPError errcode, void *cookie ) {
 
-		if(srvurl && *srvurl) {
+		// http://www.openslp.org/doc/html/ProgrammersGuide/SLPFindSrvs.html
 
-			const char *ptr = strstr(srvurl,"http");
-			if(!ptr) {
-				Logger::String{"Invalid URL from SLP: '",srvurl,"'"}.warning("slpclient");
+		if(errcode == SLP_OK || errcode == SLP_LAST_CALL) {
+
+			if(srvurl && *srvurl) {
+				Logger::String{"Got response '",srvurl,"'"}.trace("slp");
+				((SRV_URL_CB_INFO *) cookie)->responses.emplace_back(srvurl);
 			}
 
-			SRV_URL_CB_INFO * info = (SRV_URL_CB_INFO *) cookie;
+			*(SLPError*)cookie = SLP_OK;
 
-			Logger::String{"Got ",ptr," from SLP service"}.trace("slpclient");
+		} else {
 
-			info->urls.emplace_back(ptr);
+			Logger::String{"Got error '",errcode,"' on query"}.error("slp");
+			*(SLPError*)cookie = errcode;
 
 		}
 
 		return SLP_TRUE;
+
+	}
+
+	static void extract_url_from_response(const std::string &from, std::string &to) {
+
+		const char *ptr = from.c_str();
+		for(size_t ix = 0; ix < 2; ix++) {
+			ptr = strchr(ptr,':');
+			if(!ptr) {
+				Logger::String{"Rejecting bad formatted response '",from,"'"}.warning("slp");
+			}
+			ptr++;
+		}
+
+		to.assign(ptr);
 
 	}
 
@@ -106,6 +124,7 @@
 
 		SRV_URL_CB_INFO cbinfo;
 
+
 		Logger::String{"Searching for ",service_type}.info("slpclient");
 		err = SLPFindSrvs(
 					hSlp,
@@ -116,85 +135,134 @@
 					&cbinfo
 				);
 
-		if(cbinfo.urls.empty()) {
-			Logger::String{"No SLP response for ",service_type}.info("slpclient");
+		// Check prefixes
+		size_t prefix_length = strlen(service_type);
+
+		cbinfo.responses.remove_if([this,prefix_length](String &url){
+
+			const char *str = url.c_str();
+			if(strncmp(str,service_type,prefix_length)) {
+				Logger::String{"Ignoring invalid response '",url,"'"}.warning("slp");
+				return true;
+			}
+
+			str += prefix_length;
+			if(*str != ':') {
+				Logger::String{"Ignoring unexpected response '",url,"'"}.warning("slp");
+				return true;
+			}
+
+			Logger::String{"Accepting valid response '",url,"'"}.trace("slp");
+
+			return false;
+		});
+
+		if(cbinfo.responses.empty()) {
+
+			Logger::String{"No valid SLP response for ",service_type}.warning("slpclient");
+
 		} else {
-			Logger::String{cbinfo.urls.size()," SLP response(s) for ",service_type}.info("slpclient");
-		}
 
-		if(err != SLP_OK) {
+			Logger::String{cbinfo.responses.size()," SLP response(s) for ",service_type}.info("slpclient");
 
-			Logger::String{"SLPFindSrvs has failed"}.warning("slpclient");
+			if(err != SLP_OK) {
 
-		} else if(!allow_local) {
+				Logger::String{"SLPFindSrvs has failed"}.warning("slpclient");
 
-			// Ignore local addresses.
-			vector<IP::Addresses> addresses; ///< @brief IP Addresses.
-			IP::for_each([&addresses](const IP::Addresses &addr){
-				addresses.push_back(addr);
-				return false;
-			});
+			} else if(!allow_local) {
 
-			for(auto url=cbinfo.urls.begin(); url != cbinfo.urls.end() && this->url.empty(); url++) {
+				// Ignore local addresses.
+				vector<IP::Addresses> addresses; ///< @brief IP Addresses.
+				IP::for_each([&addresses](const IP::Addresses &addr){
+					addresses.push_back(addr);
+					return false;
+				});
 
-				SLPSrvURL *parsedurl = NULL;
-				if(SLPParseSrvURL(url->c_str(),&parsedurl) != SLP_OK) {
+				for(auto url=cbinfo.responses.begin(); url != cbinfo.responses.end() && this->url.empty(); url++) {
 
-					Logger::String{"Cant parse ",url->c_str()}.error("slpclient");
+					SLPSrvURL *parsedurl = NULL;
+					if(SLPParseSrvURL(url->c_str(),&parsedurl) != SLP_OK) {
 
-				} else {
+						Logger::String{"Cant parse ",url->c_str()}.error("slpclient");
 
-					struct addrinfo *ai;
-					struct addrinfo hints;
+					} else if(parsedurl->s_pcHost && *parsedurl->s_pcHost) {
 
-					memset(&hints,0,sizeof(hints));
-					hints.ai_family   = AF_UNSPEC;
-					hints.ai_socktype = SOCK_STREAM;
-					hints.ai_protocol = 0;
-					hints.ai_flags    = AI_NUMERICSERV;
+						struct addrinfo *ai;
+						struct addrinfo hints;
 
-					string port;
-					if(parsedurl->s_iPort) {
-						port = std::to_string(parsedurl->s_iPort);
-					}
+						memset(&hints,0,sizeof(hints));
+						hints.ai_family   = AF_UNSPEC;
+						hints.ai_socktype = SOCK_STREAM;
+						hints.ai_protocol = 0;
+						hints.ai_flags    = AI_NUMERICSERV;
 
-					if(getaddrinfo(parsedurl->s_pcHost, port.c_str(), &hints, &ai)) {
+						string port;
+						if(parsedurl->s_iPort) {
+							port = std::to_string(parsedurl->s_iPort);
+						}
 
-						Logger::String{"Error resolving ",parsedurl->s_pcHost}.error("slpclient");
+						if(getaddrinfo(parsedurl->s_pcHost, port.c_str(), &hints, &ai)) {
 
-					} else {
+							Logger::String{"Error resolving ",parsedurl->s_pcHost}.error("slpclient");
 
-						for(auto rp = ai;rp != NULL && this->url.empty(); rp = rp->ai_next) {
+						} else {
 
-							sockaddr_storage addr{IP::Factory(rp->ai_addr)};
-							bool remote = true;
+							for(auto rp = ai;rp != NULL && this->url.empty(); rp = rp->ai_next) {
 
-							for(IP::Addresses &local : addresses) {
-								if(local.address == addr) {
-									remote = false;
-									Logger::String {"Ignoring response ",std::to_string(addr)}.trace("slpclient");
+								sockaddr_storage addr{IP::Factory(rp->ai_addr)};
+								bool remote = true;
+
+								for(IP::Addresses &local : addresses) {
+									if(local.address == addr) {
+										remote = false;
+										Logger::String {"Ignoring response ",std::to_string(addr)}.trace("slpclient");
+									}
+								}
+
+								if(remote) {
+									extract_url_from_response(*url, this->url);
 								}
 							}
 
-							if(remote) {
-								this->url = url->c_str();
-							}
+							freeaddrinfo(ai);
 						}
 
-						freeaddrinfo(ai);
-					}
+						SLPFree(parsedurl);
 
-					SLPFree(parsedurl);
+					} else {
+
+						Logger::String{"Ignoring response '",*url,"'"}.info("slp");
+
+					}
 
 				}
 
+
+			} else {
+
+				// Get first address.
+				for(String &response : cbinfo.responses) {
+					SLPSrvURL *parsedurl = NULL;
+					if(SLPParseSrvURL(response.c_str(),&parsedurl) != SLP_OK) {
+
+						Logger::String{"Cant parse ",response.c_str()}.error("slp");
+
+					} else {
+
+						extract_url_from_response(response, this->url);
+
+						SLPFree(parsedurl);
+
+						if(!this->url.empty()) {
+							break;
+						}
+					}
+
+				}
+//				this->url = *cbinfo.responses.begin();
+
 			}
 
-
-		} else {
-
-			// Get first address.
-			this->url = *cbinfo.urls.begin();
 
 		}
 

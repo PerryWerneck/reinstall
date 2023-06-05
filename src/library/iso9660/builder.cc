@@ -458,7 +458,7 @@
 		writer->finalize();
 		writer->close();
 
-		progress.set_sub_title(_(""));
+		progress.set_sub_title("");
 
 		return writer;
 	}

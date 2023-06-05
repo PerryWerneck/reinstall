@@ -77,6 +77,34 @@
 				: Reinstall::Source{name,Quark{string{"zip:///"}+f.name}.c_str(),Quark{f.name}.c_str()}, container{c}, file{f} {
 			}
 
+			void save(const std::function<void(const void *buf, size_t length)> &write) override {
+
+				zip_file *zf = zip_fopen_index(container->handler, file.index, 0);
+
+				Dialog::Progress &progress = Dialog::Progress::getInstance();
+				progress.set_url(this->path);
+
+				try {
+
+					size_t sum = 0;
+					char buffer[4096];
+					while (sum != file.size) {
+						auto bufferlength = zip_fread(zf, buffer, 4096);
+						write(buffer,bufferlength);
+						sum += bufferlength;
+						progress.set_progress((double) sum,(double) file.size);
+					}
+
+				} catch(...) {
+					zip_fclose(zf);
+					throw;
+				}
+
+				zip_fclose(zf);
+				progress.set_url("");
+
+			}
+
 			void save(const char *filename) override {
 
 				debug(path," -> ",filename);
@@ -87,6 +115,23 @@
 				int out = ::open(filename,O_WRONLY|O_CREAT|O_TRUNC,0644);
 #endif // _WIN32
 
+				try {
+
+					save([out](const void *buffer, size_t length){
+						if(::write(out,buffer,length) != length) {
+							throw system_error(errno,system_category(),"Can't write image contents");
+						}
+					});
+
+				} catch(...) {
+
+					::close(out);
+					throw;
+				}
+
+				::close(out);
+
+				/*
 				zip_file *zf = zip_fopen_index(container->handler, file.index, 0);
 
 				Dialog::Progress &progress = Dialog::Progress::getInstance();
@@ -118,6 +163,7 @@
                 ::close(out);
 				zip_fclose(zf);
 				progress.set_url("");
+				*/
 
 				container.reset();
 
