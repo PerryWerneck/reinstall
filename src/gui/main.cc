@@ -276,10 +276,6 @@
 
  int main(int argc, char* argv[]) {
 
-#ifndef _WIN32
-	setenv("TMPDIR","/var/tmp/",1);
-#endif // _WIN32
-
 	Udjat::Quark::init();
 	Udjat::Logger::redirect();
 
