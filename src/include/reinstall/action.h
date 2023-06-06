@@ -144,6 +144,7 @@
 			bool visible	: 1;	/// @brief True if the action is visible.
 			bool reboot		: 1;	/// @brief True if the action will request reboot.
 			bool quit		: 1;	/// @brief True if the action will enable 'quit application' button.
+			bool allow_cont	: 1;	/// @brief Trie if the action will enable 'ok' button.
 
 			Options(const pugi::xml_node &node);
 
@@ -230,6 +231,10 @@
 
 		inline bool reboot() const noexcept {
 			return options.reboot;
+		}
+
+		inline bool allow_cont() const noexcept {
+			return options.allow_cont;
 		}
 
 		inline bool quit() const noexcept {

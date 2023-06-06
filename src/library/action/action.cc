@@ -81,7 +81,8 @@
 		: enabled{Factory(node,"enabled",true)},
 		  visible{Factory(node,"visible",true)},
 		  reboot{Factory(node,"allow-reboot-when-success",false)},
-		  quit{Factory(node,"allow-quit-application",true)}
+		  quit{Factory(node,"allow-quit-application",true)},
+		  allow_cont{Factory(node,"allow-continue-application",false)}
 		 {
 	}
 

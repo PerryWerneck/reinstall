@@ -195,7 +195,7 @@
 				*action.get_button(),
 				action.success(),
 				Gtk::MESSAGE_INFO,
-				Gtk::BUTTONS_OK
+				Gtk::BUTTONS_NONE
 			);
 
 		} else {
@@ -208,13 +208,18 @@
 				_("Action completed"),
 				false,
 				Gtk::MESSAGE_INFO,
-				Gtk::BUTTONS_OK,
+				Gtk::BUTTONS_NONE,
 				true
 			);
 
 		}
 
-		// Add extra buttons.
+		// Add buttons.
+		if(action.allow_cont()) {
+			popup->add_button(Config::Value<string>{"buttons","ok",_("Ok")},Gtk::RESPONSE_OK);
+			popup->set_default_response(Gtk::RESPONSE_OK);
+		}
+
 		if(action.quit()) {
 			Widget *cancel = popup->add_button(Config::Value<string>{"buttons","quit",_("Quit application")},Gtk::RESPONSE_CANCEL);
 			if(!action.reboot()) {
@@ -228,7 +233,6 @@
 			// Reboot button is destructive.
 			Widget *reboot = popup->add_button(Config::Value<string>{"buttons","reboot",_("Reboot now")},Gtk::RESPONSE_APPLY);
 			reboot->get_style_context()->add_class("destructive-action");
-
 		}
 
 		popup->set_title(action.get_label());
