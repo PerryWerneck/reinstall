@@ -24,6 +24,7 @@
 
  #include <config.h>
  #include <libreinstall/builder.h>
+ #include <reinstall/dialogs/progress.h>
  #include <udjat/tools/file/temporary.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/string.h>
@@ -126,7 +127,12 @@
 				try {
 
 					debug("Writing ",file->c_str());
-					file->save([&fil](unsigned long long, unsigned long long, const void *buf, size_t length){
+
+					Dialog::Progress &progress = Dialog::Progress::getInstance();
+
+					file->save([&fil,&progress](unsigned long long current, unsigned long long total, const void *buf, size_t length){
+
+						progress.set_progress(current,total);
 
 						UINT wrote = 0;
 						auto rc = f_write(&fil,buf,length,&wrote);

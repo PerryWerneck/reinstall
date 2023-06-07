@@ -27,7 +27,7 @@
 	Reinstall::Source source{
 		"suse",
 		"http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64/",
-		"/home/perry/Público/openSUSE-Leap-15.4-NET-x86_64-disabled",
+		"/home/perry/Público/openSUSE-Leap-15.4-NET-x86_64",
 		""
 	};
 
