@@ -20,6 +20,10 @@
  #pragma once
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
+ #include <list>
+ #include <memory>
+ #include <string>
+ #include <set>
 
  namespace Reinstall {
 
@@ -27,6 +31,7 @@
 	class UDJAT_API Source {
 	private:
 
+		/// @brief Source paths.
 		const struct Path {
 
 			/// @brief URL for remote repository.
@@ -42,7 +47,7 @@
 
 		} path;
 
-		/// @brief SLP based repository detection.
+		/// @brief SLP settings for automatic source detection.
 		const struct SlpClient {
 
 			/// @brief The service type string, including the authority string (if any) for the request.
@@ -84,7 +89,7 @@
 
 	public:
 
-		/// Build Source using fixed values.
+		/// @brief Build Source using fixed values.
 		/// @param remote URL of the root for remote source.
 		/// @param local Path for source in the local file system.
 		/// @param path Path for source in the target image.
@@ -92,6 +97,29 @@
 		}
 
 		Source(const Udjat::XML::Node &node);
+
+		/// @brief Get local path (if available).
+		/// @return The source path in local filesystem or nullptr if not available.
+		virtual const char * local() const noexcept;
+
+		/// @brief File to write.
+		class UDJAT_API File : std::string {
+		public:
+
+			/// @brief Construct file from string.
+			/// @param imgpath Path for file in the target image.
+			File(const std::string &imgpath) : std::string{imgpath} {
+			}
+
+			/// @brief Construct file from string.
+			/// @param imgpath Path for file in the target image.
+			File(const char *imgpath) : std::string{imgpath} {
+			}
+
+		};
+
+		/// @brief Get list of source files.
+		void prepare(std::set<Reinstall::Source::File> &files);
 
 	};
 

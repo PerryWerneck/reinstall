@@ -17,41 +17,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <config.h>
- #include <libreinstall/source.h>
+ #pragma once
+ #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
-
- #ifdef HAVE_UNISTD_H
-	#include <unistd.h>
- #endif // HAVE_UNISTD_H
-
- #include <fcntl.h>
- #include <stdexcept>
-
- using namespace Udjat;
- using namespace std;
+ #include <libreinstall/source.h>
 
  namespace Reinstall {
 
-	Source::Source(const Udjat::XML::Node &node) :
-		path{ node }, slpclient{ node }, imgpath{ XML::QuarkFactory(node,"path").c_str() } {
-	}
+	/// @brief The default image builder.
+	class UDJAT_API Builder {
+	public:
+		Builder() = default;
 
-	const char * Source::local() const noexcept {
+		/// @brief Add file to image.
+		/// @param from URL for file source.
+		/// @param to The path for file inside the image.
+		void push_back(const char *from, const char *to);
 
-		if(path.local && *path.local && access(path.local,R_OK) == 0) {
-			return path.local;
-		}
-
-		return nullptr;
-	}
-
-	void Source::prepare(std::set<Reinstall::Source::File> &files) {
-
-
-
-
-		throw runtime_error("Incomplete");
-	}
+	};
 
  }
+
