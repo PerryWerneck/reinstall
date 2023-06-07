@@ -7,6 +7,7 @@
  #include <set>
  #include <reinstall/userinterface.h>
  #include <reinstall/dialogs/progress.h>
+ #include <udjat/tools/logger.h>
 
  using namespace std;
  using namespace Udjat;
@@ -35,6 +36,7 @@
 
 	source.prepare(files);
 
+	debug("Number of source files: ",files.size());
 
 	Udjat::Module::unload();
 	return 0;

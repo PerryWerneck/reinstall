@@ -112,7 +112,7 @@
 
 				auto worker = Protocol::WorkerFactory(src.c_str());
 
-				Logger::String{"Getting folder from ",worker->url().c_str()}.trace("apache");
+				Logger::String{"Getting folder from ",worker->url().c_str()}.write(Logger::Debug,"apache");
 				progress.set_url(worker->url().c_str());
 
 				auto index = worker->get([&progress](double current, double total){
@@ -120,15 +120,18 @@
 					return true;
 				});
 
+				if(index.empty()) {
+					throw runtime_error(Logger::Message(_("Empty response from {}"),worker->url().c_str()));
+				}
+
 				apache_mirror(index, src.c_str(), dst.c_str(), files);
 
 			} else {
 
-				Logger::String{"Adding source file ",src}.trace("apache");
+				Logger::String{"Adding source file ",src}.write(Logger::Debug,"apache");
 				files.emplace(make_shared<Remote>(src,dst));
 
 			}
-
 
 		}
 
@@ -162,9 +165,7 @@
 		}
 
 		// Base URL.
-		std::string url{path.remote};
-
-		// Do we have slp? If yes got URL using it.
+		std::string url{remote()};
 
 		// Get files from URL.
 		if(url[url.size()-1] == '/') {

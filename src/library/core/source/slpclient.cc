@@ -56,6 +56,7 @@
 			kparm{XML::QuarkFactory(node,"slp-kernel-parameter").c_str()},
 			message{XML::QuarkFactory(node,"slp-search-message").c_str()},
 			allow_local{XML::StringFactory(node,"slp-allow-local").as_bool(false)} {
+
 	}
 
  #ifdef HAVE_LIBSLP

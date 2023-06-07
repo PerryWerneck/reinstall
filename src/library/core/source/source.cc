@@ -22,6 +22,7 @@
  #include <udjat/tools/xml.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/quark.h>
+ #include <udjat/tools/intl.h>
 
  #ifdef HAVE_UNISTD_H
 	#include <unistd.h>
@@ -46,6 +47,31 @@
 		}
 
 		return nullptr;
+	}
+
+	const char * Source::remote() const {
+
+		if(slpclient) {
+
+			// SLP is enabled, search it.
+			const char *url = slpclient.resolve();
+			if(url && *url) {
+				return url;
+			}
+
+		}
+#ifdef DEBUG
+		else {
+			Logger::String("No SLP service defined, using url").warning(name);
+		}
+#endif // DEBUG
+
+		if(path.remote && *path.remote) {
+			return path.remote;
+		}
+
+		throw runtime_error(Logger::Message{_("Can't determine source URL for '{}'"),name});
+
 	}
 
  }

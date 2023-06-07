@@ -104,6 +104,10 @@
 		/// @return The source path in local filesystem or nullptr if not available.
 		virtual const char * local() const noexcept;
 
+		/// @brief Get remote path, resolve SLP if necessary.
+		/// @return The remote source path.
+		virtual const char * remote() const;
+
 		/// @brief File to write.
 		class UDJAT_API File : std::string {
 		public:
