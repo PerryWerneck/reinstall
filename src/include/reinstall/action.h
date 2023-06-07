@@ -19,6 +19,7 @@
 
  #pragma once
 
+ /*
  #include <reinstall/defs.h>
  #include <pugixml.hpp>
  #include <udjat/tools/object.h>
@@ -303,3 +304,4 @@
 	UDJAT_API void push_back(const pugi::xml_node &node, std::shared_ptr<Action> action);
 
  }
+ */

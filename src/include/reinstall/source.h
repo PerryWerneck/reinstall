@@ -19,6 +19,7 @@
 
  #pragma once
 
+ /*
  #include <udjat/defs.h>
  #include <udjat/tools/string.h>
  #include <reinstall/defs.h>
@@ -137,4 +138,5 @@
 	};
 
  }
+ */
 

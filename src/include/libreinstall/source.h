@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -18,24 +18,21 @@
  */
 
  #pragma once
-
  #include <udjat/defs.h>
- #include <udjat/tools/object.h>
- #include <memory>
- #include <pugixml.hpp>
+ #include <udjat/tools/xml.h>
 
  namespace Reinstall {
 
-	/// @brief Installation repository defined by XML.
-	class UDJAT_API Repository : public Udjat::NamedObject {
+	/// @brief Common data source.
+	class UDJAT_API Source {
 	private:
 
 		struct Path {
 
-			/// @brief Repository URL got from XML definition.
+			/// @brief URL for remote repository.
 			const char * remote = "";
 
-			/// @brief Repository PATH on local harddisk from xml definition.
+			/// @brief Path for the local copy of repository.
 			const char * local = "";
 
 			Path(const Udjat::XML::Node &node);
@@ -64,52 +61,27 @@
 			/// @brief Allow local address?
 			bool allow_local = false;
 
-			/// @brief Resolved url
-			std::string url;
+			constexpr SlpClient() = default;
 
-		public:
-			SlpClient() = default;
-
-			SlpClient(const pugi::xml_node &node);
+			SlpClient(const Udjat::XML::Node &node);
 
 			inline operator bool() const noexcept {
 				return (service_type && *service_type);
 			}
 
-			/// @brief Resolve SLP service, return URL
-			/// @return SLP response (empty if not found).
-			const char * get_url();
+			/// @brief Do SLP query, get first valid URL.
+			/// @return The detected URL (empty string if no url was detected).
+			const char *resolve();
 
-		} slp;
+		};
+
+	protected:
+
 
 	public:
-
-		/// @brief Repository layout.
-		const enum Layout : uint8_t {
-			ApacheLayout,		///< @brief Repository is a standard apache directory.
-			MirrorCacheLayout,	///< @brief It's a MirrorCache repository;
-		} layout;
-
-		typedef struct {
-			bool operator() (const std::shared_ptr<Repository> a, const std::shared_ptr<Repository> b) const {
-				return strcasecmp(a->name(),b->name()) == 0;
-			}
-		} Equal;
-
-		typedef struct {
-			size_t operator() (const std::shared_ptr<Repository> a) const {
-				return a->hash();
-			}
-		} Hash;
-
-		Repository(const pugi::xml_node &node);
-		~Repository();
-
-		/// @brief Get repository URL.
-		/// @param expand If true resolve the real URL using SLP.
-		/// @param Repository URL.
-		const std::string get_url(bool expand = false);
+		Source(const Udjat::XML::Node &node);
 
 	};
 
  }
+

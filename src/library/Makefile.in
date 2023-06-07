@@ -5,14 +5,7 @@ PACKAGE_NAME=@PACKAGE_NAME@
 SONAME=@SONAME@
 
 SOURCES= \
-		$(wildcard *.cc) \
-		$(wildcard iso9660/*.cc) \
-		$(wildcard action/*.cc) \
-		$(wildcard dialogs/*.cc) \
-		$(wildcard writers/*.cc) \
-		$(wildcard repository/*.cc) \
-		$(wildcard source/*.cc) \
-		$(wildcard os/@OSNAME@/*.cc)
+		$(wildcard core/source/*.cc)
 
 TEST_SOURCES= \
 		$(wildcard testprogram/*.cc)

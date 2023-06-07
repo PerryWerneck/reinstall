@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,28 +17,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
- #include <reinstall/defs.h>
+ #include <config.h>
+ #include <udjat/defs.h>
+ #include <udjat/tools/xml.h>
+ #include <libreinstall/source.h>
+
+ using namespace Udjat;
 
  namespace Reinstall {
 
-	namespace Dialog {
-
-		class UDJAT_API Window {
-		private:
-			static Window * current;
-			Window *parent;
-
-		public:
-			Window();
-			virtual ~Window();
-
-			static Window & getInstance();
-
-			virtual void show();
-			virtual void hide();
-
-		};
+	Source::Path::Path(const Udjat::XML::Node &node)
+		: remote{Udjat::XML::QuarkFactory(node,"remote").c_str()},
+		  local{Udjat::XML::QuarkFactory(node,"local").c_str()} {
 
 	}
 
