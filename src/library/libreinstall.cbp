@@ -36,6 +36,7 @@
 		<Unit filename="../include/libreinstall/source.h" />
 		<Unit filename="../include/reinstall/dialogs/taskrunner.h" />
 		<Unit filename="../include/reinstall/userinterface.h" />
+		<Unit filename="core/source/file.cc" />
 		<Unit filename="core/source/path.cc" />
 		<Unit filename="core/source/prepare.cc" />
 		<Unit filename="core/source/slpclient.cc" />

@@ -72,6 +72,14 @@
 			Udjat::File::Handler::save(writer);
 		}
 
+		void get() override {
+
+			// Save URL to this->fd
+
+
+
+		}
+
 	};
 
 	void apache_mirror(const String &index, const char *base, const char *imgpath, std::set<std::shared_ptr<Source::File>> &files) {
