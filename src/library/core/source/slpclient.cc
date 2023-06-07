@@ -65,7 +65,7 @@
 		std::list<String> responses;
 	};
 
-	static SLPBoolean slpcallback( SLPHandle hslp, const char* srvurl, unsigned short lifetime, SLPError errcode, void *cookie ) {
+	static SLPBoolean slpcallback( SLPHandle, const char* srvurl, unsigned short, SLPError errcode, void *cookie ) {
 
 		// http://www.openslp.org/doc/html/ProgrammersGuide/SLPFindSrvs.html
 
@@ -104,7 +104,7 @@
 
 	}
 
-	const char * Source::SlpClient::resolve() {
+	const char * Source::SlpClient::resolve() const {
 
 		String found;
 

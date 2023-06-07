@@ -27,7 +27,7 @@
 	class UDJAT_API Source {
 	private:
 
-		struct Path {
+		const struct Path {
 
 			/// @brief URL for remote repository.
 			const char * remote = "";
@@ -35,13 +35,15 @@
 			/// @brief Path for the local copy of repository.
 			const char * local = "";
 
+			constexpr Path(const char *r, const char *l) : remote{r}, local{l} {
+			}
+
 			Path(const Udjat::XML::Node &node);
 
 		} path;
 
 		/// @brief SLP based repository detection.
-		class SlpClient {
-		private:
+		const struct SlpClient {
 
 			/// @brief The service type string, including the authority string (if any) for the request.
 			const char *service_type = "";
@@ -71,14 +73,24 @@
 
 			/// @brief Do SLP query, get first valid URL.
 			/// @return The detected URL (empty string if no url was detected).
-			const char *resolve();
+			const char *resolve() const;
 
-		};
+		} slpclient;
 
 	protected:
 
+		/// @brief Path in the target image.
+		const char *imgpath = "";
 
 	public:
+
+		/// Build Source using fixed values.
+		/// @param remote URL of the root for remote source.
+		/// @param local Path for source in the local file system.
+		/// @param path Path for source in the target image.
+		constexpr Source(const char *remote, const char *local = "", const char *path = "") : path{remote,local}, imgpath{path} {
+		}
+
 		Source(const Udjat::XML::Node &node);
 
 	};

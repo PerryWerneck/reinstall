@@ -18,17 +18,15 @@
  */
 
  #include <config.h>
- #include <udjat/defs.h>
- #include <udjat/tools/xml.h>
  #include <libreinstall/source.h>
+ #include <udjat/tools/xml.h>
 
  using namespace Udjat;
 
  namespace Reinstall {
 
-	Source::Path::Path(const Udjat::XML::Node &node)
-		: Path{Udjat::XML::QuarkFactory(node,"remote").c_str(),Udjat::XML::QuarkFactory(node,"local").c_str()} {
+	Source::Source(const Udjat::XML::Node &node) :
+		path{ node }, slpclient{ node }, imgpath{ XML::QuarkFactory(node,"path").c_str() } {
 	}
 
  }
-
