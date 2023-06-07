@@ -19,6 +19,8 @@
 
 
  #include <config.h>
+
+ /*
  #include <reinstall/actions/isobuilder.h>
  #include <udjat/tools/subprocess.h>
  #include <udjat/tools/string.h>
@@ -254,4 +256,5 @@
 	}
 
  }
+ */
 

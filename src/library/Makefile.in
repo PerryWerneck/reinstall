@@ -8,6 +8,7 @@ SOURCES= \
 		$(wildcard core/source/*.cc) \
 		$(wildcard ui/*.cc) \
 		$(wildcard ui/dialogs/*.cc) \
+		$(wildcard builders/*.cc) \
 		$(wildcard fatfs/source/*.cc) \
 		$(wildcard fatfs/source/*.c)	
 
@@ -58,6 +59,7 @@ CFLAGS= \
 	@CFLAGS@ \
 	-fPIC \
 	-I../include \
+	-I./fatfs/source \
 	-DBUILD_DATE=`date +%Y%m%d` \
 	@UDJAT_CFLAGS@ \
 	@PUGIXML_CFLAGS@ \
@@ -70,6 +72,7 @@ CXXFLAGS= \
 	@CXXFLAGS@ \
 	-fPIC \
 	-I../include \
+	-I./fatfs/source \
 	-DBUILD_DATE=`date +%Y%m%d` \
 	@UDJAT_CFLAGS@ \
 	@PUGIXML_CFLAGS@ \

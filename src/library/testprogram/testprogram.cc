@@ -2,6 +2,7 @@
  #include <udjat/tools/logger.h>
  #include <udjat/tools/quark.h>
  #include <libreinstall/source.h>
+ #include <libreinstall/builder.h>
  #include <udjat/module.h>
  #include <iostream>
  #include <set>
@@ -37,6 +38,12 @@
 	source.prepare(files);
 
 	debug("Number of source files: ",files.size());
+
+	auto builder = Reinstall::Builder::fat(20000000000ULL);
+
+	for(auto file : files) {
+		builder->push_back(file);
+	}
 
 	Udjat::Module::unload();
 	return 0;

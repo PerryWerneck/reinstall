@@ -22,8 +22,145 @@
  //		http://elm-chan.org/fsw/ff/00index_e.html
  //
 
-
  #include <config.h>
+ #include <libreinstall/builder.h>
+ #include <udjat/tools/file/temporary.h>
+ #include <udjat/tools/logger.h>
+ #include <udjat/tools/string.h>
+
+ #ifndef _GNU_SOURCE
+	#define _GNU_SOURCE             // See feature_test_macros(7)
+ #endif // _GNU_SOURCE
+
+ #include <fcntl.h>
+ #include <stdexcept>
+ #include <ff.h>
+ #include <diskio.h>
+
+ using namespace Udjat;
+ using namespace std;
+
+ namespace Reinstall {
+
+	std::shared_ptr<Builder> Builder::fat(unsigned long long length) {
+
+		class FatBuilder : public Builder, private File::Temporary {
+		private:
+			FATFS fs;
+
+		public:
+			FatBuilder(unsigned long long length) {
+
+				Logger::String{"Building disk image with ",String{}.set_byte(length)}.info("fat");
+
+				if(fallocate(this->fd,0,0,length)) {
+					throw system_error(errno,system_category(),"Cant allocate FAT image");
+				}
+
+				if(disk_ioctl(0, CTRL_FORMAT, &this->fd) != RES_OK) {
+					throw runtime_error("Cant bind fatfs to disk image");
+				}
+
+				// Format
+				{
+					static const MKFS_PARM parm = {FM_FAT32, 0, 0, 0, 0};
+
+					BYTE work[FF_MAX_SS];
+					memset(work,0,sizeof(work));
+					auto rc = f_mkfs("0:", &parm, work, sizeof work);
+
+					if(rc != FR_OK) {
+						throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_mkfs"});
+					}
+
+				}
+
+				// Mount
+				{
+					auto rc = f_mount(&fs, "0:", 1);
+					if(rc != FR_OK) {
+						throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_mount"});
+					}
+				}
+
+			}
+
+			virtual ~FatBuilder() {
+				auto rc = f_mount(NULL, "", 0);
+				if(rc != FR_OK) {
+					Logger::String{"Unexpected error '",rc,"' on f_umount"}.error("fat");
+				}
+			}
+
+			void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
+
+				FIL fil;
+				memset(&fil,0,sizeof(fil));
+
+				// Create file (and directory), open it ...
+				auto rc = f_open(&fil, file->c_str(), FA_CREATE_NEW | FA_WRITE);
+				if(rc == FR_NO_PATH) {
+
+					// Create directory.
+					const char *from = file->c_str();
+					const char *to = strchr(from+3,'/');
+					while(to) {
+
+						auto res = f_mkdir(string{from,(size_t) (to-from)}.c_str());
+						if(!(res == FR_OK || res == FR_EXIST)) {
+							throw runtime_error(Logger::String{"Unexpected error '",res,"' on f_mkdir(",string{from,(size_t) (to-from)},")"});
+						}
+
+						to = strchr(to+1,'/');
+					}
+
+					// try again...
+					rc = f_open(&fil, file->c_str(), FA_CREATE_NEW | FA_WRITE);
+
+				}
+
+				if(rc != FR_OK) {
+					throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_open(",file->c_str(),")"});
+				}
+
+				try {
+
+					debug("Writing ",file->c_str());
+					file->save([&fil](unsigned long long, unsigned long long, const void *buf, size_t length){
+
+						UINT wrote = 0;
+						auto rc = f_write(&fil,buf,length,&wrote);
+						if(rc != FR_OK) {
+							throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_write"});
+						}
+
+						if(wrote != length) {
+							throw runtime_error("Unable to write on fat disk");
+						}
+
+					});
+
+				} catch(...) {
+
+					f_close(&fil);
+					throw;
+
+				}
+
+				f_close(&fil);
+			}
+
+		};
+
+
+		return make_shared<FatBuilder>(length);
+
+	}
+
+
+ }
+
+ /*
  #include <reinstall/actions/fatbuilder.h>
  #include <reinstall/builder.h>
  #include <reinstall/writer.h>
@@ -34,11 +171,6 @@
  #include <ff.h>
  #include <diskio.h>
 
- #ifndef _GNU_SOURCE
-	#define _GNU_SOURCE             /* See feature_test_macros(7) */
- #endif // _GNU_SOURCE
-
- #include <fcntl.h>
 
  using namespace std;
  using namespace Udjat;
@@ -229,4 +361,4 @@
 
 
  }
-
+*/

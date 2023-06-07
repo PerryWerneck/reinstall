@@ -109,7 +109,7 @@
 		virtual const char * remote() const;
 
 		/// @brief File to write.
-		class UDJAT_API File : std::string {
+		class UDJAT_API File : public std::string {
 		public:
 
 			/// @brief Construct file from string.

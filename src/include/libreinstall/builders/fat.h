@@ -19,24 +19,5 @@
 
  #pragma once
  #include <udjat/defs.h>
- #include <libreinstall/source.h>
- #include <memory>
-
- namespace Reinstall {
-
-	/// @brief The default image builder.
-	class UDJAT_API Builder {
-	public:
-		Builder() = default;
-
-		/// @brief Add file to image.
-		virtual void push_back(std::shared_ptr<Reinstall::Source::File> file) = 0;
-
-		/// @brief Construct FAT32 Builder.
-		/// @param length Image size.
-		static std::shared_ptr<Builder> fat(unsigned long long length);
-
-	};
-
- }
+ 
 
