@@ -27,6 +27,7 @@
  #include <udjat/tools/file/temporary.h>
  #include <udjat/tools/protocol.h>
  #include <udjat/tools/http/mimetype.h>
+ #include <udjat/tools/intl.h>
 
  #ifdef HAVE_UNISTD_H
 	#include <unistd.h>
@@ -40,40 +41,71 @@
 
  namespace Reinstall {
 
+	/// @brief 'writer' for local files.
+	class Local : public Source::File {
+	private:
+		const Udjat::File::Path from;
+
+	public:
+		Local(const Udjat::File::Path &f, const std::string &to) : Source::File{to}, from{f} {
+		}
+
+		void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const override {
+			from.save(writer);
+		}
+
+	};
+
+	// TODO: File source saving from url to 'path.local'. Will be used to recover local repository.
+
+	/// @brief File source using URL to download to temp file.
+	class Remote : public Source::File, private Udjat::File::Temporary {
+	private:
+		std::string url;
+
+	public:
+
+		Remote(const std::string &u, const std::string &to) : Source::File{to}, url{u} {
+		}
+
+		void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const override {
+			Udjat::File::Handler::save(writer);
+		}
+
+	};
+
+	void apache_mirror(const String &index, const char *base, std::set<std::shared_ptr<Source::File>> &files) {
+
+		debug(index);
+
+		for(auto href = index.find("<a href=\""); href != string::npos; href = index.find("<a href=\"",href)) {
+
+			auto from = href+9;
+			href = index.find("\"",from);
+			if(href == string::npos) {
+				throw runtime_error(Logger::Message(_("Unable to parse file list from {}"),base));
+			}
+
+			string link = index.substr(from,href-from);
+
+			if(link[0] =='/' || link[0] == '?' || link[0] == '.' || link[0] == '$')
+				continue;
+
+			if(link.size() >= 7 && strncmp(link.c_str(),"http://",7) == 0 ) {
+				continue;
+			}
+
+			if(link.size() >= 8 && strncmp(link.c_str(),"https://",8) == 0 ) {
+				continue;
+			}
+
+			debug(link);
+
+		}
+
+	}
+
 	void Source::prepare(std::set<std::shared_ptr<File>> &files) {
-
-		/// @brief 'writer' for local files.
-		class Local : public Source::File {
-		private:
-			const Udjat::File::Path from;
-
-		public:
-			Local(const Udjat::File::Path &f, const std::string &to) : Source::File{to}, from{f} {
-			}
-
-			void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const override {
-				from.save(writer);
-			}
-
-		};
-
-		// TODO: File source saving url to original source local file. Will be used to recover local repository.
-
-		/// @brief File source using URL to download to temp file.
-		class Remote : public Source::File, private Udjat::File::Temporary {
-		private:
-			std::string url;
-
-		public:
-
-			Remote(const std::string &u, const std::string &to) : Source::File{to}, url{u} {
-			}
-
-			void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const override {
-				Udjat::File::Handler::save(writer);
-			}
-
-		};
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
@@ -120,10 +152,20 @@
 				return true;
 			});
 
+			if(index.empty()) {
+				throw runtime_error(Logger::Message(_("Empty response from {}"),url));
+			}
+
 			debug(worker->header("Content-Type").value());
 			debug(worker->header("Server").value());
 
-			debug("index=\n",index,"\n");
+			// FIX-ME: Detect server.
+			apache_mirror(index,worker->url().c_str(),files);
+
+
+		} else {
+
+			throw runtime_error("Single file source was not implemented, yet!");
 
 		}
 
