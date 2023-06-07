@@ -20,6 +20,8 @@
  #include <config.h>
  #include <libreinstall/source.h>
  #include <udjat/tools/xml.h>
+ #include <udjat/tools/logger.h>
+ #include <udjat/tools/quark.h>
 
  #ifdef HAVE_UNISTD_H
 	#include <unistd.h>
@@ -34,7 +36,7 @@
  namespace Reinstall {
 
 	Source::Source(const Udjat::XML::Node &node) :
-		path{ node }, slpclient{ node }, imgpath{ XML::QuarkFactory(node,"path").c_str() } {
+		name{  Quark{ node,"name",node.name() }.c_str() }, path{ node }, slpclient{ node }, imgpath{ XML::QuarkFactory(node,"path").c_str() } {
 	}
 
 	const char * Source::local() const noexcept {
@@ -44,14 +46,6 @@
 		}
 
 		return nullptr;
-	}
-
-	void Source::prepare(std::set<Reinstall::Source::File> &files) {
-
-
-
-
-		throw runtime_error("Incomplete");
 	}
 
  }

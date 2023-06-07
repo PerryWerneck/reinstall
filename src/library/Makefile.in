@@ -6,7 +6,10 @@ SONAME=@SONAME@
 
 SOURCES= \
 		$(wildcard core/source/*.cc) \
-		$(wildcard dialogs/*.cc)
+		$(wildcard ui/*.cc) \
+		$(wildcard ui/dialogs/*.cc) \
+		$(wildcard fatfs/source/*.cc) \
+		$(wildcard fatfs/source/*.c)	
 
 TEST_SOURCES= \
 		$(wildcard testprogram/*.cc)
@@ -14,6 +17,7 @@ TEST_SOURCES= \
 #---[ Tools ]----------------------------------------------------------------------------
 
 CXX=@CXX@
+CC=@CC@
 LD=@CXX@
 LN_S=@LN_S@
 MKDIR=@MKDIR_P@
@@ -51,6 +55,18 @@ BINRLS=$(BINDIR)/Release
 #---[ Rules ]----------------------------------------------------------------------------
 
 CFLAGS= \
+	@CFLAGS@ \
+	-fPIC \
+	-I../include \
+	-DBUILD_DATE=`date +%Y%m%d` \
+	@UDJAT_CFLAGS@ \
+	@PUGIXML_CFLAGS@ \
+	@ISOFS_CFLAGS@ \
+	@JSON_CFLAGS@ \
+	@DBUS_CFLAGS@ \
+	@LIBSLP_CFLAGS@
+
+CXXFLAGS= \
 	@CXXFLAGS@ \
 	-fPIC \
 	-I../include \
@@ -85,11 +101,29 @@ $(OBJDBG)/%.o: \
 	@$(MKDIR) $(@D)
 
 	@$(CXX) \
-		$(CFLAGS) \
+		$(CXXFLAGS) \
 		-DDEBUG=1 \
 		-MM -MT $@ -MF $(patsubst %.o,%.d,$@) $<
 
 	@$(CXX) \
+		$(CXXFLAGS) \
+		-Wall -Wextra -fstack-check \
+		-DDEBUG=1 \
+		-o $@ \
+		-c $<
+
+$(OBJDBG)/%.o: \
+	%.c
+
+	@echo $< ...
+	@$(MKDIR) $(@D)
+
+	@$(CC) \
+		$(CFLAGS) \
+		-DDEBUG=1 \
+		-MM -MT $@ -MF $(patsubst %.o,%.d,$@) $<
+
+	@$(CC) \
 		$(CFLAGS) \
 		-Wall -Wextra -fstack-check \
 		-DDEBUG=1 \
@@ -115,12 +149,12 @@ $(OBJRLS)/%.o: \
 	@$(MKDIR) $(@D)
 
 	@$(CXX) \
-		$(CFLAGS) \
+		$(CXXFLAGS) \
 		-DNDEBUG=1 \
 		-MM -MT $@ -MF $(patsubst %.o,%.d,$@) $<
 
 	@$(CXX) \
-		$(CFLAGS) \
+		$(CXXFLAGS) \
 		-DNDEBUG=1 \
 		-o $@ \
 		-c $<

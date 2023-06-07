@@ -31,6 +31,8 @@
 	class UDJAT_API Source {
 	private:
 
+		const char *name = "source";
+
 		/// @brief Source paths.
 		const struct Path {
 
@@ -93,7 +95,7 @@
 		/// @param remote URL of the root for remote source.
 		/// @param local Path for source in the local file system.
 		/// @param path Path for source in the target image.
-		constexpr Source(const char *remote, const char *local = "", const char *path = "") : path{remote,local}, imgpath{path} {
+		constexpr Source(const char *n, const char *remote, const char *local = "", const char *path = "") : name{n}, path{remote,local}, imgpath{path} {
 		}
 
 		Source(const Udjat::XML::Node &node);
@@ -116,10 +118,12 @@
 			File(const char *imgpath) : std::string{imgpath} {
 			}
 
+			virtual void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const = 0;
+
 		};
 
 		/// @brief Get list of source files.
-		void prepare(std::set<Reinstall::Source::File> &files);
+		virtual void prepare(std::set<std::shared_ptr<File>> &files);
 
 	};
 
