@@ -74,9 +74,7 @@
 
 	};
 
-	void apache_mirror(const String &index, const char *base, std::set<std::shared_ptr<Source::File>> &files) {
-
-		debug(index);
+	void apache_mirror(const String &index, const char *base, const char *imgpath, std::set<std::shared_ptr<Source::File>> &files) {
 
 		for(auto href = index.find("<a href=\""); href != string::npos; href = index.find("<a href=\"",href)) {
 
@@ -99,7 +97,38 @@
 				continue;
 			}
 
-			debug(link);
+			string src{base};
+			src += link;
+
+			string dst{imgpath};
+			if(dst.empty() || dst[dst.size()-1] != '/') {
+				dst += '/';
+			}
+			dst += link;
+
+			if(src[src.size()-1] == '/') {
+
+				Dialog::Progress &progress = Dialog::Progress::getInstance();
+
+				auto worker = Protocol::WorkerFactory(src.c_str());
+
+				Logger::String{"Getting folder from ",worker->url().c_str()}.trace("apache");
+				progress.set_url(worker->url().c_str());
+
+				auto index = worker->get([&progress](double current, double total){
+					progress.set_progress(current,total);
+					return true;
+				});
+
+				apache_mirror(index, src.c_str(), dst.c_str(), files);
+
+			} else {
+
+				Logger::String{"Adding source file ",src}.trace("apache");
+				files.emplace(make_shared<Remote>(src,dst));
+
+			}
+
 
 		}
 
@@ -160,7 +189,7 @@
 			debug(worker->header("Server").value());
 
 			// FIX-ME: Detect server.
-			apache_mirror(index,worker->url().c_str(),files);
+			apache_mirror(index,worker->url().c_str(),imgpath,files);
 
 
 		} else {
@@ -169,7 +198,6 @@
 
 		}
 
-		throw runtime_error("Still incomplete");
 	}
 
  }

@@ -36,5 +36,6 @@
 	source.prepare(files);
 
 
+	Udjat::Module::unload();
 	return 0;
  }
