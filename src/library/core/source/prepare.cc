@@ -59,7 +59,7 @@
 	// TODO: File source saving from url to 'path.local'. Will be used to recover local repository.
 
 	/// @brief File source using URL to download to temp file.
-	class Remote : public Source::File, private Udjat::File::Temporary {
+	class Remote : public Source::File {
 	private:
 		std::string url;
 
@@ -69,14 +69,17 @@
 		}
 
 		void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const override {
-			Udjat::File::Handler::save(writer);
-		}
-
-		void get() override {
 
 			// Save URL to this->fd
+			auto worker = Protocol::WorkerFactory(url.c_str());
 
+			Logger::String{"Getting file from ",worker->url().c_str()}.write(Logger::Debug,"source");
+			Dialog::Progress::getInstance().set_url(worker->url().c_str());
 
+			worker->save([&writer](unsigned long long current, unsigned long long total, const void *buf, size_t length){
+				writer(current,total,buf,length);
+				return true;
+			});
 
 		}
 

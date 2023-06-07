@@ -25,11 +25,7 @@
 
  namespace Reinstall {
 
-	void Source::File::get() {
 
-		// Default get does nothing.
-
-	}
 
  }
 

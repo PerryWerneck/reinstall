@@ -122,9 +122,6 @@
 			File(const char *imgpath) : std::string{imgpath} {
 			}
 
-			/// @brief Prepare for build, download file if necessary.
-			virtual void get();
-
 			virtual void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const = 0;
 
 		};
