@@ -33,8 +33,11 @@
 			<Add option="-Wall" />
 		</Compiler>
 		<Unit filename="../include/libreinstall/source.h" />
+		<Unit filename="../include/reinstall/dialogs/taskrunner.h" />
+		<Unit filename="../include/reinstall/userinterface.h" />
 		<Unit filename="core/source/path.cc" />
 		<Unit filename="core/source/slpclient.cc" />
+		<Unit filename="dialogs/popup.cc" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

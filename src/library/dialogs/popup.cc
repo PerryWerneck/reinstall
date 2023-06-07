@@ -21,6 +21,7 @@
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
  #include <reinstall/dialogs.h>
+ #include <udjat/tools/object.h>
 
  using namespace std;
  using namespace Udjat;

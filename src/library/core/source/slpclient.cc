@@ -131,7 +131,6 @@
 
 		SRV_URL_CB_INFO cbinfo;
 
-
 		Logger::String{"Searching for ",service_type}.info("slpclient");
 		err = SLPFindSrvs(
 					hSlp,
@@ -174,7 +173,7 @@
 
 			if(err != SLP_OK) {
 
-				Logger::String{"SLPFindSrvs has failed"}.warning("slpclient");
+				Logger::String{"SLPFindSrvs has failed with rc ",err}.warning("slpclient");
 
 			} else if(!allow_local) {
 

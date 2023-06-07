@@ -5,7 +5,8 @@ PACKAGE_NAME=@PACKAGE_NAME@
 SONAME=@SONAME@
 
 SOURCES= \
-		$(wildcard core/source/*.cc)
+		$(wildcard core/source/*.cc) \
+		$(wildcard dialogs/*.cc)
 
 TEST_SOURCES= \
 		$(wildcard testprogram/*.cc)
@@ -58,7 +59,8 @@ CFLAGS= \
 	@PUGIXML_CFLAGS@ \
 	@ISOFS_CFLAGS@ \
 	@JSON_CFLAGS@ \
-	@DBUS_CFLAGS@
+	@DBUS_CFLAGS@ \
+	@LIBSLP_CFLAGS@
 
 LDFLAGS=\
 	@LDFLAGS@
@@ -71,7 +73,8 @@ LIBS= \
 	@ISOFS_LIBS@ \
 	@DBUS_LIBS@ \
 	@JSON_LIBS@ \
-	@DBUS_LIBS@
+	@DBUS_LIBS@ \
+	@LIBSLP_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 

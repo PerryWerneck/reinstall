@@ -20,6 +20,8 @@
  #pragma once
  #include <reinstall/defs.h>
  #include <reinstall/dialogs/window.h>
+ #include <memory>
+ #include <functional>
 
  namespace Reinstall {
 
