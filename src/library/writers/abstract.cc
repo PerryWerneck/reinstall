@@ -19,6 +19,8 @@
 
  #include <config.h>
  #include <reinstall/defs.h>
+
+ /*
  #include <reinstall/writer.h>
  #include <reinstall/diskimage.h>
  #include <system_error>
@@ -146,18 +148,6 @@
 		}
 		fdisk_partition_size_explicit(pa,1);
 
-		/*
-
-		TODO: Find why fdisk_assign_device_by_fd doesnt work.
-
-		errno = - fdisk_assign_device_by_fd(cxt, fd, "diskimage", 0);
-		if(errno) {
-			fdisk_unref_context(cxt);
-			fdisk_unref_partition(pa);
-			throw system_error(errno,system_category(),"fdisk_assign_device_by_fd has failed");
-		}
-		*/
-
 		{
 			// For some reason assing by fd doesnt work, then, I'm using the filename.
 			char fn[4097];
@@ -252,7 +242,6 @@
 				throw system_error(-rc,system_category(),"fdisk_write_disklabel has failed");
 			}
 
-			/*
 			if(Logger::enabled(Logger::Trace)) {
 
 				struct fdisk_parition *pa;
@@ -269,7 +258,6 @@
 				fdisk_unref_partition(pa);
 
 			}
-			*/
 
 		} catch(...) {
 
@@ -299,3 +287,5 @@
 #endif // HAVE_FDISK
 
  }
+
+*/

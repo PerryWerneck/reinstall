@@ -27,7 +27,7 @@
 	Reinstall::Source source{
 		"suse",
 		"http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64/",
-		"/home/perry/Público/openSUSE-Leap-15.4-NET-x86_64",
+		"/home/perry/Público/openSUSE-Leap-15.4-NET-x86_64-disabled",
 		""
 	};
 
@@ -39,10 +39,22 @@
 
 	debug("Number of source files: ",files.size());
 
-	auto builder = Reinstall::Builder::fat(20000000000ULL);
+	try {
 
-	for(auto file : files) {
-		builder->push_back(file);
+		auto builder = Reinstall::Builder::fat(20000000000ULL);
+
+		builder->pre();
+		for(auto file : files) {
+			builder->push_back(file);
+		}
+		builder->post();
+
+	} catch(const std::exception &e) {
+
+		Logger::String{e.what()}.error("builder");
+		Udjat::Module::unload();
+		return -1;
+
 	}
 
 	Udjat::Module::unload();
