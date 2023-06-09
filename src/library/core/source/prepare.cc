@@ -50,6 +50,14 @@
 		Local(const Udjat::File::Path &f, const std::string &to) : Source::File{to}, from{f} {
 		}
 
+		bool remote() const noexcept override {
+			return false;
+		}
+
+		const char * path() const noexcept override {
+			return from.c_str();
+		}
+
 		void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const override {
 			from.save(writer);
 		}
@@ -66,6 +74,14 @@
 	public:
 
 		Remote(const std::string &u, const std::string &to) : Source::File{to}, url{u} {
+		}
+
+		bool remote() const noexcept override {
+			return true;
+		}
+
+		const char * path() const noexcept override {
+			throw runtime_error("Unable to get path for remote source");
 		}
 
 		void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const override {

@@ -19,6 +19,7 @@
 
  #include <config.h>
 
+ /*
  #include <iostream>
  #include <reinstall/iso9660.h>
  #include <udjat/tools/url.h>
@@ -386,7 +387,6 @@
 
 	}
 
-	/*
 	size_t iso9660::Builder::size() {
 
 		rc = iso_image_update_sizes(image);
@@ -396,7 +396,6 @@
 		}
 
 	}
-	*/
 
 	std::shared_ptr<Writer> iso9660::Builder::burn(std::shared_ptr<Writer> writer) {
 
@@ -464,3 +463,5 @@
 	}
 
  }
+
+ */

@@ -11,6 +11,7 @@ SOURCES= \
 		$(wildcard sources/*.cc) \
 		$(wildcard builders/*.cc) \
 		$(wildcard writers/*.cc) \
+		$(wildcard iso9660/*.cc) \
 		$(wildcard fatfs/source/*.cc) \
 		$(wildcard fatfs/source/*.c)	
 

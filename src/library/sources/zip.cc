@@ -126,6 +126,15 @@
 			ZipFile(const char *n, shared_ptr<Container> z, const struct zip_stat &sb, const std::string &to) : Source::File{to}, name{n}, zip{z}, stat{sb} {
 			}
 
+			/// @brief zip file should be exported to temporary as the remote ones.
+			bool remote() const noexcept override {
+				return true;
+			}
+
+			const char * path() const noexcept override {
+				throw runtime_error("Unable to get path for zip source");
+			}
+
 			void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const override {
 
 				lock_guard<mutex> lock(*zip);

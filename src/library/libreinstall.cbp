@@ -35,6 +35,8 @@
 		<Unit filename="../include/libreinstall/action.h" />
 		<Unit filename="../include/libreinstall/builder.h" />
 		<Unit filename="../include/libreinstall/builders/fat.h" />
+		<Unit filename="../include/libreinstall/builders/iso9660.h" />
+		<Unit filename="../include/libreinstall/iso9660.h" />
 		<Unit filename="../include/libreinstall/source.h" />
 		<Unit filename="../include/libreinstall/sources/zip.h" />
 		<Unit filename="../include/libreinstall/writer.h" />
@@ -48,6 +50,10 @@
 		<Unit filename="core/source/slpclient.cc" />
 		<Unit filename="core/source/source.cc" />
 		<Unit filename="dialogs/popup.cc" />
+		<Unit filename="iso9660/builder.cc" />
+		<Unit filename="iso9660/efi.cc" />
+		<Unit filename="iso9660/eltorito.cc" />
+		<Unit filename="iso9660/settings.cc" />
 		<Unit filename="sources/zip.cc" />
 		<Unit filename="testprogram/testprogram.cc" />
 		<Unit filename="ui/userinterface.cc" />

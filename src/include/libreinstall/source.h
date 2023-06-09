@@ -121,6 +121,14 @@
 			File(const char *imgpath) : std::string{imgpath} {
 			}
 
+			/// @brief Is the file remote?
+			virtual bool remote() const noexcept = 0;
+
+			/// @brief Path of the file in local file system.
+			virtual const char * path() const noexcept = 0;
+
+			/// @brief Save file using custom writer.
+			/// @param writer The file writer method.
 			virtual void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const = 0;
 
 		};

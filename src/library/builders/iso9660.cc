@@ -19,6 +19,183 @@
 
 
  #include <config.h>
+ #include <udjat/defs.h>
+ #include <udjat/tools/object.h>
+ #include <libreinstall/source.h>
+ #include <libreinstall/iso9660.h>
+ #include <libreinstall/builders/iso9660.h>
+ #include <reinstall/dialogs/progress.h>
+ #include <udjat/tools/file/temporary.h>
+ #include <udjat/tools/file/handler.h>
+ #include <udjat/tools/logger.h>
+ #include <udjat/tools/intl.h>
+ #include <udjat/tools/string.h>
+ #include <vector>
+
+ #ifdef HAVE_UNISTD_H
+	#include <unistd.h>
+ #endif // HAVE_UNISTD_H
+
+ #define LIBISOFS_WITHOUT_LIBBURN
+ #include <libisofs/libisofs.h>
+
+ typedef struct Iso_Image IsoImage;
+ typedef struct iso_write_opts IsoWriteOpts;
+
+ using namespace Udjat;
+ using namespace std;
+ using namespace Reinstall;
+
+ namespace iso9660 {
+
+	class UDJAT_PRIVATE IsoBuilderSingleTon {
+	private:
+		IsoBuilderSingleTon() {
+			Logger::String{"Starting isofs"}.info("iso9660");
+			iso_init();
+		}
+
+	public:
+		static IsoBuilderSingleTon &getInstance() {
+			static IsoBuilderSingleTon instance;
+			return instance;
+		}
+
+		~IsoBuilderSingleTon() {
+			Logger::String{"Stopping isofs"}.info("iso9660");
+			iso_finish();
+		}
+
+	};
+
+	static IsoDir * getIsoDir(IsoImage *image, const char *dirname) {
+
+		if(*dirname == '/') {
+			dirname++;
+		}
+
+		int rc;
+		IsoDir * dir = iso_image_get_root(image);
+
+		for(auto dn : Udjat::String(dirname).split("/")) {
+
+			IsoNode *node;
+			rc = iso_image_dir_get_node(image,dir,dn.c_str(),&node,0);
+			if(rc == 0) {
+
+				// Not found, add it.
+				rc = iso_tree_add_new_dir(dir, dn.c_str(), (IsoDir **) &node);
+
+			};
+
+			if(rc < 0) {
+				Logger::String{"Error '",iso_error_to_msg(rc),"' adding path ",dirname}.error("iso9660");
+				throw runtime_error(iso_error_to_msg(rc));
+			}
+
+			dir = (IsoDir *) node;
+
+		}
+
+		return dir;
+
+	}
+
+	std::shared_ptr<Reinstall::Builder> BuilderFactory(const Settings &settings) {
+
+		class Builder : public Reinstall::Builder {
+		private:
+			const iso9660::Settings &settings;
+
+			class TempFile : public string {
+			public:
+				TempFile() : string{Udjat::File::Temporary::create()} {
+				}
+
+				~TempFile() {
+					if(unlink(c_str()) < 0) {
+						Logger::String{"Cant remove '",c_str(),"': ",strerror(errno)}.warning("iso9660");
+					}
+				}
+
+			};
+
+			std::vector<TempFile> tempfiles;
+
+			IsoImage *image = nullptr;
+			IsoWriteOpts *opts;
+
+		public:
+			Builder(const iso9660::Settings &s) : Reinstall::Builder("iso9660"), settings{s} {
+
+				IsoBuilderSingleTon::getInstance();
+
+				if(!iso_image_new("name", &image)) {
+					throw runtime_error(_("Error creating iso image"));
+				}
+
+				iso_image_attach_data(image,this,NULL);
+
+				iso_write_opts_new(&opts, 2);
+				iso_write_opts_set_relaxed_vol_atts(opts, 1);
+				iso_write_opts_set_rrip_version_1_10(opts,1);
+
+			}
+
+			virtual ~Builder() {
+
+				iso_image_unref(image);
+				iso_write_opts_free(opts);
+
+			}
+
+			void pre() override {
+			}
+
+			void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
+
+				string filename;
+
+				if(file->remote()) {
+
+					// Is a remote file, download it.
+
+					tempfiles.emplace_back();
+					filename = tempfiles.back();
+
+					debug("Writing ",filename);
+					Dialog::Progress &progress = Dialog::Progress::getInstance();
+
+					File::Handler fil{filename.c_str(),true};
+
+					file->save([&fil,&progress](unsigned long long current, unsigned long long total, const void *buf, size_t length){
+						progress.set_progress(current,total);
+						fil.write(current, buf, length);
+					});
+
+
+				} else {
+
+					filename = file->path();
+
+				}
+
+				//
+				// Add 'filename' in the iso image
+				//
+
+
+			}
+
+			void post() override {
+			}
+		};
+
+		return make_shared<Builder>(settings);
+
+	}
+
+ }
 
  /*
  #include <reinstall/actions/isobuilder.h>
