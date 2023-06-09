@@ -8,6 +8,7 @@ SOURCES= \
 		$(wildcard core/source/*.cc) \
 		$(wildcard ui/*.cc) \
 		$(wildcard ui/dialogs/*.cc) \
+		$(wildcard sources/*.cc) \
 		$(wildcard builders/*.cc) \
 		$(wildcard writers/*.cc) \
 		$(wildcard fatfs/source/*.cc) \

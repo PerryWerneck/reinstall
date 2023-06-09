@@ -55,9 +55,9 @@
 			bool mounted = false;
 
 		public:
-			FatBuilder(unsigned long long length) {
+			FatBuilder(unsigned long long length) : Builder{"fatfs"} {
 
-				Logger::String{"Building disk image with ",String{}.set_byte(length)}.info("fat");
+				info("Building disk image with {}",String{}.set_byte(length));
 
 				if(fallocate(this->fd,0,0,length)) {
 					throw system_error(errno,system_category(),"Cant allocate FAT image");
@@ -100,7 +100,7 @@
 			void post() override {
 				auto rc = f_mount(NULL, "", 0);
 				if(rc != FR_OK) {
-					Logger::String{"Unexpected error '",rc,"' on f_umount"}.error("fat");
+					error("Unexpected error '{}' on f_umount",rc);
 				}
 				fsync(fd);
 				mounted = false;

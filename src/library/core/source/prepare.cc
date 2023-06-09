@@ -155,7 +155,7 @@
 		if(local()) {
 
 			progress.set_url(path.local);
-			Logger::String{"Getting file list from ",path.local}.trace(name);
+			Logger::String{"Getting file list from ",path.local}.trace(name());
 
 			size_t szpath = strlen(path.local);
 
@@ -185,7 +185,7 @@
 			auto worker = Protocol::WorkerFactory(url.c_str());
 			worker->mimetype(MimeType::json);
 
-			Logger::String{"Getting file list for ",worker->url().c_str()}.info(name);
+			info("Getting file list for {}",worker->url().c_str());
 			progress.set_url(worker->url().c_str());
 
 			auto index = worker->get([&progress](double current, double total){

@@ -44,7 +44,8 @@
 		static std::shared_ptr<Writer> factory();
 
 		/// @brief Set image size, notify user if not enough space.
-		virtual void prepare(unsigned long long image_len = 0);
+		/// @return true to continue, false to stop.
+		virtual bool prepare(unsigned long long image_len = 0);
 
 	};
 

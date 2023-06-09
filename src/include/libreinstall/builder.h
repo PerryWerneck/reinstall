@@ -19,15 +19,17 @@
 
  #pragma once
  #include <udjat/defs.h>
+ #include <udjat/tools/object.h>
  #include <libreinstall/source.h>
  #include <memory>
 
  namespace Reinstall {
 
 	/// @brief The default image builder.
-	class UDJAT_API Builder {
+	class UDJAT_API Builder : Udjat::NamedObject {
 	public:
-		Builder() = default;
+		Builder(const char *name) : Udjat::NamedObject{name} {
+		}
 
 		/// @brief Start build.
 		virtual void pre() = 0;

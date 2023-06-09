@@ -37,7 +37,7 @@
  namespace Reinstall {
 
 	Source::Source(const Udjat::XML::Node &node) :
-		name{  Quark{ node,"name",node.name() }.c_str() }, path{ node }, slpclient{ node }, imgpath{ XML::QuarkFactory(node,"path").c_str() } {
+		Udjat::NamedObject{ node }, path{ node }, slpclient{ node }, imgpath{ XML::QuarkFactory(node,"path").c_str() } {
 	}
 
 	const char * Source::local() const noexcept {
@@ -62,7 +62,7 @@
 		}
 #ifdef DEBUG
 		else {
-			Logger::String("No SLP service defined, using url").warning(name);
+			warning("No SLP service defined, using {}",path.remote);
 		}
 #endif // DEBUG
 
@@ -70,7 +70,7 @@
 			return path.remote;
 		}
 
-		throw runtime_error(Logger::Message{_("Can't determine source URL for '{}'"),name});
+		throw runtime_error(Logger::Message{_("Can't determine source URL for '{}'"),name()});
 
 	}
 

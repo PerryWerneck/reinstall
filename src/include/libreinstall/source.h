@@ -20,6 +20,7 @@
  #pragma once
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
+ #include <udjat/tools/object.h>
  #include <list>
  #include <memory>
  #include <string>
@@ -28,10 +29,8 @@
  namespace Reinstall {
 
 	/// @brief Common data source.
-	class UDJAT_API Source {
+	class UDJAT_API Source : public Udjat::NamedObject {
 	private:
-
-		const char *name = "source";
 
 		/// @brief Source paths.
 		const struct Path {
@@ -95,7 +94,7 @@
 		/// @param remote URL of the root for remote source.
 		/// @param local Path for source in the local file system.
 		/// @param path Path for source in the target image.
-		constexpr Source(const char *n, const char *remote, const char *local = "", const char *path = "") : name{n}, path{remote,local}, imgpath{path} {
+		constexpr Source(const char *n, const char *remote, const char *local = "", const char *path = "") : Udjat::NamedObject{n}, path{remote,local}, imgpath{path} {
 		}
 
 		Source(const Udjat::XML::Node &node);

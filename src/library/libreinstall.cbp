@@ -47,6 +47,7 @@
 		<Unit filename="core/source/slpclient.cc" />
 		<Unit filename="core/source/source.cc" />
 		<Unit filename="dialogs/popup.cc" />
+		<Unit filename="sources/zip.cc" />
 		<Unit filename="testprogram/testprogram.cc" />
 		<Unit filename="ui/userinterface.cc" />
 		<Unit filename="writers/abstract.cc" />
