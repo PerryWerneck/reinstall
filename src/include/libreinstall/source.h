@@ -126,7 +126,7 @@
 		};
 
 		/// @brief Get list of source files.
-		virtual void prepare(std::set<std::shared_ptr<File>> &files);
+		virtual void prepare(std::set<std::shared_ptr<File>> &files) const;
 
 	};
 

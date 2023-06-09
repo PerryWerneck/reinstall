@@ -10,6 +10,8 @@
  #include <reinstall/dialogs/progress.h>
  #include <udjat/tools/logger.h>
 
+ #include <libreinstall/sources/zip.h>
+
  using namespace std;
  using namespace Udjat;
 
@@ -24,10 +26,19 @@
 	Udjat::Logger::console(true);
 	Udjat::Module::load("http");
 
+	/*
 	Reinstall::Source source{
 		"suse",
 		"http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64/",
-		"/home/perry/Público/openSUSE-Leap-15.4-NET-x86_64-disabled",
+		"/home/perry/Público/openSUSE-Leap-15.4-NET-x86_64",
+		""
+	};
+	*/
+
+	Reinstall::ZipSource source{
+		"zip",
+		"http://localhost/~perry/win/ziptest.zip",
+		"/home/perry/public_html/win/ziptest.zip",
 		""
 	};
 

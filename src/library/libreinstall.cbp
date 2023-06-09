@@ -36,6 +36,7 @@
 		<Unit filename="../include/libreinstall/builder.h" />
 		<Unit filename="../include/libreinstall/builders/fat.h" />
 		<Unit filename="../include/libreinstall/source.h" />
+		<Unit filename="../include/libreinstall/sources/zip.h" />
 		<Unit filename="../include/libreinstall/writer.h" />
 		<Unit filename="../include/reinstall/dialogs/taskrunner.h" />
 		<Unit filename="../include/reinstall/userinterface.h" />

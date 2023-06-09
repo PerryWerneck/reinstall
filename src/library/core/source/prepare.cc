@@ -148,7 +148,7 @@
 
 	}
 
-	void Source::prepare(std::set<std::shared_ptr<File>> &files) {
+	void Source::prepare(std::set<std::shared_ptr<File>> &files) const {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
@@ -197,8 +197,11 @@
 				throw runtime_error(Logger::Message(_("Empty response from {}"),url));
 			}
 
-			debug(worker->header("Content-Type").value());
-			debug(worker->header("Server").value());
+			trace(
+				"Got a '{}' response form server '{}'",
+					worker->header("Content-Type").value(),
+					worker->header("Server").value()
+			);
 
 			// FIX-ME: Detect server.
 			apache_mirror(index,worker->url().c_str(),imgpath,files);

@@ -68,6 +68,7 @@ CFLAGS= \
 	@ISOFS_CFLAGS@ \
 	@JSON_CFLAGS@ \
 	@DBUS_CFLAGS@ \
+	@ZIPLIB_CFLAGS@ \
 	@LIBSLP_CFLAGS@
 
 CXXFLAGS= \
@@ -81,6 +82,7 @@ CXXFLAGS= \
 	@ISOFS_CFLAGS@ \
 	@JSON_CFLAGS@ \
 	@DBUS_CFLAGS@ \
+	@ZIPLIB_CFLAGS@ \
 	@LIBSLP_CFLAGS@
 
 LDFLAGS=\
@@ -95,6 +97,7 @@ LIBS= \
 	@DBUS_LIBS@ \
 	@JSON_LIBS@ \
 	@DBUS_LIBS@ \
+	@ZIPLIB_LIBS@ \
 	@LIBSLP_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
