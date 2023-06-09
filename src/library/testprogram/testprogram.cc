@@ -2,13 +2,16 @@
  #include <udjat/tools/logger.h>
  #include <udjat/tools/quark.h>
  #include <libreinstall/source.h>
- #include <libreinstall/builder.h>
+ #include <libreinstall/iso9660.h>
  #include <udjat/module.h>
  #include <iostream>
  #include <set>
  #include <reinstall/userinterface.h>
  #include <reinstall/dialogs/progress.h>
  #include <udjat/tools/logger.h>
+
+ #include <libreinstall/builder.h>
+ #include <libreinstall/builders/iso9660.h>
 
  #include <libreinstall/sources/zip.h>
 
@@ -52,13 +55,17 @@
 
 	try {
 
-		auto builder = Reinstall::Builder::fat(20000000000ULL);
+		iso9660::Settings settings;
+		auto builder = iso9660::BuilderFactory(settings);
+
+		// auto builder = Reinstall::Builder::fat(20000000000ULL);
 
 		builder->pre();
 		for(auto file : files) {
 			builder->push_back(file);
 		}
 		builder->post();
+
 
 	} catch(const std::exception &e) {
 
