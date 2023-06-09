@@ -32,6 +32,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="../include/libreinstall/action.h" />
 		<Unit filename="../include/libreinstall/builder.h" />
 		<Unit filename="../include/libreinstall/builders/fat.h" />
 		<Unit filename="../include/libreinstall/source.h" />

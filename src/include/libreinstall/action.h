@@ -18,35 +18,50 @@
  */
 
  #pragma once
+
  #include <udjat/defs.h>
+ #include <udjat/tools/xml.h>
+ #include <libreinstall/source.h>
  #include <memory>
+ #include <libreinstall/builder.h>
+ #include <udjat/tools/object.h>
 
  namespace Reinstall {
 
-	/// @brief The default image writer.
-	class UDJAT_API Writer {
+	/// @brief Standard action.
+	class UDJAT_API Action : public Udjat::NamedObject {
 	private:
-		static const char *devicename;	///< @brief Device set by user, disable detection dialog.
-		int fd = -1; ///< @brief Device handler.
+		static Action *selected;	/// @brief Selected action.
+		static Action *def;			/// @brief Default action.
 
 	protected:
-		Writer() = default;
+
+		/// @brief List of sources defined by XML.
+		std::vector<Reinstall::Source> sources;
+
+		/// @brief Get required files.
+		virtual void prepare(std::set<std::shared_ptr<Reinstall::Source::File>> &files);
+
+		/// @brief Get Image builder.
+		virtual std::shared_ptr<Builder> BuilderFactory() const = 0;
 
 	public:
-		~Writer();
+		Action(const XML::Node &node);
+		~Action();
 
-		/// @brief Set a fixed device name.
-		/// @param devicename The device name.
-		/// @param length Bytes to allocate on device (if it's a file).
-		static set_device_name(const char *devicename, unsigned long long length = 0LL);
+		enum ActivationType {
+			Selected,
+			Default
+		};
 
-		/// @brief Detect USB device, build an image writer for it.
-		static std::shared_ptr<Writer> factory();
+		static void activate(const const ActivationType type);
 
-		/// @brief Set image size, notify user if not enough space.
-		virtual void prepare(unsigned long long image_len = 0);
+		virtual void activate() const;
+
+		inline void select() noexcept {
+			selected = this;
+		}
 
 	};
 
  }
-
