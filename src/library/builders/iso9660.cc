@@ -173,7 +173,6 @@
 						fil.write(current, buf, length);
 					});
 
-
 				} else {
 
 					filename = file->path();
@@ -183,7 +182,52 @@
 				//
 				// Add 'filename' in the iso image
 				//
+				int rc = 0;
 
+				const char *isoname = file->c_str();
+				auto pos = strrchr(isoname,'/');
+				if(pos) {
+
+					if(!*(pos+1)) {
+						Logger::String{
+							"Can't insert node '",
+							isoname,
+							"' it's not a FILE name, looks like a DIRECTORY name"
+						}.error("iso9660");
+						throw logic_error(Logger::Message{_("Unexpected or invalid file name: {}"),isoname});
+					}
+
+					// Add file to iso.
+					rc = iso_tree_add_new_node(
+						image,
+						getIsoDir(image,string{isoname,(size_t) (pos - isoname)}.c_str()),
+						pos+1,
+						filename.c_str(),
+						NULL
+					);
+
+				} else {
+
+					// No path, store on root.
+					rc = iso_tree_add_new_node(
+						image,
+						iso_image_get_root(image),
+						isoname,
+						filename.c_str(),
+						NULL
+					);
+
+				}
+
+				if(rc < 0) {
+					Logger::String{
+						"Error '",
+						iso_error_to_msg(rc),
+						"' adding '",
+						isoname
+					}.error("iso9660");
+					throw runtime_error(iso_error_to_msg(rc));
+				}
 
 			}
 
