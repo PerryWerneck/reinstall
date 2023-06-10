@@ -42,14 +42,17 @@
 	#include <unistd.h>
  #endif // HAVE_UNISTD_H
 
+ #include <libreinstall/builders/fat.h>
+
+ using namespace Reinstall;
  using namespace Udjat;
  using namespace std;
 
- namespace Reinstall {
+ namespace Fat {
 
-	std::shared_ptr<Builder> Builder::fat(unsigned long long length) {
+	std::shared_ptr<Reinstall::Builder> BuilderFactory(unsigned long long length) {
 
-		class FatBuilder : public Builder, private File::Temporary {
+		class FatBuilder : public Reinstall::Builder, private File::Temporary {
 		private:
 			FATFS fs;
 			bool mounted = false;

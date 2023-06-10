@@ -131,7 +131,7 @@
 				return true;
 			}
 
-			const char * path() const noexcept override {
+			const char * path() const override {
 				throw runtime_error("Unable to get path for zip source");
 			}
 

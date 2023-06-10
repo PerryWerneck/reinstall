@@ -19,5 +19,12 @@
 
  #pragma once
  #include <udjat/defs.h>
- 
+ #include <libreinstall/builder.h>
 
+ namespace Fat {
+
+	/// @brief Construct FAT32 Builder.
+	/// @param length Image size.
+	std::shared_ptr<Reinstall::Builder> BuilderFactory(unsigned long long length);
+
+ }

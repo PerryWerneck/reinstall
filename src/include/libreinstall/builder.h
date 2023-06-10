@@ -25,10 +25,10 @@
 
  namespace Reinstall {
 
-	/// @brief The default image builder.
-	class UDJAT_API Builder : Udjat::NamedObject {
+	/// @brief The abstract image builder.
+	class UDJAT_API Builder : public Udjat::NamedObject {
 	public:
-		Builder(const char *name) : Udjat::NamedObject{name} {
+		constexpr Builder(const char *name) : Udjat::NamedObject{name} {
 		}
 
 		/// @brief Start build.
@@ -39,10 +39,6 @@
 
 		/// @brief Add file to image.
 		virtual void push_back(std::shared_ptr<Reinstall::Source::File> file) = 0;
-
-		/// @brief Construct FAT32 Builder.
-		/// @param length Image size.
-		static std::shared_ptr<Builder> fat(unsigned long long length);
 
 	};
 

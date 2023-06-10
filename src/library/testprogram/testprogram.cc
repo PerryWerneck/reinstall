@@ -12,6 +12,7 @@
 
  #include <libreinstall/builder.h>
  #include <libreinstall/builders/iso9660.h>
+ #include <libreinstall/builders/fat.h>
 
  #include <libreinstall/sources/zip.h>
 

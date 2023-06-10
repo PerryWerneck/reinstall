@@ -125,7 +125,7 @@
 			virtual bool remote() const noexcept = 0;
 
 			/// @brief Path of the file in local file system.
-			virtual const char * path() const noexcept = 0;
+			virtual const char * path() const = 0;
 
 			/// @brief Save file using custom writer.
 			/// @param writer The file writer method.
