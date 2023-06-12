@@ -39,7 +39,11 @@
 		: image{XML::QuarkFactory(node,"efi-boot-image","value","/boot/x86_64/efi").c_str()} {
 	}
 
-	void Image::set_bootable(const char *, const Settings::Boot::Efi &boot) {
+	void Image::set_bootable(const char *partdata, const Settings::Boot::Efi &boot) {
+
+		if(!(partdata && *partdata)) {
+			throw runtime_error("Invalid EFI partition data");
+		}
 
 		// Set EFI boot partition.
 		int rc;
@@ -48,21 +52,21 @@
 
 			// iso-hybrid, set partition
 			set_part_like_isohybrid();
-			rc = iso_write_opts_set_partition_img(opts,2,0xef,(char *) boot.image,0);
+			rc = iso_write_opts_set_partition_img(opts,2,0xef,(char *) partdata,0);
 
 		} else {
 
 			// Non iso-hybrid, set bootp.
-			rc = iso_write_opts_set_efi_bootp(opts,(char *) boot.image,0);
+			rc = iso_write_opts_set_efi_bootp(opts,(char *) partdata,0);
 
 		}
 
 		if(rc != ISO_SUCCESS) {
-			Logger::String{"Cant set ",boot.image," as efi boot image: ",iso_error_to_msg(rc)}.error("iso9660");
+			Logger::String{"Cant set ",partdata," as efi boot image: ",iso_error_to_msg(rc)}.error("iso9660");
 			throw runtime_error(iso_error_to_msg(rc));
 		}
 
-		Logger::String{"EFI partition set from '",boot.image,"'"}.trace("iso9660");
+		Logger::String{"EFI partition set from '",partdata,"'"}.trace("iso9660");
 
 	}
 

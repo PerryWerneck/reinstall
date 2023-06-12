@@ -121,7 +121,6 @@
 		<Unit filename="src/library/dialogs/taskrunner.cc" />
 		<Unit filename="src/library/dialogs/window.cc" />
 		<Unit filename="src/library/group.cc" />
-		<Unit filename="src/library/iso9660/builder.cc" />
 		<Unit filename="src/library/kernelparameter.cc" />
 		<Unit filename="src/library/object.cc" />
 		<Unit filename="src/library/os/linux/abstract_writer.cc" />

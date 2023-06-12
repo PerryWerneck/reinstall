@@ -132,7 +132,8 @@
 		void set_bootable(const char *catalog, const Settings::Boot::ElTorito &boot);
 
 		/// @brief Set efi boot options.
-		void set_bootable(const char *catalog, const Settings::Boot::Efi &boot);
+		/// @param partfile	The local file with the EFI boot partition image.
+		void set_bootable(const char *partfile, const Settings::Boot::Efi &boot);
 
 	};
 

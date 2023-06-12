@@ -67,6 +67,9 @@
 
 			};
 
+			/// @brief Path for EFI boot partition in local filesystem;
+			std::string efibootpart;
+
 			std::vector<shared_ptr<TempFile>> tempfiles;
 
 		public:
@@ -91,6 +94,9 @@
 
 			void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
 
+				/// @brief The system filename.
+				string path;
+
 				if(file->remote()) {
 
 					// Is a remote file, download it.
@@ -107,14 +113,19 @@
 						fil.write(current, buf, length);
 					});
 
-					add(filename->c_str(),file->c_str());
+					path = filename->c_str();
 
 				} else {
 
-					add(file->path(),file->c_str());
+					path = file->path();
 
 				}
 
+				add(path.c_str(),file->c_str());
+
+				if(!strcmp(file->c_str(),settings.boot.efi.image)) {
+					efibootpart = path;
+				}
 
 			}
 
@@ -135,7 +146,7 @@
 
 				if(settings.boot.efi) {
 					progress.set_sub_title(_("Installing efi boot image"));
-					set_bootable(settings.boot.catalog,settings.boot.efi);
+					set_bootable(efibootpart.c_str(),settings.boot.efi);
 				}
 
 			}
