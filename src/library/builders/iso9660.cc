@@ -36,9 +36,6 @@
 	#include <unistd.h>
  #endif // HAVE_UNISTD_H
 
- #define LIBISOFS_WITHOUT_LIBBURN
- #include <libisofs/libisofs.h>
-
  typedef struct Iso_Image IsoImage;
  typedef struct iso_write_opts IsoWriteOpts;
 
@@ -48,67 +45,17 @@
 
  namespace iso9660 {
 
-	class UDJAT_PRIVATE IsoBuilderSingleTon {
-	private:
-		IsoBuilderSingleTon() {
-			Logger::String{"Starting isofs"}.info("iso9660");
-			iso_init();
-		}
-
-	public:
-		static IsoBuilderSingleTon &getInstance() {
-			static IsoBuilderSingleTon instance;
-			return instance;
-		}
-
-		~IsoBuilderSingleTon() {
-			Logger::String{"Stopping isofs"}.info("iso9660");
-			iso_finish();
-		}
-
-	};
-
-	static IsoDir * getIsoDir(IsoImage *image, const char *dirname) {
-
-		if(*dirname == '/') {
-			dirname++;
-		}
-
-		int rc;
-		IsoDir * dir = iso_image_get_root(image);
-
-		for(auto dn : Udjat::String(dirname).split("/")) {
-
-			IsoNode *node;
-			rc = iso_image_dir_get_node(image,dir,dn.c_str(),&node,0);
-			if(rc == 0) {
-
-				// Not found, add it.
-				rc = iso_tree_add_new_dir(dir, dn.c_str(), (IsoDir **) &node);
-
-			};
-
-			if(rc < 0) {
-				Logger::String{"Error '",iso_error_to_msg(rc),"' adding path ",dirname}.error("iso9660");
-				throw runtime_error(iso_error_to_msg(rc));
-			}
-
-			dir = (IsoDir *) node;
-
-		}
-
-		return dir;
-
-	}
-
 	std::shared_ptr<Reinstall::Builder> BuilderFactory(const Settings &settings) {
 
-		class Builder : public Reinstall::Builder {
+		class Builder : public Reinstall::Builder, private Image {
 		private:
 			const iso9660::Settings &settings;
 
 			class TempFile : public string {
 			public:
+				TempFile(const TempFile &) = delete;
+				TempFile(const TempFile *) = delete;
+
 				TempFile() : string{Udjat::File::Temporary::create()} {
 				}
 
@@ -120,119 +67,79 @@
 
 			};
 
-			std::vector<TempFile> tempfiles;
-
-			IsoImage *image = nullptr;
-			IsoWriteOpts *opts;
+			std::vector<shared_ptr<TempFile>> tempfiles;
 
 		public:
-			Builder(const iso9660::Settings &s) : Reinstall::Builder("iso9660"), settings{s} {
-
-				IsoBuilderSingleTon::getInstance();
-
-				if(!iso_image_new("name", &image)) {
-					throw runtime_error(_("Error creating iso image"));
-				}
-
-				iso_image_attach_data(image,this,NULL);
-
-				iso_write_opts_new(&opts, 2);
-				iso_write_opts_set_relaxed_vol_atts(opts, 1);
-				iso_write_opts_set_rrip_version_1_10(opts,1);
-
+			Builder(const iso9660::Settings &s) : Reinstall::Builder("iso9660"), Image{s.name}, settings{s} {
 			}
 
 			virtual ~Builder() {
-
-				iso_image_unref(image);
-				iso_write_opts_free(opts);
-
 			}
 
 			void pre() override {
+
+				Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Setting up ISO image"));
+
+				set_system_area(settings.system_area);
+				set_volume_id(settings.volume_id);
+				set_publisher_id(settings.publisher_id);
+				set_data_preparer_id(settings.data_preparer_id);
+				set_system_id(settings.system_id);
+				set_application_id(settings.application_id);
+
 			}
 
 			void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
 
-				string filename;
-
 				if(file->remote()) {
 
 					// Is a remote file, download it.
+					auto filename = make_shared<TempFile>();
+					tempfiles.emplace_back(filename);
 
-					tempfiles.emplace_back();
-					filename = tempfiles.back();
-
-					debug("Writing ",filename);
+					debug("Writing ",filename->c_str());
 					Dialog::Progress &progress = Dialog::Progress::getInstance();
 
-					File::Handler fil{filename.c_str(),true};
+					File::Handler fil{filename->c_str(),true};
 
 					file->save([&fil,&progress](unsigned long long current, unsigned long long total, const void *buf, size_t length){
 						progress.set_progress(current,total);
 						fil.write(current, buf, length);
 					});
 
-				} else {
-
-					filename = file->path();
-
-				}
-
-				//
-				// Add 'filename' in the iso image
-				//
-				int rc = 0;
-
-				const char *isoname = file->c_str();
-				auto pos = strrchr(isoname,'/');
-				if(pos) {
-
-					if(!*(pos+1)) {
-						Logger::String{
-							"Can't insert node '",
-							isoname,
-							"' it's not a FILE name, looks like a DIRECTORY name"
-						}.error("iso9660");
-						throw logic_error(Logger::Message{_("Unexpected or invalid file name: {}"),isoname});
-					}
-
-					// Add file to iso.
-					rc = iso_tree_add_new_node(
-						image,
-						getIsoDir(image,string{isoname,(size_t) (pos - isoname)}.c_str()),
-						pos+1,
-						filename.c_str(),
-						NULL
-					);
+					add(filename->c_str(),file->c_str());
 
 				} else {
 
-					// No path, store on root.
-					rc = iso_tree_add_new_node(
-						image,
-						iso_image_get_root(image),
-						isoname,
-						filename.c_str(),
-						NULL
-					);
+					add(file->path(),file->c_str());
 
 				}
 
-				if(rc < 0) {
-					Logger::String{
-						"Error '",
-						iso_error_to_msg(rc),
-						"' adding '",
-						isoname
-					}.error("iso9660");
-					throw runtime_error(iso_error_to_msg(rc));
-				}
 
 			}
 
 			void post() override {
+
+				Reinstall::Dialog::Progress &progress{Reinstall::Dialog::Progress::getInstance()};
+
+				progress.set_sub_title(_("Setting up ISO image"));
+
+				set_rockridge();
+				set_joliet();
+				set_allow_deep_paths();
+
+				if(settings.boot.eltorito) {
+					progress.set_sub_title(_("Installing el-torito boot image"));
+					set_bootable(settings.boot.catalog,settings.boot.eltorito);
+				}
+
+				if(settings.boot.efi) {
+					progress.set_sub_title(_("Installing efi boot image"));
+					set_bootable(settings.boot.catalog,settings.boot.efi);
+				}
+
 			}
+
 		};
 
 		return make_shared<Builder>(settings);
@@ -383,80 +290,6 @@
 
 			void post(const Action &ptr) override {
 
-				const IsoBuilder *action = dynamic_cast<const IsoBuilder *>(&ptr);
-
-				if(!action) {
-					throw runtime_error(_("Rejecting invalid action pointer"));
-				}
-
-				Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Setting up ISO image"));
-
-				set_rockridge();
-				set_joliet();
-				set_allow_deep_paths();
-
-				if(action->boot.eltorito) {
-
-					Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Adding el-torito boot image"));
-
-					// Search to confirm presence of the boot_image.
-					const char *filename = action->source(action->boot.eltorito.image)->filename();
-					if(!(filename && *filename)) {
-						throw runtime_error(_("Unexpected filename on el-torito boot image"));
-					}
-
-					set_el_torito_boot_image(
-						action->boot.eltorito.image,
-						action->boot.catalog,
-						action->volume_id
-					);
-
-					cout << "iso9660\tEl-torito boot image set to '" << action->boot.eltorito.image << "'" << endl;
-				}
-
-				if(action->boot.efi->enabled()) {
-
-					Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Adding EFI boot image"));
-
-					auto source = action->source(action->boot.efi->path());
-					const char *filename = source->filename(true);
-					if(!filename[0]) {
-						throw runtime_error(_("Unexpected filename on EFI boot image"));
-					}
-
-					// Apply templates on EFI boot image.
-					{
-						debug("Applying templates on EFI boot image at '",filename,"'");
-
-						Disk::Image disk(filename);
-
-						for(auto tmpl : action->templates) {
-
-							disk.forEach([this,&tmpl](const char *mountpoint, const char *path){
-
-								if(tmpl->test(path)) {
-									tmpl->load((Udjat::Object &) *this);
-									cout << "efi\tReplacing " << path << " with template " << tmpl->c_str() << endl;
-									tmpl->replace((string{mountpoint} + "/" + path).c_str());
-								}
-
-							});
-
-						}
-					}
-
-					// Add EFI boot image
-					Logger::String{"Adding ",filename," as EFI boot image"}.info(name);
-					set_efi_boot_image(filename);
-
-					if(action->boot.catalog && *action->boot.catalog) {
-						Logger::String{"Adding ",source->path," as boot image"}.info(name);
-						add_boot_image(source->path,0xEF);
-					} else {
-						Logger::String{"No boot catalog, ",source->path," was not added as boot image"}.trace(name);
-					}
-
-				}
 
 			}
 

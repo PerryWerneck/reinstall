@@ -137,6 +137,14 @@
 
 			void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const override {
 
+				{
+					string url{"zip://"};
+					url += stat.name;
+
+					Logger::String{"Unpacking '",stat.name,"'"}.write(Logger::Debug,name);
+					Dialog::Progress::getInstance().set_url(url.c_str());
+				}
+
 				lock_guard<mutex> lock(*zip);
 
 				zip_file *zf = zip_fopen_index(zip->handler, stat.index, 0);

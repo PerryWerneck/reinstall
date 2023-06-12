@@ -53,6 +53,7 @@
 		<Unit filename="iso9660/builder.cc" />
 		<Unit filename="iso9660/efi.cc" />
 		<Unit filename="iso9660/eltorito.cc" />
+		<Unit filename="iso9660/image.cc" />
 		<Unit filename="iso9660/settings.cc" />
 		<Unit filename="sources/zip.cc" />
 		<Unit filename="testprogram/testprogram.cc" />

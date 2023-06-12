@@ -26,13 +26,45 @@
  #include <config.h>
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
+ #include <udjat/tools/logger.h>
  #include <libreinstall/iso9660.h>
+ #include <stdexcept>
 
  using namespace Udjat;
+ using namespace std;
 
  namespace iso9660 {
 
-	Settings::Boot::Efi::Efi(const XML::Node &node) {
+	Settings::Boot::Efi::Efi(const XML::Node &node)
+		: image{XML::QuarkFactory(node,"efi-boot-image","value","/boot/x86_64/efi").c_str()} {
 	}
+
+	void Image::set_bootable(const char *, const Settings::Boot::Efi &boot) {
+
+		// Set EFI boot partition.
+		int rc;
+
+		if(boot.isohybrid) {
+
+			// iso-hybrid, set partition
+			set_part_like_isohybrid();
+			rc = iso_write_opts_set_partition_img(opts,2,0xef,(char *) boot.image,0);
+
+		} else {
+
+			// Non iso-hybrid, set bootp.
+			rc = iso_write_opts_set_efi_bootp(opts,(char *) boot.image,0);
+
+		}
+
+		if(rc != ISO_SUCCESS) {
+			Logger::String{"Cant set ",boot.image," as efi boot image: ",iso_error_to_msg(rc)}.error("iso9660");
+			throw runtime_error(iso_error_to_msg(rc));
+		}
+
+		Logger::String{"EFI partition set from '",boot.image,"'"}.trace("iso9660");
+
+	}
+
 
  }

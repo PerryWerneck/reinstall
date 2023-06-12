@@ -25,11 +25,19 @@
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
 
+ #define LIBISOFS_WITHOUT_LIBBURN
+ #include <libisofs/libisofs.h>
+
+ typedef struct Iso_Image IsoImage;
+ typedef struct iso_write_opts IsoWriteOpts;
+
  namespace iso9660 {
 
+	/// @brief ISO-9660 build settings.
 	class UDJAT_API Settings {
 	public:
 
+		const char *name = nullptr;
 		const char *system_area = nullptr;
 		const char *volume_id = nullptr;
 		const char *publisher_id = nullptr;
@@ -48,7 +56,10 @@
 				ElTorito(const Udjat::XML::Node &node);
 
 				bool enabled = true;
+				bool isohybrid = true;
+
 				const char *image = "/boot/x86_64/loader/isolinux.bin";
+				const char *id = "";
 
 				inline operator bool() const {
 					return enabled;
@@ -58,10 +69,13 @@
 
 			struct Efi {
 
+				const char *image = "/boot/x86_64/efi";
+
 				constexpr Efi() = default;
 				Efi(const Udjat::XML::Node &node);
 
 				bool enabled = true;
+				bool isohybrid = true;
 
 				inline operator bool() const {
 					return enabled;
@@ -79,5 +93,42 @@
 
 	};
 
+	/// @brief ISO-9660 disk image.
+	class UDJAT_API Image {
+	protected:
+		IsoImage *image = nullptr;
+		IsoWriteOpts *opts;
+
+	public:
+
+		/// @brief Create a new empty image.
+		/// @param name Name of the image. This will be used as volset_id and volume_id.
+		Image(const char *name = "");
+		~Image();
+
+		/// @brief Add file in ISO image.
+		/// @param from Source file in local filesystem.
+		/// @param to File name in the image.
+		void add(const char *from, const char *to);
+
+		void set_system_area(const char *path);
+		void set_volume_id(const char *volume_id);
+		void set_publisher_id(const char *publisher_id);
+		void set_data_preparer_id(const char *data_preparer_id);
+		void set_application_id(const char *application_id);
+		void set_system_id(const char *system_id);
+		void set_iso_level(int level);
+		void set_rockridge(int rockridge = 1);
+		void set_joliet(int joliet = 1);
+		void set_allow_deep_paths(int deep_paths = 1);
+		void set_part_like_isohybrid();
+
+		/// @brief Set el-torito boot options.
+		void set_bootable(const char *catalog, const Settings::Boot::ElTorito &boot);
+
+		/// @brief Set efi boot options.
+		void set_bootable(const char *catalog, const Settings::Boot::Efi &boot);
+
+	};
 
  }

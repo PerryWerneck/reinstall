@@ -37,6 +37,7 @@
 		}
 
 	Settings::Settings(const XML::Node &node) :
+		name{XML::QuarkFactory(node,"iso-name").c_str()},
 		system_area{XML::QuarkFactory(node,"system-area").c_str()},
 		volume_id{XML::QuarkFactory(node,"volume-id").c_str()},
 		publisher_id{XML::QuarkFactory(node,"publisher-id").c_str()},
