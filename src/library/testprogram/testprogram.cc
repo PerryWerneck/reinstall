@@ -30,21 +30,21 @@
 	Udjat::Logger::console(true);
 	Udjat::Module::load("http");
 
-	/*
 	Reinstall::Source source{
 		"suse",
 		"http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64/",
 		"/home/perry/Público/openSUSE-Leap-15.4-NET-x86_64",
 		""
 	};
-	*/
 
+	/*
 	Reinstall::ZipSource source{
 		"zip",
 		"http://localhost/~perry/win/ziptest.zip",
 		"/home/perry/public_html/win/ziptest.zip",
 		""
 	};
+	*/
 
 	Reinstall::Dialog::Progress progress;
 
@@ -59,7 +59,7 @@
 		iso9660::Settings settings;
 		auto builder = iso9660::BuilderFactory(settings);
 
-		// auto builder = Reinstall::Builder::fat(20000000000ULL);
+		// auto builder = fat::BuilderFactory(20000000000ULL);
 
 		builder->pre();
 		for(auto file : files) {

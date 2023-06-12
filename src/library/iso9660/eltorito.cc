@@ -52,6 +52,8 @@
 			throw runtime_error(iso_error_to_msg(rc));
 		}
 
+		Logger::String{"El-torito boot image set from '",boot.image,"'"}.trace("iso9660");
+
 		el_torito_set_load_size(bootimg, 4);
 		el_torito_patch_isolinux_image(bootimg);
 

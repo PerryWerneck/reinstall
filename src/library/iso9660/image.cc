@@ -123,6 +123,8 @@
 
 	void Image::add(const char *filename, const char *isoname) {
 
+		Logger::String{filename," -> ", isoname}.write(Logger::Debug,"iso9660");
+
 		int rc = 0;
 
 		auto pos = strrchr(isoname,'/');

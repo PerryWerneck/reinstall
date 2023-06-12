@@ -50,7 +50,6 @@
 		<Unit filename="core/source/slpclient.cc" />
 		<Unit filename="core/source/source.cc" />
 		<Unit filename="dialogs/popup.cc" />
-		<Unit filename="iso9660/builder.cc" />
 		<Unit filename="iso9660/efi.cc" />
 		<Unit filename="iso9660/eltorito.cc" />
 		<Unit filename="iso9660/image.cc" />
