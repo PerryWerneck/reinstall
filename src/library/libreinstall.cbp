@@ -39,6 +39,7 @@
 		<Unit filename="../include/libreinstall/iso9660.h" />
 		<Unit filename="../include/libreinstall/source.h" />
 		<Unit filename="../include/libreinstall/sources/zip.h" />
+		<Unit filename="../include/libreinstall/template.h" />
 		<Unit filename="../include/libreinstall/writer.h" />
 		<Unit filename="../include/libreinstall/writers/file.h" />
 		<Unit filename="../include/reinstall/dialogs/taskrunner.h" />
@@ -50,6 +51,7 @@
 		<Unit filename="core/source/prepare.cc" />
 		<Unit filename="core/source/slpclient.cc" />
 		<Unit filename="core/source/source.cc" />
+		<Unit filename="core/template.cc" />
 		<Unit filename="dialogs/popup.cc" />
 		<Unit filename="iso9660/efi.cc" />
 		<Unit filename="iso9660/eltorito.cc" />

@@ -17,6 +17,8 @@
  #include <libreinstall/writer.h>
  #include <libreinstall/writers/file.h>
 
+ #include <libreinstall/template.h>
+
  #include <libreinstall/sources/zip.h>
 
  using namespace std;
@@ -40,6 +42,12 @@
 		""
 	};
 
+	Reinstall::Template tmpl {
+		"grub",
+		"grub.cfg",
+		"file://../../templates/grub.cfg"
+	};
+
 	/*
 	Reinstall::ZipSource source{
 		"zip",
@@ -54,6 +62,8 @@
 	std::set<std::shared_ptr<Reinstall::Source::File>> files;
 
 	source.prepare(files);
+
+	tmpl.apply(Udjat::Abstract::Object{},files);
 
 	debug("Number of source files: ",files.size());
 
