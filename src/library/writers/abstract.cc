@@ -18,7 +18,17 @@
  */
 
  #include <config.h>
- #include <reinstall/defs.h>
+ #include <udjat/defs.h>
+ #include <libreinstall/writer.h>
+
+ namespace Reinstall {
+
+	unsigned long long Writer::size() {
+		return 0;
+	}
+
+ }
+
 
  /*
  #include <reinstall/writer.h>

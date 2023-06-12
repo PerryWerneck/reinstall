@@ -27,25 +27,29 @@
 	class UDJAT_API Writer {
 	private:
 		static const char *devicename;	///< @brief Device set by user, disable detection dialog.
-		int fd = -1; ///< @brief Device handler.
 
 	protected:
 		Writer() = default;
 
 	public:
-		~Writer();
+
+		/// @brief Write data to device at offset.
+		/// @param contents Data to write.
+		/// @param length Data length.
+		/// @return Number of bytes written (allways 'length')
+		virtual size_t write(unsigned long long offset, const void *contents, size_t length) = 0;
 
 		/// @brief Set a fixed device name.
 		/// @param devicename The device name.
 		/// @param length Bytes to allocate on device (if it's a file).
-		static set_device_name(const char *devicename, unsigned long long length = 0LL);
+		static void set_device_name(const char *devicename, unsigned long long length = 0LL);
 
 		/// @brief Detect USB device, build an image writer for it.
 		static std::shared_ptr<Writer> factory();
 
-		/// @brief Set image size, notify user if not enough space.
-		/// @return true to continue, false to stop.
-		virtual bool prepare(unsigned long long image_len = 0);
+		/// @brief Get device length.
+		/// @return Device length (0 if cant be determined).
+		virtual unsigned long long size();
 
 	};
 

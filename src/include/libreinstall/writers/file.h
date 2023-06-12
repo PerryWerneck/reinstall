@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2022 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,26 +17,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #include <config.h>
+ /**
+  * @brief Declare file writer.
+  */
+
+ #pragma once
  #include <udjat/defs.h>
  #include <libreinstall/writer.h>
- #include <libreinstall/writers/file.h>
  #include <udjat/tools/file/handler.h>
- #include <udjat/tools/logger.h>
-
- using namespace Udjat;
 
  namespace Reinstall {
 
- 	FileWriter::FileWriter(const char *filename) : Udjat::File::Handler{filename,true} {
- 		Logger::String{"Writer to '",filename,"' was initialized"}.trace(PACKAGE_NAME);
- 	}
+	class UDJAT_API FileWriter : public Writer, private Udjat::File::Handler {
+	public:
+		FileWriter(const char *filename);
+		virtual ~FileWriter();
 
- 	FileWriter::~FileWriter() {
- 	}
+		size_t write(unsigned long long offset, const void *contents, size_t length) override;
 
-	size_t FileWriter::write(unsigned long long offset, const void *contents, size_t length) {
-		return Udjat::File::Handler::write(offset,contents,length);
-	}
+	};
 
  }
+
+

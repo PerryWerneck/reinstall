@@ -14,6 +14,9 @@
  #include <libreinstall/builders/iso9660.h>
  #include <libreinstall/builders/fat.h>
 
+ #include <libreinstall/writer.h>
+ #include <libreinstall/writers/file.h>
+
  #include <libreinstall/sources/zip.h>
 
  using namespace std;
@@ -66,6 +69,8 @@
 			builder->push_back(file);
 		}
 		builder->post();
+
+		auto writer = make_shared<Reinstall::FileWriter>("/tmp/test.iso");
 
 
 	} catch(const std::exception &e) {
