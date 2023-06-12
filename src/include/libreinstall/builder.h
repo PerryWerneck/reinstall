@@ -25,6 +25,8 @@
 
  namespace Reinstall {
 
+	class Writer;
+
 	/// @brief The abstract image builder.
 	class UDJAT_API Builder : public Udjat::NamedObject {
 	public:
@@ -39,6 +41,9 @@
 
 		/// @brief Add file to image.
 		virtual void push_back(std::shared_ptr<Reinstall::Source::File> file) = 0;
+
+		/// @brief Write image.
+		virtual void write(std::shared_ptr<Writer> writer) = 0;
 
 	};
 

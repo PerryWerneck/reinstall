@@ -23,8 +23,14 @@
  #include <libreinstall/writers/file.h>
  #include <udjat/tools/file/handler.h>
  #include <udjat/tools/logger.h>
+ #include <stdexcept>
+
+ #ifdef HAVE_UNISTD_H
+	#include <unistd.h>
+ #endif // HAVE_UNISTD_H
 
  using namespace Udjat;
+ using namespace std;
 
  namespace Reinstall {
 
@@ -38,5 +44,13 @@
 	size_t FileWriter::write(unsigned long long offset, const void *contents, size_t length) {
 		return Udjat::File::Handler::write(offset,contents,length);
 	}
+
+	void FileWriter::finalize() {
+		if(fsync(fd)) {
+			Logger::String{"Unexpected error on fsync: ",strerror(errno)}.error("Writer");
+			throw runtime_error("Unexpected error finalizing file write");
+		}
+
+ 	}
 
  }

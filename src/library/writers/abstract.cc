@@ -27,6 +27,9 @@
 		return 0;
 	}
 
+	void Writer::finalize() {
+	}
+
  }
 
 

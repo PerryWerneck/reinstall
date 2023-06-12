@@ -176,6 +176,11 @@
 				f_close(&fil);
 			}
 
+			void write(std::shared_ptr<Writer> writer) override {
+				throw runtime_error("Incomplete");
+			}
+
+
 		};
 
 		return make_shared<FatBuilder>(length);

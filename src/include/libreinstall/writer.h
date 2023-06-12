@@ -51,6 +51,9 @@
 		/// @return Device length (0 if cant be determined).
 		virtual unsigned long long size();
 
+		/// @brief Finalize writing
+		virtual void finalize();
+
 	};
 
  }

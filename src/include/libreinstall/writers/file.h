@@ -34,7 +34,7 @@
 		virtual ~FileWriter();
 
 		size_t write(unsigned long long offset, const void *contents, size_t length) override;
-
+		void finalize() override;
 	};
 
  }

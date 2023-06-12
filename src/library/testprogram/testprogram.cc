@@ -70,7 +70,7 @@
 		}
 		builder->post();
 
-		auto writer = make_shared<Reinstall::FileWriter>("/tmp/test.iso");
+		builder->write(make_shared<Reinstall::FileWriter>("/tmp/test.iso"));
 
 
 	} catch(const std::exception &e) {

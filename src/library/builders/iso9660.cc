@@ -140,6 +140,10 @@
 
 			}
 
+			void write(std::shared_ptr<Writer> writer) override {
+				Image::write(writer);
+			}
+
 		};
 
 		return make_shared<Builder>(settings);

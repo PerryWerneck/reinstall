@@ -24,6 +24,7 @@
  #pragma once
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
+ #include <libreinstall/writer.h>
 
  #define LIBISOFS_WITHOUT_LIBBURN
  #include <libisofs/libisofs.h>
@@ -105,6 +106,10 @@
 		/// @param name Name of the image. This will be used as volset_id and volume_id.
 		Image(const char *name = "");
 		~Image();
+
+		/// @brief Write image to device.
+		/// @param writer The device writer.
+		void write(std::shared_ptr<Reinstall::Writer> writer);
 
 		/// @brief Add file in ISO image.
 		/// @param from Source file in local filesystem.
