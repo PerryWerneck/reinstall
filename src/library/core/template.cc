@@ -92,8 +92,9 @@
 
 	}
 
-	void Template::apply(const Udjat::Abstract::Object &object, std::set<std::shared_ptr<Reinstall::Source::File>> &files) {
+	std::shared_ptr<Reinstall::Source::File> Template::SourceFactory(const Udjat::Abstract::Object &object, const char *path) {
 
+		/// @brief Template text with resolved ${}.
 		class Parsed : public Source::File {
 		private:
 			const Udjat::String text;
@@ -119,8 +120,17 @@
 
 		};
 
+		return make_shared<Parsed>(
+					this->get().expand(marker,object,true,true),
+					path
+				);
+	}
+
+	void Template::apply(const Udjat::Abstract::Object &object, std::set<std::shared_ptr<Reinstall::Source::File>> &files) {
+
+
 		/// @brief New sources, with prepared templates.
-		vector<shared_ptr<Parsed>> updated;
+		vector<shared_ptr<Reinstall::Source::File>> updated;
 
 		// Search for templates, when found, remove foi files, append on updated.
 		for(auto it = files.begin(); it != files.end();) {
@@ -132,12 +142,7 @@
 				Logger::String{"Apply ",this->url," on '",file->c_str()}.trace(this->name());
 
 				// Parse
-				updated.push_back(
-					make_shared<Parsed>(
-						this->get().expand(marker,object,true,true),
-						file->c_str()
-					)
-				);
+				updated.push_back(this->SourceFactory(object,file->c_str()));
 
 				// And remove the old one.
 				it = files.erase(it);
