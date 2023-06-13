@@ -28,10 +28,12 @@
  #include <libreinstall/source.h>
  #include <set>
  #include <udjat/tools/object.h>
+ #include <udjat/tools/string.h>
 
  namespace Reinstall {
 
 	class UDJAT_API Template : public Udjat::NamedObject {
+	private:
 
 		/// @brief Template filename, starting with '/' for fullpath.
 		const char *filter = nullptr;
@@ -55,6 +57,9 @@
 
 		/// @brief Apply template in the source list using object properties.
 		void apply(const Udjat::Abstract::Object &object, std::set<std::shared_ptr<Reinstall::Source::File>> &files);
+
+		/// @brief Load template.
+		Udjat::String get() const;
 
 	};
 

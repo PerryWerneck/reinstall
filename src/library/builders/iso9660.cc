@@ -103,7 +103,7 @@
 					auto filename = make_shared<TempFile>();
 					tempfiles.emplace_back(filename);
 
-					debug("Writing ",filename->c_str());
+					Logger::String{"Saving temporary for ",file->c_str()," on '",filename->c_str(),"'"}.write(Logger::Debug,"iso9660");
 					Dialog::Progress &progress = Dialog::Progress::getInstance();
 
 					File::Handler fil{filename->c_str(),true};

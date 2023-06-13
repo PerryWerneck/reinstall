@@ -23,10 +23,12 @@
 
  #include <config.h>
  #include <libreinstall/template.h>
+ #include <reinstall/dialogs/progress.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/file/temporary.h>
  #include <udjat/tools/file/handler.h>
  #include <udjat/tools/file.h>
+ #include <udjat/tools/protocol.h>
  #include <udjat/tools/string.h>
  #include <udjat/tools/logger.h>
  #include <vector>
@@ -67,33 +69,45 @@
 		return false;
 	}
 
+	Udjat::String Template::get() const {
+
+		Dialog::Progress &progress{Dialog::Progress::getInstance()};
+
+		auto worker = Protocol::WorkerFactory(this->url);
+
+		Logger::String{"Loading ",worker->url().c_str()}.write(Logger::Trace,"template");
+		progress.set_url(worker->url().c_str());
+
+		return worker->get([&progress](double current, double total){
+			progress.set_progress(current,total);
+			return true;
+		});
+
+	}
+
 	void Template::apply(const Udjat::Abstract::Object &object, std::set<std::shared_ptr<Reinstall::Source::File>> &files) {
 
 		class Parsed : public Source::File {
 		private:
-			const Udjat::File::Path from;
+			const Udjat::String text;
 
 		public:
-			Parsed(const char *filename, const char *to) : Source::File{to}, from{filename} {
-				Logger::String{filename," -> ",to}.write(Logger::Debug,"template");
+			Parsed(const Udjat::String &t, const char *to) : Source::File{to}, text{t} {
 			}
 
 			virtual ~Parsed() {
-				if(unlink(from.c_str()) < 0) {
-					Logger::String{"Cant remove '",from.c_str(),"': ",strerror(errno)}.warning("template");
-				}
 			}
 
 			bool remote() const noexcept override {
-				return false;
+				return true;
 			}
 
-			const char * path() const noexcept override {
-				return from.c_str();
+			const char * path() const override {
+				throw runtime_error("Unexpected call to 'path' on template source");
 			}
 
 			void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const override {
-				from.save(writer);
+				writer(0,text.size(),text.c_str(),text.size());
 			}
 
 		};
@@ -108,25 +122,15 @@
 
 			if(test(file->c_str())) {
 
-				Logger::String{"Applying template on '",file->c_str(),"'"}.trace(this->name());
-
-				// Match template, Download source to string.
-				std::stringstream stream;
-
-				file->save([&stream](unsigned long long, unsigned long long, const void *buf, size_t length){
-					stream.write((const char *) buf, length);
-				});
+				Logger::String{"Apply ",this->url," on '",file->c_str()}.trace(this->name());
 
 				// Parse
-				Udjat::String str{stream.str()};
-				str.expand(object,true,true);
-
-				// Create new source using parsed string.
-				string filename{Udjat::File::Temporary::create()};
-				Udjat::File::Handler{filename.c_str(),true}.write(str.c_str());
-
-				// Add the parsed source in the list.
-				updated.push_back(make_shared<Parsed>(filename.c_str(),file->c_str()));
+				updated.push_back(
+					make_shared<Parsed>(
+						this->get().expand(object,true,true),
+						file->c_str()
+					)
+				);
 
 				// And remove the old one.
 				it = files.erase(it);
