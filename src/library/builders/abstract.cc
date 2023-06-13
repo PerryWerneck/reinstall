@@ -27,7 +27,7 @@
 
  namespace Reinstall {
 
-	void Builder::push_back(const std::vector<Reinstall::Template> &) {
+	void Builder::push_back(const Udjat::Abstract::Object &, const std::vector<Reinstall::Template> &) {
 	}
 
  }

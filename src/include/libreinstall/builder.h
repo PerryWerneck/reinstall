@@ -45,7 +45,7 @@
 		virtual void push_back(std::shared_ptr<Reinstall::Source::File> file) = 0;
 
 		/// @brief Apply template on image.
-		virtual void push_back(const std::vector<Reinstall::Template> &tmpls);
+		virtual void push_back(const Udjat::Abstract::Object &object, const std::vector<Reinstall::Template> &tmpls);
 
 		/// @brief Write image.
 		virtual void write(std::shared_ptr<Writer> writer) = 0;

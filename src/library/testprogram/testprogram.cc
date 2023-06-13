@@ -83,7 +83,7 @@
 		for(auto file : files) {
 			builder->push_back(file);
 		}
-		builder->push_back(tmpls);
+		builder->push_back(Udjat::Abstract::Object{},tmpls);
 		builder->post();
 
 		builder->write(make_shared<Reinstall::FileWriter>("/tmp/test.iso"));

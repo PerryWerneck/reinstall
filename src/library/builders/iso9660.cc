@@ -23,6 +23,7 @@
  #include <udjat/tools/object.h>
  #include <libreinstall/source.h>
  #include <libreinstall/iso9660.h>
+ #include <libreinstall/template.h>
  #include <libreinstall/builders/iso9660.h>
  #include <reinstall/dialogs/progress.h>
  #include <udjat/tools/file/temporary.h>
@@ -49,7 +50,7 @@
 
  namespace iso9660 {
 
- 	static void scandirs(const char *path) {
+ 	static void scandirs(const Udjat::Abstract::Object &object, const std::vector<Reinstall::Template> &tmpls, const char *path) {
 
 		// https://github.com/maskedw/fatfs/blob/master/stm32/main.c
 		DIR dirs;
@@ -78,8 +79,63 @@
 			Logger::String{"fat://",filename}.write(Logger::Debug,"efiboot");
 
 			if (Finfo.fattrib & AM_DIR) {
-				scandirs((filename+"/").c_str());
+				scandirs(object,tmpls,(filename+"/").c_str());
 				continue;
+			}
+
+			for(const Reinstall::Template &tmpl : tmpls) {
+
+				if(tmpl.test(filename.c_str())) {
+
+					// Found template
+					Logger::String{"Replacing file fat://",filename," with template"}.trace(tmpl.name());
+					String text{tmpl.get()};
+					text.expand(object,true,true);
+
+					FIL fp;
+					memset(&fp,0,sizeof(fp));
+
+					rc = f_open(&fp, filename.c_str(), FA_OPEN_EXISTING | FA_WRITE);
+					if(rc != FR_OK) {
+						Logger::String{"Unexpected error ",rc," opening '",filename,"'"}.error("iso9660");
+						throw runtime_error("Unexpected error patching EFI Boot image");
+					}
+
+					rc = f_truncate(&fp);
+					if(rc != FR_OK) {
+						Logger::String{"Unexpected error ",rc," truncating '",filename,"'"}.error("iso9660");
+						throw runtime_error("Unexpected error patching EFI Boot image");
+					}
+
+					// Write 'text' on file.
+					{
+						const char *ptr = text.c_str();
+						UINT length = (UINT) text.size();
+
+						while(length) {
+
+							UINT bytes = 0;
+							rc = f_write(&fp,ptr,length,&bytes);
+							if(rc != FR_OK) {
+								Logger::String{"Unexpected error ",rc," writing '",filename,"'"}.error("iso9660");
+								throw runtime_error("Unexpected error patching EFI Boot image");
+							}
+
+							debug("length=",length," wrote=",bytes);
+							length -= bytes;
+							ptr += bytes;
+
+						}
+
+					}
+
+					rc = f_close(&fp);
+					if(rc != FR_OK) {
+						Logger::String{"Unexpected error ",rc," closing '",filename,"'"}.error("iso9660");
+						throw runtime_error("Unexpected error patching EFI Boot image");
+					}
+					break;
+				}
 			}
 
 		}
@@ -138,7 +194,7 @@
 
 			}
 
-			void push_back(const std::vector<Reinstall::Template> &tmpls) override {
+			void push_back(const Udjat::Abstract::Object &object, const std::vector<Reinstall::Template> &tmpls) override {
 
 				if(efibootpart.empty()) {
 					return;
@@ -170,7 +226,7 @@
 
 					try {
 
-						scandirs("/");
+						scandirs(object,tmpls,"/");
 
 					} catch(...) {
 
