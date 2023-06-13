@@ -17,40 +17,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- #pragma once
+ /**
+  * @brief Brief description of this source.
+  */
+
+ #include <config.h>
  #include <udjat/defs.h>
- #include <udjat/tools/object.h>
- #include <libreinstall/source.h>
- #include <libreinstall/template.h>
- #include <memory>
- #include <vector>
+ #include <libreinstall/builder.h>
 
  namespace Reinstall {
 
-	class Writer;
-
-	/// @brief The abstract image builder.
-	class UDJAT_API Builder : public Udjat::NamedObject {
-	public:
-		constexpr Builder(const char *name) : Udjat::NamedObject{name} {
-		}
-
-		/// @brief Start build.
-		virtual void pre() = 0;
-
-		/// @brief Finalize build.
-		virtual void post() = 0;
-
-		/// @brief Add file to image.
-		virtual void push_back(std::shared_ptr<Reinstall::Source::File> file) = 0;
-
-		/// @brief Apply template on image.
-		virtual void push_back(const std::vector<Reinstall::Template> &tmpls);
-
-		/// @brief Write image.
-		virtual void write(std::shared_ptr<Writer> writer) = 0;
-
-	};
+	void Builder::push_back(const std::vector<Reinstall::Template> &) {
+	}
 
  }
-

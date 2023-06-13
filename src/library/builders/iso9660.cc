@@ -36,6 +36,10 @@
 	#include <unistd.h>
  #endif // HAVE_UNISTD_H
 
+ // FatFS is required to manage the EFI Boot image.
+ #include <ff.h>
+ #include <diskio.h>
+
  typedef struct Iso_Image IsoImage;
  typedef struct iso_write_opts IsoWriteOpts;
 
@@ -44,6 +48,48 @@
  using namespace Reinstall;
 
  namespace iso9660 {
+
+ 	static void scandirs(const char *path) {
+
+		// https://github.com/maskedw/fatfs/blob/master/stm32/main.c
+		DIR dirs;
+		memset(&dirs,0,sizeof(dirs));
+
+		FRESULT rc;
+
+		rc = f_opendir(&dirs, path);
+		if(rc != FR_OK) {
+			Logger::String{"Unexpected error ",rc," opening fat fs dir '",path,"'"}.error("iso9660");
+			throw runtime_error("Unexpected error patching EFI Boot image");
+		}
+
+		FILINFO Finfo;
+		memset(&Finfo,0,sizeof(Finfo));
+
+		while(((rc = f_readdir(&dirs, &Finfo)) == FR_OK) && Finfo.fname[0]) {
+
+			if (Finfo.fname[0] == '.') {
+				continue;
+			}
+
+			string filename{path};
+			filename += Finfo.fname; // (*Finfo.lfname ? Finfo.lfname : Finfo.fname);
+
+			Logger::String{"fat://",filename}.write(Logger::Debug,"efiboot");
+
+			if (Finfo.fattrib & AM_DIR) {
+				scandirs((filename+"/").c_str());
+				continue;
+			}
+
+		}
+		debug("rc=",rc);
+
+		if(rc != FR_OK) {
+			Logger::String{"Unexpected error ",rc," reading fat fs dir '",path,"'"}.error("iso9660");
+		}
+
+ 	}
 
 	std::shared_ptr<Reinstall::Builder> BuilderFactory(const Settings &settings) {
 
@@ -67,7 +113,7 @@
 
 			};
 
-			/// @brief Path for EFI boot partition in local filesystem;
+			/// @brief Path for EFI boot partition in local filesystem.
 			std::string efibootpart;
 
 			std::vector<shared_ptr<TempFile>> tempfiles;
@@ -92,14 +138,70 @@
 
 			}
 
+			void push_back(const std::vector<Reinstall::Template> &tmpls) override {
+
+				if(efibootpart.empty()) {
+					return;
+				}
+
+				// Apply templates on efi boot image.
+				Logger::String{"Applying templates on ",efibootpart}.trace("iso9660");
+
+				int fd = ::open(efibootpart.c_str(),O_RDWR);
+				if(fd < 0) {
+					throw system_error(errno,system_category(),"Cant open EFI boot image");
+				}
+
+				try {
+
+					FATFS fs;
+					int rc;
+
+					if(disk_ioctl(0, CTRL_FORMAT, &fd) != RES_OK) {
+						throw runtime_error("Cant bind fatfs to efi boot disk image");
+					}
+
+					memset(&fs,0,sizeof(fd));
+
+					rc = f_mount(&fs, "0:", 1);
+					if(rc != FR_OK) {
+						throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_mount"});
+					}
+
+					try {
+
+						scandirs("/");
+
+					} catch(...) {
+
+						f_mount(NULL, "", 0);
+						throw;
+
+					}
+
+					f_mount(NULL, "", 0);
+
+				} catch(...) {
+
+					::close(fd);
+					throw;
+
+				}
+
+				::close(fd);
+
+
+			}
+
 			void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
 
 				/// @brief The system filename.
 				string path;
+				bool efibootimage = !strcmp(file->c_str(),settings.boot.efi.image);
 
-				if(file->remote()) {
+				if(file->remote() || efibootimage) {
 
-					// Is a remote file, download it.
+					// Is a remote file or the efibootimage, download it.
 					auto filename = make_shared<TempFile>();
 					tempfiles.emplace_back(filename);
 
@@ -123,7 +225,7 @@
 
 				add(path.c_str(),file->c_str());
 
-				if(!strcmp(file->c_str(),settings.boot.efi.image)) {
+				if(efibootimage) {
 					efibootpart = path;
 				}
 

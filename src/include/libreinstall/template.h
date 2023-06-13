@@ -57,12 +57,12 @@
 		/// @brief Build source from object and image path.
 		/// @param object The object for ${} expansion.
 		/// @param path The image path for source.
-		std::shared_ptr<Reinstall::Source::File> SourceFactory(const Udjat::Abstract::Object &object, const char *path);
+		std::shared_ptr<Reinstall::Source::File> SourceFactory(const Udjat::Abstract::Object &object, const char *path) const;
 
 		/// @brief Apply template in the source list using object properties.
 		/// @param object The object for ${} expansion.
 		/// @param files List of sources to search and replace templates.
-		void apply(const Udjat::Abstract::Object &object, std::set<std::shared_ptr<Reinstall::Source::File>> &files);
+		void apply(const Udjat::Abstract::Object &object, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const;
 
 		/// @brief Load template.
 		Udjat::String get() const;

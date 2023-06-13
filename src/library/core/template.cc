@@ -92,7 +92,7 @@
 
 	}
 
-	std::shared_ptr<Reinstall::Source::File> Template::SourceFactory(const Udjat::Abstract::Object &object, const char *path) {
+	std::shared_ptr<Reinstall::Source::File> Template::SourceFactory(const Udjat::Abstract::Object &object, const char *path) const {
 
 		/// @brief Template text with resolved ${}.
 		class Parsed : public Source::File {
@@ -126,8 +126,7 @@
 				);
 	}
 
-	void Template::apply(const Udjat::Abstract::Object &object, std::set<std::shared_ptr<Reinstall::Source::File>> &files) {
-
+	void Template::apply(const Udjat::Abstract::Object &object, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const {
 
 		/// @brief New sources, with prepared templates.
 		vector<shared_ptr<Reinstall::Source::File>> updated;

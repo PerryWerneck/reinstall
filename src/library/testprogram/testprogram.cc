@@ -6,6 +6,7 @@
  #include <udjat/module.h>
  #include <iostream>
  #include <set>
+ #include <vector>
  #include <reinstall/userinterface.h>
  #include <reinstall/dialogs/progress.h>
  #include <udjat/tools/logger.h>
@@ -42,10 +43,12 @@
 		""
 	};
 
-	Reinstall::Template tmpl {
-		"grub",
-		"grub.cfg",
-		"file://../../templates/grub.cfg"
+	static const std::vector<Reinstall::Template> tmpls = {
+		{
+			"grub",
+			"grub.cfg",
+			"file://../../templates/grub.cfg"
+		}
 	};
 
 	/*
@@ -63,7 +66,9 @@
 
 	source.prepare(files);
 
-	tmpl.apply(Udjat::Abstract::Object{},files);
+	for(const Reinstall::Template &tmpl : tmpls) {
+		tmpl.apply(Udjat::Abstract::Object{},files);
+	}
 
 	debug("Number of source files: ",files.size());
 
@@ -78,6 +83,7 @@
 		for(auto file : files) {
 			builder->push_back(file);
 		}
+		builder->push_back(tmpls);
 		builder->post();
 
 		builder->write(make_shared<Reinstall::FileWriter>("/tmp/test.iso"));
