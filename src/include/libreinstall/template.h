@@ -41,8 +41,7 @@
 		/// @brief URL for template file, file:// for local file.
 		const char *url = nullptr;
 
-		bool script = false;
-		const char *marker = "$";
+		char marker = '$';
 
 	public:
 		constexpr Template(const char *name, const char *f, const char *u) : Udjat::NamedObject{name}, filter{f}, url{u} {
@@ -56,6 +55,8 @@
 		bool test(const char *path) const noexcept;
 
 		/// @brief Apply template in the source list using object properties.
+		/// @param object The object for ${} expansion.
+		/// @param files List of sources to search and replace templates.
 		void apply(const Udjat::Abstract::Object &object, std::set<std::shared_ptr<Reinstall::Source::File>> &files);
 
 		/// @brief Load template.

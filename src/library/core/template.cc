@@ -31,6 +31,7 @@
  #include <udjat/tools/protocol.h>
  #include <udjat/tools/string.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/configuration.h>
  #include <vector>
  #include <memory>
  #include <set>
@@ -48,9 +49,15 @@
 	Template::Template(const Udjat::XML::Node &node) :
 		Udjat::NamedObject{node},
 		filter{Udjat::XML::QuarkFactory(node,"filter").c_str()},
-		url{Udjat::XML::QuarkFactory(node,"url").c_str()},
-		script{node.attribute("script").as_bool(false)},
-		marker{Udjat::XML::QuarkFactory(node,"url").c_str()} {
+		url{Udjat::XML::QuarkFactory(node,"url").c_str()} {
+
+		const char *sMarker = node.attribute("marker").as_string(((std::string) Config::Value<String>("template","marker","$")).c_str());
+
+		if(strlen(sMarker) > 1 || !sMarker[0]) {
+			throw runtime_error("Marker attribute is invalid");
+		}
+
+		this->marker = sMarker[0];
 	}
 
 	bool Template::test(const char *path) const noexcept {
@@ -127,7 +134,7 @@
 				// Parse
 				updated.push_back(
 					make_shared<Parsed>(
-						this->get().expand(object,true,true),
+						this->get().expand(marker,object,true,true),
 						file->c_str()
 					)
 				);
