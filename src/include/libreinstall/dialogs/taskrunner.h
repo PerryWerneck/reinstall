@@ -18,8 +18,8 @@
  */
 
  #pragma once
- #include <reinstall/defs.h>
- #include <reinstall/dialogs/window.h>
+ #include <udjat/defs.h>
+ #include <libreinstall/dialogs/window.h>
  #include <memory>
  #include <functional>
 

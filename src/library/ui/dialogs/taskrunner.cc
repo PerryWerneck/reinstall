@@ -18,7 +18,8 @@
  */
 
  #include <config.h>
- #include <reinstall/dialogs/taskrunner.h>
+ #include <libreinstall/dialogs/taskrunner.h>
+ #include <libreinstall/dialogs/popup.h>
  #include <reinstall/userinterface.h>
  #include <memory>
  #include <iostream>

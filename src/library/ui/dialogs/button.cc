@@ -18,8 +18,8 @@
  */
 
  #include <config.h>
- #include <reinstall/defs.h>
- #include <reinstall/dialogs/taskrunner.h>
+ #include <udjat/defs.h>
+ #include <libreinstall/dialogs/taskrunner.h>
 
  using namespace std;
 

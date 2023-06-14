@@ -25,7 +25,7 @@
  #include <config.h>
  #include <libreinstall/source.h>
  #include <libreinstall/sources/zip.h>
- #include <reinstall/dialogs/progress.h>
+ #include <libreinstall/dialogs/progress.h>
  #include <udjat/tools/file.h>
  #include <udjat/tools/application.h>
  #include <memory>

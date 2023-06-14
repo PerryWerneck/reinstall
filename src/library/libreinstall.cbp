@@ -36,6 +36,8 @@
 		<Unit filename="../include/libreinstall/builder.h" />
 		<Unit filename="../include/libreinstall/builders/fat.h" />
 		<Unit filename="../include/libreinstall/builders/iso9660.h" />
+		<Unit filename="../include/libreinstall/dialogs/progress.h" />
+		<Unit filename="../include/libreinstall/dialogs/taskrunner.h" />
 		<Unit filename="../include/libreinstall/iso9660.h" />
 		<Unit filename="../include/libreinstall/source.h" />
 		<Unit filename="../include/libreinstall/sources/zip.h" />
@@ -61,6 +63,11 @@
 		<Unit filename="iso9660/settings.cc" />
 		<Unit filename="sources/zip.cc" />
 		<Unit filename="testprogram/testprogram.cc" />
+		<Unit filename="ui/dialogs/button.cc" />
+		<Unit filename="ui/dialogs/popup.cc" />
+		<Unit filename="ui/dialogs/progress.cc" />
+		<Unit filename="ui/dialogs/taskrunner.cc" />
+		<Unit filename="ui/dialogs/window.cc" />
 		<Unit filename="ui/userinterface.cc" />
 		<Unit filename="writers/abstract.cc" />
 		<Unit filename="writers/file.cc" />

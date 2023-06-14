@@ -25,7 +25,7 @@
  #include <libreinstall/iso9660.h>
  #include <libreinstall/template.h>
  #include <libreinstall/builders/iso9660.h>
- #include <reinstall/dialogs/progress.h>
+ #include <libreinstall/dialogs/progress.h>
  #include <udjat/tools/file/temporary.h>
  #include <udjat/tools/file/handler.h>
  #include <udjat/tools/logger.h>

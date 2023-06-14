@@ -19,7 +19,7 @@
 
  #include <config.h>
  #include <libreinstall/source.h>
- #include <reinstall/dialogs/progress.h>
+ #include <libreinstall/dialogs/progress.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/quark.h>

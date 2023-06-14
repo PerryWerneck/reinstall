@@ -18,8 +18,11 @@
  */
 
  #pragma once
- #include <reinstall/defs.h>
- #include <reinstall/dialogs/window.h>
+ #include <udjat/defs.h>
+ #include <stddef.h>
+ #include <cstdint>
+ #include <libreinstall/dialogs/window.h>
+ #include <string>
 
  namespace Reinstall {
 

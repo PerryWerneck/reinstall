@@ -19,7 +19,7 @@
 
  #include <config.h>
  #include <libreinstall/iso9660.h>
- #include <reinstall/dialogs/progress.h>
+ #include <libreinstall/dialogs/progress.h>
  #include <libisofs/libisofs.h>
  #include <udjat/tools/configuration.h>
  #include <udjat/tools/string.h>

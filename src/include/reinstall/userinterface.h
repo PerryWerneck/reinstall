@@ -22,7 +22,8 @@
  #include <udjat/defs.h>
  #include <reinstall/action.h>
  #include <reinstall/group.h>
- #include <reinstall/dialogs.h>
+ #include <libreinstall/dialogs/progress.h>
+ #include <memory>
 
  namespace Reinstall {
 

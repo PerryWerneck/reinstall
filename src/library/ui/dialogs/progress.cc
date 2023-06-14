@@ -18,7 +18,7 @@
  */
 
  #include <config.h>
- #include <reinstall/dialogs.h>
+ #include <libreinstall/dialogs/progress.h>
  #include <iostream>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>

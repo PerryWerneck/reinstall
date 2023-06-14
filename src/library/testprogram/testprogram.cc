@@ -8,7 +8,7 @@
  #include <set>
  #include <vector>
  #include <reinstall/userinterface.h>
- #include <reinstall/dialogs/progress.h>
+ #include <libreinstall/dialogs/progress.h>
  #include <udjat/tools/logger.h>
 
  #include <libreinstall/builder.h>

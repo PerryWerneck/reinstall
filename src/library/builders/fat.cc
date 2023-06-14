@@ -24,7 +24,7 @@
 
  #include <config.h>
  #include <libreinstall/builder.h>
- #include <reinstall/dialogs/progress.h>
+ #include <libreinstall/dialogs/progress.h>
  #include <udjat/tools/file/temporary.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/string.h>

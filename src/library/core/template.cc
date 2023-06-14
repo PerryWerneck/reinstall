@@ -23,7 +23,7 @@
 
  #include <config.h>
  #include <libreinstall/template.h>
- #include <reinstall/dialogs/progress.h>
+ #include <libreinstall/dialogs/progress.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/file/temporary.h>
  #include <udjat/tools/file/handler.h>

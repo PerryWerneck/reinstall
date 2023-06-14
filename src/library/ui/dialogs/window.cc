@@ -19,7 +19,7 @@
 
  #include <config.h>
  #include <stdexcept>
- #include <reinstall/dialogs.h>
+ #include <libreinstall/dialogs/window.h>
  #include <udjat/tools/intl.h>
 
  using namespace std;
