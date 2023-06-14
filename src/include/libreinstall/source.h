@@ -26,6 +26,7 @@
  #include <string>
  #include <set>
  #include <libreinstall/slpclient.h>
+ #include <libreinstall/path.h>
 
  namespace Reinstall {
 
@@ -34,20 +35,7 @@
 	private:
 
 		/// @brief Source paths.
-		const struct Path {
-
-			/// @brief Remote path.
-			const char * remote = "";
-
-			/// @brief Local path.
-			const char * local = "";
-
-			constexpr Path(const char *r, const char *l) : remote{r}, local{l} {
-			}
-
-			Path(const Udjat::XML::Node &node);
-
-		} path;
+		const Path path;
 
 		/// @brief SLP settings for automatic source detection.
 		const SlpClient slpclient;

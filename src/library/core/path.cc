@@ -26,7 +26,7 @@
 
  namespace Reinstall {
 
-	Source::Path::Path(const Udjat::XML::Node &node)
+	Path::Path(const Udjat::XML::Node &node)
 		: Path{Udjat::XML::QuarkFactory(node,"remote").c_str(),Udjat::XML::QuarkFactory(node,"local").c_str()} {
 	}
 
