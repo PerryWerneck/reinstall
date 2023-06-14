@@ -25,6 +25,7 @@
  #include <memory>
  #include <string>
  #include <set>
+ #include <libreinstall/slpclient.h>
 
  namespace Reinstall {
 
@@ -49,39 +50,7 @@
 		} path;
 
 		/// @brief SLP settings for automatic source detection.
-		const struct SlpClient {
-
-			/// @brief The service type string, including the authority string (if any) for the request.
-			const char *service_type = "";
-
-			/// @brief A comma separated list of scope names.
-			const char *scope = "";
-
-			/// @brief A query formulated of attribute pattern matching expressions in the form of an LDAPv3 search filter.
-			const char *filter = "";
-
-			/// @brief URL for kernel parameter when SLP server was detected.
-			const char *kparm = "";
-
-			/// @brief User message while detecting.
-			const char *message = "";
-
-			/// @brief Allow local address?
-			bool allow_local = false;
-
-			constexpr SlpClient() = default;
-
-			SlpClient(const Udjat::XML::Node &node);
-
-			inline operator bool() const noexcept {
-				return (service_type && *service_type);
-			}
-
-			/// @brief Do SLP query, get first valid URL.
-			/// @return The detected URL (empty string if no url was detected).
-			const char *resolve() const;
-
-		} slpclient;
+		const SlpClient slpclient;
 
 	protected:
 

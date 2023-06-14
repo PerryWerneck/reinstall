@@ -183,15 +183,19 @@
 		memset(data,0,sizeof(data));
 
 		int fd;
+		std::string filename;
 
 		if(path && *path) {
-			fd = open(path,O_RDONLY);
+			filename = path;
 		} else {
-			fd = open(Config::Value<string>("iso9660","system-area","/usr/share/syslinux/isohdpfx.bin").c_str(),O_RDONLY);
+			filename = Config::Value<string>{"iso9660","system-area","/usr/share/syslinux/isohdpfx.bin"};
 		}
 
+		fd = open(filename.c_str(),O_RDONLY);
 		if(fd <  0) {
-			throw system_error(errno, system_category(), _("Error loading system area"));
+			int err = errno;
+			Logger::String{"Cant open '",filename,"': ",strerror(err)}.error("iso9660");
+			throw system_error(err, system_category(), _("Error loading system area"));
 		}
 
 		try {

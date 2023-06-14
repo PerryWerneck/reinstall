@@ -23,9 +23,12 @@
  #include <udjat/tools/xml.h>
  #include <udjat/tools/object.h>
  #include <libreinstall/action.h>
- #include <libreinstall/dialogs/taskrunner.h>
- #include <libreinstall/dialogs/progress.h>
  #include <stdexcept>
+
+ #include <libreinstall/dialogs/progress.h>
+
+ #include <libreinstall/writer.h>
+ #include <libreinstall/writers/file.h>
 
  using namespace std;
  using namespace Udjat;
@@ -35,12 +38,17 @@
 	Action *Action::selected = nullptr;
 	Action *Action::def = nullptr;
 
-	Action::Action(const XML::Node &node) : NamedObject{node} {
+	Action::Action(const XML::Node &node) : NamedObject{node}, output{node} {
 
 		if(getAttribute(node, "action-defaults", "default", false)) {
 			Action::def = this;
 		}
 
+	}
+
+	Action::OutPut::OutPut(const Udjat::XML::Node &node)
+		: filename{XML::QuarkFactory(node,"output-file-name").c_str()},
+		  length{XML::StringFactory(node,"length").as_ull()} {
 	}
 
 	Action::~Action() {
@@ -117,6 +125,18 @@
 
 	std::shared_ptr<Reinstall::Builder> Action::BuilderFactory() const {
 		throw runtime_error(_("The selected action is unable to build an image"));
+	}
+
+	std::shared_ptr<Reinstall::Writer> Action::WriterFactory() const {
+
+		if(output.filename && *output.filename) {
+			return make_shared<Reinstall::FileWriter>(output.filename);
+		}
+
+		throw runtime_error("Incomplete");
+		/*
+		return make_shared<Reinstall::USBWriter>();
+		*/
 	}
 
 	void Action::activate(const ActivationType type) {

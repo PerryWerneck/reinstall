@@ -15,10 +15,9 @@
  #include <libreinstall/builders/iso9660.h>
  #include <libreinstall/builders/fat.h>
 
- #include <libreinstall/writer.h>
- #include <libreinstall/writers/file.h>
+ #include <libreinstall/action.h>
 
- #include <libreinstall/template.h>
+ #include <libreinstall/writers/file.h>
 
  #include <libreinstall/sources/zip.h>
 
@@ -36,6 +35,40 @@
 	Udjat::Logger::console(true);
 	Udjat::Module::load("http");
 
+	class Action : public Reinstall::Action {
+	public:
+		Action() : Reinstall::Action{} {
+
+			sources.emplace_back(
+				"suse",
+				"http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64/",
+				"/home/perry/Público/openSUSE-Leap-15.4-NET-x86_64",
+				""
+			);
+
+			tmpls.emplace_back(
+				"grub",
+				"grub.cfg",
+				"file://../../templates/grub.cfg"
+			);
+		}
+
+		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
+			static iso9660::Settings settings;
+			return iso9660::BuilderFactory(settings);
+		}
+
+		std::shared_ptr<Reinstall::Writer> WriterFactory() const override {
+			return make_shared<Reinstall::FileWriter>("/tmp/test.iso");
+		}
+
+	};
+
+	Reinstall::Dialog::Progress progress;
+	Action{}.activate(progress);
+
+
+	/*
 	Reinstall::Source source{
 		"suse",
 		"http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64/",
@@ -50,6 +83,7 @@
 			"file://../../templates/grub.cfg"
 		}
 	};
+	*/
 
 	/*
 	Reinstall::ZipSource source{
@@ -60,6 +94,7 @@
 	};
 	*/
 
+	/*
 	Reinstall::Dialog::Progress progress;
 
 	std::set<std::shared_ptr<Reinstall::Source::File>> files;
@@ -96,6 +131,7 @@
 		return -1;
 
 	}
+	*/
 
 	Udjat::Module::unload();
 	return 0;

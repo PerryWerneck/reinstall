@@ -41,6 +41,7 @@
 		<Unit filename="../include/libreinstall/dialogs/taskrunner.h" />
 		<Unit filename="../include/libreinstall/dialogs/window.h" />
 		<Unit filename="../include/libreinstall/iso9660.h" />
+		<Unit filename="../include/libreinstall/slpclient.h" />
 		<Unit filename="../include/libreinstall/source.h" />
 		<Unit filename="../include/libreinstall/sources/zip.h" />
 		<Unit filename="../include/libreinstall/template.h" />
@@ -53,6 +54,7 @@
 		<Unit filename="builders/fat.cc" />
 		<Unit filename="builders/iso9660.cc" />
 		<Unit filename="controller.cc" />
+		<Unit filename="core/slpclient.cc" />
 		<Unit filename="core/source/file.cc" />
 		<Unit filename="core/source/path.cc" />
 		<Unit filename="core/source/prepare.cc" />

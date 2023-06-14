@@ -21,7 +21,7 @@
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/string.h>
- #include <libreinstall/source.h>
+ #include <libreinstall/slpclient.h>
  #include <libreinstall/dialogs/progress.h>
  #include <list>
  #include <udjat/tools/logger.h>
@@ -33,23 +33,12 @@
 	#include <slp.h>
  #endif // HAVE_LIBSLP
 
- using namespace Udjat;
-
- /*
- #include <config.h>
- #include <reinstall/repository.h>
- #include <udjat/tools/quark.h>
- #include <sys/types.h>
- #include <sys/socket.h>
-
- */
-
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
 
-	Source::SlpClient::SlpClient(const XML::Node &node)
+	SlpClient::SlpClient(const XML::Node &node)
 		: service_type{XML::QuarkFactory(node,"slp-service-type").c_str()},
 			scope{XML::QuarkFactory(node,"slp-scope").c_str()},
 			filter{XML::QuarkFactory(node,"slp-filter").c_str()},
@@ -59,7 +48,7 @@
 
 	}
 
- #ifdef HAVE_LIBSLP
+#ifdef HAVE_LIBSLP
 
 	struct SRV_URL_CB_INFO  {
 		SLPError callbackerr;
@@ -105,7 +94,7 @@
 
 	}
 
-	const char * Source::SlpClient::resolve() const {
+	const char * SlpClient::resolve() const {
 
 		String found;
 
@@ -279,9 +268,6 @@
 
  #else
 
-	const char * Repository::SlpClient::get_url() {
-		return "";
-	}
 
  #endif // HAVE_LIBSLP
 

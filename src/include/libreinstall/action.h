@@ -64,12 +64,27 @@
 		/// @brief Write iso image.
 		virtual void write(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder) const;
 
+		/// @brief The output defined by xml
+		const struct OutPut {
+
+			/// @brief The output filename.
+			const char * filename = nullptr;
+
+			/// @brief The required file length.
+			unsigned long long length = 0;
+
+			constexpr OutPut() = default;
+			OutPut(const Udjat::XML::Node &node);
+
+		} output;
+
 	public:
 
 		Action(Action *) = delete;
 		Action(Action &) = delete;
 
-		Action() = default;
+		Action() {
+		};
 
 		Action(const Udjat::XML::Node &node);
 		~Action();
