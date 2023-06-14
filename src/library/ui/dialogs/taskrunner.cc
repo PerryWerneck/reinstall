@@ -31,6 +31,7 @@
 
  namespace Reinstall {
 
+	/*
 	static void write(int fd, const char *str) {
 		::write(fd,str,strlen(str));
 		::write(fd,"\n",1);
@@ -189,6 +190,7 @@
 		return make_shared<Button>(callback);
 
 	}
+	*/
 
 
  }

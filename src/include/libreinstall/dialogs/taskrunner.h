@@ -45,35 +45,17 @@
 			virtual void activate() = 0;
 		};
 
+		/*
 		/// @brief Dialog for background tasks.
-		class UDJAT_API TaskRunner : public Window {
+		class UDJAT_API TaskRunner {
 		public:
 
 			TaskRunner();
 			virtual ~TaskRunner();
+			int push(const std::function<int()> &callback);
 
-			/// @brief Show Dialog.
-			virtual void show();
-
-			/// @brief Update dialog with popup definitions.
-			virtual void set(const Popup &popup);
-
-			/// @brief Update dialog with action definitions.
-			virtual void set(const Action &action);
-
-			virtual void set_title(const char *text, bool markup = false);
-			virtual void set_sub_title(const char *text, bool markup = false);
-
-			/// @brief Button factory.
-			virtual std::shared_ptr<Button> ButtonFactory(const char *label, const std::function<void()> &callback);
-
-			/// @brief Run background task (if available).
-			/// @param callback task to run.
-			/// @param show show dialog after task begin.
-			/// @return Task response or negative errno in case of exception.
-			/// @retval -1 Unexpected exception while running task.
-			virtual int push(const std::function<int()> &callback, bool show = true);
 		};
+		*/
 
 	}
 

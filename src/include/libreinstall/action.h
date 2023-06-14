@@ -24,6 +24,7 @@
  #include <libreinstall/source.h>
  #include <memory>
  #include <libreinstall/builder.h>
+ #include <libreinstall/dialogs/progress.h>
  #include <udjat/tools/object.h>
 
  namespace Reinstall {
@@ -39,14 +40,38 @@
 		/// @brief List of sources defined by XML.
 		std::vector<Reinstall::Source> sources;
 
-		/// @brief Get required files.
-		virtual void prepare(std::set<std::shared_ptr<Reinstall::Source::File>> &files);
+		/// @brief List of templates defined by XML.
+		std::vector<Reinstall::Template> tmpls;
 
-		/// @brief Get Image builder.
-		virtual std::shared_ptr<Builder> BuilderFactory() const = 0;
+		/// @brief Get image builder.
+		virtual std::shared_ptr<Reinstall::Builder> BuilderFactory() const;
+
+		/// @brief Get image writer.
+		virtual std::shared_ptr<Reinstall::Writer> WriterFactory() const;
+
+		/// @brief Get files, apply templates (if required).
+		virtual void prepare(Dialog::Progress &progress, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const;
+
+		/// @brief Build iso image.
+		virtual void build(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const;
+
+		/// @brief Build iso image.
+		virtual std::shared_ptr<Reinstall::Builder> build(Dialog::Progress &progress, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const;
+
+		/// @brief Write iso image.
+		virtual void write(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::shared_ptr<Reinstall::Writer> writer) const;
+
+		/// @brief Write iso image.
+		virtual void write(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder) const;
 
 	public:
-		Action(const XML::Node &node);
+
+		Action(Action *) = delete;
+		Action(Action &) = delete;
+
+		Action() = default;
+
+		Action(const Udjat::XML::Node &node);
 		~Action();
 
 		enum ActivationType {
@@ -54,9 +79,9 @@
 			Default
 		};
 
-		static void activate(const const ActivationType type);
+		static void activate(const ActivationType type = Selected);
 
-		virtual void activate() const;
+		virtual void activate(Dialog::Progress &progress) const;
 
 		inline void select() noexcept {
 			selected = this;

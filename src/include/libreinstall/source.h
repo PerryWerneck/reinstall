@@ -35,10 +35,10 @@
 		/// @brief Source paths.
 		const struct Path {
 
-			/// @brief URL for remote repository.
+			/// @brief Remote path.
 			const char * remote = "";
 
-			/// @brief Path for the local copy of repository.
+			/// @brief Local path.
 			const char * local = "";
 
 			constexpr Path(const char *r, const char *l) : remote{r}, local{l} {

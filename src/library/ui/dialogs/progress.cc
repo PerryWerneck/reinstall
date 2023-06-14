@@ -90,5 +90,11 @@
 		void Progress::set_icon_name(const char *icon_name) {
 		}
 
+		int Progress::run(const char *name, const std::function<void()> &background_task) {
+			set_sub_title(name);
+			background_task();
+			return 0;
+		}
+
 	}
  }

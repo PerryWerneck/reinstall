@@ -19,7 +19,7 @@
 
  #pragma once
  #include <reinstall/defs.h>
- #include <pugixml.hpp>
+ #include <udjat/tools/xml.h>
 
  namespace Reinstall {
 

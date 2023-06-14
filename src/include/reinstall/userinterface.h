@@ -51,7 +51,7 @@
 		// virtual std::shared_ptr<Abstract::Group> GroupFactory(const pugi::xml_node &node);
 
 		/// @brief Construct a wait for task dialog.
-		virtual std::shared_ptr<Dialog::TaskRunner> TaskRunnerFactory( const char *message, bool markup = false);
+		// virtual std::shared_ptr<Dialog::TaskRunner> TaskRunnerFactory( const char *message, bool markup = false);
 
 	};
 

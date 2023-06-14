@@ -23,6 +23,7 @@
  #include <cstdint>
  #include <libreinstall/dialogs/window.h>
  #include <string>
+ #include <functional>
 
  namespace Reinstall {
 
@@ -75,6 +76,8 @@
 			inline void set_title(const std::string &message) {
 				set_title(message.c_str());
 			}
+
+			int run(const char *name, const std::function<void()> &background_task);
 
 		};
 
