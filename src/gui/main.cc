@@ -32,6 +32,7 @@
  #include <readline/readline.h>
  #include <unistd.h>
  #include <reinstall/action.h>
+ #include <cstdlib>
 
  using namespace std;
  using namespace Udjat;
@@ -315,6 +316,19 @@
 		} else if(strncasecmp(ptr,"usb-storage-length=",19) == 0) {
 			// Set usb-storage-device
 			Reinstall::Writer::setUsbDeviceLength(Reinstall::Action::getImageSize(ptr+19));
+
+		} else {
+
+			const char *sep = strchr(ptr,'=');
+			if(sep) {
+
+				std::string name{ptr,(size_t) (sep-ptr)};
+				std::string value{sep+1};
+
+				Logger::String{"Setting environment ",name,"='",value,"'"}.info(PACKAGE_NAME);
+				setenv(name.c_str(),value.c_str(),1);
+
+			}
 
 		}
 
