@@ -18,17 +18,42 @@
  */
 
  #include <config.h>
- #include <libreinstall/action.h>
- #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
  #include <udjat/tools/url.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
 
+ #include <libreinstall/action.h>
+ #include <libreinstall/kernelparameter.h>
+
  using namespace std;
  using namespace Udjat;
 
  namespace Reinstall {
+
+	std::shared_ptr<Kernel::Parameter> Kernel::Parameter::factory(const Udjat::XML::Node &node) {
+
+		class KValue : public Parameter {
+		private:
+			const char *str;
+
+		public:
+			KValue(const Udjat::XML::Node &node) : Parameter{node}, str{XML::QuarkFactory(node,"value").c_str()} {
+			}
+
+			const std::string value() const override {
+				return str;
+			}
+
+		};
+
+
+
+		return make_shared<KValue>(node);
+	}
+
+	Kernel::Parameter::Parameter(const Udjat::XML::Node &node) : Kernel::Parameter{Udjat::XML::QuarkFactory(node,"name").c_str()} {
+	}
 
 
 	/*

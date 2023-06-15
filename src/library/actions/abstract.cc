@@ -31,6 +31,8 @@
  #include <libreinstall/writer.h>
  #include <libreinstall/writers/file.h>
 
+ #include <libreinstall/kernelparameter.h>
+
  using namespace std;
  using namespace Udjat;
 
@@ -52,6 +54,10 @@
 		});
 
 		// Load kernel parameters.
+		search(node,"kernel-parameter",[this](const pugi::xml_node &node){
+			kparms.push_back(Kernel::Parameter::factory(node));
+			return false;
+		});
 
 		// Load sources.
 		search(node,"source",[this](const pugi::xml_node &node){

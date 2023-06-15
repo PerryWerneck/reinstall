@@ -24,6 +24,7 @@
  #pragma once
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
+ #include <memory>
 
  namespace Reinstall {
 
@@ -34,6 +35,9 @@
 			const char *nm;
 
 		public:
+
+			static std::shared_ptr<Parameter> factory(const Udjat::XML::Node &node);
+
 			constexpr Parameter(const char *name) : nm{name} {
 			}
 

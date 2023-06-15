@@ -26,6 +26,7 @@
  #include <libreinstall/source.h>
  #include <libreinstall/builder.h>
  #include <libreinstall/repository.h>
+ #include <libreinstall/kernelparameter.h>
 
  #include <libreinstall/dialogs/progress.h>
  #include <udjat/tools/object.h>
@@ -48,6 +49,9 @@
 
 		/// @brief List of templates defined by XML.
 		std::vector<Reinstall::Template> templates;
+
+		/// @brief List of kernel parameters defined by XML.
+		std::vector<std::shared_ptr<Reinstall::Kernel::Parameter>> kparms;
 
 		/// @brief Get image builder.
 		virtual std::shared_ptr<Reinstall::Builder> BuilderFactory() const;
