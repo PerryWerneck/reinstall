@@ -37,7 +37,26 @@
  namespace Reinstall {
 
 	Source::Source(const Udjat::XML::Node &node) :
-		Udjat::NamedObject{ node }, path{ node }, slpclient{ node }, imgpath{ XML::QuarkFactory(node,"path").c_str() } {
+		Udjat::NamedObject{ node },
+		path{ node },
+		repository{ XML::QuarkFactory(node,"repository").c_str() },
+		slpclient{ node },
+		imgpath{ XML::QuarkFactory(node,"path").c_str() } {
+
+		if(!(imgpath && *imgpath)) {
+
+			// No imgpath, use standard.
+
+			if(path.remote[0] == '/') {
+				// The remote path is relative, use it as image path.
+				imgpath = path.remote;
+			} else {
+				// No image path, how can I store this source?
+				throw runtime_error("Cant determine image path source");
+			}
+
+		}
+
 	}
 
 	const char * Source::local() const noexcept {

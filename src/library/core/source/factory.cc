@@ -36,9 +36,7 @@
 
 	std::shared_ptr<Source> Source::factory(const Udjat::XML::Node &node) {
 
-		debug("NAME=",node.attribute("name").as_string("???"));
-
-		switch(XML::StringFactory(node,"type","value","default").select("default","zip")) {
+		switch(XML::StringFactory(node,"type","value","default").select("default","zip",nullptr)) {
 		case 0: // Default
 			return make_shared<Source>(node);
 

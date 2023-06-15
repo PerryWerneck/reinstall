@@ -20,7 +20,7 @@
  #include <config.h>
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
- #include <libreinstall/source.h>
+ #include <libreinstall/path.h>
 
  using namespace Udjat;
 
@@ -28,6 +28,12 @@
 
 	Path::Path(const Udjat::XML::Node &node)
 		: Path{Udjat::XML::QuarkFactory(node,"remote").c_str(),Udjat::XML::QuarkFactory(node,"local").c_str()} {
+
+		// Check URL attribute for compatibility.
+		if(!(remote && *remote)) {
+			remote = Udjat::XML::QuarkFactory(node,"url").c_str();
+		}
+
 	}
 
  }

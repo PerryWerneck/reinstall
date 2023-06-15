@@ -38,6 +38,9 @@
 		/// @brief Source paths.
 		const Path path;
 
+		/// @brief The repository name.
+		const char *repository = "";
+
 		/// @brief SLP settings for automatic source detection.
 		const SlpClient slpclient;
 
