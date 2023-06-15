@@ -58,6 +58,16 @@
 		}
 
 		this->marker = sMarker[0];
+
+		if(!(filter && *filter)) {
+			filter = strrchr(url,'/');
+			if(filter) {
+				filter++;
+			} else {
+				throw runtime_error("Required attribute 'filter' is missing or invalid");
+			}
+		}
+
 	}
 
 	bool Template::test(const char *path) const noexcept {

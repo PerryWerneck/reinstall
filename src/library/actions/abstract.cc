@@ -168,19 +168,34 @@
 
 	bool Action::getProperty(const char *key, std::string &value) const {
 
+		if(!strcasecmp(key,"kernel-parameters")) {
 
-#ifdef DEBUG
-		if(!Udjat::NamedObject::getProperty(key,value)) {
-			Logger::Message{_("Cant get property '{}'"),key}.error(name());
-			return false;
+			for(auto kparm : kparms) {
+
+				if(!value.empty()) {
+					value += " ";
+				}
+
+				value += kparm->name();
+
+				auto val = kparm->value();
+				if(!val.empty()) {
+					value += "=";
+					value += kparm->value();
+				}
+
+			}
+
+			Logger::String{"Kernel-parameters: '",value,"'"}.write(Logger::Debug,name());
+
+			return true;
 		}
-		return true;
-#else
+
 		if(!Udjat::NamedObject::getProperty(key,value)) {
 			throw runtime_error{Logger::Message{_("Cant get property '{}'"),key}};
 		}
 		return true;
-#endif // DEBUG
+
 	}
 
 	void Action::build(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const {
