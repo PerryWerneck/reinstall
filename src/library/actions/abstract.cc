@@ -22,9 +22,9 @@
  #include <udjat/tools/intl.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/object.h>
- #include <libreinstall/action.h>
  #include <stdexcept>
 
+ #include <libreinstall/action.h>
  #include <libreinstall/dialogs/progress.h>
 
  #include <libreinstall/writer.h>
@@ -44,6 +44,27 @@
 			Action::def = this;
 		}
 
+		// Load repositories.
+		search(node,"repository",[this](const pugi::xml_node &node){
+			repositories.emplace_back(node);
+			return false;
+		});
+
+		// Load kernel parameters.
+
+		// Load sources.
+		search(node,"source",[this](const pugi::xml_node &node){
+			sources.push_back(Source::factory(node));
+			return false;
+		});
+
+		// Load templates.
+		search(node,"template",[this](const pugi::xml_node &node){
+			templates.emplace_back(node);
+			return false;
+		});
+
+		debug("Repositories.size()=",repositories.size()," sources.size()=",sources.size()," templates.size()=",templates.size());
 	}
 
 	Action::OutPut::OutPut(const Udjat::XML::Node &node)
@@ -65,15 +86,15 @@
 	void Action::prepare(Dialog::Progress &progress, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const {
 
 		progress.run(_("Getting required files"),[this,&files](){
-			for(const Reinstall::Source &source : sources) {
-				source.prepare(files);
+			for(auto source : sources) {
+				source->prepare(files);
 			}
 		});
 
-		if(!tmpls.empty()) {
+		if(!templates.empty()) {
 
 			progress.run(_("Applying templates"),[this,&files](){
-				for(const Reinstall::Template &tmpl : tmpls) {
+				for(const Reinstall::Template &tmpl : templates) {
 					tmpl.apply(Udjat::Abstract::Object{},files);
 				}
 			});
@@ -81,6 +102,24 @@
 		}
 
 	}
+
+	bool Action::getProperty(const char *key, std::string &value) const {
+
+
+#ifdef DEBUG
+		if(!Udjat::NamedObject::getProperty(key,value)) {
+			Logger::Message{_("Cant get property '{}'"),key}.error(name());
+			return false;
+		}
+		return true;
+#else
+		if(!Udjat::NamedObject::getProperty(key,value)) {
+			throw runtime_error{Logger::Message{_("Cant get property '{}'"),key}};
+		}
+		return true;
+#endif // DEBUG
+	}
+
 
 	void Action::build(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const {
 
@@ -91,10 +130,10 @@
 			}
 		});
 
-		if(!tmpls.empty()) {
+		if(!templates.empty()) {
 
 			progress.run(_("Applying templates"),[this,builder](){
-				builder->push_back(*this,tmpls);
+				builder->push_back(*this,templates);
 			});
 
 		}

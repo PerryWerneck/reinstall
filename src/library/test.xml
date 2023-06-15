@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<config>
-
-	<!-- System version -->
-	<attribute name='osversion' value='15.4' />
-
-	<!-- HTTP is required for downloading files -->
-	<module name='http' required='yes' />
+<action name='test'>
 
 	<!-- 
 	
@@ -29,16 +23,7 @@
 		slp-filter='' 
 		slp-allow-local='no' 
 		slp-kernel-parameter='slp:/' 
-		layout='apache'
 	/>
-
-	<!-- Path for the installation kernel (Full URL or path from repository) -->
-	<kernel url='/boot/x86_64/loader/linux' repository='install' />
-
-	<!-- Path for the installation init (Full URL or path from repository) -->
-	<init url='/boot/x86_64/loader/initrd' repository='install' />
-
-	<!-- driver-installation-disk url='http://localhost/updates.dud' path='boot/updates.dud' / -->	
 
 	<source name='boot' url='/boot/x86_64/' repository='install' />
 	<source name='efi' url='/EFI/' repository='install' />
@@ -57,31 +42,5 @@
 	<!-- Replace every 'isolinux.cfg' file with template -->
 	<template name='isolinux.cfg' url='file://../../templates/isolinux.cfg' />
 	
-	<group name='OpenSUSE'>
-
-		<!-- Nome que aparece na opção de menu -->
- 		<attribute name='label' value='OpenSUSE ${osversion}' />
- 		
- 		<option name='opt1' default='yes' output-file='/tmp/test.iso'>
-
-	 		<attribute name='label' value='Option 1' />
-
-			<!-- Image post processing -->
-			<!-- script type='post' name='iso-hybrid' cmdline='/usr/bin/isohybrid -u ${devname}' / -->
-			
-			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
-			<dialog name='confirmation' title='Confirmation message' icon='dialog-question' text='Do you confirm?' url='http://google.com' url-label='More info'>
-				This is the secondary text on confirmation message.
-			</dialog>
-
-			<dialog name='success' title='Success message' icon='dialog-information' text='Operation complete' url='http://google.com' url-label='More info' allow-reboot='yes'>
-				This is the secondary text of sucess message.
-			</dialog>
-
-		</option>
-
-
-	</group>
-
-</config>
+</action>
 

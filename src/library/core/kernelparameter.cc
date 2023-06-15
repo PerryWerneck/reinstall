@@ -18,7 +18,7 @@
  */
 
  #include <config.h>
- #include <reinstall/action.h>
+ #include <libreinstall/action.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
  #include <udjat/tools/url.h>
@@ -30,6 +30,8 @@
 
  namespace Reinstall {
 
+
+	/*
 	Action::KernelParameter::KernelParameter(const pugi::xml_node &node) : KernelParameter{Quark(node.attribute("name").as_string()).c_str(),node} {
 	}
 
@@ -111,6 +113,6 @@
 
 		return response;
 	}
-
+	*/
 
  }

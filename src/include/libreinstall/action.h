@@ -21,9 +21,12 @@
 
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
- #include <libreinstall/source.h>
  #include <memory>
+
+ #include <libreinstall/source.h>
  #include <libreinstall/builder.h>
+ #include <libreinstall/repository.h>
+
  #include <libreinstall/dialogs/progress.h>
  #include <udjat/tools/object.h>
 
@@ -37,11 +40,14 @@
 
 	protected:
 
+		/// @brief List of repositories defined by XML.
+		std::vector<Reinstall::Repository> repositories;
+
 		/// @brief List of sources defined by XML.
-		std::vector<Reinstall::Source> sources;
+		std::vector<std::shared_ptr<Reinstall::Source>> sources;
 
 		/// @brief List of templates defined by XML.
-		std::vector<Reinstall::Template> tmpls;
+		std::vector<Reinstall::Template> templates;
 
 		/// @brief Get image builder.
 		virtual std::shared_ptr<Reinstall::Builder> BuilderFactory() const;
@@ -93,6 +99,8 @@
 			Selected,
 			Default
 		};
+
+		bool getProperty(const char *key, std::string &value) const override;
 
 		static void activate(const ActivationType type = Selected);
 

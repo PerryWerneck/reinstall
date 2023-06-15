@@ -27,6 +27,7 @@
  #include <set>
  #include <libreinstall/slpclient.h>
  #include <libreinstall/path.h>
+ #include <libreinstall/repository.h>
 
  namespace Reinstall {
 
@@ -46,6 +47,8 @@
 		const char *imgpath = "";
 
 	public:
+
+		static std::shared_ptr<Source> factory(const Udjat::XML::Node &node);
 
 		/// @brief Build Source using fixed values.
 		/// @param remote URL of the root for remote source.

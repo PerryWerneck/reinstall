@@ -10,6 +10,7 @@
  #include <reinstall/userinterface.h>
  #include <libreinstall/dialogs/progress.h>
  #include <udjat/tools/logger.h>
+ #include <pugixml.hpp>
 
  #include <libreinstall/builder.h>
  #include <libreinstall/builders/iso9660.h>
@@ -24,16 +25,8 @@
  using namespace std;
  using namespace Udjat;
 
- int main(int, char **) {
-
-	Reinstall::UserInterface interface;
-
-	Udjat::Quark::init();
-	Udjat::Logger::redirect();
-	Udjat::Logger::enable(Udjat::Logger::Trace);
-	Udjat::Logger::enable(Udjat::Logger::Debug);
-	Udjat::Logger::console(true);
-	Udjat::Module::load("http");
+ /*
+ static void object_test() {
 
 	class Action : public Reinstall::Action {
 	public:
@@ -67,71 +60,31 @@
 	Reinstall::Dialog::Progress progress;
 	Action{}.activate(progress);
 
+ }
+ */
 
-	/*
-	Reinstall::Source source{
-		"suse",
-		"http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64/",
-		"/home/perry/Público/openSUSE-Leap-15.4-NET-x86_64",
-		""
-	};
+ static void xml_test(const char *filename) {
 
-	static const std::vector<Reinstall::Template> tmpls = {
-		{
-			"grub",
-			"grub.cfg",
-			"file://../../templates/grub.cfg"
-		}
-	};
-	*/
+	pugi::xml_document document;
+	document.load_file(filename);
 
-	/*
-	Reinstall::ZipSource source{
-		"zip",
-		"http://localhost/~perry/win/ziptest.zip",
-		"/home/perry/public_html/win/ziptest.zip",
-		""
-	};
-	*/
-
-	/*
-	Reinstall::Dialog::Progress progress;
-
-	std::set<std::shared_ptr<Reinstall::Source::File>> files;
-
-	source.prepare(files);
-
-	for(const Reinstall::Template &tmpl : tmpls) {
-		tmpl.apply(Udjat::Abstract::Object{},files);
-	}
-
-	debug("Number of source files: ",files.size());
-
-	try {
-
-		iso9660::Settings settings;
-		auto builder = iso9660::BuilderFactory(settings);
-
-		// auto builder = fat::BuilderFactory(20000000000ULL);
-
-		builder->pre();
-		for(auto file : files) {
-			builder->push_back(file);
-		}
-		builder->push_back(Udjat::Abstract::Object{},tmpls);
-		builder->post();
-
-		builder->write(make_shared<Reinstall::FileWriter>("/tmp/test.iso"));
+	Reinstall::Action action{document.document_element()};
 
 
-	} catch(const std::exception &e) {
+ }
 
-		Logger::String{e.what()}.error("builder");
-		Udjat::Module::unload();
-		return -1;
+ int main(int, char **) {
 
-	}
-	*/
+	Reinstall::UserInterface interface;
+
+	Udjat::Quark::init();
+	Udjat::Logger::redirect();
+	Udjat::Logger::enable(Udjat::Logger::Trace);
+	Udjat::Logger::enable(Udjat::Logger::Debug);
+	Udjat::Logger::console(true);
+	Udjat::Module::load("http");
+
+	xml_test("test.xml");
 
 	Udjat::Module::unload();
 	return 0;

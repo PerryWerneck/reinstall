@@ -41,7 +41,9 @@
 		<Unit filename="../include/libreinstall/dialogs/taskrunner.h" />
 		<Unit filename="../include/libreinstall/dialogs/window.h" />
 		<Unit filename="../include/libreinstall/iso9660.h" />
+		<Unit filename="../include/libreinstall/kernelparameter.h" />
 		<Unit filename="../include/libreinstall/path.h" />
+		<Unit filename="../include/libreinstall/repository.h" />
 		<Unit filename="../include/libreinstall/slpclient.h" />
 		<Unit filename="../include/libreinstall/source.h" />
 		<Unit filename="../include/libreinstall/sources/zip.h" />
@@ -55,12 +57,13 @@
 		<Unit filename="builders/fat.cc" />
 		<Unit filename="builders/iso9660.cc" />
 		<Unit filename="controller.cc" />
+		<Unit filename="core/kernelparameter.cc" />
 		<Unit filename="core/path.cc" />
+		<Unit filename="core/repository.cc" />
 		<Unit filename="core/slpclient.cc" />
+		<Unit filename="core/source/factory.cc" />
 		<Unit filename="core/source/file.cc" />
-		<Unit filename="core/source/path.cc" />
 		<Unit filename="core/source/prepare.cc" />
-		<Unit filename="core/source/slpclient.cc" />
 		<Unit filename="core/source/source.cc" />
 		<Unit filename="core/template.cc" />
 		<Unit filename="fatfs/documents/res/app1.c">
@@ -101,7 +104,6 @@
 		<Unit filename="iso9660/eltorito.cc" />
 		<Unit filename="iso9660/image.cc" />
 		<Unit filename="iso9660/settings.cc" />
-		<Unit filename="kernelparameter.cc" />
 		<Unit filename="object.cc" />
 		<Unit filename="os/linux/abstract_writer.cc" />
 		<Unit filename="os/linux/disk_image.cc" />
