@@ -100,14 +100,7 @@
 
 					// source is relative to repository, get real URL.
 					auto it = urls.find(string{reponame});
-					if(it != urls.end()) {
-
-						// Already resolved, just use URL.
-						debug("Repository '",reponame,"' was already resolved, using it");
-						progress.set_sub_title(_("Getting required files"));
-						source->prepare(it->second,files);
-
-					} else {
+					if(it == urls.end()) {
 
 						// Not resolved, get URL.
 						debug("Searching for repository '",reponame,"'");
@@ -134,15 +127,15 @@
 							throw runtime_error(Logger::String{"Cant find repository '",reponame,"'"});
 						}
 
-						// Gt the real URL, prepare it.
-						progress.set_sub_title(_("Getting required files"));
+					}
 
-						{
-							Udjat::URL url{it->second};
-							url += remote;
-							source->prepare(url,files);
-						}
+					// Gt the real URL, prepare it.
+					progress.set_sub_title(_("Getting required files"));
 
+					{
+						Udjat::URL url{it->second};
+						url += remote;
+						source->prepare(url,files);
 					}
 
 				} else {
