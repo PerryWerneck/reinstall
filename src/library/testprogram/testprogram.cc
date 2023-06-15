@@ -65,13 +65,27 @@
 
  static void xml_test(const char *filename) {
 
+	class Action : public Reinstall::Action {
+	public:
+		Action(const Udjat::XML::Node &node) : Reinstall::Action{node} {
+		}
+
+		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
+			static iso9660::Settings settings;
+			return iso9660::BuilderFactory(settings);
+		}
+
+		std::shared_ptr<Reinstall::Writer> WriterFactory() const override {
+			return make_shared<Reinstall::FileWriter>("/tmp/test.iso");
+		}
+
+	};
+
 	pugi::xml_document document;
 	document.load_file(filename);
 
-	Reinstall::Action action{document.document_element()};
-
 	Reinstall::Dialog::Progress progress;
-	action.activate(progress);
+	Action{document.document_element()}.activate(progress);
 
  }
 
