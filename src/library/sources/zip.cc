@@ -38,7 +38,7 @@
 
  namespace Reinstall {
 
-	void ZipSource::prepare(std::set<std::shared_ptr<Source::File>> &files) const {
+	void ZipSource::prepare(const Udjat::URL &url, std::set<std::shared_ptr<Source::File>> &files) const {
 
 		class Container : public mutex {
 		public:
@@ -65,33 +65,31 @@
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
-		const char *local = this->local();
-		if(local && *local) {
+		if(url.scheme() == "file") {
 
 			// It's a local file, just open it.
-			container = make_shared<Container>(local);
+			container = make_shared<Container>(url.ComponentsFactory().path.c_str());
 
 		} else {
 
 			// TODO: Allow an optional 'cache' attribute, when false, open zip as a temporary unnamed file.
 
 			// It's a remote file, download to temporary file and open it.
-			std::string url{remote()};
-
 			auto worker = Protocol::WorkerFactory(url.c_str());
 
 			Logger::String{"Getting file from ",worker->url().c_str()}.write(Logger::Debug,name());
 			progress.set_url(worker->url().c_str());
 
-			if(local && *local) {
+			const char *filepath = this->local();
+			if(filepath && *filepath) {
 
 				// Have local path, use it!
-				worker->save(local,[&progress](double current, double total) {
+				worker->save(filepath,[&progress](double current, double total) {
 					progress.set_progress(current,total);
 					return true;
 				},true);
 
-				container = make_shared<Container>(local);
+				container = make_shared<Container>(filepath);
 
 			} else {
 

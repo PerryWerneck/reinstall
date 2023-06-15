@@ -21,6 +21,7 @@
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/object.h>
+ #include <udjat/tools/url.h>
  #include <list>
  #include <memory>
  #include <string>
@@ -39,7 +40,7 @@
 		const Path path;
 
 		/// @brief The repository name.
-		const char *repository = "";
+		const char *reponame = "";
 
 		/// @brief SLP settings for automatic source detection.
 		const SlpClient slpclient;
@@ -70,6 +71,11 @@
 		/// @return The remote source path.
 		virtual const char * remote() const;
 
+		/// @brief Get repository name.
+		inline const char * repository() const noexcept {
+			return reponame;
+		}
+
 		/// @brief File to write.
 		class UDJAT_API File : public std::string {
 		public:
@@ -97,7 +103,13 @@
 		};
 
 		/// @brief Get list of source files.
-		virtual void prepare(std::set<std::shared_ptr<File>> &files) const;
+		/// @param files List of files to download.
+		void prepare(std::set<std::shared_ptr<File>> &files);
+
+		/// @brief Get list of source files.
+		/// @param url The real repository URL.
+		/// @param files List of files to download.
+		virtual void prepare(const Udjat::URL &url, std::set<std::shared_ptr<File>> &files) const;
 
 	};
 

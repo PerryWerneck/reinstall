@@ -34,7 +34,46 @@
  namespace Reinstall {
 
 	Repository::Repository(const Udjat::XML::Node &node)
-		: slpclient{node}, remote{XML::QuarkFactory(node,"remote").c_str()}, local{XML::QuarkFactory(node,"local").c_str()} {
+		:	name{XML::QuarkFactory(node,"name").c_str()}, slpclient{node},
+			remote{XML::QuarkFactory(node,"remote").c_str()},
+			local{XML::QuarkFactory(node,"local").c_str()},
+			kparm{node} {
+
+		if(!(name && *name)) {
+			throw runtime_error("Required attribute 'name' is missing or invalid");
+		}
+
+		if(!(remote && *remote)) {
+			remote = XML::QuarkFactory(node,"url").c_str();
+		}
+
+		if(!(remote && *remote)) {
+			throw runtime_error("Required attribute 'remote' is missing or invalid");
+		}
+
+	}
+
+	Udjat::URL Repository::url() const {
+
+		Repository *repo = const_cast<Repository *>(this);
+
+		if(slpclient) {
+			const char *url = slpclient.resolve();
+			if(url && *url) {
+				Logger::String{"Using slp URL ",remote}.trace(name);
+				if(repo) {
+					repo->kparm.val = kparm.slpval;
+				}
+				return Udjat::URL{url};
+			}
+		}
+
+		Logger::String{"Using default URL ",remote}.trace(name);
+		if(repo) {
+			repo->kparm.val = remote;
+		}
+
+		return Udjat::URL{remote};
 	}
 
  }

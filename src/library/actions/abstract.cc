@@ -23,6 +23,7 @@
  #include <udjat/tools/xml.h>
  #include <udjat/tools/object.h>
  #include <stdexcept>
+ #include <unordered_map>
 
  #include <libreinstall/action.h>
  #include <libreinstall/dialogs/progress.h>
@@ -85,9 +86,72 @@
 
 	void Action::prepare(Dialog::Progress &progress, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const {
 
-		progress.run(_("Getting required files"),[this,&files](){
+		progress.run(_("Getting required files"),[this,&progress,&files](){
+
+			/// @brief Resolved repositories.
+			std::unordered_map<std::string, Udjat::URL> urls;
+
 			for(auto source : sources) {
-				source->prepare(files);
+
+				const char *reponame = source->repository();
+				const char *remote = source->remote();
+
+				if(reponame && *reponame && remote[0] == '/') {
+
+					// source is relative to repository, get real URL.
+					auto it = urls.find(string{reponame});
+					if(it != urls.end()) {
+
+						// Already resolved, just use URL.
+						debug("Repository '",reponame,"' was already resolved, using it");
+						progress.set_sub_title(_("Getting required files"));
+						source->prepare(it->second,files);
+
+					} else {
+
+						// Not resolved, get URL.
+						debug("Searching for repository '",reponame,"'");
+
+						for(const Reinstall::Repository &repository : repositories) {
+
+							if(repository == reponame) {
+
+								// Found, resolve url.
+								auto url = repository.url();
+
+								auto result = urls.insert({string{reponame},url});
+								if(!result.second) {
+									throw runtime_error(Logger::String{"Unable to insert repository '",reponame,"' on URL cache"});
+								}
+
+								it = result.first;
+
+								break;
+							}
+						}
+
+						if(it == urls.end()) {
+							throw runtime_error(Logger::String{"Cant find repository '",reponame,"'"});
+						}
+
+						// Gt the real URL, prepare it.
+						progress.set_sub_title(_("Getting required files"));
+
+						{
+							Udjat::URL url{it->second};
+							url += remote;
+							source->prepare(url,files);
+						}
+
+					}
+
+				} else {
+
+					// Source is not relative, just prepare it.
+					source->prepare(files);
+
+				}
+
 			}
 		});
 
@@ -119,7 +183,6 @@
 		return true;
 #endif // DEBUG
 	}
-
 
 	void Action::build(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const {
 
@@ -178,20 +241,20 @@
 		*/
 	}
 
-	void Action::activate(const ActivationType type) {
+	void Action::activate(Dialog::Progress &progress, const ActivationType type) {
 		switch(type) {
 		case Selected:
 			if(!Action::selected) {
 				throw runtime_error(_("No selected action"));
 			}
-			Action::selected->activate();
+			Action::selected->activate(progress);
 			break;
 
 		case Default:
 			if(!Action::def) {
 				throw runtime_error(_("No default action"));
 			}
-			Action::def->activate();
+			Action::def->activate(progress);
 			break;
 		}
 	}
@@ -201,6 +264,7 @@
 		std::set<std::shared_ptr<Reinstall::Source::File>> files;
 
 		// Step 1, get files, prepare for build.
+		Logger::String{"Preparing"}.info(name());
 		prepare(progress,files);
 
 		// Step 2, build and write image.

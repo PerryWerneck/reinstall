@@ -102,7 +102,7 @@
 
 		bool getProperty(const char *key, std::string &value) const override;
 
-		static void activate(const ActivationType type = Selected);
+		static void activate(Dialog::Progress &progress, const ActivationType type);
 
 		virtual void activate(Dialog::Progress &progress) const;
 

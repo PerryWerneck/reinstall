@@ -24,14 +24,20 @@
  #pragma once
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
+ #include <udjat/tools/url.h>
  #include <libreinstall/slpclient.h>
+ #include <libreinstall/kernelparameter.h>
  #include <string>
+ #include <cstring>
 
  namespace Reinstall {
 
 	/// @brief Path to repository (A local or remote folder with files to be used by action).
 	class UDJAT_API Repository {
 	private:
+
+		/// @brief Repository name.
+		const char *name;
 
 		/// @brief SLP settings for automatic source detection.
 		const SlpClient slpclient;
@@ -42,8 +48,35 @@
 		/// @brief Local path.
 		const char * local = "";
 
+		class KParm : public Kernel::Parameter {
+		public:
+
+			/// @brief Current value.
+			const char *val = nullptr;
+
+			/// @brief value to set when detected by slp.
+			const char *slpval = "";
+
+			KParm(const Udjat::XML::Node &node) :
+				Kernel::Parameter{Udjat::XML::QuarkFactory(node,"kernel-parameter-name").c_str()},
+				slpval{Udjat::XML::QuarkFactory(node,"slp-kernel-parameter","value","slp:/").c_str()} {
+			}
+
+			const std::string value() const override {
+				return val;
+			}
+
+		} kparm;
+
 	public:
 		Repository(const Udjat::XML::Node &node);
+
+		inline bool operator==(const char *name) const noexcept {
+			return strcasecmp(this->name,name) == 0;
+		}
+
+		/// @brief Get repository URL, resolve it using SLP.
+		Udjat::URL url() const;
 
 	};
 

@@ -39,7 +39,7 @@
 	Source::Source(const Udjat::XML::Node &node) :
 		Udjat::NamedObject{ node },
 		path{ node },
-		repository{ XML::QuarkFactory(node,"repository").c_str() },
+		reponame{ XML::QuarkFactory(node,"repository").c_str() },
 		slpclient{ node },
 		imgpath{ XML::QuarkFactory(node,"path").c_str() } {
 
@@ -90,6 +90,23 @@
 		}
 
 		throw runtime_error(Logger::Message{_("Can't determine source URL for '{}'"),name()});
+
+	}
+
+	void Source::prepare(std::set<std::shared_ptr<File>> &files) {
+
+		const char *filename = this->local();
+		if(filename && *filename) {
+			prepare(Udjat::URL{String{"file://",filename}},files);
+			return;
+		}
+
+		filename = this->remote();
+		if(filename[0] == '/') {
+			throw runtime_error("Unsupported remote url");
+		}
+
+		prepare(Udjat::URL{filename},files);
 
 	}
 

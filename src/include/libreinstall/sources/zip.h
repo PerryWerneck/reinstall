@@ -40,8 +40,9 @@
 		}
 
 		/// @brief Open zip file, extract all file names.
+		/// @param url parsed URL.
 		/// @param files container for the list of file handlers.
-		void prepare(std::set<std::shared_ptr<Source::File>> &files) const override;
+		void prepare(const Udjat::URL &url, std::set<std::shared_ptr<Source::File>> &files) const override;
 
 	};
 

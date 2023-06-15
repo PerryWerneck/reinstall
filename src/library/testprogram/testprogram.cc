@@ -70,6 +70,8 @@
 
 	Reinstall::Action action{document.document_element()};
 
+	Reinstall::Dialog::Progress progress;
+	action.activate(progress);
 
  }
 

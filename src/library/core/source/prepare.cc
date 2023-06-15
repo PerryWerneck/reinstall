@@ -164,18 +164,20 @@
 
 	}
 
-	void Source::prepare(std::set<std::shared_ptr<File>> &files) const {
+	void Source::prepare(const Udjat::URL &url, std::set<std::shared_ptr<File>> &files) const {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
-		if(local()) {
+		if(url.scheme() == "file") {
 
-			progress.set_url(path.local);
-			Logger::String{"Getting file list from ",path.local}.trace(name());
+			string local = url.ComponentsFactory().path;
 
-			size_t szpath = strlen(path.local);
+			progress.set_url(url.c_str());
 
-			Udjat::File::Path{path.local}.for_each([this,szpath,&files](const Udjat::File::Path &path){
+			Logger::String{"Getting file list from ",local.c_str()}.trace(name());
+
+			size_t szpath = local.size();
+			Udjat::File::Path{local.c_str()}.for_each([this,szpath,&files](const Udjat::File::Path &path){
 
 				string target{imgpath};
 				target += (path.c_str()+szpath);
@@ -187,12 +189,8 @@
 
 			},true);
 
-
 			return;
 		}
-
-		// Base URL.
-		std::string url{remote()};
 
 		// Get files from URL.
 		if(url[url.size()-1] == '/') {
@@ -210,7 +208,7 @@
 			});
 
 			if(index.empty()) {
-				throw runtime_error(Logger::Message(_("Empty response from {}"),url));
+				throw runtime_error(Logger::Message(_("Empty response from {}"),url.c_str()));
 			}
 
 			trace(
