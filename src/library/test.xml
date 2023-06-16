@@ -17,7 +17,9 @@
 		https://download.opensuse.org/distribution/leap/15.4/repo/oss
 		http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64
 	-->
-	<repository name='install' url='http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64' 
+	<repository name='install' 
+		remote='http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64' 
+		local='/home/perry/public_html/openSUSE-Leap-15.4-NET-x86_64' 
 		slp-service-type='service:install.suse' 
 		slp-scope-list='' 
 		slp-filter='' 

@@ -150,10 +150,15 @@
 					}
 
 					// Resolve local path.
-					URL local{source->local()};
+					URL local{source->filename()};
+
 					if(local.empty()) {
+						local = repo.path(remote.ComponentsFactory().path.c_str());
+					} else {
 						local = repo.path(local.ComponentsFactory().path.c_str());
 					}
+
+					debug("Local=",local.c_str());
 
 					// Get file list
 					source->prepare(

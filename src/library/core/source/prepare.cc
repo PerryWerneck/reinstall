@@ -171,7 +171,7 @@
 		if(!local.empty() && local.test()) {
 
 			// Local path is available.
-			string filepath{local.ComponentsFactory().path};
+			Udjat::File::Path filepath{local.ComponentsFactory().path};
 
 			Logger::String{"Getting file list from ",filepath.c_str()}.info(name());
 
@@ -179,13 +179,21 @@
 			progress.set_url(local.c_str());
 
 			size_t szpath = filepath.size();
-			Udjat::File::Path{local.c_str()}.for_each([this,szpath,&files](const Udjat::File::Path &path){
+			debug("Filepath='",filepath.c_str(),"' ",filepath.size()," ",strlen(filepath.c_str()));
+			filepath.for_each([this,szpath,&files](const Udjat::File::Path &path){
 
 				string target{imgpath};
+				debug("imgpath: '",target.c_str(),"'");
+				debug("payload:",(path.c_str()+szpath));
+
 				target += (path.c_str()+szpath);
-				debug(target);
+
+				debug("From: '",path.c_str(),"' dir=",path.dir()," regular=",path.regular()," len=",path.size());
+				debug("To: '",target,"'");
 
 				files.emplace(make_shared<Local>(path,target));
+
+				exit(-1);
 
 				return false;
 
