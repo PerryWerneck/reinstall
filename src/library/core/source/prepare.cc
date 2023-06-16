@@ -172,6 +172,7 @@
 
 			// Local path is available.
 			Udjat::File::Path filepath{local.ComponentsFactory().path};
+			filepath.realpath();
 
 			Logger::String{"Getting file list from ",filepath.c_str()}.info(name());
 
@@ -179,21 +180,17 @@
 			progress.set_url(local.c_str());
 
 			size_t szpath = filepath.size();
-			debug("Filepath='",filepath.c_str(),"' ",filepath.size()," ",strlen(filepath.c_str()));
 			filepath.for_each([this,szpath,&files](const Udjat::File::Path &path){
 
+				const char *payload = path.c_str()+szpath;
+				if(*payload == '/') {
+					payload++;
+				}
+
 				string target{imgpath};
-				debug("imgpath: '",target.c_str(),"'");
-				debug("payload:",(path.c_str()+szpath));
-
-				target += (path.c_str()+szpath);
-
-				debug("From: '",path.c_str(),"' dir=",path.dir()," regular=",path.regular()," len=",path.size());
-				debug("To: '",target,"'");
+				target += payload;
 
 				files.emplace(make_shared<Local>(path,target));
-
-				exit(-1);
 
 				return false;
 
