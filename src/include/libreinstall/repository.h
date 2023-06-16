@@ -86,6 +86,10 @@
 		/// @brief Get repository URL, resolve it using SLP.
 		Udjat::URL url() const;
 
+		/// @brief Get local path for file.
+		/// @param filepath The path inside repository.
+		Udjat::URL path(const char *filepath) const;
+
 		/// @brief Setup repository as kernel parameter.
 		void set_kernel_parameter(const Udjat::XML::Node &node);
 

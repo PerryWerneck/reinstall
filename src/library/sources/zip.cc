@@ -38,7 +38,7 @@
 
  namespace Reinstall {
 
-	void ZipSource::prepare(const Udjat::URL &url, std::set<std::shared_ptr<Source::File>> &files) const {
+	void ZipSource::prepare(const Udjat::URL &local, const Udjat::URL &remote, std::set<std::shared_ptr<Source::File>> &files) const {
 
 		class Container : public mutex {
 		public:
@@ -65,25 +65,26 @@
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
-		if(url.scheme() == "file") {
+		if(!local.empty() && local.test()) {
 
 			// It's a local file, just open it.
-			container = make_shared<Container>(url.ComponentsFactory().path.c_str());
+			container = make_shared<Container>(local.ComponentsFactory().path.c_str());
 
 		} else {
 
 			// TODO: Allow an optional 'cache' attribute, when false, open zip as a temporary unnamed file.
 
 			// It's a remote file, download to temporary file and open it.
-			auto worker = Protocol::WorkerFactory(url.c_str());
+			auto worker = Protocol::WorkerFactory(remote.c_str());
 
 			Logger::String{"Getting file from ",worker->url().c_str()}.write(Logger::Debug,name());
 			progress.set_url(worker->url().c_str());
 
-			const char *filepath = this->local();
+			const char *filepath = this->filename();
 			if(filepath && *filepath) {
 
 				// Have local path, use it!
+				Logger::String{"Updating local file on ",filepath}.info(name());
 				worker->save(filepath,[&progress](double current, double total) {
 					progress.set_progress(current,total);
 					return true;
@@ -95,7 +96,7 @@
 
 				// No local path, use cache
 				std::string filename{Application::CacheDir{}.build_filename(worker->url().c_str())};
-				trace("Updating zip file {}",filename);
+				Logger::String{"Updating cached file on ",filename}.info(name());
 
 				worker->save(filename.c_str(),[&progress](double current, double total) {
 					progress.set_progress(current,total);

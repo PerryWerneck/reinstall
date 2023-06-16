@@ -53,19 +53,36 @@
 
 	}
 
+	Udjat::URL Repository::path(const char *filepath) const {
+
+		if(local && *local) {
+			URL url{"file://",local,filepath};
+			if(url.test() == 200) {
+				return url;
+			}
+			Logger::String{"Rejecting source URL ",url.c_str()}.warning(name);
+		}
+
+		// Return empty url
+		return Udjat::URL{};
+	}
+
 	Udjat::URL Repository::url() const {
 
 		Repository *repo = const_cast<Repository *>(this);
 
 		if(slpclient) {
-			const char *url = slpclient.resolve();
-			if(url && *url) {
-				Logger::String{"Using slp URL ",remote}.trace(name);
+
+			// SLP is set, try it.
+			Udjat::URL url = slpclient.url();
+			if(!url.empty()) {
+				Logger::String{"Using slp URL ",url.c_str()}.trace(name);
 				if(repo) {
 					repo->kparm.val = kparm.slpval;
 				}
-				return Udjat::URL{url};
+				return url;
 			}
+
 		}
 
 		Logger::String{"Using default URL ",remote}.trace(name);

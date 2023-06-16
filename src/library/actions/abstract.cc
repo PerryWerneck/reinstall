@@ -26,6 +26,7 @@
  #include <unordered_map>
 
  #include <libreinstall/action.h>
+ #include <libreinstall/repository.h>
  #include <libreinstall/dialogs/progress.h>
 
  #include <libreinstall/writer.h>
@@ -66,7 +67,7 @@
 			} else {
 
 				// It's a repository parameter.
-				repository(reponame.c_str()).set_kernel_parameter(node);
+				const_cast<Repository &>(repository(reponame.c_str())).set_kernel_parameter(node);
 
 			}
 
@@ -104,9 +105,9 @@
 
 	}
 
-	Reinstall::Repository & Action::repository(const char *name) {
+	const Reinstall::Repository & Action::repository(const char *name) const {
 
-		for(Repository &repository : repositories) {
+		for(const Repository &repository : repositories) {
 			if(repository == name) {
 				return repository;
 			}
@@ -125,8 +126,50 @@
 
 			for(auto source : sources) {
 
+				URL remote{source->remote()};
+
 				const char *reponame = source->repository();
-				const char *remote = source->remote();
+				if(reponame && *reponame && (remote[0] == '/' || remote[0] == '.')) {
+
+					// Using repository, resolve real URLs
+					const Repository &repo = this->repository(reponame);
+
+					auto it = urls.find(string{reponame});
+					if(it == urls.end()) {
+
+						// Not in cache, search for repository real URL
+						auto url = repo.url();
+
+						auto result = urls.insert({string{reponame},url});
+						if(!result.second) {
+							throw runtime_error(Logger::String{"Unable to insert repository '",reponame,"' on URL cache"});
+						}
+
+						it = result.first;
+
+					}
+
+					// Resolve local path.
+					URL local{source->local()};
+					if(local.empty()) {
+						local = repo.path(local.ComponentsFactory().path.c_str());
+					}
+
+					// Get file list
+					source->prepare(
+						local,									// URL on local file system.
+						(it->second + remote.c_str()),			// URL for remote repository.
+						files									// File list.
+					);
+
+				} else {
+
+					// Not using repository, just get file list.
+					source->prepare(files);
+
+				}
+				/*
+				URL local;
 
 				if(reponame && *reponame && (remote[0] == '/' || remote[0] == '.')) {
 
@@ -141,7 +184,7 @@
 
 							if(repository == reponame) {
 
-								// Found, resolve url.
+								// Resolve remote path.
 								auto url = repository.url();
 
 								auto result = urls.insert({string{reponame},url});
@@ -164,11 +207,11 @@
 					// Gt the real URL, prepare it.
 					progress.set_sub_title(_("Getting required files"));
 
-					{
-						Udjat::URL url{it->second};
-						url += remote;
-						source->prepare(url,files);
-					}
+					source->prepare(
+						local,								// Local path
+						(it->second + remote.c_str()),		// Remote path
+						files								// File list
+					);
 
 				} else {
 
@@ -176,6 +219,7 @@
 					source->prepare(files);
 
 				}
+				*/
 
 			}
 		});

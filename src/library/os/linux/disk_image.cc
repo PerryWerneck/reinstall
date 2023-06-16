@@ -17,8 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ /*
  #ifndef _GNU_SOURCE
-	#define _GNU_SOURCE             /* See feature_test_macros(7) */
+	#define _GNU_SOURCE
  #endif // !_GNU_SOURCE
 
  #include <config.h>
@@ -293,5 +294,6 @@
 	}
 
  }
+ */
 
 

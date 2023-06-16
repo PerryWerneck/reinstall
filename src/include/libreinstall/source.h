@@ -29,6 +29,7 @@
  #include <libreinstall/slpclient.h>
  #include <libreinstall/path.h>
  #include <libreinstall/repository.h>
+ #include <udjat/tools/url.h>
 
  namespace Reinstall {
 
@@ -62,14 +63,6 @@
 		}
 
 		Source(const Udjat::XML::Node &node);
-
-		/// @brief Get local path (if available).
-		/// @return The source path in local filesystem or nullptr if not available.
-		virtual const char * local() const noexcept;
-
-		/// @brief Get remote path, resolve SLP if necessary.
-		/// @return The remote source path.
-		virtual const char * remote() const;
 
 		/// @brief Get repository name.
 		inline const char * repository() const noexcept {
@@ -106,10 +99,25 @@
 		/// @param files List of files to download.
 		void prepare(std::set<std::shared_ptr<File>> &files);
 
+		/// @brief Get filename (if available).
+		/// @return The filename in local file system for caching.
+		inline const char * filename() const noexcept {
+			return path.local;
+		}
+
+		/// @brief Get local path (if available).
+		/// @return The source path in local (empty if not available).
+		virtual Udjat::URL local() const;
+
+		/// @brief Get remote path, resolve SLP if necessary.
+		/// @return The remote source path (empty if not available).
+		virtual Udjat::URL remote() const;
+
 		/// @brief Get list of source files.
-		/// @param url The real repository URL.
+		/// @param local The URL for local repository.
+		/// @param remote The URL for remote repository.
 		/// @param files List of files to download.
-		virtual void prepare(const Udjat::URL &url, std::set<std::shared_ptr<File>> &files) const;
+		virtual void prepare(const Udjat::URL &local, const Udjat::URL &remote, std::set<std::shared_ptr<File>> &files) const;
 
 	};
 

@@ -19,9 +19,62 @@
 
  #include <config.h>
  #include <udjat/defs.h>
+ #include <udjat/tools/logger.h>
+ #include <libreinstall/writer.h>
+ #include <libreinstall/writers/usb.h>
+ #include <system_error>
+ #include <sys/ioctl.h>
+ #include <linux/fs.h>
+
+ #ifdef HAVE_UNISTD_H
+	#include <unistd.h>
+ #endif // HAVE_UNISTD_H
+
+ using namespace std;
+ using namespace Udjat;
+
+ namespace Reinstall {
+
+	UsbWriter::UsbWriter(int f) : fd{f} {
+
+		if(fd < 0) {
+			throw system_error(errno,system_category());
+		}
+
+	}
+
+	UsbWriter::~UsbWriter() {
+		if(fd > 0) {
+			::close(fd);
+		}
+	}
+
+	unsigned long long UsbWriter::size() {
+		unsigned long long devlen = 0LL;
+		if(ioctl(fd,BLKGETSIZE64,&devlen) < 0) {
+			Logger::String{"Unable to get device length: ",strerror(errno)}.error("usb");
+			return 0LL;
+		}
+		return devlen;
+	}
+
+	size_t UsbWriter::write(unsigned long long offset, const void *contents, size_t length) {
+	}
+
+	void UsbWriter::finalize() {
+	}
+
+	shared_ptr<Writer> UsbWriter::factory() {
+
+	}
+
+ }
+
+	/*
+ #include <config.h>
+ #include <udjat/defs.h>
  #include <reinstall/writer.h>
  #include <string>
- #include <system_error>
  #include <unistd.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
@@ -34,10 +87,7 @@
  #include <sys/stat.h>
  #include <sys/sysmacros.h>
  #include <linux/fs.h>
- #include <sys/ioctl.h>
 
- using namespace std;
- using namespace Udjat;
 
  #define INOTIFY_EVENT_SIZE ( sizeof (struct inotify_event) )
  #define INOTIFY_EVENT_BUF_LEN ( 1024 * ( INOTIFY_EVENT_SIZE + 16 ) )
@@ -47,7 +97,6 @@
 	unsigned long long Writer::usbdevlength = 0;
 	const char * Writer::usbdevname = nullptr;
 
-	/*
 	/// @brief Get the size of the device in fd.
 	static unsigned long long devlen(int fd) {
 
@@ -59,7 +108,6 @@
 
 		return devlen;
 	}
-	*/
 
 	std::shared_ptr<Writer> Writer::USBWriterFactory(const Reinstall::Action &action, size_t length) {
 
@@ -236,12 +284,6 @@
 			void write(const void *buf, size_t count) override {
 				super::write(fd,buf,count);
 			}
-
-			/*
-			void make_partition(uint64_t length, const char *parttype) override {
-				Reinstall::Writer::make_partition(fd,length,parttype);
-			}
-			*/
 
 			void finalize() override {
 				debug("Finalizing");
@@ -423,5 +465,5 @@
 		return writer;
 	}
 
-
  }
+	*/

@@ -50,6 +50,7 @@
 		<Unit filename="../include/libreinstall/template.h" />
 		<Unit filename="../include/libreinstall/writer.h" />
 		<Unit filename="../include/libreinstall/writers/file.h" />
+		<Unit filename="../include/libreinstall/writers/usb.h" />
 		<Unit filename="../include/reinstall/dialogs/taskrunner.h" />
 		<Unit filename="../include/reinstall/userinterface.h" />
 		<Unit filename="actions/abstract.cc" />
@@ -112,10 +113,8 @@
 		<Unit filename="os/linux/private.h" />
 		<Unit filename="os/linux/reboot.cc" />
 		<Unit filename="os/linux/source.cc" />
-		<Unit filename="os/linux/usbstorage.cc" />
+		<Unit filename="os/linux/usbwriter.cc" />
 		<Unit filename="parameters.cc" />
-		<Unit filename="repository/construct.cc" />
-		<Unit filename="repository/slpclient.cc" />
 		<Unit filename="script.cc" />
 		<Unit filename="source/apache_mirror.cc" />
 		<Unit filename="source/efiboot.cc" />

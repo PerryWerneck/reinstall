@@ -94,16 +94,16 @@
 
 	}
 
-	const char * SlpClient::resolve() const {
+	Udjat::URL SlpClient::url() const {
 
-		String found;
+		Udjat::URL found;
 
 		// Detect URL
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
 		std::string dialog_sub_title{progress.get_sub_title()};
 
-		progress.set_sub_title((message && *message) ? message : _("Searching for server"));
+		progress.set_sub_title((message && *message) ? message : _("Searching for service"));
 
 		progress.set_url(service_type);
 		progress.pulse();
@@ -263,7 +263,8 @@
 		progress.set_sub_title(dialog_sub_title.c_str());
 		progress.set_url(found.c_str());
 
-		return found.as_quark();
+		return found;
+
 	}
 
  #else

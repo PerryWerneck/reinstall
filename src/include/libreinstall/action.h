@@ -45,7 +45,7 @@
 		std::vector<Reinstall::Repository> repositories;
 
 		/// @brief Get repository by name
-		Reinstall::Repository & repository(const char *name);
+		const Repository & repository(const char *name) const;
 
 		/// @brief List of sources defined by XML.
 		std::vector<std::shared_ptr<Reinstall::Source>> sources;

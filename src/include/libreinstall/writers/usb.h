@@ -18,33 +18,34 @@
  */
 
  /**
-  * @brief Brief Declare zip source class.
+  * @brief Declare file writer.
   */
 
  #pragma once
  #include <udjat/defs.h>
- #include <udjat/tools/xml.h>
- #include <libreinstall/source.h>
+ #include <libreinstall/writer.h>
 
  namespace Reinstall {
 
-	/// @brief Common data source.
-	class UDJAT_API ZipSource : public Reinstall::Source {
+	class UDJAT_API UsbWriter : public Writer {
+	private:
+		int fd = -1;
+
+	protected:
+		UsbWriter(int fd);
+
 	public:
-		constexpr ZipSource(const char *name, const char *remote, const char *local = "", const char *path = "")
-			: Reinstall::Source{name,remote,local,path} {
-		}
+		virtual ~UsbWriter();
 
-		ZipSource(const Udjat::XML::Node &node)
-			: Reinstall::Source{node} {
-		}
+		unsigned long long size() override;
 
-		/// @brief Open zip file, extract all file names.
-		/// @param local URL for local files.
-		/// @param remote URL for remote files.
-		/// @param files container for the list of file handlers.
-		void prepare(const Udjat::URL &local, const Udjat::URL &remote, std::set<std::shared_ptr<Source::File>> &files) const override;
+		/// @brief Detect USB device.
+		static std::shared_ptr<Writer> factory();
 
+		size_t write(unsigned long long offset, const void *contents, size_t length) override;
+		void finalize() override;
 	};
 
  }
+
+

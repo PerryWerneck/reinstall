@@ -59,22 +59,22 @@
 
 	}
 
-	const char * Source::local() const noexcept {
+	Udjat::URL Source::local() const {
 
 		if(path.local && *path.local && access(path.local,R_OK) == 0) {
-			return path.local;
+			return (Udjat::URL{"file://"} + path.local);
 		}
 
-		return nullptr;
+		return Udjat::URL{};
 	}
 
-	const char * Source::remote() const {
+	Udjat::URL Source::remote() const {
 
 		if(slpclient) {
 
 			// SLP is enabled, search it.
-			const char *url = slpclient.resolve();
-			if(url && *url) {
+			URL url = slpclient.url();
+			if(!url.empty()) {
 				return url;
 			}
 
@@ -86,7 +86,7 @@
 #endif // DEBUG
 
 		if(path.remote && *path.remote) {
-			return path.remote;
+			return URL{path.remote};
 		}
 
 		throw runtime_error(Logger::Message{_("Can't determine source URL for '{}'"),name()});
@@ -94,20 +94,7 @@
 	}
 
 	void Source::prepare(std::set<std::shared_ptr<File>> &files) {
-
-		const char *filename = this->local();
-		if(filename && *filename) {
-			prepare(Udjat::URL{String{"file://",filename}},files);
-			return;
-		}
-
-		filename = this->remote();
-		if(filename[0] == '/') {
-			throw runtime_error("Unsupported remote url");
-		}
-
-		prepare(Udjat::URL{filename},files);
-
+		prepare(this->local(),this->remote(),files);
 	}
 
  }

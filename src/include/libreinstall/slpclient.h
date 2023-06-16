@@ -24,6 +24,7 @@
  #pragma once
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
+ #include <udjat/tools/url.h>
 
  namespace Reinstall {
 
@@ -59,8 +60,8 @@
 		}
 
 		/// @brief Do SLP query, get first valid URL.
-		/// @return The detected URL (empty string if no url was detected).
-		const char *resolve() const;
+		/// @return The detected URL (def if no url was detected).
+		Udjat::URL url() const;
 
 	};
 

@@ -21,6 +21,7 @@
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
  #include <libreinstall/path.h>
+ #include <udjat/tools/logger.h>
 
  using namespace Udjat;
 
@@ -29,9 +30,15 @@
 	Path::Path(const Udjat::XML::Node &node)
 		: Path{Udjat::XML::QuarkFactory(node,"remote").c_str(),Udjat::XML::QuarkFactory(node,"local").c_str()} {
 
-		// Check URL attribute for compatibility.
+		// Check legacy attribute 'url'.
 		if(!(remote && *remote)) {
 			remote = Udjat::XML::QuarkFactory(node,"url").c_str();
+		}
+
+		// It there's no local path and remote is relative, use remote.
+		if(!local[0] && (remote[0] == '/' || remote[0] == '.') && node.attribute("auto-detect-local-path").as_bool(true)) {
+			// No local path and remote is relative, use remote as local
+			local = remote;
 		}
 
 	}
