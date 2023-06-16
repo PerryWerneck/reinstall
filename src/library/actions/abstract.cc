@@ -55,7 +55,21 @@
 
 		// Load kernel parameters.
 		search(node,"kernel-parameter",[this](const pugi::xml_node &node){
-			kparms.push_back(Kernel::Parameter::factory(node));
+
+			auto reponame = Udjat::XML::StringFactory(node,"repository");
+
+			if(reponame.empty()) {
+
+				// It's a normal parameter
+				kparms.push_back(Kernel::Parameter::factory(node));
+
+			} else {
+
+				// It's a repository parameter.
+				repository(reponame.c_str()).set_kernel_parameter(node);
+
+			}
+
 			return false;
 		});
 
@@ -90,6 +104,18 @@
 
 	}
 
+	Reinstall::Repository & Action::repository(const char *name) {
+
+		for(Repository &repository : repositories) {
+			if(repository == name) {
+				return repository;
+			}
+		}
+
+		throw runtime_error(Logger::String("Cant find repository '",name,"'"));
+
+	}
+
 	void Action::prepare(Dialog::Progress &progress, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const {
 
 		progress.run(_("Getting required files"),[this,&progress,&files](){
@@ -102,7 +128,7 @@
 				const char *reponame = source->repository();
 				const char *remote = source->remote();
 
-				if(reponame && *reponame && remote[0] == '/') {
+				if(reponame && *reponame && (remote[0] == '/' || remote[0] == '.')) {
 
 					// source is relative to repository, get real URL.
 					auto it = urls.find(string{reponame});
@@ -182,6 +208,28 @@
 				if(!val.empty()) {
 					value += "=";
 					value += kparm->value();
+				}
+
+			}
+
+			for(const Repository &repository : repositories) {
+
+				const Kernel::Parameter &kparm{repository.kernel_parameter()};
+
+				if(!kparm) {
+					continue;
+				}
+
+				if(!value.empty()) {
+					value += " ";
+				}
+
+				value += kparm.name();
+
+				auto val = kparm.value();
+				if(!val.empty()) {
+					value += "=";
+					value += kparm.value();
 				}
 
 			}

@@ -62,6 +62,10 @@
 				slpval{Udjat::XML::QuarkFactory(node,"slp-kernel-parameter","value","slp:/").c_str()} {
 			}
 
+			void set_name(const char *name) noexcept {
+				this->nm = name;
+			}
+
 			const std::string value() const override {
 				return val;
 			}
@@ -75,8 +79,15 @@
 			return strcasecmp(this->name,name) == 0;
 		}
 
+		inline const Kernel::Parameter & kernel_parameter() const noexcept {
+			return kparm;
+		}
+
 		/// @brief Get repository URL, resolve it using SLP.
 		Udjat::URL url() const;
+
+		/// @brief Setup repository as kernel parameter.
+		void set_kernel_parameter(const Udjat::XML::Node &node);
 
 	};
 

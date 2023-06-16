@@ -76,4 +76,14 @@
 		return Udjat::URL{remote};
 	}
 
+	void Repository::set_kernel_parameter(const Udjat::XML::Node &node) {
+
+		if(kparm) {
+			Logger::String{"Kernel parameter was already set to '",kparm.name()}.warning(name);
+		}
+
+		kparm.set_name(XML::QuarkFactory(node,"name").c_str());
+
+	}
+
  }

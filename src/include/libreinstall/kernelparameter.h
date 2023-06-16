@@ -31,14 +31,18 @@
 	namespace Kernel {
 
 		class UDJAT_API Parameter {
-		private:
-			const char *nm;
+		protected:
+			const char *nm = nullptr;
 
 		public:
 
 			static std::shared_ptr<Parameter> factory(const Udjat::XML::Node &node);
 
 			constexpr Parameter(const char *name) : nm{name} {
+			}
+
+			inline operator bool() const {
+				return (nm && *nm);
 			}
 
 			Parameter(const Udjat::XML::Node &node);
