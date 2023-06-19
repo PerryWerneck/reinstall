@@ -120,6 +120,7 @@
 		});
 
 		if(dialog.run() != Gtk::RESPONSE_OK) {
+			Logger::String{"Image builder has failed"}.error("action");
 			return;
 		}
 

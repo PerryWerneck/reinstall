@@ -125,45 +125,13 @@
 
 				} catch(...) {
 
+					Logger::String{"Download of ",filename," was aborted"};
 					::close(out);
 					throw;
 				}
 
 				::close(out);
 
-				/*
-				zip_file *zf = zip_fopen_index(container->handler, file.index, 0);
-
-				Dialog::Progress &progress = Dialog::Progress::getInstance();
-				progress.set_url(this->path);
-
-				try {
-
-					size_t sum = 0;
-					char buffer[4096];
-					while (sum != file.size) {
-						auto bufferlength = zip_fread(zf, buffer, 4096);
-
-						if(::write(out,buffer,bufferlength) != bufferlength) {
-							throw system_error(errno,system_category(),"Can't write image contents");
-						}
-
-						sum += bufferlength;
-						progress.set_progress((double) sum,(double) file.size);
-					}
-
-				} catch(...) {
-
-					::close(out);
-					zip_fclose(zf);
-
-					throw;
-				}
-
-                ::close(out);
-				zip_fclose(zf);
-				progress.set_url("");
-				*/
 
 				container.reset();
 
