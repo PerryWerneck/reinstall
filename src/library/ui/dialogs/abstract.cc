@@ -65,7 +65,8 @@
 
 		for(XML::Node node = base; node; node = node.parent()) {
 			for(XML::Node child = node.child("dialog"); child; child = child.next_sibling("dialog")) {
-				if(strcasecmp(node.attribute("name").as_string("unnamed"),name) == 0) {
+				if(strcasecmp(child.attribute("name").as_string("unnamed"),name) == 0) {
+					debug("Loading dialog '",name,"'");
 					setup(child);
 					return true;
 				}
@@ -73,6 +74,8 @@
 		}
 
 		// Not found, set only the needed properties.
+		Logger::String{"Cant find settings for dialog '",name,"', using defaults"}.trace("ui");
+
 		icon = XML::QuarkFactory(base,"icon-name").c_str();
 		title = XML::QuarkFactory(base,"title").c_str();
 
