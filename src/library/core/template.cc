@@ -23,7 +23,7 @@
 
  #include <config.h>
  #include <libreinstall/template.h>
- #include <libreinstall/dialogs/progress.h>
+ #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/file/temporary.h>
  #include <udjat/tools/file/handler.h>
@@ -43,6 +43,8 @@
 
  using namespace Udjat;
  using namespace std;
+
+ using Progress = Udjat::Dialog::Progress;
 
  namespace Reinstall {
 
@@ -88,15 +90,15 @@
 
 	Udjat::String Template::get() const {
 
-		Dialog::Progress &progress{Dialog::Progress::getInstance()};
+		Progress &progress{Progress::instance()};
 
 		auto worker = Protocol::WorkerFactory(this->url);
 
 		Logger::String{"Loading ",worker->url().c_str()}.write(Logger::Trace,"template");
-		progress.set_url(worker->url().c_str());
+		progress.url(worker->url().c_str());
 
 		return worker->get([&progress](double current, double total){
-			progress.set_progress(current,total);
+			progress.progress(current,total);
 			return true;
 		});
 

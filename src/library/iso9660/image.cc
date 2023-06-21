@@ -19,7 +19,7 @@
 
  #include <config.h>
  #include <libreinstall/iso9660.h>
- #include <libreinstall/dialogs/progress.h>
+ #include <udjat/ui/dialogs/progress.h>
  #include <libisofs/libisofs.h>
  #include <udjat/tools/configuration.h>
  #include <udjat/tools/string.h>
@@ -34,6 +34,8 @@
  using namespace Udjat;
  using namespace std;
  using namespace Reinstall;
+
+ using Progress = Udjat::Dialog::Progress;
 
  namespace iso9660 {
 
@@ -307,8 +309,9 @@
 
 		int rc;
 
-		Dialog::Progress &progress = Dialog::Progress::getInstance();
-		progress.set_sub_title(_("Preparing to write"));
+		Progress &progress{Progress::instance()};
+
+		progress.message(_("Preparing to write"));
 
 		rc = iso_image_update_sizes(image);
 		if (rc < 0) {
@@ -324,7 +327,7 @@
 			throw runtime_error(iso_error_to_msg(rc));
 		}
 
-		progress.set_sub_title(_("Writing image"));
+		progress.message(_("Writing image"));
 		try {
 
 			#define BUFLEN 2048
@@ -335,16 +338,16 @@
 
 			while(burn_src->read_xt(burn_src, buffer, BUFLEN) == BUFLEN) {
 
-				progress.set_progress(current,total);
+				progress.progress(current,total);
 				writer->write(current,buffer,BUFLEN);
 
 				current += BUFLEN;
 				if(total) {
-					progress.set_progress(current,total);
+					progress.progress(current,total);
 				}
 
 			}
-			progress.set_progress(current,total);
+			progress.progress(current,total);
 
 		} catch(...) {
 
@@ -356,10 +359,10 @@
 		burn_src->free_data(burn_src);
 		free(burn_src);
 
-		progress.set_sub_title(_("Finalizing"));
+		progress.message(_("Finalizing"));
 		writer->finalize();
 
-		progress.set_sub_title("");
+		progress.message("");
 
 	}
 

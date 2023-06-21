@@ -28,8 +28,10 @@
  #include <libreinstall/repository.h>
  #include <libreinstall/kernelparameter.h>
 
- #include <libreinstall/dialogs/progress.h>
+ #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/object.h>
+
+ using Progress = Udjat::Dialog::Progress;
 
  namespace Reinstall {
 
@@ -63,19 +65,19 @@
 		virtual std::shared_ptr<Reinstall::Writer> WriterFactory() const;
 
 		/// @brief Get files, apply templates (if required).
-		virtual void prepare(Dialog::Progress &progress, Source::Files &files) const;
+		virtual void prepare(Progress &progress, Source::Files &files) const;
 
 		/// @brief Build iso image.
-		virtual void build(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, Source::Files &files) const;
+		virtual void build(Progress &progress, std::shared_ptr<Reinstall::Builder> builder, Source::Files &files) const;
 
 		/// @brief Build iso image.
-		virtual std::shared_ptr<Reinstall::Builder> build(Dialog::Progress &progress, Source::Files &files) const;
+		virtual std::shared_ptr<Reinstall::Builder> build(Progress &progress, Source::Files &files) const;
 
 		/// @brief Write iso image.
-		virtual void write(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::shared_ptr<Reinstall::Writer> writer) const;
+		virtual void write(Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::shared_ptr<Reinstall::Writer> writer) const;
 
 		/// @brief Write iso image.
-		virtual void write(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder) const;
+		virtual void write(Progress &progress, std::shared_ptr<Reinstall::Builder> builder) const;
 
 		/// @brief The output defined by xml
 		const struct OutPut {
@@ -109,9 +111,9 @@
 
 		bool getProperty(const char *key, std::string &value) const override;
 
-		static void activate(Dialog::Progress &progress, const ActivationType type);
+		static void activate(Progress &progress, const ActivationType type);
 
-		virtual void activate(Dialog::Progress &progress) const;
+		virtual void activate(Progress &progress) const;
 
 		inline void select() noexcept {
 			selected = this;

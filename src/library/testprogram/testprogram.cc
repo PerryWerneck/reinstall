@@ -8,7 +8,7 @@
  #include <set>
  #include <vector>
  #include <reinstall/userinterface.h>
- #include <libreinstall/dialogs/progress.h>
+ #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/logger.h>
  #include <pugixml.hpp>
 
@@ -84,7 +84,7 @@
 	pugi::xml_document document;
 	document.load_file(filename);
 
-	Reinstall::Dialog::Progress progress;
+	Progress progress;
 	Action{document.document_element()}.activate(progress);
 
  }

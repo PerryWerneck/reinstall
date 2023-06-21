@@ -24,7 +24,7 @@
 
  #include <config.h>
  #include <libreinstall/builder.h>
- #include <libreinstall/dialogs/progress.h>
+ #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/file/temporary.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/string.h>
@@ -47,6 +47,8 @@
  using namespace Reinstall;
  using namespace Udjat;
  using namespace std;
+
+ using Progress = Udjat::Dialog::Progress;
 
  namespace Fat {
 
@@ -148,11 +150,11 @@
 
 					debug("Writing ",file->c_str());
 
-					Dialog::Progress &progress = Dialog::Progress::getInstance();
+					Progress &progress{Progress::instance()};
 
 					file->save([&fil,&progress](unsigned long long current, unsigned long long total, const void *buf, size_t length){
 
-						progress.set_progress(current,total);
+						progress.progress(current,total);
 
 						UINT wrote = 0;
 						auto rc = f_write(&fil,buf,length,&wrote);

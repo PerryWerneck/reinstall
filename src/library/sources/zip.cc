@@ -25,7 +25,7 @@
  #include <config.h>
  #include <libreinstall/source.h>
  #include <libreinstall/sources/zip.h>
- #include <libreinstall/dialogs/progress.h>
+ #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/file.h>
  #include <udjat/tools/application.h>
  #include <memory>
@@ -35,6 +35,8 @@
 
  using namespace Udjat;
  using namespace std;
+
+ using Progress = Udjat::Dialog::Progress;
 
  namespace Reinstall {
 
@@ -63,7 +65,7 @@
 		//
 		shared_ptr<Container> container;
 
-		Dialog::Progress &progress = Dialog::Progress::getInstance();
+		Progress &progress{Progress::instance()};
 
 		if(!local.empty() && local.test()) {
 
@@ -78,7 +80,7 @@
 			auto worker = Protocol::WorkerFactory(remote.c_str());
 
 			Logger::String{"Getting file from ",worker->url().c_str()}.write(Logger::Debug,name());
-			progress.set_url(worker->url().c_str());
+			progress.url(worker->url().c_str());
 
 			const char *filepath = this->filename();
 			if(filepath && *filepath) {
@@ -86,7 +88,7 @@
 				// Have local path, use it!
 				Logger::String{"Updating local file on ",filepath}.info(name());
 				worker->save(filepath,[&progress](double current, double total) {
-					progress.set_progress(current,total);
+					progress.progress(current,total);
 					return true;
 				},true);
 
@@ -99,7 +101,7 @@
 				Logger::String{"Updating cached file on ",filename}.info(name());
 
 				worker->save(filename.c_str(),[&progress](double current, double total) {
-					progress.set_progress(current,total);
+					progress.progress(current,total);
 					return true;
 				},true);
 
@@ -141,7 +143,7 @@
 					url += stat.name;
 
 					Logger::String{"Unpacking '",stat.name,"'"}.write(Logger::Debug,name);
-					Dialog::Progress::getInstance().set_url(url.c_str());
+					Progress::instance().url(url.c_str());
 				}
 
 				lock_guard<mutex> lock(*zip);

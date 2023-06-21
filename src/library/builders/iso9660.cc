@@ -25,7 +25,7 @@
  #include <libreinstall/iso9660.h>
  #include <libreinstall/template.h>
  #include <libreinstall/builders/iso9660.h>
- #include <libreinstall/dialogs/progress.h>
+ #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/file/temporary.h>
  #include <udjat/tools/file/handler.h>
  #include <udjat/tools/logger.h>
@@ -47,6 +47,8 @@
  using namespace Udjat;
  using namespace std;
  using namespace Reinstall;
+
+ using Progress = Udjat::Dialog::Progress;
 
  namespace iso9660 {
 
@@ -183,7 +185,7 @@
 
 			void pre() override {
 
-				Reinstall::Dialog::Progress::getInstance().set_sub_title(_("Setting up ISO image"));
+				Progress::instance().message(_("Setting up ISO image"));
 
 				set_system_area(settings.system_area);
 				set_volume_id(settings.volume_id);
@@ -262,13 +264,13 @@
 					tempfiles.emplace_back(filename);
 
 					Logger::String{"Saving temporary for ",file->c_str()," on '",filename->c_str(),"'"}.write(Logger::Debug,"iso9660");
-					Dialog::Progress &progress = Dialog::Progress::getInstance();
+					Progress &progress{Progress::instance()};
 
 					File::Handler fil{filename->c_str(),true};
 
 					file->save([&fil,&progress](unsigned long long current, unsigned long long total, const void *buf, size_t length){
 
-						progress.set_progress(current,total);
+						progress.progress(current,total);
 
 						/*
 						if(current == 0 && total) {
@@ -298,21 +300,22 @@
 
 			void post() override {
 
-				Reinstall::Dialog::Progress &progress{Reinstall::Dialog::Progress::getInstance()};
+				Progress &progress{Progress::instance()};
 
-				progress.set_sub_title(_("Setting up ISO image"));
+				progress.message(_("Setting up ISO image"));
+				progress.pulse();
 
 				set_rockridge();
 				set_joliet();
 				set_allow_deep_paths();
 
 				if(settings.boot.eltorito) {
-					progress.set_sub_title(_("Installing el-torito boot image"));
+					progress.url(_("Installing el-torito boot image"));
 					set_bootable(settings.boot.catalog,settings.boot.eltorito);
 				}
 
 				if(settings.boot.efi) {
-					progress.set_sub_title(_("Installing efi boot image"));
+					progress.url(_("Installing efi boot image"));
 					set_bootable(efibootpart.c_str(),settings.boot.efi);
 				}
 

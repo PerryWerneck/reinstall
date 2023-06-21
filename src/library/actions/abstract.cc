@@ -27,7 +27,7 @@
 
  #include <libreinstall/action.h>
  #include <libreinstall/repository.h>
- #include <libreinstall/dialogs/progress.h>
+ #include <udjat/ui/dialogs/progress.h>
 
  #include <libreinstall/writer.h>
  #include <libreinstall/writers/file.h>
@@ -173,59 +173,6 @@
 					source->prepare(files);
 
 				}
-				/*
-				URL local;
-
-				if(reponame && *reponame && (remote[0] == '/' || remote[0] == '.')) {
-
-					// source is relative to repository, get real URL.
-					auto it = urls.find(string{reponame});
-					if(it == urls.end()) {
-
-						// Not resolved, get URL.
-						debug("Searching for repository '",reponame,"'");
-
-						for(const Reinstall::Repository &repository : repositories) {
-
-							if(repository == reponame) {
-
-								// Resolve remote path.
-								auto url = repository.url();
-
-								auto result = urls.insert({string{reponame},url});
-								if(!result.second) {
-									throw runtime_error(Logger::String{"Unable to insert repository '",reponame,"' on URL cache"});
-								}
-
-								it = result.first;
-
-								break;
-							}
-						}
-
-						if(it == urls.end()) {
-							throw runtime_error(Logger::String{"Cant find repository '",reponame,"'"});
-						}
-
-					}
-
-					// Gt the real URL, prepare it.
-					progress.set_sub_title(_("Getting required files"));
-
-					source->prepare(
-						local,								// Local path
-						(it->second + remote.c_str()),		// Remote path
-						files								// File list
-					);
-
-				} else {
-
-					// Source is not relative, just prepare it.
-					source->prepare(files);
-
-				}
-				*/
-
 			}
 		});
 

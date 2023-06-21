@@ -22,7 +22,7 @@
  #include <udjat/tools/xml.h>
  #include <udjat/tools/string.h>
  #include <libreinstall/slpclient.h>
- #include <libreinstall/dialogs/progress.h>
+ #include <udjat/ui/dialogs/progress.h>
  #include <list>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
@@ -35,6 +35,8 @@
 
  using namespace std;
  using namespace Udjat;
+
+ using Progress = Udjat::Dialog::Progress;
 
  namespace Reinstall {
 
@@ -99,13 +101,13 @@
 		Udjat::URL found;
 
 		// Detect URL
-		Dialog::Progress &progress = Dialog::Progress::getInstance();
+		Progress &progress{Progress::instance()};
 
-		std::string dialog_sub_title{progress.get_sub_title()};
+		std::string dialog_sub_title{progress.message()};
 
-		progress.set_sub_title((message && *message) ? message : _("Searching for service"));
+		progress.message((message && *message) ? message : _("Searching for service"));
 
-		progress.set_url(service_type);
+		progress.url(service_type);
 		progress.pulse();
 
 		// https://github.com/ManageIQ/slp/blob/master/examples/raw_example.c
@@ -260,8 +262,9 @@
 
 		SLPClose(hSlp);
 
-		progress.set_sub_title(dialog_sub_title.c_str());
-		progress.set_url(found.c_str());
+		progress.message(dialog_sub_title.c_str());
+		progress.url(found.c_str());
+		progress.pulse();
 
 		return found;
 

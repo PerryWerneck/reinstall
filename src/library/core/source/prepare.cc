@@ -19,7 +19,7 @@
 
  #include <config.h>
  #include <libreinstall/source.h>
- #include <libreinstall/dialogs/progress.h>
+ #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/quark.h>
@@ -38,6 +38,8 @@
 
  using namespace Udjat;
  using namespace std;
+
+ using Progress = Udjat::Dialog::Progress;
 
  namespace Reinstall {
 
@@ -90,7 +92,7 @@
 			auto worker = Protocol::WorkerFactory(url.c_str());
 
 			Logger::String{"Getting file from ",worker->url().c_str()}.write(Logger::Debug,"source");
-			Dialog::Progress::getInstance().set_url(worker->url().c_str());
+			Progress::instance().url(worker->url().c_str());
 
 			worker->save([&writer](unsigned long long current, unsigned long long total, const void *buf, size_t length){
 				writer(current,total,buf,length);
@@ -135,15 +137,15 @@
 
 			if(src[src.size()-1] == '/') {
 
-				Dialog::Progress &progress = Dialog::Progress::getInstance();
+				Progress &progress = Progress::instance();
 
 				auto worker = Protocol::WorkerFactory(src.c_str());
 
 				Logger::String{"Getting folder from ",worker->url().c_str()}.write(Logger::Debug,"apache");
-				progress.set_url(worker->url().c_str());
+				progress.url(worker->url().c_str());
 
 				auto index = worker->get([&progress](double current, double total){
-					progress.set_progress(current,total);
+					progress.progress(current,total);
 					return true;
 				});
 
@@ -166,7 +168,7 @@
 
 	void Source::prepare(const Udjat::URL &local, const Udjat::URL &remote, Source::Files &files) const {
 
-		Dialog::Progress &progress = Dialog::Progress::getInstance();
+		Progress &progress = Progress::instance();
 
 		if(!local.empty() && local.test()) {
 
@@ -177,7 +179,7 @@
 			Logger::String{"Getting file list from ",filepath.c_str()}.info(name());
 
 			// Local files are available.
-			progress.set_url(local.c_str());
+			progress.url(local.c_str());
 
 			size_t szpath = filepath.size();
 			filepath.for_each([this,szpath,&files](const Udjat::File::Path &path){
@@ -208,10 +210,10 @@
 			worker->mimetype(MimeType::json);
 
 			info("Getting file list for {}",worker->url().c_str());
-			progress.set_url(worker->url().c_str());
+			progress.url(worker->url().c_str());
 
 			auto index = worker->get([&progress](double current, double total){
-				progress.set_progress(current,total);
+				progress.progress(current,total);
 				return true;
 			});
 

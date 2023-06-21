@@ -54,6 +54,8 @@
 		<Unit filename="../include/libreinstall/writers/usb.h" />
 		<Unit filename="../include/reinstall/dialogs/taskrunner.h" />
 		<Unit filename="../include/reinstall/userinterface.h" />
+		<Unit filename="../include/udjat/ui/dialog.h" />
+		<Unit filename="../include/udjat/ui/dialogs/progress.h" />
 		<Unit filename="actions/abstract.cc" />
 		<Unit filename="builders/abstract.cc" />
 		<Unit filename="builders/fat.cc" />
