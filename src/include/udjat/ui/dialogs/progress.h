@@ -37,6 +37,9 @@
 		Progress();
 		virtual ~Progress();
 
+		/// @brief Setup from dialog.
+		virtual void set(const Dialog &dialog);
+
 		/// @brief Show dialog
 		virtual void show();
 
@@ -56,7 +59,7 @@
 		virtual std::string message() const;
 
 		/// @brief Set secondary text.
-		virtual void secondary(const char *step);
+		//virtual void secondary(const char *step);
 
 		virtual void icon(const char *icon_name);
 
@@ -66,10 +69,14 @@
 		virtual void progress(double current, double total);
 		virtual void count(size_t current, size_t total);
 
+		/// @brief Show progress dialog, run background task.
+		/// @return Return code of the background task.
+		virtual void run(const std::function<void(Progress &progress)> &background_task);
+
 		/// @brief Run background task with dialog in 'pulse' mode.
 		/// @param message The message for the progress dialog.
 		/// @param background_task The task to run.
-		virtual void run(const char *message, const std::function<void()> &background_task);
+		void run(const char *message, const std::function<void()> &background_task);
 
 	};
 

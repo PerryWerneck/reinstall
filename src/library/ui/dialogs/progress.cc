@@ -54,6 +54,28 @@
 
 	}
 
+	void Dialog::Progress::set(const Dialog &dialog) {
+
+		if(dialog.title && *dialog.title) {
+			title(dialog.title);
+		}
+
+		if(dialog.message && *dialog.message) {
+			message(dialog.message);
+		}
+
+		if(dialog.icon && *dialog.icon) {
+			icon(dialog.icon);
+		}
+
+		// Reset fields.
+		url("");
+		count(0,0);
+		pulse();
+
+		show();
+	}
+
 	Dialog::Progress & Dialog::Progress::instance() {
 		if(!current) {
 			throw runtime_error("No active progress dialog");
@@ -80,8 +102,8 @@
 		return "";
 	}
 
-	void Dialog::Progress::secondary(const char *) {
-	}
+	//void Dialog::Progress::secondary(const char *) {
+	//}
 
 	void Dialog::Progress::icon(const char *) {
 	}
@@ -101,8 +123,17 @@
 	void Dialog::Progress::count(size_t, size_t) {
 	}
 
-	void Dialog::Progress::run(const char *, const std::function<void()> &background_task) {
-		background_task();
+	void Dialog::Progress::run(const std::function<void(Dialog::Progress &progress)> &task) {
+		task(*this);
+	}
+
+	void Dialog::Progress::run(const char *text, const std::function<void()> &task) {
+		run([text,task](Dialog::Progress &progress){
+			string saved{progress.message()};
+			progress.message(text);
+			task();
+			progress.message(saved.c_str());
+		});
 	}
 
  }
