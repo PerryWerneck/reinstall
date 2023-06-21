@@ -77,9 +77,11 @@
 		return -1;
 	}
 
-	int Dialog::run(const std::function<int(Progress &progress)> &background_task) const {
-		Dialog::Progress &dialog{Dialog::Progress::instance()};
-		return background_task(dialog);
+	int Dialog::run(const std::function<int(Progress &progress)> &task) const {
+		Dialog::Progress dialog;
+		dialog.set(*this);
+		return task(dialog);
 	}
+
 
  }

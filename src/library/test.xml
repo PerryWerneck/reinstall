@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <action name='test'>
 
+	 <attribute name='title' value='Sample action'/>
+
 	<!-- 
 	
 		URL for the installation repositóry 
@@ -43,6 +45,11 @@
 	
 	<!-- Replace every 'isolinux.cfg' file with template -->
 	<template name='isolinux.cfg' url='file://../../templates/isolinux.cfg' />
+	
+	<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
+	<dialog name='confirmation' icon='dialog-question' message='Do you confirm?'>
+		This is the secondary text on confirmation message.
+	</dialog>
 	
 </action>
 

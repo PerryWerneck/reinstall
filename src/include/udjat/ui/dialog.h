@@ -26,10 +26,11 @@
  #include <udjat/tools/xml.h>
  #include <functional>
  #include <vector>
+ #include <memory>
 
  namespace Udjat {
 
-	/// @brief Standard dialog.
+	/// @brief Generic dialog box.
 	class UDJAT_API Dialog {
 	protected:
 
@@ -57,19 +58,32 @@
 		class Progress;
 		class Button;
 
+		constexpr Dialog() {
+		}
+
 		constexpr Dialog(const char *t, const char *m, const char *s) : title{t}, message{m}, secondary{s} {
 		}
 
 		constexpr Dialog(const char *m, const char *s) : message{m}, secondary{s} {
 		}
 
-		/// @brief Run dialog with buttons.
-		/// @return The id of selected button.
-		virtual int run(const std::vector<Button> &buttons);
+		Dialog(const XML::Node &node) {
+			setup(node);
+		}
 
-		/// @brief Show progress dialog, run background task.
+		Dialog(const char *name, const XML::Node &node) {
+			setup(name,node);
+		}
+
+		/// @brief Run dialog with buttons.
+		/// @param buttons the dialog buttons.
+		/// @return The id of selected button.
+		int run(const std::vector<Button> &buttons);
+
+		/// @brief Build progress dialog, run background task.
+		/// @param task the background task to run.
 		/// @return Return code of the background task.
-		virtual int run(const std::function<int(Progress &progress)> &background_task) const;
+		int run(const std::function<int(Progress &progress)> &task) const;
 
 	};
 
