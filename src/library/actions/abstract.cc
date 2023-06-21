@@ -352,6 +352,11 @@
 
 		};
 
+		if(!dialogs.confirmation.confirm()) {
+			Logger::String{"Cancel by user choice"}.info(name());
+			return;
+		}
+
 		Dialog::Controller &dcntrl{Dialog::Controller::instance()};
 
 		try {

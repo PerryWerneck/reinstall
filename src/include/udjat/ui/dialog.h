@@ -69,6 +69,9 @@
 			/// @brief Quit application.
 			virtual void quit(int rc = 0);
 
+			/// @brief Run confirmation dialog.
+			virtual bool confirm(const Dialog &dialog, const char *yes = nullptr, const char *no = nullptr);
+
 			/// @brief Run dialog with buttons.
 			/// @param buttons the dialog buttons.
 			/// @return The id of selected button.
@@ -118,6 +121,18 @@
 
 		Dialog(const char *name, const XML::Node &node) {
 			setup(name,node);
+		}
+
+		inline operator bool() const {
+			return (message && *message);
+		}
+
+		/// @brief Run and yes/no dialog.
+		bool confirm(const char *yes = nullptr, const char *no = nullptr) const {
+			if(message && *message) {
+				return Controller::instance().confirm(*this,yes,no);
+			}
+			return true;
 		}
 
 		/// @brief Run dialog with buttons.

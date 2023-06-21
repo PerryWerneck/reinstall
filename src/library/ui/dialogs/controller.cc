@@ -28,6 +28,7 @@
  #include <udjat/tools/logger.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/string.h>
+ #include <udjat/tools/intl.h>
  #include <vector>
  #include <iostream>
  #include <stdexcept>
@@ -70,7 +71,7 @@
 
 	int Dialog::Controller::run(const Dialog &, const std::vector<Button> &) {
 		errno = ENOTSUP;
-		return -1;
+		return 0;
 	}
 
 	int Dialog::Controller::run(const Dialog &dialog, const std::function<int(Progress &progress)> &task) {
@@ -78,5 +79,25 @@
 		progress.set(dialog);
 		return task(progress);
 	}
+
+	bool Dialog::Controller::confirm(const Dialog &dialog, const char *yes, const char *no) {
+
+		if(!yes) {
+			yes = _("_Yes");
+		}
+
+		if(!no) {
+			no = _("_No");
+		}
+
+		vector<Button> buttons = {
+			{ 0, yes },
+			{ 1, no	 }
+		};
+
+		return run(dialog,buttons) == 0;
+
+	}
+
 
  }
