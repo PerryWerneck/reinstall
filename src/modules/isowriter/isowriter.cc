@@ -55,7 +55,7 @@
  	}
 
 	sources.clear(); // Remove other sources.
-	sources.insert(make_shared<Source>(node,_("Downloading ISO image")));
+	sources.push_back(make_shared<Source>(node,_("Downloading ISO image")));
 
  }
 
