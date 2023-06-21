@@ -131,12 +131,8 @@
 		<Unit filename="sources/zip.cc" />
 		<Unit filename="testprogram/private.h" />
 		<Unit filename="testprogram/testprogram.cc" />
-		<Unit filename="ui/dialogs/button.cc" />
-		<Unit filename="ui/dialogs/popup.cc" />
+		<Unit filename="ui/dialogs/abstract.cc" />
 		<Unit filename="ui/dialogs/progress.cc" />
-		<Unit filename="ui/dialogs/taskrunner.cc" />
-		<Unit filename="ui/dialogs/window.cc" />
-		<Unit filename="ui/userinterface.cc" />
 		<Unit filename="value.cc" />
 		<Unit filename="worker.cc" />
 		<Unit filename="writers/abstract.cc" />

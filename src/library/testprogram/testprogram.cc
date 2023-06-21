@@ -91,8 +91,6 @@
 
  int main(int, char **) {
 
-	Reinstall::UserInterface interface;
-
 	Udjat::Quark::init();
 	Udjat::Logger::redirect();
 	Udjat::Logger::enable(Udjat::Logger::Trace);

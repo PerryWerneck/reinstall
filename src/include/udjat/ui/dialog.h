@@ -49,7 +49,8 @@
 		void setup(const XML::Node &node);
 
 		/// @brief Scan for tag "<dialog name='name'>" and setup dialog from it.
-		void setup(const char *name, const XML::Node &node);
+		/// @return true if the dialog was set.
+		bool setup(const char *name, const XML::Node &node);
 
 	public:
 

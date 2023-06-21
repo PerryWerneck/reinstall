@@ -26,7 +26,7 @@
 	/// @brief Abstract progress dialog.
 	class UDJAT_API Dialog::Progress {
 	private:
-		static Progress *active;
+		static Progress *current;
 		Progress *parent = nullptr;
 
 	protected:
