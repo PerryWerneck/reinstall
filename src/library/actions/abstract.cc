@@ -117,7 +117,7 @@
 
 	}
 
-	void Action::prepare(Dialog::Progress &progress, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const {
+	void Action::prepare(Dialog::Progress &progress, Source::Files &files) const {
 
 		progress.run(_("Getting required files"),[this,&progress,&files](){
 
@@ -295,21 +295,20 @@
 
 	}
 
-	void Action::build(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const {
+	void Action::build(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, Source::Files &files) const {
 
 		progress.run(_("Building image"),[this,builder,&files](){
 			builder->pre();
-			for(auto file : files) {
+			files.for_each([builder](std::shared_ptr<Source::File> file){
 				builder->push_back(file);
-			}
+			});
+
 		});
 
 		if(!templates.empty()) {
-
 			progress.run(_("Applying templates"),[this,builder](){
 				builder->push_back(*this,templates);
 			});
-
 		}
 
 		progress.run(_("Building image"),[this,builder](){
@@ -326,7 +325,7 @@
 
 	}
 
-	std::shared_ptr<Reinstall::Builder> Action::build(Dialog::Progress &progress, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const {
+	std::shared_ptr<Reinstall::Builder> Action::build(Dialog::Progress &progress, Source::Files &files) const {
 		auto builder = BuilderFactory();
 		build(progress,builder,files);
 		return builder;
@@ -372,7 +371,36 @@
 
 	void Action::activate(Dialog::Progress &progress) const {
 
-		std::set<std::shared_ptr<Reinstall::Source::File>> files;
+		class Files : public Reinstall::Source::Files {
+		private:
+			std::set<std::shared_ptr<Reinstall::Source::File>> files;
+
+		public:
+			void insert(std::shared_ptr<Reinstall::Source::File> file) override {
+				files.insert(file);
+			}
+
+			void for_each(const std::function<void(std::shared_ptr<Reinstall::Source::File>)> &worker) override {
+				for(auto file : files) {
+					worker(file);
+				}
+			}
+
+			void remove_if(const std::function<bool(const Reinstall::Source::File &)> &worker) override {
+
+				for(auto it = files.begin(); it != files.end();) {
+					if(worker(*(*it))) {
+						it = files.erase(it);
+					} else {
+						it++;
+					}
+				}
+
+			}
+
+		};
+
+		Files files;
 
 		// Step 1, get files, prepare for build.
 		Logger::String{"Preparing"}.info(name());

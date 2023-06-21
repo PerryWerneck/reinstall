@@ -136,35 +136,25 @@
 				);
 	}
 
-	void Template::apply(const Udjat::Abstract::Object &object, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const {
+	void Template::apply(const Udjat::Abstract::Object &object, Source::Files &files) const {
 
 		/// @brief New sources, with prepared templates.
 		vector<shared_ptr<Reinstall::Source::File>> updated;
 
-		// Search for templates, when found, remove foi files, append on updated.
-		for(auto it = files.begin(); it != files.end();) {
+		// Search for templates, when found, remove files, append on updated.
+		files.remove_if([this,&object,&updated](const Source::File &file){
 
-			std::shared_ptr<Reinstall::Source::File> file = *it; // Convenience.
+			if(test(file.c_str())) {
 
-			if(test(file->c_str())) {
+				Logger::String{"Apply ",this->url," on '",file.c_str()}.trace(this->name());
+				updated.push_back(this->SourceFactory(object,file.c_str()));
+				return true;
 
-				Logger::String{"Apply ",this->url," on '",file->c_str()}.trace(this->name());
-
-				// Parse
-				updated.push_back(this->SourceFactory(object,file->c_str()));
-
-				// And remove the old one.
-				it = files.erase(it);
-
-			} else {
-
-				// No match, test the next one.
-				++it;
 			}
 
-		}
+			return false;
 
-		debug("file length: ",files.size());
+		});
 
 		// Insert contents of 'updated' in files.
 		for(auto source : updated) {

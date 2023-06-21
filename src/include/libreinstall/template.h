@@ -62,7 +62,7 @@
 		/// @brief Apply template in the source list using object properties.
 		/// @param object The object for ${} expansion.
 		/// @param files List of sources to search and replace templates.
-		void apply(const Udjat::Abstract::Object &object, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const;
+		void apply(const Udjat::Abstract::Object &object, Source::Files &files) const;
 
 		/// @brief Load template.
 		Udjat::String get() const;

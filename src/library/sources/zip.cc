@@ -38,7 +38,7 @@
 
  namespace Reinstall {
 
-	void ZipSource::prepare(const Udjat::URL &local, const Udjat::URL &remote, std::set<std::shared_ptr<Source::File>> &files) const {
+	void ZipSource::prepare(const Udjat::URL &local, const Udjat::URL &remote, Source::Files &files) const {
 
 		class Container : public mutex {
 		public:

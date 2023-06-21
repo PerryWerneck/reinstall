@@ -101,7 +101,7 @@
 
 	};
 
-	void apache_mirror(const String &index, const char *base, const char *imgpath, std::set<std::shared_ptr<Source::File>> &files) {
+	void apache_mirror(const String &index, const char *base, const char *imgpath, Source::Files &files) {
 
 		for(auto href = index.find("<a href=\""); href != string::npos; href = index.find("<a href=\"",href)) {
 
@@ -156,7 +156,7 @@
 			} else {
 
 				Logger::String{"Adding source file ",src}.write(Logger::Debug,"apache");
-				files.emplace(make_shared<Remote>(src,dst));
+				files.insert(make_shared<Remote>(src,dst));
 
 			}
 
@@ -164,7 +164,7 @@
 
 	}
 
-	void Source::prepare(const Udjat::URL &local, const Udjat::URL &remote, std::set<std::shared_ptr<File>> &files) const {
+	void Source::prepare(const Udjat::URL &local, const Udjat::URL &remote, Source::Files &files) const {
 
 		Dialog::Progress &progress = Dialog::Progress::getInstance();
 
@@ -190,7 +190,7 @@
 				string target{imgpath};
 				target += payload;
 
-				files.emplace(make_shared<Local>(path,target));
+				files.insert(make_shared<Local>(path,target));
 
 				return false;
 

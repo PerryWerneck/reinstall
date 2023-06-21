@@ -95,9 +95,17 @@
 
 		};
 
+		/// @brief List of files to add in the exported images.
+		class UDJAT_API Files {
+		public:
+			virtual void insert(std::shared_ptr<File> file) = 0;
+			virtual void for_each(const std::function<void(std::shared_ptr<File>)> &worker) = 0;
+			virtual void remove_if(const std::function<bool(const File &)> &worker) = 0;
+		};
+
 		/// @brief Get list of source files.
 		/// @param files List of files to download.
-		void prepare(std::set<std::shared_ptr<File>> &files);
+		void prepare(Files &files);
 
 		/// @brief Get filename (if available).
 		/// @return The filename in local file system for caching.
@@ -117,7 +125,7 @@
 		/// @param local The URL for local repository.
 		/// @param remote The URL for remote repository.
 		/// @param files List of files to download.
-		virtual void prepare(const Udjat::URL &local, const Udjat::URL &remote, std::set<std::shared_ptr<File>> &files) const;
+		virtual void prepare(const Udjat::URL &local, const Udjat::URL &remote, Files &files) const;
 
 	};
 

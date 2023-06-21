@@ -43,7 +43,7 @@
 		/// @param local URL for local files.
 		/// @param remote URL for remote files.
 		/// @param files container for the list of file handlers.
-		void prepare(const Udjat::URL &local, const Udjat::URL &remote, std::set<std::shared_ptr<Source::File>> &files) const override;
+		void prepare(const Udjat::URL &local, const Udjat::URL &remote, Source::Files &files) const override;
 
 	};
 

@@ -63,13 +63,13 @@
 		virtual std::shared_ptr<Reinstall::Writer> WriterFactory() const;
 
 		/// @brief Get files, apply templates (if required).
-		virtual void prepare(Dialog::Progress &progress, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const;
+		virtual void prepare(Dialog::Progress &progress, Source::Files &files) const;
 
 		/// @brief Build iso image.
-		virtual void build(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const;
+		virtual void build(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, Source::Files &files) const;
 
 		/// @brief Build iso image.
-		virtual std::shared_ptr<Reinstall::Builder> build(Dialog::Progress &progress, std::set<std::shared_ptr<Reinstall::Source::File>> &files) const;
+		virtual std::shared_ptr<Reinstall::Builder> build(Dialog::Progress &progress, Source::Files &files) const;
 
 		/// @brief Write iso image.
 		virtual void write(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::shared_ptr<Reinstall::Writer> writer) const;

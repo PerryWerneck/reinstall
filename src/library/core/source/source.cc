@@ -93,7 +93,7 @@
 
 	}
 
-	void Source::prepare(std::set<std::shared_ptr<File>> &files) {
+	void Source::prepare(Source::Files &files) {
 		prepare(this->local(),this->remote(),files);
 	}
 
