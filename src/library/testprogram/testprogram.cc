@@ -8,7 +8,7 @@
  #include <set>
  #include <vector>
  #include <reinstall/userinterface.h>
- #include <udjat/ui/dialogs/progress.h>
+ #include <udjat/ui/dialog.h>
  #include <udjat/tools/logger.h>
  #include <pugixml.hpp>
 
@@ -84,8 +84,7 @@
 	pugi::xml_document document;
 	document.load_file(filename);
 
-	Progress progress;
-	Action{document.document_element()}.activate(progress);
+	Action{document.document_element()}.activate();
 
  }
 
@@ -97,6 +96,8 @@
 	Udjat::Logger::enable(Udjat::Logger::Debug);
 	Udjat::Logger::console(true);
 	Udjat::Module::load("http");
+
+	Dialog::Controller dialogs;
 
 	xml_test("test.xml");
 

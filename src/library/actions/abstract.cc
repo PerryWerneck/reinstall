@@ -42,7 +42,7 @@
 	Action *Action::selected = nullptr;
 	Action *Action::def = nullptr;
 
-	Action::Action(const XML::Node &node) : NamedObject{node}, output{node} {
+	Action::Action(const XML::Node &node) : NamedObject{node}, dialogs{node}, output{node} {
 
 		if(getAttribute(node, "action-defaults", "default", false)) {
 			Action::def = this;
@@ -119,7 +119,8 @@
 
 	void Action::prepare(Dialog::Progress &progress, Source::Files &files) const {
 
-		progress.run(_("Getting required files"),[this,&progress,&files](){
+		progress.message(_("Getting required files"));
+		{
 
 			/// @brief Resolved repositories.
 			std::unordered_map<std::string, Udjat::URL> urls;
@@ -174,15 +175,14 @@
 
 				}
 			}
-		});
+		}
 
 		if(!templates.empty()) {
 
-			progress.run(_("Applying templates"),[this,&files](){
-				for(const Reinstall::Template &tmpl : templates) {
-					tmpl.apply(Udjat::Abstract::Object{},files);
-				}
-			});
+			progress.message(_("Applying templates"));
+			for(const Reinstall::Template &tmpl : templates) {
+				tmpl.apply(Udjat::Abstract::Object{},files);
+			}
 
 		}
 
@@ -244,43 +244,48 @@
 
 	void Action::build(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, Source::Files &files) const {
 
-		progress.run(_("Building image"),[this,builder,&files](){
+		progress.pulse();
+		progress.message(_("Building image"));
+		{
 			builder->pre();
 			files.for_each([builder](std::shared_ptr<Source::File> file){
 				builder->push_back(file);
 			});
 
-		});
-
-		if(!templates.empty()) {
-			progress.run(_("Applying templates"),[this,builder](){
-				builder->push_back(*this,templates);
-			});
 		}
 
-		progress.run(_("Building image"),[this,builder](){
-			builder->post();
-		});
+		if(!templates.empty()) {
+			progress.message(_("Applying templates"));
+			builder->push_back(*this,templates);
+		}
 
+		progress.message(_("Building image"));
+		builder->post();
+
+		progress.message(_("Build process complete"));
 	}
 
 	void Action::write(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::shared_ptr<Reinstall::Writer> writer) const {
 
-		progress.run(_("Writing image"),[this,builder,writer](){
-			builder->write(writer);
-		});
+		progress.pulse();
+		progress.message(_("Writing image"));
+		builder->write(writer);
 
 	}
 
+	/*
 	std::shared_ptr<Reinstall::Builder> Action::build(Dialog::Progress &progress, Source::Files &files) const {
 		auto builder = BuilderFactory();
 		build(progress,builder,files);
 		return builder;
 	}
+	*/
 
+	/*
 	void Action::write(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder) const {
 		write(progress,builder,WriterFactory());
 	}
+	*/
 
 	std::shared_ptr<Reinstall::Builder> Action::BuilderFactory() const {
 		throw runtime_error(_("The selected action is unable to build an image"));
@@ -298,25 +303,25 @@
 		*/
 	}
 
-	void Action::activate(Dialog::Progress &progress, const ActivationType type) {
+	void Action::activate(const ActivationType type) {
 		switch(type) {
 		case Selected:
 			if(!Action::selected) {
 				throw runtime_error(_("No selected action"));
 			}
-			Action::selected->activate(progress);
+			Action::selected->activate();
 			break;
 
 		case Default:
 			if(!Action::def) {
 				throw runtime_error(_("No default action"));
 			}
-			Action::def->activate(progress);
+			Action::def->activate();
 			break;
 		}
 	}
 
-	void Action::activate(Dialog::Progress &progress) const {
+	void Action::activate() const {
 
 		class Files : public Reinstall::Source::Files {
 		private:
@@ -347,14 +352,50 @@
 
 		};
 
-		Files files;
+		Dialog::Controller &dcntrl{Dialog::Controller::instance()};
 
-		// Step 1, get files, prepare for build.
-		Logger::String{"Preparing"}.info(name());
-		prepare(progress,files);
+		try {
 
-		// Step 2, build and write image.
-		write(progress,build(progress,files));
+			Files files;
+
+			// Step 1, get files, prepare for build.
+			Logger::String{"Preparing"}.info(name());
+			dcntrl.run(dialogs.progress,[this,&files](Dialog::Progress &dialog) {
+				prepare(dialog,files);
+				return 0;
+			});
+
+			// Step 2, build image.
+			Logger::String{"Building"}.info(name());
+			std::shared_ptr<Reinstall::Builder> builder{BuilderFactory()};
+			dcntrl.run(dialogs.progress,[this,builder,&files](Dialog::Progress &dialog) {
+				build(dialog,builder,files);
+				return 0;
+			});
+
+			// Step 3, get writer.
+			std::shared_ptr<Reinstall::Writer> writer{WriterFactory()};
+
+			// Step 4, write image.
+			Logger::String{"Writing"}.info(name());
+			dcntrl.run(dialogs.progress,[this,builder,writer](Dialog::Progress &dialog) {
+				write(dialog,builder,writer);
+				return 0;
+			});
+
+		} catch(const std::exception &e) {
+
+//			dcntrl.run(failed,e.what());
+			return;
+
+		} catch(...) {
+
+//			dcntrl.run(failed,_("Unexpected error"));
+			return;
+
+		}
+
+//		dcntrl.run(success);
 
 	}
 

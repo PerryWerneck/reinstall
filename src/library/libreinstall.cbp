@@ -40,7 +40,6 @@
 		<Unit filename="../include/libreinstall/dialogs/progress.h" />
 		<Unit filename="../include/libreinstall/dialogs/taskrunner.h" />
 		<Unit filename="../include/libreinstall/dialogs/window.h" />
-		<Unit filename="../include/libreinstall/filelist.h" />
 		<Unit filename="../include/libreinstall/iso9660.h" />
 		<Unit filename="../include/libreinstall/kernelparameter.h" />
 		<Unit filename="../include/libreinstall/path.h" />
@@ -132,6 +131,7 @@
 		<Unit filename="testprogram/private.h" />
 		<Unit filename="testprogram/testprogram.cc" />
 		<Unit filename="ui/dialogs/abstract.cc" />
+		<Unit filename="ui/dialogs/controller.cc" />
 		<Unit filename="ui/dialogs/progress.cc" />
 		<Unit filename="value.cc" />
 		<Unit filename="worker.cc" />

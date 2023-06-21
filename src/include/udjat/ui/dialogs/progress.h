@@ -71,12 +71,12 @@
 
 		/// @brief Show progress dialog, run background task.
 		/// @return Return code of the background task.
-		virtual void run(const std::function<void(Progress &progress)> &background_task);
+		// virtual void run(const std::function<void(Progress &progress)> &background_task);
 
 		/// @brief Run background task with dialog in 'pulse' mode.
 		/// @param message The message for the progress dialog.
 		/// @param background_task The task to run.
-		void run(const char *message, const std::function<void()> &background_task);
+		// void run(const char *message, const std::function<void()> &background_task);
 
 	};
 

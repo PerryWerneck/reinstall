@@ -70,17 +70,19 @@
 			}
 		}
 
+		// Not found, set only the needed properties.
+		icon = XML::QuarkFactory(node,"icon-name").c_str();
+		title = XML::QuarkFactory(node,"title").c_str();
+
 		return false;
 	}
 
-	int Dialog::run(const std::vector<Dialog::Button> &) {
-		return -1;
+	int Dialog::run(const std::vector<Dialog::Button> &buttons) const {
+		return Controller::instance().run(*this,buttons);
 	}
 
 	int Dialog::run(const std::function<int(Progress &progress)> &task) const {
-		Dialog::Progress dialog;
-		dialog.set(*this);
-		return task(dialog);
+		return Controller::instance().run(*this,task);
 	}
 
 

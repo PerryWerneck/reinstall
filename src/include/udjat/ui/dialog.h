@@ -32,6 +32,32 @@
 
 	/// @brief Generic dialog box.
 	class UDJAT_API Dialog {
+	public:
+
+		class Progress;
+		class Button;
+
+		class UDJAT_API Controller {
+		private:
+			static Controller *cntrl;
+
+		public:
+			Controller();
+			~Controller();
+
+			static Controller & instance();
+
+			/// @brief Run dialog with buttons.
+			/// @param buttons the dialog buttons.
+			/// @return The id of selected button.
+			virtual int run(const Dialog &dialog, const std::vector<Button> &buttons);
+
+			/// @brief Build progress dialog, run background task.
+			/// @param task the background task to run.
+			/// @return Return code of the background task.
+			virtual int run(const Dialog &dialog, const std::function<int(Progress &progress)> &task);
+		};
+
 	protected:
 
 		/// @brief The dialog icon.
@@ -55,9 +81,6 @@
 
 	public:
 
-		class Progress;
-		class Button;
-
 		constexpr Dialog() {
 		}
 
@@ -78,7 +101,7 @@
 		/// @brief Run dialog with buttons.
 		/// @param buttons the dialog buttons.
 		/// @return The id of selected button.
-		int run(const std::vector<Button> &buttons);
+		int run(const std::vector<Button> &buttons) const;
 
 		/// @brief Build progress dialog, run background task.
 		/// @param task the background task to run.

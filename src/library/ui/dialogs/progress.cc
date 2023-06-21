@@ -123,6 +123,7 @@
 	void Dialog::Progress::count(size_t, size_t) {
 	}
 
+	/*
 	void Dialog::Progress::run(const std::function<void(Dialog::Progress &progress)> &task) {
 		task(*this);
 	}
@@ -135,6 +136,7 @@
 			progress.message(saved.c_str());
 		});
 	}
+	*/
 
  }
 

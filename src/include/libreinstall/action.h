@@ -28,6 +28,7 @@
  #include <libreinstall/repository.h>
  #include <libreinstall/kernelparameter.h>
 
+ #include <udjat/ui/dialog.h>
  #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/object.h>
 
@@ -40,6 +41,30 @@
 	private:
 		static Action *selected;	/// @brief Selected action.
 		static Action *def;			/// @brief Default action.
+
+		/// @brief Action dialogs.
+		struct Dialogs {
+
+			/// @brief Confirmation dialog (Yes/No/Quit)
+			Udjat::Dialog confirmation;
+
+			/// @brief Progress dialog.
+			Udjat::Dialog progress;
+
+			/// @brief Success dialog.
+			Udjat::Dialog success;
+
+			/// @brief Success dialog.
+			Udjat::Dialog failed;
+
+			Dialogs(const Udjat::XML::Node &node) :
+				confirmation{"confirmation",node},
+				progress{"progress",node},
+				success{"success",node},
+				failed("failed",node) {
+			}
+
+		} dialogs;
 
 	protected:
 
@@ -70,14 +95,8 @@
 		/// @brief Build iso image.
 		virtual void build(Progress &progress, std::shared_ptr<Reinstall::Builder> builder, Source::Files &files) const;
 
-		/// @brief Build iso image.
-		virtual std::shared_ptr<Reinstall::Builder> build(Progress &progress, Source::Files &files) const;
-
 		/// @brief Write iso image.
 		virtual void write(Progress &progress, std::shared_ptr<Reinstall::Builder> builder, std::shared_ptr<Reinstall::Writer> writer) const;
-
-		/// @brief Write iso image.
-		virtual void write(Progress &progress, std::shared_ptr<Reinstall::Builder> builder) const;
 
 		/// @brief The output defined by xml
 		const struct OutPut {
@@ -98,9 +117,6 @@
 		Action(Action *) = delete;
 		Action(Action &) = delete;
 
-		Action() {
-		};
-
 		Action(const Udjat::XML::Node &node);
 		~Action();
 
@@ -111,9 +127,9 @@
 
 		bool getProperty(const char *key, std::string &value) const override;
 
-		static void activate(Progress &progress, const ActivationType type);
+		static void activate(const ActivationType type);
 
-		virtual void activate(Progress &progress) const;
+		virtual void activate() const;
 
 		inline void select() noexcept {
 			selected = this;
