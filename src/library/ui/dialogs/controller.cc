@@ -76,8 +76,7 @@
 	}
 
 	int Dialog::Controller::run(const Dialog &dialog, const std::function<int(Progress &progress)> &task) {
-		Logger::String{dialog.message}.info("ui");
-		Logger::String{"The selected backend cant manage progress dialogs, using default"}.warning("ui");
+		Logger::String{"The selected backend cant manage progress dialogs, using default for '",dialog.message,"'"}.warning("ui");
 		Dialog::Progress progress;
 		progress.set(dialog);
 		return task(progress);
