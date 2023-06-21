@@ -383,19 +383,17 @@
 				return 0;
 			});
 
+			dialogs.success.run();
+
 		} catch(const std::exception &e) {
 
-//			dcntrl.run(failed,e.what());
-			return;
+			dialogs.failed.run(e.what());
 
 		} catch(...) {
 
-//			dcntrl.run(failed,_("Unexpected error"));
-			return;
+			dialogs.failed.run(_("Unexpected error"));
 
 		}
-
-//		dcntrl.run(success);
 
 	}
 

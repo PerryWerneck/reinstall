@@ -42,6 +42,23 @@
 		static Action *selected;	/// @brief Selected action.
 		static Action *def;			/// @brief Default action.
 
+		/// @brief Action popup
+		class Popup : public Udjat::Dialog {
+		private:
+			bool allow_reboot = false;
+			bool allow_quit = false;
+
+		public:
+			Popup(const char *name, const Udjat::XML::Node &node) {
+				Udjat::Dialog::setup(name,node);
+			}
+
+			void setup(const Udjat::XML::Node &node) override;
+
+			void run(const char *error_message, bool allow_close = true) const;
+			void run(bool allow_close = true) const;
+		};
+
 		/// @brief Action dialogs.
 		struct Dialogs {
 
@@ -52,16 +69,16 @@
 			Udjat::Dialog progress;
 
 			/// @brief Success dialog.
-			Udjat::Dialog success;
+			Popup success;
 
 			/// @brief Success dialog.
-			Udjat::Dialog failed;
+			Popup failed;
 
 			Dialogs(const Udjat::XML::Node &node) :
 				confirmation{"confirmation",node},
 				progress{"progress",node},
 				success{"success",node},
-				failed("failed",node) {
+				failed{"failed",node} {
 			}
 
 		} dialogs;

@@ -35,7 +35,26 @@
 	public:
 
 		class Progress;
-		class Button;
+
+		class UDJAT_API Button {
+		public:
+
+			/// @brief The button id.
+			int id = -1;
+
+			/// @brief The button label.
+			const char * label;
+
+			enum Style : uint8_t {
+				Standard,
+				Recommended,
+				Destructive
+			} style = Standard;
+
+			constexpr Button(int i, const char *l, const Style s = Standard) : id{i}, label{l}, style{s} {
+			}
+
+		};
 
 		class UDJAT_API Controller {
 		private:
@@ -46,6 +65,9 @@
 			~Controller();
 
 			static Controller & instance();
+
+			/// @brief Quit application.
+			virtual void quit(int rc = 0);
 
 			/// @brief Run dialog with buttons.
 			/// @param buttons the dialog buttons.
@@ -73,7 +95,7 @@
 		const char *secondary = "";
 
 		/// @brief Setup dialog from node.
-		void setup(const XML::Node &node);
+		virtual void setup(const XML::Node &node);
 
 		/// @brief Scan for tag "<dialog name='name'>" and setup dialog from it.
 		/// @return true if the dialog was set.

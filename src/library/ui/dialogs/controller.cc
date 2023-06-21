@@ -65,7 +65,10 @@
 
 	}
 
-	int Dialog::Controller::run(const Dialog &dialog, const std::vector<Button> &buttons) {
+	void Dialog::Controller::quit(int) {
+	}
+
+	int Dialog::Controller::run(const Dialog &, const std::vector<Button> &) {
 		errno = ENOTSUP;
 		return -1;
 	}

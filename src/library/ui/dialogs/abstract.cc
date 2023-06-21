@@ -61,18 +61,20 @@
 		}
 	}
 
-	bool Dialog::setup(const char *name, const XML::Node &node) {
+	bool Dialog::setup(const char *name, const XML::Node &base) {
 
-		for(XML::Node child = node.child("dialog"); child; child = child.next_sibling("dialog")) {
-			if(strcasecmp(node.attribute("name").as_string("*"),name) == 0) {
-				setup(child);
-				return true;
+		for(XML::Node node = base; node; node = node.parent()) {
+			for(XML::Node child = node.child("dialog"); child; child = child.next_sibling("dialog")) {
+				if(strcasecmp(node.attribute("name").as_string("unnamed"),name) == 0) {
+					setup(child);
+					return true;
+				}
 			}
 		}
 
 		// Not found, set only the needed properties.
-		icon = XML::QuarkFactory(node,"icon-name").c_str();
-		title = XML::QuarkFactory(node,"title").c_str();
+		icon = XML::QuarkFactory(base,"icon-name").c_str();
+		title = XML::QuarkFactory(base,"title").c_str();
 
 		return false;
 	}

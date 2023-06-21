@@ -56,6 +56,7 @@
 		<Unit filename="../include/udjat/ui/dialog.h" />
 		<Unit filename="../include/udjat/ui/dialogs/progress.h" />
 		<Unit filename="actions/abstract.cc" />
+		<Unit filename="actions/popup.cc" />
 		<Unit filename="builders/abstract.cc" />
 		<Unit filename="builders/fat.cc" />
 		<Unit filename="builders/iso9660.cc" />
