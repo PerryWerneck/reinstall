@@ -50,15 +50,15 @@
 	}
 
 	void Menu::Controller::push_back(const Item *, const Item *, const XML::Node &) {
-		Logger::String{"The selected backend has no support for menus"}.warning("ui");
+		Logger::String{"The selected backend has no support for menus"}.trace("ui");
 	}
 
 	void Menu::Controller::push_back(const Item *, const XML::Node &) {
-		Logger::String{"The selected backend has no support for menus"}.warning("ui");
+		Logger::String{"The selected backend has no support for menus"}.trace("ui");
 	}
 
 	void Menu::Controller::remove(const Item *) {
-		Logger::String{"The selected backend has no support for menus"}.warning("ui");
+		Logger::String{"The selected backend has no support for menus"}.trace("ui");
 	}
 
 

@@ -29,6 +29,7 @@
  #include <libreinstall/kernelparameter.h>
 
  #include <udjat/ui/dialog.h>
+ #include <udjat/ui/menu.h>
  #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/object.h>
 
@@ -37,7 +38,7 @@
  namespace Reinstall {
 
 	/// @brief Standard action.
-	class UDJAT_API Action : public Udjat::NamedObject {
+	class UDJAT_API Action : public Udjat::NamedObject, private Udjat::Menu::Item {
 	private:
 		static Action *selected;	/// @brief Selected action.
 		static Action *def;			/// @brief Default action.
@@ -146,7 +147,7 @@
 
 		static void activate(const ActivationType type);
 
-		virtual void activate() const;
+		void activate() override;
 
 		inline void select() noexcept {
 			selected = this;

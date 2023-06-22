@@ -42,7 +42,7 @@
 	Action *Action::selected = nullptr;
 	Action *Action::def = nullptr;
 
-	Action::Action(const XML::Node &node) : NamedObject{node}, dialogs{node}, output{node} {
+	Action::Action(const XML::Node &node) : NamedObject{node}, Udjat::Menu::Item{node}, dialogs{node}, output{node} {
 
 		if(getAttribute(node, "action-defaults", "default", false)) {
 			Action::def = this;
@@ -321,7 +321,7 @@
 		}
 	}
 
-	void Action::activate() const {
+	void Action::activate() {
 
 		class Files : public Reinstall::Source::Files {
 		private:
