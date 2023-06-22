@@ -10,6 +10,7 @@ SOURCES= \
 		$(wildcard os/@OSNAME@/*.cc) \
 		$(wildcard ui/*.cc) \
 		$(wildcard ui/dialogs/*.cc) \
+		$(wildcard ui/menu/*.cc) \
 		$(wildcard sources/*.cc) \
 		$(wildcard builders/*.cc) \
 		$(wildcard writers/*.cc) \

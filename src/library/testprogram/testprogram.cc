@@ -9,6 +9,7 @@
  #include <vector>
  #include <reinstall/userinterface.h>
  #include <udjat/ui/dialog.h>
+ #include <udjat/ui/menu.h>
  #include <udjat/tools/logger.h>
  #include <pugixml.hpp>
 
@@ -98,6 +99,7 @@
 	Udjat::Module::load("http");
 
 	Dialog::Controller dialogs;
+	Menu::Controller menus;
 
 	xml_test("test.xml");
 
