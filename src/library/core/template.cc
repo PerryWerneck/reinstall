@@ -23,6 +23,7 @@
 
  #include <config.h>
  #include <libreinstall/template.h>
+ #include <libreinstall/source.h>
  #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/file/temporary.h>
@@ -138,6 +139,7 @@
 				);
 	}
 
+	/*
 	void Template::apply(const Udjat::Abstract::Object &object, Source::Files &files) const {
 
 		/// @brief New sources, with prepared templates.
@@ -150,6 +152,9 @@
 
 				Logger::String{"Apply ",this->url," on '",file.c_str()}.trace(this->name());
 				updated.push_back(this->SourceFactory(object,file.c_str()));
+
+				debug()
+
 				return true;
 
 			}
@@ -165,5 +170,6 @@
 		}
 
 	}
+	*/
 
  }

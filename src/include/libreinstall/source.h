@@ -33,6 +33,8 @@
 
  namespace Reinstall {
 
+	class Template;
+
 	/// @brief Common data source.
 	class UDJAT_API Source : public Udjat::NamedObject {
 	private:
@@ -73,6 +75,11 @@
 		class UDJAT_API File : public std::string {
 		public:
 
+			/// @brief Create Source for text file.
+			/// @param path Path for text inside the image.
+			/// @param contents The file contents.
+			static std::shared_ptr<File> Factory(const char *path, const char *contents);
+
 			/// @brief Construct file from string.
 			/// @param imgpath Path for file in the target image.
 			File(const std::string &imgpath) : std::string{imgpath} {
@@ -101,6 +108,7 @@
 			virtual void insert(std::shared_ptr<File> file) = 0;
 			virtual void for_each(const std::function<void(std::shared_ptr<File>)> &worker) = 0;
 			virtual void remove_if(const std::function<bool(const File &)> &worker) = 0;
+			virtual void apply(const Udjat::Abstract::Object &object,const Template &tmpl) = 0;
 		};
 
 		/// @brief Get list of source files.

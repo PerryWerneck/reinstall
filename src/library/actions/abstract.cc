@@ -181,7 +181,7 @@
 
 			progress.message(_("Applying templates"));
 			for(const Reinstall::Template &tmpl : templates) {
-				tmpl.apply(Udjat::Abstract::Object{},files);
+				files.apply(*this,tmpl);
 			}
 
 		}
@@ -346,6 +346,46 @@
 					} else {
 						it++;
 					}
+				}
+
+			}
+
+			void apply(const Udjat::Abstract::Object &object,const Template &tmpl) override {
+
+				vector<string> updates;
+
+				for(auto it = files.begin(); it != files.end();) {
+
+					std::shared_ptr<Reinstall::Source::File> file = *it;
+
+					if(tmpl.test(file->c_str())) {
+
+						Logger::String{"Replacing '",file->c_str(),"'"}.trace(tmpl.name());
+						it = files.erase(it);
+						updates.push_back(file->c_str());
+
+					} else {
+
+						it++;
+
+					}
+
+				}
+
+				if(updates.size()) {
+
+					// Have updates, get template.
+					String text = tmpl.get();
+					text.expand(object);
+
+					if(Logger::enabled(Logger::Debug)) {
+						Logger::String{"New contents:\n",text.c_str(),"\n"}.write(Logger::Debug,tmpl.name());
+					}
+
+					for(string &path : updates) {
+						insert(Source::File::Factory(path.c_str(),text.c_str()));
+					}
+
 				}
 
 			}

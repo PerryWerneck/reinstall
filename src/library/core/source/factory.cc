@@ -49,4 +49,36 @@
 
 	}
 
+	std::shared_ptr<Source::File> Source::File::Factory(const char *path, const char *contents) {
+
+		/// @brief Template text with resolved ${}.
+		class Text : public File {
+		private:
+			const string text;
+
+		public:
+			Text(const char *path, const char *contents) : Source::File{path}, text{contents} {
+			}
+
+			virtual ~Text() {
+			}
+
+			bool remote() const noexcept override {
+				return true;
+			}
+
+			const char * path() const override {
+				throw runtime_error("Unexpected call to 'path' on text source");
+			}
+
+			void save(const std::function<void(unsigned long long offset, unsigned long long total, const void *buf, size_t length)> &writer) const override {
+				writer(0,text.size(),text.c_str(),text.size());
+			}
+
+		};
+
+		return make_shared<Text>(path,contents);
+
+	}
+
  }
