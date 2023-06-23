@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <reinstall/defs.h>
  #include <reinstall/source.h>
  #include <reinstall/sources/initrd.h>
@@ -39,3 +41,4 @@
 	}
 
  }
+ */

@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <private/dialogs.h>
  #include <iostream>
  #include <udjat/version.h>
@@ -336,4 +338,5 @@
 	timer.idle = -1;
 
  }
+ */
 

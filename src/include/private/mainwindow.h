@@ -23,68 +23,45 @@
  #include <udjat/defs.h>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
- #include <reinstall/action.h>
- #include <private/dialogs.h>
- #include <reinstall/userinterface.h>
- #include <pugixml.hpp>
+ #include <udjat/tools/xml.h>
+ #include <udjat/ui/dialog.h>
+ #include <udjat/ui/menu.h>
  #include <udjat/factory.h>
 
- class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Reinstall::UserInterface, private Udjat::Factory {
+ class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Udjat::Factory, private Udjat::Menu::Controller, private Udjat::Dialog::Controller {
  private:
-
- 	class Logo : public Gtk::Image {
-	public:
-		Logo();
- 	};
-
-	Logo logo;
 
  	struct {
 		Gtk::Label title{ _( "Select option" ), Gtk::ALIGN_START };
-		Gtk::Box hbox, vbox{Gtk::ORIENTATION_VERTICAL}, view{Gtk::ORIENTATION_VERTICAL};
+		Gtk::Box hbox;
+		Gtk::Box vbox{Gtk::ORIENTATION_VERTICAL};
+		Gtk::Box view{Gtk::ORIENTATION_VERTICAL};
 		Gtk::ScrolledWindow swindow;
 		Gtk::ButtonBox bbox;
  	} layout;
 
  	struct {
-		Gtk::Button apply{_("_Apply"), true}, cancel{_("_Cancel"), true};
+		Gtk::Button apply{_("_Apply"), true};
+		Gtk::Button cancel{_("_Cancel"), true};
  	} buttons;
 
 	void on_show() override;
 
-	void apply();
+	void set_icon_name(const char *icon_name);
 
  public:
 
 	MainWindow();
 	virtual ~MainWindow();
 
-	/// @brief Set window icon.
-	void set_icon(const char *name);
+	/// @brief Build and insert a new top level item.
+	bool generic(const Udjat::XML::Node &node) override;
 
-	/// @brief Set logo.
-	void set_logo(const char *name);
+	void push_back(const Udjat::Menu::Item *menu, const Udjat::XML::Node &node) override;
+	void remove(const Udjat::Menu::Item *menu) override;
 
-	/// @brief Setup progress dialog.
-	void show(Dialog::Progress &dialog);
-
-	/// @brief Action has failed, notify user.
-	void failed(const char *message);
-
-	/// @brief Construct an action button.
-	std::shared_ptr<Reinstall::Abstract::Object> ActionFactory(const pugi::xml_node &node, const char *icon_name) override;
-
-	/// @brief Construct a filename (gui thread).
-	std::string FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save) override;
-
-	/// @brief Construct a group box.
-	std::shared_ptr<Reinstall::Abstract::Group> GroupFactory(const pugi::xml_node &node) override;
-
-	/// @brief Construct a wait for task dialog.
-	std::shared_ptr<Reinstall::Dialog::TaskRunner> TaskRunnerFactory(const char *message, bool markup) override;
-
-	/// @brief Parse XML definition.
-	bool generic(const pugi::xml_node &node) override;
+	// int run(const Udjat::Dialog &dialog, const std::vector<Udjat::Dialog::Button> &buttons) override;
+	int run(const Udjat::Dialog &dialog, const std::function<int(Udjat::Dialog::Progress &progress)> &task) override;
 
  };
 

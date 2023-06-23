@@ -19,6 +19,8 @@
 
  #pragma once
  #include <config.h>
+
+ /*
  #include <udjat/defs.h>
  #include <reinstall/action.h>
 
@@ -35,3 +37,4 @@
 
 
  }
+ */

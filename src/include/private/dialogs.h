@@ -21,6 +21,8 @@
 
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
+
+ /*
  #include <reinstall/dialogs/popup.h>
  #include <reinstall/dialogs/progress.h>
  #include <reinstall/dialogs/taskrunner.h>
@@ -135,3 +137,4 @@
 	};
 
  }
+ */

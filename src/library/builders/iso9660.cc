@@ -19,6 +19,7 @@
 
 
  #include <config.h>
+
  #include <udjat/defs.h>
  #include <udjat/tools/object.h>
  #include <libreinstall/source.h>

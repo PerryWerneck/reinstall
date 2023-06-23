@@ -69,6 +69,10 @@
 	void Dialog::Controller::quit(int) {
 	}
 
+	int Dialog::Controller::run(const std::function<int(Progress &progress)> &task) {
+		return run(Dialog{},task);
+	}
+
 	int Dialog::Controller::run(const Dialog &dialog, const std::vector<Button> &) {
 		Logger::String{"The selected backend cant manage dialogs with buttons, assuming '0' for '",dialog.message,"'"}.warning("ui");
 		errno = ENOTSUP;

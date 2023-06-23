@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+/*
  #include <reinstall/builder.h>
  #include <reinstall/dialogs.h>
  #include <reinstall/source.h>
@@ -51,4 +53,4 @@
 	}
 
  }
-
+*/

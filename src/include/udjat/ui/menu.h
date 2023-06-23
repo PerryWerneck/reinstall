@@ -51,9 +51,8 @@
 
 			static Controller & instance();
 
-			virtual void push_back(const Item *parent, const Item *menu, const XML::Node &node);
-			virtual void push_back(const Item *menu, const XML::Node &node);
-			virtual void remove(const Item *menu);
+			virtual void push_back(const Item *item, const XML::Node &node);
+			virtual void remove(const Item *item);
 
 		};
 

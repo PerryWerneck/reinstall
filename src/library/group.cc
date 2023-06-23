@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <reinstall/controller.h>
  #include <reinstall/group.h>
  #include <udjat/tools/logger.h>
@@ -154,3 +156,4 @@
 	}
 
  }
+ */

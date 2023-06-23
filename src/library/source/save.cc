@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <udjat/defs.h>
  #include <reinstall/source.h>
  #include <reinstall/builder.h>
@@ -144,3 +146,4 @@
 	}
 
  }
+ */

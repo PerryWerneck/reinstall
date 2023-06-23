@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <udjat/defs.h>
  #include <udjat/version.h>
  #include <reinstall/source.h>
@@ -182,4 +184,4 @@
 #endif // !_WIN32
 
  }
-
+*/

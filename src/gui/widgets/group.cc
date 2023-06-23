@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <private/widgets.h>
  #include <udjat/tools/logger.h>
 
@@ -42,15 +44,6 @@
 
 		get_style_context()->add_class("group-box");
 		label.get_style_context()->add_class("group-title");
-
-		/*
-		if(icon) {
-			icon.get_style_context()->add_class("action-icon");
-			icon.set_valign(ALIGN_CENTER);
-			icon.set_halign(ALIGN_CENTER);
-			attach(icon,0,0,1,2);
-		}
-		*/
 
 		attach(label,1,0,1,1);
 		if(body) {
@@ -100,3 +93,4 @@
 	}
 
  }
+ */

@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <reinstall/defs.h>
  #include <reinstall/action.h>
  #include <reinstall/sources/efiboot.h>
@@ -121,3 +123,4 @@
 	}
 
  }
+ */

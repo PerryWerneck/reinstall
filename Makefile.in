@@ -9,24 +9,23 @@ MODULES=@MODULES@
 SONAME=@SONAME@
 
 LIBRARY_SOURCES = \
-	$(wildcard src/library/*.cc) \
-	$(wildcard src/library/iso9660/*.cc) \
-	$(wildcard src/library/action/*.cc) \
-	$(wildcard src/library/dialogs/*.cc) \
-	$(wildcard src/library/repository/*.cc) \
-	$(wildcard src/library/source/*.cc) \
-	$(wildcard src/library/writers/*.cc) \
+	$(wildcard src/library/core/source/*.cc) \
+	$(wildcard src/library/core/*.cc) \
+	$(wildcard src/library/os/@OSNAME@/*.cc) \
+	$(wildcard src/library/ui/*.cc) \
+	$(wildcard src/library/ui/dialogs/*.cc) \
+	$(wildcard src/library/ui/menu/*.cc) \
+	$(wildcard src/library/sources/*.cc) \
 	$(wildcard src/library/builders/*.cc) \
-	$(wildcard src/library/os/@OSNAME@/*.cc) \
-	$(wildcard src/library/os/@OSNAME@/*.cc) \
-	$(wildcard src/fatfs/source/*.cc) \
-	$(wildcard src/fatfs/source/*.c)	
+	$(wildcard src/library/writers/*.cc) \
+	$(wildcard src/library/actions/*.cc) \
+	$(wildcard src/library/iso9660/*.cc) \
+	$(wildcard src/library/fatfs/source/*.cc) \
+	$(wildcard src/library/fatfs/source/*.c)	
 
 GUI_SOURCES= \
-	$(wildcard src/gui/*.cc) \
-	$(wildcard src/gui/dialogs/*.cc) \
-	$(wildcard src/gui/widgets/*.cc) \
-	$(wildcard src/gui/os/@OSNAME@/*.cc)
+	$(wildcard src/main/*.cc) \
+	$(wildcard src/ui/gtk3/*.cc)
 
 #---[ Tools ]----------------------------------------------------------------------------
 
@@ -80,7 +79,7 @@ CXXFLAGS= \
 	-fPIC \
 	@CXXFLAGS@ \
 	-Isrc/include \
-	-Isrc/fatfs/source \
+	-Isrc/library/fatfs/source \
 	-DBUILD_DATE=`date +%Y%m%d` \
 	-DLOCALEDIR=$(localedir) \
 	@UDJAT_CFLAGS@ \
@@ -89,14 +88,13 @@ CXXFLAGS= \
 	@GTK_CFLAGS@ \
 	@ZIPLIB_CFLAGS@ \
 	@JSON_CFLAGS@ \
-	@LIBSLP_CFLAGS@ \
-	@FDISK_CFLAGS@
+	@LIBSLP_CFLAGS@
 
 CFLAGS= \
 	-fPIC \
 	@CFLAGS@ \
 	-Isrc/include \
-	-Isrc/fatfs/source \
+	-Isrc/library/fatfs/source \
 	-DBUILD_DATE=`date +%Y%m%d` \
 	-DLOCALEDIR=$(localedir)
 
@@ -110,8 +108,7 @@ LIBS= \
 	@GTK_LIBS@ \
 	@ZIPLIB_LIBS@ \
 	@JSON_LIBS@ \
-	@LIBSLP_LIBS@ \
-	@FDISK_LIBS@
+	@LIBSLP_LIBS@
 
 #---[ Debug Rules ]----------------------------------------------------------------------
 
@@ -263,7 +260,7 @@ Release: \
 	$(foreach MODULE, $(MODULES), $(BINRLS)/modules/$(MODULE)@DLLEXT@)
 
 locale/$(PACKAGE_NAME).pot: \
-	$(foreach SRC, $(basename $(LIBRARY_SOURCES) $(ISOWRITER_SOURCES) $(NETINSTALL_SOURCES) $(ISOBUILDER_SOURCES) $(GRUB_SOURCES) $(GUI_SOURCES)), $(POTDIR)/$(SRC).pot)
+	$(foreach SRC, $(basename $(LIBRARY_SOURCES) $(GUI_SOURCES)), $(POTDIR)/$(SRC).pot)
 
 	@rm -f $@
 	@$(MKDIR) $(dir $@)

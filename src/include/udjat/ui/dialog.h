@@ -77,6 +77,11 @@
 			/// @return The id of selected button.
 			virtual int run(const Dialog &dialog, const std::vector<Button> &buttons);
 
+			/// @brief Build default progress dialog, run background task.
+			/// @param task the background task to run.
+			/// @return Return code of the background task.
+			int run(const std::function<int(Progress &progress)> &task);
+
 			/// @brief Build progress dialog, run background task.
 			/// @param task the background task to run.
 			/// @return Return code of the background task.

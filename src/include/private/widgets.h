@@ -19,6 +19,8 @@
 
  #pragma once
 
+ /*
+
  #include <config.h>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
@@ -78,3 +80,4 @@
 	};
 
  }
+ */

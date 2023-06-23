@@ -20,6 +20,8 @@
  #include <config.h>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
+
+ /*
  #include <reinstall/dialogs/popup.h>
  #include <private/dialogs.h>
 
@@ -74,4 +76,4 @@
 	}
 
  }
-
+ */

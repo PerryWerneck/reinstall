@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <udjat/moduleinfo.h>
  #include <udjat/tools/quark.h>
  #include <reinstall/controller.h>
@@ -55,4 +57,5 @@
 	}
 
  }
+ */
 

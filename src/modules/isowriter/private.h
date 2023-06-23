@@ -20,6 +20,8 @@
  #pragma once
 
  #include <config.h>
+
+ /*
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
  #include <reinstall/action.h>
@@ -43,3 +45,4 @@
 	void post(std::shared_ptr<Reinstall::Writer> writer) override;
 
  };
+ */

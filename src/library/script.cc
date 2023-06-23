@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <reinstall/script.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/subprocess.h>
@@ -156,4 +158,5 @@
 	}
 
  }
+ */
 
