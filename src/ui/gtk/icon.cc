@@ -18,7 +18,7 @@
  */
 
  /**
-  * @brief Implements GTK based Udjat::Label.
+  * @brief Implements GTK based Udjat::Icon.
   */
 
  #include <config.h>
@@ -28,13 +28,40 @@
 
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
+ #include <udjat/tools/string.h>
 
- #include <udjat/ui/gtk/label.h>
+ #include <udjat/ui/gtk/icon.h>
+
+ #include <string>
+
+ using namespace std;
 
  namespace Udjat {
 
-	Label::Label(const Udjat::XML::Node &node, const char *attrname, const char *def) :
-		Label{XML::StringFactory(node,attrname,"value",def).c_str()} {
+	Gtk::Icon::Icon(const char *name, const ::Gtk::IconSize iconsize, bool symbolic) {
+
+		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
+
+		if(name && *name && strcasecmp(name,"none")) {
+
+			if(symbolic) {
+					set_from_icon_name((std::string{name} + "-symbolic").c_str(), iconsize);
+			} else {
+					set_from_icon_name(name, iconsize);
+			}
+
+			show();
+
+		} else {
+
+			hide();
+
+		}
+
+	}
+
+	Gtk::Icon::Icon(const Udjat::XML::Node &node, const ::Gtk::IconSize iconsize, const char *attrname, const char *def) :
+		Icon{ XML::StringFactory(node,attrname,"value",def).c_str(), iconsize, true } {
 	}
 
  }

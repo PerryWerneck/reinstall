@@ -24,7 +24,7 @@
 
  using namespace std;
  using namespace Udjat;
- using namespace Gtk;
+ using namespace ::Gtk;
 
  static void g_syslog(const gchar *domain, GLogLevelFlags level, const gchar *message, gpointer G_GNUC_UNUSED(user_data)) {
 
@@ -56,7 +56,7 @@
  }
 
  static int gui_mode() {
-	auto app = Gtk::Application::create(PRODUCT_ID "." PACKAGE_NAME);
+	auto app = ::Gtk::Application::create(PRODUCT_ID "." PACKAGE_NAME);
 	MainWindow window;
 	return app->run(window);
  }

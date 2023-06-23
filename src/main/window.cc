@@ -38,7 +38,7 @@
  #include <string.h>
 
  using namespace Udjat;
- using namespace Gtk;
+ using namespace ::Gtk;
  using namespace std;
 
  static const ModuleInfo moduleinfo{PACKAGE_NAME " Main window"};
@@ -46,7 +46,7 @@
  MainWindow::MainWindow() : Factory{"MainWindow",moduleinfo} {
 
  	{
-		auto css = Gtk::CssProvider::create();
+		auto css = CssProvider::create();
 #ifdef DEBUG
 		css->load_from_path("./stylesheet.css");
 #else
@@ -70,7 +70,7 @@
 
 	// Left box
 	{
-		Gtk::Box * box = new Gtk::Box(Gtk::ORIENTATION_VERTICAL);
+		Box * box = new Box(::Gtk::ORIENTATION_VERTICAL);
 		box->get_style_context()->add_class("sidebar");
 
 		box->set_hexpand(false);
@@ -90,8 +90,8 @@
 	layout.title.get_style_context()->add_class("main-title");
 	layout.vbox.pack_start(layout.title,false,false,0);
 
-	layout.view.set_valign(Gtk::ALIGN_START);
-	layout.view.set_halign(Gtk::ALIGN_FILL);
+	layout.view.set_valign(::Gtk::ALIGN_START);
+	layout.view.set_halign(::Gtk::ALIGN_FILL);
 	layout.view.get_style_context()->add_class("main-view");
 
 	layout.swindow.set_hexpand(true);
@@ -118,7 +118,7 @@
 		close();
     });
 
-	layout.bbox.set_layout(Gtk::BUTTONBOX_END);
+	layout.bbox.set_layout(::Gtk::BUTTONBOX_END);
 	layout.bbox.add(buttons.cancel);
 	layout.bbox.add(buttons.apply);
 	layout.bbox.set_hexpand(true);
@@ -156,46 +156,13 @@
 		}
 
 		bool generic(const Udjat::XML::Node &node) override {
-
-			auto name = Udjat::XML::StringFactory(node,"name");
-			debug("Creating group '",name.c_str(),"'");
-
-			auto group = make_shared<Group>(node);
-
-			// Setup group.
-			set_hexpand(true);
-			set_halign(ALIGN_FILL);
-
-			set_vexpand(false);
-			set_valign(ALIGN_START);
-
-			label.set_hexpand(true);
-			body.set_hexpand(true);
-			label.set_vexpand(false);
-			body.set_vexpand(false);
-
-			get_style_context()->add_class("group-box");
-			label.get_style_context()->add_class("group-title");
-
-			attach(label,1,0,1,1);
-			if(body) {
-				body.get_style_context()->add_class("group-subtitle");
-				attach(body,1,1,2,1);
-			}
-
-			set(node);
-
-			actions.get_style_context()->add_class("group-actions");
-			attach(actions,1,2,2,1);
-			show_all();
-
-
+			controller.find(node);
 			return true;
 		}
 
 	} gfactory{*this};
 
-	Gtk::Window::on_show();
+	::Gtk::Window::on_show();
 
 	std::string message;
 	int rc = -1;
@@ -230,12 +197,12 @@
 		// The initialization has failed.
 		Logger::String{"Initialization procedure has finished with rc=",rc}.error("MainWindow");
 
-		Gtk::MessageDialog dialog_fail{
+		::Gtk::MessageDialog dialog_fail{
 			*this,
 			_("The initialization procedure has failed, the application cant continue"),
 			false,
-			Gtk::MESSAGE_ERROR,
-			Gtk::BUTTONS_CLOSE,
+			::Gtk::MESSAGE_ERROR,
+			::Gtk::BUTTONS_CLOSE,
 			true
 		};
 
@@ -246,7 +213,7 @@
 		}
 		dialog_fail.show();
 		dialog_fail.run();
-		Gtk::Application::get_default()->quit();
+		::Gtk::Application::get_default()->quit();
 		return;
 
 	}
@@ -254,6 +221,25 @@
  }
 
  bool MainWindow::generic(const XML::Node &node) {
+ 	this->group = find(node);
+ }
+
+ std::shared_ptr<MainWindow::Group> MainWindow::find(const pugi::xml_node &node) {
+
+ 	auto name = XML::StringFactory(node,"name");
+	for(auto group : groups) {
+		if(!strcasecmp(group->get_name().c_str(),name.c_str())) {
+			return group;
+		}
+	}
+
+	auto grp = make_shared<Group>(node);
+	groups.push_back(grp);
+
+	layout.view.add(*grp);
+
+	return grp;
+
  }
 
  void MainWindow::push_back(const Menu::Item *menu, const XML::Node &node) {

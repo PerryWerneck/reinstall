@@ -18,6 +18,7 @@
  */
 
  #include <config.h>
+
  #include <udjat/module.h>
  #include <udjat/factory.h>
  #include <udjat/tools/object.h>

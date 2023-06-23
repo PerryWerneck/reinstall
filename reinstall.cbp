@@ -117,6 +117,7 @@
 		<Unit filename="src/include/udjat/ui/dialogs/progress.h" />
 		<Unit filename="src/include/udjat/ui/gtk/icon.h" />
 		<Unit filename="src/include/udjat/ui/gtk/label.h" />
+		<Unit filename="src/include/udjat/ui/gtk/progress.h" />
 		<Unit filename="src/include/udjat/ui/menu.h" />
 		<Unit filename="src/include/udjat/ui/widgets/label.h">
 			<Option target="&lt;{~None~}&gt;" />
@@ -218,8 +219,7 @@
 		<Unit filename="src/library/worker.cc" />
 		<Unit filename="src/library/writers/abstract.cc" />
 		<Unit filename="src/library/writers/file.cc" />
-		<Unit filename="src/main/icon.cc" />
-		<Unit filename="src/main/label.cc" />
+		<Unit filename="src/main/group.cc" />
 		<Unit filename="src/main/main.cc" />
 		<Unit filename="src/main/progress.cc" />
 		<Unit filename="src/main/window.cc" />
@@ -232,6 +232,9 @@
 		<Unit filename="src/modules/netinstall/init.cc" />
 		<Unit filename="src/modules/netinstall/private.h" />
 		<Unit filename="src/modules/udfbuilder/init.cc" />
+		<Unit filename="src/ui/gtk/icon.cc" />
+		<Unit filename="src/ui/gtk/label.cc" />
+		<Unit filename="src/ui/gtk/progress.cc" />
 		<Extensions>
 			<code_completion>
 				<search_path add="src/fatfs/source" />

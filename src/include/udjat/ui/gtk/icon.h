@@ -31,12 +31,12 @@
 
  namespace Udjat {
 
-	namespace Widget {
+	namespace Gtk {
 
-		class UDJAT_API Icon : public Gtk::Image {
+		class UDJAT_API Icon : public ::Gtk::Image {
 		public:
-			Icon(const char *name, const Gtk::IconSize iconsize, bool symbolic);
-			Icon(const Udjat::XML::Node &node, const Gtk::IconSize iconsize, const char *attrname = "icon", const char *def = "");
+			Icon(const char *name, const ::Gtk::IconSize iconsize, bool symbolic);
+			Icon(const Udjat::XML::Node &node, const ::Gtk::IconSize iconsize, const char *attrname = "icon", const char *def = "");
 		};
 
 	}

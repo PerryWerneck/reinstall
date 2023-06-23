@@ -18,49 +18,55 @@
  */
 
  /**
-  * @brief Implements GTK based Udjat::Icon.
+  * @brief Implements group widget.
   */
 
  #include <config.h>
 
+ #include <config.h>
+ #include <udjat/defs.h>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
-
- #include <udjat/defs.h>
+ #include <private/mainwindow.h>
  #include <udjat/tools/xml.h>
 
  #include <udjat/ui/gtk/label.h>
+ #include <udjat/ui/gtk/icon.h>
 
- #include <string>
 
+ using namespace Udjat;
  using namespace std;
+ using namespace ::Gtk;
 
- namespace Udjat {
+ MainWindow::Group::Group(const XML::Node &node) :
 
-	Icon::Icon(const char *icon_name, const Gtk::IconSize iconsize, bool symbolic) {
+	label{node,"title"}, body{"sub-title"} {
 
-		// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
+	set_name(XML::StringFactory(node,"name").c_str());
 
-		if(name && *name && strcasecmp(name,"none")) {
+	// Setup group.
+	set_hexpand(true);
+	set_halign(ALIGN_FILL);
 
-			if(symbolic) {
-					set_from_icon_name((std::string{name} + "-symbolic").c_str(), iconsize);
-			} else {
-					set_from_icon_name(name, iconsize);
-			}
+	set_vexpand(false);
+	set_valign(ALIGN_START);
 
-			show();
+	label.set_hexpand(true);
+	body.set_hexpand(true);
+	label.set_vexpand(false);
+	body.set_vexpand(false);
 
-		} else {
+	get_style_context()->add_class("group-box");
+	label.get_style_context()->add_class("group-title");
 
-			hide();
-
-		}
-
+	attach(label,1,0,1,1);
+	if(body) {
+		body.get_style_context()->add_class("group-subtitle");
+		attach(body,1,1,2,1);
 	}
 
-	Icon::Icon(const Udjat::XML::Node &node, const Gtk::IconSize iconsize, const char *attrname, const char *def) :
-		Icon{ XML::StringFactory(node,attrname,"value",def).c_str(), iconsize, true } {
-	}
+	actions.get_style_context()->add_class("group-actions");
+	attach(actions,1,2,2,1);
+	show_all();
 
- }
+ };

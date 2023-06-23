@@ -29,6 +29,8 @@
  #include <udjat/ui/gtk/label.h>
  #include <udjat/ui/gtk/icon.h>
  #include <udjat/factory.h>
+ #include <memory>
+ #include <vector>
 
  class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Udjat::Factory, private Udjat::Menu::Controller, private Udjat::Dialog::Controller {
  private:
@@ -55,16 +57,18 @@
 	private:
 		Udjat::Label label;
 		Udjat::Label body;
-		Udjat::Icon icon;
 		Gtk::Box actions{Gtk::ORIENTATION_VERTICAL};
 
 	public:
-		Group(Udjat::XML::Node &node);
+		Group(const Udjat::XML::Node &node);
 
-		static std::shared_ptr<Group> find(const pugi::xml_node &node);
-		static std::shared_ptr<Group> find(const unsigned short id);
 	};
 
+	/// @brief The window groups.
+	std::vector<std::shared_ptr<Group>> groups;
+
+	/// @brief The active group.
+	std::shared_ptr<Group> group;
 
  public:
 
@@ -79,6 +83,8 @@
 
 	// int run(const Udjat::Dialog &dialog, const std::vector<Udjat::Dialog::Button> &buttons) override;
 	int run(const Udjat::Dialog &dialog, const std::function<int(Udjat::Dialog::Progress &progress)> &task) override;
+
+	std::shared_ptr<Group> find(const pugi::xml_node &node);
 
  };
 

@@ -25,7 +25,8 @@ LIBRARY_SOURCES = \
 
 GUI_SOURCES= \
 	$(wildcard src/main/*.cc) \
-	$(wildcard src/ui/gtk3/*.cc)
+	$(wildcard src/ui/gtk/*.cc)
+
 
 #---[ Tools ]----------------------------------------------------------------------------
 
