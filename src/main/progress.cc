@@ -264,7 +264,7 @@
 
 		try {
 
-			task(progress);
+			rc = task(progress);
 
 		} catch(const std::exception &e) {
 			rc = -1;

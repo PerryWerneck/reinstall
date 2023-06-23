@@ -32,6 +32,7 @@
  #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/configuration.h>
  #include <udjat/tools/application.h>
+ #include <udjat/module.h>
  #include <udjat/factory.h>
  #include <string.h>
 
@@ -146,22 +147,57 @@
 
 	Gtk::Window::on_show();
 
-	auto rc = Udjat::Dialog::Controller::run([](Udjat::Dialog::Progress &progress){
+	std::string message;
+	int rc = -1;
 
-		progress.title(_("Initializing application"));
-		progress.message(_("Loading configuration"));
-		progress.pulse();
+	try {
 
-		sleep(5);
+		rc = Udjat::Dialog::Controller::run([](Udjat::Dialog::Progress &progress){
 
-		return 0;
-	});
+			progress.title(_("Initializing application"));
+			progress.message(_("Loading configuration"));
+			progress.pulse();
+
+#ifdef DEBUG
+			Udjat::Module::load(Udjat::File::Path(".bin/Debug/modules"));
+			Udjat::Application::initialize(Udjat::Abstract::Agent::RootFactory(),"./xml.d",true);
+#else
+			Udjat::Application::initialize(Udjat::Abstract::Agent::RootFactory(),nullptr,true);
+#endif // DEBUG
+
+			return 0;
+		});
+
+	} catch(const std::exception &e) {
+
+		message = e.what();
+		rc = -1;
+
+	}
 
 	if(rc) {
 
 		// The initialization has failed.
 		Logger::String{"Initialization procedure has finished with rc=",rc}.error("MainWindow");
 
+		Gtk::MessageDialog dialog_fail{
+			*this,
+			_("The initialization procedure has failed, the application cant continue"),
+			false,
+			Gtk::MESSAGE_ERROR,
+			Gtk::BUTTONS_CLOSE,
+			true
+		};
+
+		dialog_fail.set_default_size(500, -1);
+		dialog_fail.set_title(get_title());
+		if(!message.empty()) {
+			dialog_fail.set_secondary_text(message);
+		}
+		dialog_fail.show();
+		dialog_fail.run();
+		Gtk::Application::get_default()->quit();
+		return;
 
 	}
 
