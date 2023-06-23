@@ -32,6 +32,7 @@
  #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/configuration.h>
  #include <udjat/tools/application.h>
+ #include <udjat/factory.h>
  #include <udjat/module.h>
  #include <udjat/factory.h>
  #include <string.h>
@@ -144,6 +145,55 @@
  }
 
  void MainWindow::on_show() {
+
+	/// @brief Factory for <group> nodes.
+	class GroupFactory : public Udjat::Factory {
+	private:
+		MainWindow &controller;
+
+	public:
+		GroupFactory(MainWindow &window) : Udjat::Factory{"group",moduleinfo}, controller{window} {
+		}
+
+		bool generic(const Udjat::XML::Node &node) override {
+
+			auto name = Udjat::XML::StringFactory(node,"name");
+			debug("Creating group '",name.c_str(),"'");
+
+			auto group = make_shared<Group>(node);
+
+			// Setup group.
+			set_hexpand(true);
+			set_halign(ALIGN_FILL);
+
+			set_vexpand(false);
+			set_valign(ALIGN_START);
+
+			label.set_hexpand(true);
+			body.set_hexpand(true);
+			label.set_vexpand(false);
+			body.set_vexpand(false);
+
+			get_style_context()->add_class("group-box");
+			label.get_style_context()->add_class("group-title");
+
+			attach(label,1,0,1,1);
+			if(body) {
+				body.get_style_context()->add_class("group-subtitle");
+				attach(body,1,1,2,1);
+			}
+
+			set(node);
+
+			actions.get_style_context()->add_class("group-actions");
+			attach(actions,1,2,2,1);
+			show_all();
+
+
+			return true;
+		}
+
+	} gfactory{*this};
 
 	Gtk::Window::on_show();
 

@@ -26,6 +26,8 @@
  #include <udjat/tools/xml.h>
  #include <udjat/ui/dialog.h>
  #include <udjat/ui/menu.h>
+ #include <udjat/ui/gtk/label.h>
+ #include <udjat/ui/gtk/icon.h>
  #include <udjat/factory.h>
 
  class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Udjat::Factory, private Udjat::Menu::Controller, private Udjat::Dialog::Controller {
@@ -48,6 +50,21 @@
 	void on_show() override;
 
 	void set_icon_name(const char *icon_name);
+
+	class Group : public Gtk::Grid {
+	private:
+		Udjat::Label label;
+		Udjat::Label body;
+		Udjat::Icon icon;
+		Gtk::Box actions{Gtk::ORIENTATION_VERTICAL};
+
+	public:
+		Group(Udjat::XML::Node &node);
+
+		static std::shared_ptr<Group> find(const pugi::xml_node &node);
+		static std::shared_ptr<Group> find(const unsigned short id);
+	};
+
 
  public:
 
