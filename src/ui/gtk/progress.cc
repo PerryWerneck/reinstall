@@ -209,10 +209,12 @@
 		std::string error_message;
 
 		// We cant start thread before the widget initialization is complete.
-		signal_show().connect([this,task,&error_message]{
+		auto connection = signal_show().connect([this,task,&error_message]{
 
 			// Widget is showing, start background thread.
 			Udjat::ThreadPool::getInstance().push([this,task,&error_message](){
+
+				usleep(100);
 
 				int rc = -1;
 
@@ -240,15 +242,17 @@
 		});
 
 		pulse();
-		show_all();
 
+		::Gtk::Dialog::show_all();
 		int rc = ::Gtk::Dialog::run();
+		::Gtk::Dialog::hide();
+
+		connection.disconnect();
 
 		if(rc == -1 && !error_message.empty()) {
 			throw runtime_error(error_message);
 		}
 
-		::Gtk::Dialog::hide();
 
 		return rc;
 
