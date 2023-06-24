@@ -58,15 +58,12 @@
  	set_title(Config::Value<string>("MainWindow","title",_("System Installer")));
 	set_default_size(800, 600);
 
-	/*
 	// MainWindow logo
 #ifdef DEBUG
 	set_icon(Config::Value<string>{"MainWindow","icon","./icon.svg"}.c_str());
 #else
 	set_icon(Config::Value<string>{"MainWindow","icon",PRODUCT_ID "." PACKAGE_NAME}.c_str());
 #endif // DEBUG
-	*/
-
 
 	// Left box
 	{
@@ -75,7 +72,7 @@
 
 		box->set_hexpand(false);
 		box->set_vexpand(true);
-		// box->add(logo);
+		box->add(logo);
 
 		layout.hbox.add(*box);
 	}
@@ -138,10 +135,6 @@
 
  MainWindow::~MainWindow() {
  	Udjat::Application::finalize();
- }
-
- void MainWindow::set_icon_name(const char *icon_name) {
-
  }
 
  void MainWindow::on_show() {
@@ -239,6 +232,29 @@
 	layout.view.add(*grp);
 
 	return grp;
+
+ }
+
+  void MainWindow::set_icon_name(const char *icon_name) {
+
+ }
+
+ void MainWindow::set_icon(const char *icon) {
+
+	if(access(icon, R_OK)) {
+
+		// File not found, try icon name.
+		set_icon_name(icon);
+		set_default_icon_name(icon);
+
+	} else {
+
+		// File exists, use it.
+		if(!set_icon_from_file(icon)) {
+			Logger::String{"Unable to set icon from '",icon,"'"}.error("MainWindow");
+		}
+
+	}
 
  }
 

@@ -18,6 +18,10 @@
  */
 
  #include <config.h>
+
+ #include <gtkmm.h>
+ #include <glibmm/i18n.h>
+
  #include <private/mainwindow.h>
  #include <udjat/tools/configuration.h>
  #include <udjat/tools/application.h>
@@ -62,7 +66,7 @@
 
  }
 
- MainWindow::Logo::Logo() : Gtk::Image{find_logo()} {
+ MainWindow::Logo::Logo() : ::Gtk::Image{find_logo()} {
 
 	// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1Image.html
 	set_hexpand(true);

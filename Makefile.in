@@ -25,6 +25,7 @@ LIBRARY_SOURCES = \
 
 GUI_SOURCES= \
 	$(wildcard src/main/*.cc) \
+	$(wildcard src/os/@OSNAME@/*.cc) \
 	$(wildcard src/ui/gtk/*.cc)
 
 

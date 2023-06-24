@@ -35,6 +35,11 @@
  class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Udjat::Factory, private Udjat::Menu::Controller, private Udjat::Dialog::Controller {
  private:
 
+	class Logo : public Gtk::Image {
+	public:
+		Logo();
+	} logo;
+
  	struct {
 		Gtk::Label title{ _( "Select option" ), Gtk::ALIGN_START };
 		Gtk::Box hbox;
@@ -52,6 +57,7 @@
 	void on_show() override;
 
 	void set_icon_name(const char *icon_name);
+	void set_icon(const char *name);
 
 	class Group : public Gtk::Grid {
 	private:

@@ -232,6 +232,7 @@
 		<Unit filename="src/modules/netinstall/init.cc" />
 		<Unit filename="src/modules/netinstall/private.h" />
 		<Unit filename="src/modules/udfbuilder/init.cc" />
+		<Unit filename="src/os/linux/logo.cc" />
 		<Unit filename="src/ui/gtk/icon.cc" />
 		<Unit filename="src/ui/gtk/label.cc" />
 		<Unit filename="src/ui/gtk/progress.cc" />
