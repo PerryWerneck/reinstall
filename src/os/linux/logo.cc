@@ -31,12 +31,12 @@
 
  using namespace Udjat;
 
- static std::string find_logo() {
+ static std::string find_logo(const char *name = "logo") {
 
 	Udjat::Application::DataDir datadir;
 
 	std::string names[] {
-		(datadir + "logo"),
+		(datadir + name),
 		(datadir + g_application_get_application_id(g_application_get_default()))
 	};
 
@@ -72,6 +72,17 @@
 	set_hexpand(true);
 	set_vexpand(false);
 	get_style_context()->add_class("logo");
+
+ }
+
+ void MainWindow::Logo::set(const char *name) {
+
+	if(name && *name) {
+		auto filename = find_logo(name);
+		if(!filename.empty()) {
+			::Gtk::Image::set(filename);
+		}
+	}
 
  }
 

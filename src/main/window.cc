@@ -43,7 +43,7 @@
 
  static const ModuleInfo moduleinfo{PACKAGE_NAME " Main window"};
 
- MainWindow::MainWindow() : Factory{"MainWindow",moduleinfo} {
+ MainWindow::MainWindow() {
 
  	{
 		auto css = CssProvider::create();
@@ -139,6 +139,67 @@
 
  void MainWindow::on_show() {
 
+	/// @brief Factor for windows properties.
+	class WindowsPropertyFactory : public Udjat::Factory {
+	private:
+		MainWindow &hwnd;
+
+	public:
+		WindowsPropertyFactory(MainWindow &window) : Udjat::Factory{"mainwindow",moduleinfo}, hwnd{window} {
+		}
+
+		bool generic(const Udjat::XML::Node &node) override {
+
+			hwnd.set_title(
+				XML::StringFactory(
+					node,
+					"title",
+					"value",
+					hwnd.get_title().c_str()
+				)
+			);
+
+			hwnd.layout.title.set_text(
+				XML::StringFactory(
+					node,
+					"sub-title",
+					"value",
+					hwnd.layout.title.get_text().c_str()
+				)
+			);
+
+			hwnd.buttons.cancel.set_label(
+				XML::StringFactory(
+					node,
+					"cancel",
+					"value",
+					hwnd.buttons.cancel.get_label().c_str()
+				)
+			);
+
+			hwnd.buttons.apply.set_label(
+				XML::StringFactory(
+					node,
+					"apply",
+					"value",
+					hwnd.buttons.apply.get_label().c_str()
+				)
+			);
+
+			hwnd.logo.set(
+				XML::StringFactory(
+					node,
+					"logo",
+					"value",
+					"logo"
+				).c_str()
+			);
+
+			return true;
+		}
+
+	} wpfactory{*this};
+
 	/// @brief Factory for <group> nodes.
 	class GroupFactory : public Udjat::Factory {
 	private:
@@ -213,10 +274,6 @@
 
  }
 
- bool MainWindow::generic(const XML::Node &node) {
- 	this->group = find(node);
- }
-
  std::shared_ptr<MainWindow::Group> MainWindow::find(const pugi::xml_node &node) {
 
  	auto name = XML::StringFactory(node,"name");
@@ -235,7 +292,7 @@
 
  }
 
-  void MainWindow::set_icon_name(const char *icon_name) {
+ void MainWindow::set_icon_name(const char *icon_name) {
 
  }
 

@@ -32,12 +32,13 @@
  #include <memory>
  #include <vector>
 
- class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Udjat::Factory, private Udjat::Menu::Controller, private Udjat::Dialog::Controller {
+ class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Udjat::Menu::Controller, private Udjat::Dialog::Controller {
  private:
 
 	class Logo : public Gtk::Image {
 	public:
 		Logo();
+		void set(const char *name);
 	} logo;
 
  	struct {
@@ -80,9 +81,6 @@
 
 	MainWindow();
 	virtual ~MainWindow();
-
-	/// @brief Build and insert a new top level item.
-	bool generic(const Udjat::XML::Node &node) override;
 
 	void push_back(const Udjat::Menu::Item *menu, const Udjat::XML::Node &node) override;
 	void remove(const Udjat::Menu::Item *menu) override;

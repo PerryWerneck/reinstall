@@ -206,40 +206,49 @@
 
 	int Gtk::Progress::run(const std::function<int(Udjat::Dialog::Progress &progress)> &task) {
 
-		show_all();
-		pulse();
-
 		std::string error_message;
-		Udjat::ThreadPool::getInstance().push([this,task,&error_message](){
 
-			int rc = -1;
+		// We cant start thread before the widget initialization is complete.
+		signal_show().connect([this,task,&error_message]{
 
-			try {
+			// Widget is showing, start background thread.
+			Udjat::ThreadPool::getInstance().push([this,task,&error_message](){
 
-				rc = task(*this);
+				int rc = -1;
 
-			} catch(const std::exception &e) {
-				rc = -1;
-				error_message = e.what();
-				Logger::String{error_message}.error("ui-task");
-			} catch(...) {
-				rc = -1;
-				error_message = _("Unexpected error on background task");
-				Logger::String{error_message}.error("ui-task");
-			}
+				try {
 
-			Glib::signal_idle().connect([this,rc](){
-				response(rc);
-				return 0;
+					rc = task(*this);
+
+				} catch(const std::exception &e) {
+					rc = -1;
+					error_message = e.what();
+					Logger::String{error_message}.error("ui-task");
+				} catch(...) {
+					rc = -1;
+					error_message = _("Unexpected error on background task");
+					Logger::String{error_message}.error("ui-task");
+				}
+
+				Glib::signal_idle().connect([this,rc](){
+					response(rc);
+					return 0;
+				});
+
 			});
 
 		});
+
+		pulse();
+		show_all();
 
 		int rc = ::Gtk::Dialog::run();
 
 		if(rc == -1 && !error_message.empty()) {
 			throw runtime_error(error_message);
 		}
+
+		::Gtk::Dialog::hide();
 
 		return rc;
 
