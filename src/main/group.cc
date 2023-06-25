@@ -39,8 +39,7 @@
  using namespace ::Gtk;
 
  MainWindow::Group::Group(const XML::Node &node) :
-
-	label{node,"title"}, body{"sub-title"} {
+	label{node,"title"}, body{XML::StringFactory(node,"sub-title").c_str()} {
 
 	set_name(XML::StringFactory(node,"name").c_str());
 
@@ -51,20 +50,42 @@
 	set_vexpand(false);
 	set_valign(ALIGN_START);
 
-	label.set_hexpand(true);
 	body.set_hexpand(true);
-	label.set_vexpand(false);
 	body.set_vexpand(false);
 
+	// The group title.
+	label.set_hexpand(false);
+	label.set_vexpand(false);
 	get_style_context()->add_class("group-box");
 	label.get_style_context()->add_class("group-title");
-
 	attach(label,1,0,1,1);
-	if(body) {
-		body.get_style_context()->add_class("group-subtitle");
-		attach(body,1,1,2,1);
+
+	// Check help link.
+	{
+		auto help = XML::StringFactory(node,"help");
+		if(!help.empty()) {
+			// https://developer-old.gnome.org/gtkmm/stable/classGtk_1_1LinkButton.html
+			linkbutton.get_style_context()->add_class("group-link");
+
+			linkbutton.set_uri(help);
+			linkbutton.set_hexpand(false);
+			linkbutton.set_vexpand(false);
+			linkbutton.set_halign(::Gtk::ALIGN_START);
+
+			// https://specifications.freedesktop.org/icon-naming-spec/latest/ar01s04.html
+			linkbutton.set_image_from_icon_name("help-faq");
+			attach_next_to(linkbutton,label,::Gtk::POS_RIGHT);
+		}
 	}
 
+
+	// The group sub-title
+	if(body) {
+		body.get_style_context()->add_class("group-subtitle");
+		attach(body,1,1,3,1);
+	}
+
+	// The box for group actions.
 	actions.get_style_context()->add_class("group-actions");
 	attach(actions,1,2,2,1);
 	show_all();

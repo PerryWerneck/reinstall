@@ -64,6 +64,7 @@
 	private:
 		Udjat::Label label;
 		Udjat::Label body;
+		Gtk::LinkButton linkbutton;
 		Gtk::Box actions{Gtk::ORIENTATION_VERTICAL};
 
 	public:
