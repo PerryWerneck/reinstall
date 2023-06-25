@@ -50,9 +50,6 @@
 	set_vexpand(false);
 	set_valign(ALIGN_START);
 
-	body.set_hexpand(true);
-	body.set_vexpand(false);
-
 	// The group title.
 	label.set_hexpand(false);
 	label.set_vexpand(false);
@@ -81,6 +78,8 @@
 
 	// The group sub-title
 	if(body) {
+		body.set_hexpand(true);
+		body.set_vexpand(false);
 		body.get_style_context()->add_class("group-subtitle");
 		attach(body,1,1,3,1);
 	}
