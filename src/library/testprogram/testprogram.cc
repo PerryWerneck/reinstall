@@ -5,7 +5,7 @@
  #include <iostream>
  #include <set>
  #include <vector>
- #include <reinstall/userinterface.h>
+
  #include <udjat/ui/dialog.h>
  #include <udjat/ui/menu.h>
  #include <udjat/tools/logger.h>

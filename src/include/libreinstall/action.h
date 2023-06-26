@@ -130,6 +130,8 @@
 
 		} output;
 
+		void reboot() noexcept;
+
 	public:
 
 		Action(Action *) = delete;

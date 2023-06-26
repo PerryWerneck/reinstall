@@ -19,7 +19,7 @@
 
  #include <config.h>
  #include <udjat/defs.h>
- #include <reinstall/tools.h>
+ #include <libreinstall/action.h>
  #include <dbus/dbus.h>
  #include <iostream>
 
@@ -27,7 +27,7 @@
 
  namespace Reinstall {
 
-	UDJAT_API void reboot() noexcept {
+	UDJAT_API void Action::reboot() noexcept {
 
 		// Ask gnome for reboot.
 		//

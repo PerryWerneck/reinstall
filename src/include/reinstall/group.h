@@ -18,6 +18,7 @@
  */
 
  #pragma once
+ #error deprecated
 
  /*
  #include <reinstall/action.h>

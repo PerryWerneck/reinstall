@@ -19,11 +19,13 @@
 
  #pragma once
  #include <udjat/defs.h>
+ #error deprecated
 
+ /*
  namespace Reinstall {
 
 	UDJAT_API void reboot() noexcept;
 
 
  }
-
+ */

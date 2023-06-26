@@ -18,7 +18,9 @@
  */
 
  #pragma once
+ #error deprecated
 
+ /*
  #include <udjat/defs.h>
  #include <udjat/tools/object.h>
  #include <memory>
@@ -113,3 +115,4 @@
 	};
 
  }
+ */
