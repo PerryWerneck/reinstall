@@ -54,6 +54,7 @@
 		<Unit filename="../include/reinstall/dialogs/taskrunner.h" />
 		<Unit filename="../include/reinstall/userinterface.h" />
 		<Unit filename="../include/udjat/ui/dialog.h" />
+		<Unit filename="../include/udjat/ui/dialogs/popup.h" />
 		<Unit filename="../include/udjat/ui/dialogs/progress.h" />
 		<Unit filename="../include/udjat/ui/menu.h" />
 		<Unit filename="actions/abstract.cc" />
@@ -134,6 +135,7 @@
 		<Unit filename="testprogram/testprogram.cc" />
 		<Unit filename="ui/dialogs/abstract.cc" />
 		<Unit filename="ui/dialogs/controller.cc" />
+		<Unit filename="ui/dialogs/popup.cc" />
 		<Unit filename="ui/dialogs/progress.cc" />
 		<Unit filename="ui/menu/controller.cc" />
 		<Unit filename="ui/menu/item.cc" />

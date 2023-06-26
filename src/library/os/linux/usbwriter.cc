@@ -20,11 +20,19 @@
  #include <config.h>
  #include <udjat/defs.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/intl.h>
  #include <libreinstall/writer.h>
  #include <libreinstall/writers/usb.h>
+
  #include <system_error>
+ #include <sys/inotify.h>
  #include <sys/ioctl.h>
  #include <linux/fs.h>
+ #include <poll.h>
+ #include <vector>
+
+ #include <udjat/ui/dialog.h>
+ #include <udjat/ui/dialogs/popup.h>
 
  #ifdef HAVE_UNISTD_H
 	#include <unistd.h>
@@ -32,6 +40,9 @@
 
  using namespace std;
  using namespace Udjat;
+
+ #define INOTIFY_EVENT_SIZE ( sizeof (struct inotify_event) )
+ #define INOTIFY_EVENT_BUF_LEN ( 1024 * ( INOTIFY_EVENT_SIZE + 16 ) )
 
  namespace Reinstall {
 
@@ -64,11 +75,123 @@
 	void UsbWriter::finalize() {
 	}
 
-	shared_ptr<Writer> UsbWriter::factory() {
+	shared_ptr<Writer> UsbWriter::factory(const char *title) {
+
+		const Udjat::Dialog dialog {
+			title,	// Title
+			_("Insert an storage device <b>NOW</b> "), // Message
+			_("This action will <b>DELETE ALL CONTENT</b> on the device."), // Secondary
+		};
+
+		const vector<Dialog::Button> buttons = {
+			{ ECANCELED, 	_("Cancel"),	Dialog::Button::Standard 	},
+			{ 0, 			_("Continue"),	Dialog::Button::Destructive },
+		};
+
+		//
+		// Watch /dev
+		//
+		int fd = inotify_init1(IN_NONBLOCK|IN_CLOEXEC);
+		if(fd == -1) {
+			throw system_error(errno,system_category(),"Can't initialize inotify");
+		}
+
+		int wd = inotify_add_watch(fd,"/dev",IN_CREATE|IN_DELETE);
+
+		if(fd == -1) {
+			int err = errno;
+			::close(fd);
+			 throw system_error(err,system_category(),"Unable to watch /dev");
+		}
+
+		int rc = -1;
+		try {
+
+			rc = dialog.run([fd,wd](Dialog::Popup &popup){
+
+				popup.disable(0);
+
+				// Loop until user select device.
+				while(popup) {
+
+					struct pollfd pfd;
+					pfd.fd = fd;
+					pfd.events = POLLIN;
+					pfd.revents = 0;
+
+					int pfds = poll(&pfd, 1, 1000);
+
+					if(pfds == 1 && (pfd.revents & POLLIN)) {
+
+						// Got response.
+						char buffer[INOTIFY_EVENT_BUF_LEN];
+						memset(buffer,0,INOTIFY_EVENT_BUF_LEN);
+
+						ssize_t bytes = ::read(fd, buffer, INOTIFY_EVENT_BUF_LEN);
+
+						while(bytes > 0) {
+
+							ssize_t bufPtr  = 0;
+
+							while(bufPtr < bytes) {
+
+								// Get event
+								auto event = (struct inotify_event *) &buffer[bufPtr];
+
+								if(event->wd == wd) {
+
+									debug("Inotify event on '",event->name,"'");
+
+									if((event->mask & IN_CREATE) != 0) {
+
+										debug("Device ",event->name," added");
+
+									} else if((event->mask & IN_DELETE) != 0) {
+
+										debug("Device ",event->name," removed");
+
+									}
+
+								}
+
+								// Get next entry
+								bufPtr += (offsetof (struct inotify_event, name) + event->len);
+
+							}
+
+							bytes = read(fd, buffer, INOTIFY_EVENT_BUF_LEN);
+
+						}
+
+					} else if(pfds < 0) {
+
+						// Error.
+						throw system_error(errno,system_category(),"Error watching /dev");
+
+					}
+
+				}
+
+				return 0;
+
+			},buttons);
+
+		} catch(...) {
+
+			inotify_rm_watch(fd, wd);
+			::close(fd);
+
+			throw;
+		}
+
+		inotify_rm_watch(fd, wd);
+		::close(fd);
+
 
 	}
 
  }
+
 
 	/*
  #include <config.h>
@@ -89,8 +212,6 @@
  #include <linux/fs.h>
 
 
- #define INOTIFY_EVENT_SIZE ( sizeof (struct inotify_event) )
- #define INOTIFY_EVENT_BUF_LEN ( 1024 * ( INOTIFY_EVENT_SIZE + 16 ) )
 
  namespace Reinstall {
 

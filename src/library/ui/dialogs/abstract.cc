@@ -90,5 +90,8 @@
 		return Controller::instance().run(*this,task);
 	}
 
+	int Dialog::run(const std::function<int(Popup &popup)> &task, const std::vector<Button> &buttons) const {
+		return Controller::instance().run(*this,task,buttons);
+	}
 
  }

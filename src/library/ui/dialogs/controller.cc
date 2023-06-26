@@ -25,6 +25,7 @@
  #include <udjat/defs.h>
  #include <udjat/ui/dialog.h>
  #include <udjat/ui/dialogs/progress.h>
+ #include <udjat/ui/dialogs/popup.h>
  #include <udjat/tools/logger.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/string.h>
@@ -84,6 +85,13 @@
 		Dialog::Progress progress;
 		progress.set(dialog);
 		return task(progress);
+	}
+
+	int Dialog::Controller::run(const Dialog &dialog, const std::function<int(Popup &popup)> &task, const std::vector<Button> &) {
+		Logger::String{"The selected backend cant manage popup dialogs, using default for '",dialog.message,"'"}.warning("ui");
+		Dialog::Popup popup;
+		popup.set(dialog);
+		return task(popup);
 	}
 
 	bool Dialog::Controller::confirm(const Dialog &dialog, const char *yes, const char *no) {

@@ -62,7 +62,7 @@
 				const char *image = "/boot/x86_64/loader/isolinux.bin";
 				const char *id = "";
 
-				inline operator bool() const {
+				inline operator bool() const noexcept {
 					return enabled;
 				}
 

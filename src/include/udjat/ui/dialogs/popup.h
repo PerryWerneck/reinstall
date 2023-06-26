@@ -17,35 +17,46 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- /**
-  * @brief Declare file writer.
-  */
-
  #pragma once
  #include <udjat/defs.h>
- #include <libreinstall/writer.h>
+ #include <udjat/ui/dialog.h>
 
- namespace Reinstall {
+ namespace Udjat {
 
-	class UDJAT_API UsbWriter : public Writer {
+	/// @brief Abstract progress dialog.
+	class UDJAT_API Dialog::Popup {
 	private:
-		int fd = -1;
+		bool running = true;
 
 	protected:
-		UsbWriter(int fd);
+		Popup(const Popup &) = delete;
+		Popup(const Popup *) = delete;
 
 	public:
-		virtual ~UsbWriter();
+		Popup();
+		virtual ~Popup();
 
-		unsigned long long size() override;
+		/// @brief Setup from dialog.
+		virtual void set(const Dialog &dialog);
 
-		/// @brief Detect USB device.
-		static std::shared_ptr<Writer> factory(const char *title = "");
+		/// @brief is the dialog running?
+		inline bool enabled() const noexcept {
+			return running;
+		}
 
-		size_t write(unsigned long long offset, const void *contents, size_t length) override;
-		void finalize() override;
+		inline operator bool() const noexcept {
+			return running;
+		}
+
+		/// @brief Enable/Disable button
+		/// @param id The button id.
+		/// @param enabled the button enable status.
+		virtual void enable(int id, bool enabled = true);
+
+		inline void disable(int id) {
+			enable(id,false);
+		}
+
 	};
 
  }
-
-

@@ -35,6 +35,7 @@
 	public:
 
 		class Progress;
+		class Popup;
 
 		class UDJAT_API Button {
 		public:
@@ -86,6 +87,13 @@
 			/// @param task the background task to run.
 			/// @return Return code of the background task.
 			virtual int run(const Dialog &dialog, const std::function<int(Progress &progress)> &task);
+
+			/// @brief Build popup dialog, run background task.
+			/// @param buttons the dialog buttons.
+			/// @param task the background task to run.
+			/// @return The id of selected button.
+			virtual int run(const Dialog &dialog, const std::function<int(Popup &popup)> &task, const std::vector<Button> &buttons);
+
 		};
 
 	protected:
@@ -145,7 +153,13 @@
 		/// @return The id of selected button.
 		int run(const std::vector<Button> &buttons) const;
 
-		/// @brief Build progress dialog, run background task.
+		/// @brief Run dialog with buttons.
+		/// @param buttons the dialog buttons.
+		/// @param task the background task to run.
+		/// @return The id of selected button.
+		int run(const std::function<int(Popup &popup)> &task, const std::vector<Button> &buttons) const;
+
+		/// @brief run background task.
 		/// @param task the background task to run.
 		/// @return Return code of the background task.
 		int run(const std::function<int(Progress &progress)> &task) const;

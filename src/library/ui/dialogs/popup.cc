@@ -18,34 +18,30 @@
  */
 
  /**
-  * @brief Declare file writer.
+  * @brief Implement abstract popup dialog.
   */
 
- #pragma once
+ #include <config.h>
  #include <udjat/defs.h>
- #include <libreinstall/writer.h>
+ #include <udjat/ui/dialog.h>
+ #include <udjat/ui/dialogs/popup.h>
+ #include <udjat/tools/logger.h>
 
- namespace Reinstall {
+ using namespace std;
 
-	class UDJAT_API UsbWriter : public Writer {
-	private:
-		int fd = -1;
+ namespace Udjat {
 
-	protected:
-		UsbWriter(int fd);
+	Dialog::Popup::Popup() {
+	}
 
-	public:
-		virtual ~UsbWriter();
+	Dialog::Popup::~Popup() {
+	}
 
-		unsigned long long size() override;
+	void Dialog::Popup::set(const Dialog &) {
+	}
 
-		/// @brief Detect USB device.
-		static std::shared_ptr<Writer> factory(const char *title = "");
-
-		size_t write(unsigned long long offset, const void *contents, size_t length) override;
-		void finalize() override;
-	};
+	void Dialog::Popup::enable(int, bool) {
+	}
 
  }
-
 
