@@ -31,6 +31,7 @@
 
  #include <libreinstall/writer.h>
  #include <libreinstall/writers/file.h>
+ #include <libreinstall/writers/usb.h>
 
  #include <libreinstall/kernelparameter.h>
 
@@ -273,20 +274,6 @@
 
 	}
 
-	/*
-	std::shared_ptr<Reinstall::Builder> Action::build(Dialog::Progress &progress, Source::Files &files) const {
-		auto builder = BuilderFactory();
-		build(progress,builder,files);
-		return builder;
-	}
-	*/
-
-	/*
-	void Action::write(Dialog::Progress &progress, std::shared_ptr<Reinstall::Builder> builder) const {
-		write(progress,builder,WriterFactory());
-	}
-	*/
-
 	std::shared_ptr<Reinstall::Builder> Action::BuilderFactory() const {
 		throw runtime_error(_("The selected action is unable to build an image"));
 	}
@@ -297,10 +284,8 @@
 			return make_shared<Reinstall::FileWriter>(output.filename);
 		}
 
-		throw runtime_error("Incomplete");
-		/*
-		return make_shared<Reinstall::USBWriter>();
-		*/
+		return Reinstall::UsbWriter::factory(dialogs.title);
+
 	}
 
 	void Action::activate(const ActivationType type) {

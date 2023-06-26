@@ -63,6 +63,9 @@
 		/// @brief Action dialogs.
 		struct Dialogs {
 
+			/// @brief The action title.
+			const char *title = "";
+
 			/// @brief Confirmation dialog (Yes/No/Quit)
 			Udjat::Dialog confirmation;
 
@@ -76,6 +79,7 @@
 			Popup failed;
 
 			Dialogs(const Udjat::XML::Node &node) :
+				title{Udjat::XML::QuarkFactory(node,"title").c_str()},
 				confirmation{"confirmation",node},
 				progress{"progress",node},
 				success{"success",node},

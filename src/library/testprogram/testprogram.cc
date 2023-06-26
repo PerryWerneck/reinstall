@@ -103,12 +103,8 @@
 	Dialog::Controller dialogs;
 	Menu::Controller menus;
 
-	//xml_test("test.xml");
-
-	{
-		Reinstall::UsbWriter::factory();
-	}
-
+	xml_test("test.xml");
+\
 	Udjat::Module::unload();
 	return 0;
  }
