@@ -1,8 +1,6 @@
 
  #include <udjat/tools/logger.h>
  #include <udjat/tools/quark.h>
- #include <libreinstall/source.h>
- #include <libreinstall/iso9660.h>
  #include <udjat/module.h>
  #include <iostream>
  #include <set>
@@ -17,9 +15,13 @@
  #include <libreinstall/builders/iso9660.h>
  #include <libreinstall/builders/fat.h>
 
+ #include <libreinstall/source.h>
+ #include <libreinstall/iso9660.h>
+
  #include <libreinstall/action.h>
 
  #include <libreinstall/writers/file.h>
+ #include <libreinstall/writers/usb.h>
 
  #include <libreinstall/sources/zip.h>
 
@@ -101,7 +103,11 @@
 	Dialog::Controller dialogs;
 	Menu::Controller menus;
 
-	xml_test("test.xml");
+	//xml_test("test.xml");
+
+	{
+		Reinstall::UsbWriter::factory();
+	}
 
 	Udjat::Module::unload();
 	return 0;

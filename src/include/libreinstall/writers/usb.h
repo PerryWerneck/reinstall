@@ -31,16 +31,14 @@
 	private:
 		int fd = -1;
 
-	protected:
-		UsbWriter(int fd);
-
 	public:
+		UsbWriter(int fd);
 		virtual ~UsbWriter();
 
 		unsigned long long size() override;
 
 		/// @brief Detect USB device.
-		static std::shared_ptr<Writer> factory(const char *title = "");
+		static std::shared_ptr<Writer> factory(const char *title = "", unsigned long long length = 0LL);
 
 		size_t write(unsigned long long offset, const void *contents, size_t length) override;
 		void finalize() override;

@@ -19,6 +19,11 @@
 
  #include <config.h>
  #include <udjat/defs.h>
+
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
  #include <libreinstall/writer.h>
@@ -27,9 +32,11 @@
  #include <system_error>
  #include <sys/inotify.h>
  #include <sys/ioctl.h>
+ #include <sys/file.h>
  #include <linux/fs.h>
  #include <poll.h>
  #include <vector>
+ #include <sys/sysmacros.h>
 
  #include <udjat/ui/dialog.h>
  #include <udjat/ui/dialogs/popup.h>
@@ -47,11 +54,6 @@
  namespace Reinstall {
 
 	UsbWriter::UsbWriter(int f) : fd{f} {
-
-		if(fd < 0) {
-			throw system_error(errno,system_category());
-		}
-
 	}
 
 	UsbWriter::~UsbWriter() {
@@ -75,7 +77,7 @@
 	void UsbWriter::finalize() {
 	}
 
-	shared_ptr<Writer> UsbWriter::factory(const char *title) {
+	shared_ptr<Writer> UsbWriter::factory(const char *title, unsigned long long) {
 
 		const Udjat::Dialog dialog {
 			title,	// Title
@@ -104,10 +106,16 @@
 			 throw system_error(err,system_category(),"Unable to watch /dev");
 		}
 
+		// Detected device.
+		struct {
+			String name;
+			int fd = -1;
+		} device;
+
 		int rc = -1;
 		try {
 
-			rc = dialog.run([fd,wd](Dialog::Popup &popup){
+			rc = dialog.run([fd,wd,&device](Dialog::Popup &popup){
 
 				popup.disable(0);
 
@@ -142,13 +150,56 @@
 
 									debug("Inotify event on '",event->name,"'");
 
-									if((event->mask & IN_CREATE) != 0) {
+									if(strncasecmp(event->name,"sd",2)) {
+
+										Logger::String{"Ignoring device /dev/",event->name}.trace("usbwriter");
+
+									} else if((event->mask & IN_CREATE) != 0) {
 
 										debug("Device ",event->name," added");
 
+										int devfd = ::open(String{"/dev/",event->name}.c_str(),O_RDWR);
+										if(devfd < 0) {
+
+											Logger::String{"Unable to open /dev/",event->name,": ",strerror(errno)}.trace("usbwriter");
+
+										} else if(::flock(devfd, LOCK_EX|LOCK_NB) != 0) {
+
+											Logger::String{"Error locking /dev/",event->name,": ",strerror(errno)}.trace("usbwriter");
+
+										} else {
+
+											// Got locked device, check type
+											struct stat st;
+											if(fstat(devfd,&st) == 0
+												&& (st.st_mode & S_IFMT) == S_IFBLK
+												&& major(st.st_rdev) == 8
+												&& (minor(st.st_rdev) & 15) == 0
+												) {
+
+												device.name = event->name;
+												device.fd = devfd;
+
+												Logger::String{"Device /dev/",device.name," is valid"}.trace("usbwriter");
+												popup.enable(0);
+
+											} else {
+
+												Logger::String{"Ignoring device /dev/",event->name}.trace("usbwriter");
+												::close(devfd);
+												devfd = -1;
+
+											}
+										}
+
 									} else if((event->mask & IN_DELETE) != 0) {
 
-										debug("Device ",event->name," removed");
+										Logger::String{"Device ",event->name," removed"}.trace("usbwriter");
+										if(device.fd > 0 && !strcmp(event->name,device.name.c_str())) {
+											::close(device.fd);
+											device.fd = -1;
+											device.name.clear();
+										}
 
 									}
 
@@ -187,7 +238,16 @@
 		inotify_rm_watch(fd, wd);
 		::close(fd);
 
+		if(rc == ECANCELED) {
+			throw runtime_error(_("Operation canceled by user"));
+		}
 
+		if(device.fd < 0) {
+			throw runtime_error(_("Can detect USB storage device"));
+		}
+
+		Logger::String{"Creating writer for /dev/",device.name}.trace("usbwriter");
+		return make_shared<UsbWriter>(device.fd);
 	}
 
  }
