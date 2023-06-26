@@ -19,11 +19,18 @@
 
  #include <config.h>
  #include <udjat/module.h>
- #include <udjat/factory.h>
+ #include <udjat/tools/xml.h>
  #include <udjat/tools/string.h>
+ #include <udjat/factory.h>
 
- #include <reinstall/actions/isobuilder.h>
- #include <reinstall/actions/fatbuilder.h>
+ #include <udjat/ui/menu.h>
+
+ #include <libreinstall/action.h>
+ #include <libreinstall/builder.h>
+ #include <libreinstall/builders/iso9660.h>
+ #include <libreinstall/builders/fat.h>
+
+ #include <stdexcept>
 
  using namespace std;
  using namespace Udjat;
@@ -32,6 +39,57 @@
 
  	static const Udjat::ModuleInfo moduleinfo { "Disk image builder" };
 
+ 	class iso9660Action : public Reinstall::Action, private iso9660::Settings {
+	public:
+		iso9660Action(const XML::Node &node) : Reinstall::Action{node}, iso9660::Settings{node} {
+		}
+
+		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
+			return iso9660::BuilderFactory(*this);
+		}
+
+ 	};
+
+  	class FatAction : public Reinstall::Action, private iso9660::Settings {
+	private:
+		unsigned long long length;
+
+	public:
+		FatAction(const XML::Node &node) : Reinstall::Action{node}, length{XML::StringFactory(node,"length").as_ull()} {
+		}
+
+		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
+			return Fat::BuilderFactory(length);
+		}
+
+ 	};
+
+	class Module : public Udjat::Module, public Udjat::Factory {
+	public:
+		Module() : Udjat::Module("iso-builder", moduleinfo), Udjat::Factory("iso-builder",moduleinfo) {
+		}
+
+		bool generic(const XML::Node &node) override {
+
+			switch(XML::StringFactory(node,"filesystem","value","iso9660").select("fat32","iso9660",nullptr)) {
+			case 0:	// FAT32
+				Reinstall::push_back(make_shared<FatAction>(node));
+				break;
+
+			case 1: // iso9660
+				Reinstall::push_back(make_shared<iso9660Action>(node));
+				break;
+
+			default:
+				return false;
+			}
+
+			return true;
+		}
+
+	};
+
+ 	/*
 	class Module : public Udjat::Module, public Udjat::Factory {
 	public:
 		Module() : Udjat::Module("iso-builder", moduleinfo), Udjat::Factory("iso-builder",moduleinfo) {
@@ -58,6 +116,7 @@
 		}
 
 	};
+	*/
 
 	return new Module();
 

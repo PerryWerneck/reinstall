@@ -155,4 +155,6 @@
 
 	};
 
+	void UDJAT_API push_back(std::shared_ptr<Action> action);
+
  }

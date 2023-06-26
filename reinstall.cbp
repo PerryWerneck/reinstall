@@ -122,8 +122,6 @@
 		<Unit filename="src/include/udjat/ui/widgets/label.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
-		<Unit filename="src/library/action/action.cc" />
-		<Unit filename="src/library/action/template.cc" />
 		<Unit filename="src/library/actions/abstract.cc" />
 		<Unit filename="src/library/actions/popup.cc" />
 		<Unit filename="src/library/builders/abstract.cc" />
@@ -182,7 +180,6 @@
 		<Unit filename="src/library/iso9660/eltorito.cc" />
 		<Unit filename="src/library/iso9660/image.cc" />
 		<Unit filename="src/library/iso9660/settings.cc" />
-		<Unit filename="src/library/kernelparameter.cc" />
 		<Unit filename="src/library/object.cc" />
 		<Unit filename="src/library/os/linux/abstract_writer.cc" />
 		<Unit filename="src/library/os/linux/disk_image.cc" />
@@ -214,7 +211,6 @@
 		<Unit filename="src/library/ui/dialogs/progress.cc" />
 		<Unit filename="src/library/ui/menu/controller.cc" />
 		<Unit filename="src/library/ui/menu/item.cc" />
-		<Unit filename="src/library/userinterface.cc" />
 		<Unit filename="src/library/value.cc" />
 		<Unit filename="src/library/worker.cc" />
 		<Unit filename="src/library/writers/abstract.cc" />
