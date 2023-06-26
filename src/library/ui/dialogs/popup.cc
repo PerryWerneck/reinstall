@@ -40,7 +40,11 @@
 	void Dialog::Popup::set(const Dialog &) {
 	}
 
-	void Dialog::Popup::enable(int, bool) {
+	void Dialog::Popup::enable(int id, bool enabled) {
+		if(enabled) {
+			Logger::String{"Option '",id,"' was enabled, stopping default popup dialog"}.warning("ui");
+			running = false;
+		}
 	}
 
  }
