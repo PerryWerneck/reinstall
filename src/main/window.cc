@@ -236,6 +236,8 @@
 			Udjat::Application::initialize(Udjat::Abstract::Agent::RootFactory(),nullptr,true);
 #endif // DEBUG
 
+			debug("Load complete");
+
 			return 0;
 		});
 
@@ -245,6 +247,8 @@
 		rc = -1;
 
 	}
+
+	debug("load process exits with rc=",rc," and message '",message,"'");
 
 	if(rc) {
 
@@ -316,7 +320,9 @@
  }
 
  void MainWindow::push_back(const Menu::Item *menu, const XML::Node &node) {
+	debug("--------------------> Implement MENU ",__FUNCTION__);
  }
 
  void MainWindow::remove(const Udjat::Menu::Item *menu) {
+	debug("--------------------> Implement MENU ",__FUNCTION__);
  }

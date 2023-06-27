@@ -29,6 +29,7 @@
  #include <glibmm/i18n.h>
  #include <private/mainwindow.h>
  #include <udjat/tools/xml.h>
+ #include <udjat/factory.h>
 
  #include <udjat/ui/gtk/label.h>
  #include <udjat/ui/gtk/icon.h>
@@ -83,6 +84,8 @@
 		body.get_style_context()->add_class("group-subtitle");
 		attach(body,1,1,3,1);
 	}
+
+	// Load children.
 
 	// The box for group actions.
 	actions.get_style_context()->add_class("group-actions");

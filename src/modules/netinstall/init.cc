@@ -36,6 +36,8 @@
 	public:
 		Action(const XML::Node &node) : Reinstall::Action{node}, iso9660::Settings{node} {
 
+			debug("----------------------");
+
 			/*
 			// Get URL for installation kernel.
 			if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
