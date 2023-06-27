@@ -36,6 +36,7 @@
  #include <udjat/module.h>
  #include <udjat/factory.h>
  #include <string.h>
+ #include <udjat/ui/gtk/label.h>
 
  using namespace Udjat;
  using namespace ::Gtk;
@@ -210,7 +211,7 @@
 		}
 
 		bool generic(const Udjat::XML::Node &node) override {
-			controller.find(node);
+			controller.find(node,"name");
 			return true;
 		}
 
@@ -278,9 +279,16 @@
 
  }
 
- std::shared_ptr<MainWindow::Group> MainWindow::find(const pugi::xml_node &node) {
+ std::shared_ptr<MainWindow::Group> MainWindow::find(const pugi::xml_node &node, const char *attrname) {
 
- 	auto name = XML::StringFactory(node,"name");
+ 	auto name = XML::StringFactory(node,attrname);
+	if(name.empty()) {
+		if(!this->group) {
+			throw runtime_error("Cant determine group name");
+		}
+		return this->group;
+	}
+
 	for(auto group : groups) {
 		if(!strcasecmp(group->get_name().c_str(),name.c_str())) {
 			return group;
@@ -320,7 +328,34 @@
  }
 
  void MainWindow::push_back(const Menu::Item *menu, const XML::Node &node) {
-	debug("--------------------> Implement MENU ",__FUNCTION__);
+
+	class Entry : public ::Gtk::Grid {
+	private:
+		const Menu::Item *menu;
+		Udjat::Label title;
+		Udjat::Label subtitle;
+
+	public:
+		Entry(const Udjat::XML::Node &node, const Menu::Item *m) :
+			menu{m},
+			title{node,"title"},
+			subtitle{node,"sub-title"} {
+
+
+		}
+
+	};
+
+	auto entry = make_shared<Entry>(node,menu);
+	auto group = find(node,"group");
+
+	Glib::signal_idle().connect([this,entry,group](){
+
+
+		group->show_all();
+		return 0;
+	});
+
  }
 
  void MainWindow::remove(const Udjat::Menu::Item *menu) {

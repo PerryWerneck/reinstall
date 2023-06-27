@@ -70,6 +70,10 @@
 	public:
 		Group(const Udjat::XML::Node &node);
 
+		inline void append(Gtk::Widget &child) {
+			actions.pack_end(child);
+		}
+
 	};
 
 	/// @brief The window groups.
@@ -89,7 +93,7 @@
 	// int run(const Udjat::Dialog &dialog, const std::vector<Udjat::Dialog::Button> &buttons) override;
 	int run(const Udjat::Dialog &dialog, const std::function<int(Udjat::Dialog::Progress &progress)> &task) override;
 
-	std::shared_ptr<Group> find(const pugi::xml_node &node);
+	std::shared_ptr<Group> find(const pugi::xml_node &node, const char *attrname);
 
  };
 
