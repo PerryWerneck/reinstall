@@ -113,6 +113,7 @@
 
 	 		<attribute name='title' value='Build a simple network install image'/>
 	 		<attribute name='sub-title' value='Build an small usb based boot device for network install' />
+	 		<attribute name='icon-name' value='drive-removable-media' />
 
 			<!-- Replace every 'grub.cfg' file with template -->
 			<template name='grub.cfg' url='file://${template-dir}/grub.cfg' />
