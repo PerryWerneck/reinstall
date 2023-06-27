@@ -18,9 +18,31 @@
  */
 
  #include <config.h>
+ #include <udjat/module.h>
+ #include <udjat/factory.h>
+ #include <udjat/tools/xml.h>
+
+ using namespace Udjat;
+
+ Udjat::Module * udjat_module_init() {
+
+ 	static const Udjat::ModuleInfo moduleinfo { "Grub based system installation" };
+
+ 	class Module : public Udjat::Module, public Udjat::Factory {
+	public:
+		Module() : Udjat::Module("local-installer", moduleinfo), Udjat::Factory("local-installer",moduleinfo) {
+		}
+
+		bool generic(const XML::Node &node) override {
+			return false;
+		}
+ 	};
+
+ 	return new Module();
+
+ }
 
  /*
- #include <udjat/module.h>
  #include <udjat/factory.h>
  #include <udjat/tools/object.h>
  #include <stdexcept>

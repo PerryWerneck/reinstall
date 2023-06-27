@@ -69,7 +69,7 @@
 		Module() : Udjat::Module("network-installer", moduleinfo), Udjat::Factory("network-installer",moduleinfo) {
 		}
 
-		bool generic(const pugi::xml_node &node) override {
+		bool generic(const XML::Node &node) override {
 			Reinstall::push_back(make_shared<Action>(node));
 			return true;
 		}

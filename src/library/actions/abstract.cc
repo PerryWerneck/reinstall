@@ -48,7 +48,7 @@
 	void UDJAT_API push_back(std::shared_ptr<Udjat::Menu::Item> action) {
 
 		/// @brief Container to keep menu items alive while application is running.
-		vector<std::shared_ptr<Udjat::Menu::Item>> actions;
+		static vector<std::shared_ptr<Udjat::Menu::Item>> actions;
 		actions.push_back(action);
 
 	}

@@ -38,7 +38,7 @@
  namespace Reinstall {
 
 	/// @brief Standard action.
-	class UDJAT_API Action : public Udjat::NamedObject, private Udjat::Menu::Item {
+	class UDJAT_API Action : public Udjat::NamedObject, public Udjat::Menu::Item {
 	private:
 		static Action *selected;	/// @brief Selected action.
 		static Action *def;			/// @brief Default action.
