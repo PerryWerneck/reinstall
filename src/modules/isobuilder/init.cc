@@ -73,11 +73,11 @@
 
 			switch(XML::StringFactory(node,"filesystem","value","iso9660").select("fat32","iso9660",nullptr)) {
 			case 0:	// FAT32
-				Reinstall::push_back(make_shared<FatAction>(node));
+				new FatAction(node);
 				break;
 
 			case 1: // iso9660
-				Reinstall::push_back(make_shared<iso9660Action>(node));
+				new iso9660Action(node);
 				break;
 
 			default:

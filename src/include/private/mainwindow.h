@@ -82,11 +82,13 @@
 	/// @brief The active group.
 	std::shared_ptr<Group> group;
 
-	class Item : public ::Gtk::Grid {
+	class Item : public ::Gtk::RadioButton {
 	private:
 		Udjat::Menu::Item *menu;
 		Udjat::Label title;
 		Udjat::Label subtitle;
+		Udjat::Gtk::Icon icon;
+		::Gtk::Grid grid;
 
 	public:
 		Item(Udjat::Menu::Item *menu, const Udjat::XML::Node &node);
