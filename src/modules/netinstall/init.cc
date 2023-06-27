@@ -18,6 +18,68 @@
  */
 
  #include <config.h>
+ #include <udjat/factory.h>
+ #include <udjat/module.h>
+ #include <udjat/tools/xml.h>
+
+ #include <libreinstall/action.h>
+
+ #include <libreinstall/builder.h>
+ #include <libreinstall/builders/iso9660.h>
+
+ using namespace std;
+ using namespace Udjat;
+
+ Udjat::Module * udjat_module_init() {
+
+ 	class Action : public Reinstall::Action, private iso9660::Settings {
+	public:
+		Action(const XML::Node &node) : Reinstall::Action{node}, iso9660::Settings{node} {
+
+			/*
+			// Get URL for installation kernel.
+			if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
+				push_back(make_shared<Kernel>(node));
+				return true;
+			})) {
+				throw runtime_error(_("Missing required entry <kernel> with the URL for installation kernel"));
+			}
+
+			// Get URL for installation init.
+			if(!scan(node,"init",[this](const pugi::xml_node &node) {
+				push_back(make_shared<InitRD>(node));
+				return true;
+			})) {
+				throw runtime_error(_("Missing required entry <init> with the URL for the linuxrc program"));
+			}
+			*/
+
+		}
+
+		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
+			return iso9660::BuilderFactory(*this);
+		}
+
+ 	};
+
+ 	static const Udjat::ModuleInfo moduleinfo { "Basic network install image builder" };
+
+	class Module : public Udjat::Module, public Udjat::Factory {
+	public:
+		Module() : Udjat::Module("network-installer", moduleinfo), Udjat::Factory("network-installer",moduleinfo) {
+		}
+
+		bool generic(const pugi::xml_node &node) override {
+			Reinstall::push_back(make_shared<Action>(node));
+			return true;
+		}
+
+	};
+
+	return new Module();
+
+ }
+
 
  /*
  #include <udjat/module.h>

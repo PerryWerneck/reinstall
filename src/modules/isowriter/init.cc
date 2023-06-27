@@ -18,9 +18,12 @@
  */
 
  #include <config.h>
- #include "private.h"
+
+ /*
  #include <udjat/module.h>
  #include <udjat/factory.h>
+
+ #include <libreinstall/action.h>
 
  using namespace std;
  using namespace Udjat;
@@ -53,4 +56,5 @@
 	return new Module();
 
  }
+ */
 

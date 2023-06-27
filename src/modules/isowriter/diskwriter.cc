@@ -18,6 +18,7 @@
  */
 
  #include <config.h>
+ /*
  #include "private.h"
 
  #include <reinstall/source.h>
@@ -91,4 +92,5 @@
 	}
 
  }
+ */
 

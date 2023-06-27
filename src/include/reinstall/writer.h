@@ -18,6 +18,9 @@
  */
 
  #pragma once
+ #error deprecated
+
+ /*
  #include <udjat/defs.h>
  #include <cstddef>
  #include <memory>
@@ -113,4 +116,5 @@
 	};
 
  }
+ */
 

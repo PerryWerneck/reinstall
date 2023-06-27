@@ -19,6 +19,7 @@
 
  #include <config.h>
 
+ /*
  #include <udjat/module.h>
  #include <udjat/factory.h>
  #include <udjat/tools/object.h>
@@ -168,7 +169,6 @@
 						return true;
 					}
 
-					/*
 					if(strcasecmp(key,"kernel-path") == 0) {
 						// TODO: Detect boot partition
 						value = "/boot/kernel-" PACKAGE_NAME;
@@ -182,7 +182,6 @@
 						debug(key,"=",value);
 						return true;
 					}
-					*/
 
 					if(strcasecmp(key,"kernel-filename") == 0) {
 						value = "kernel." PACKAGE_NAME;
@@ -224,4 +223,5 @@
 	return new Module();
 
  }
+ */
 
