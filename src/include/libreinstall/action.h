@@ -161,6 +161,6 @@
 
 	};
 
-	void UDJAT_API push_back(std::shared_ptr<Action> action);
+	void UDJAT_API push_back(std::shared_ptr<Udjat::Menu::Item> action);
 
  }

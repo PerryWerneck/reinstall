@@ -22,8 +22,10 @@
  #include <udjat/tools/intl.h>
  #include <udjat/tools/xml.h>
  #include <udjat/tools/object.h>
+ #include <udjat/tools/singleton.h>
  #include <stdexcept>
  #include <unordered_map>
+ #include <vector>
 
  #include <libreinstall/action.h>
  #include <libreinstall/repository.h>
@@ -42,6 +44,14 @@
 
 	Action *Action::selected = nullptr;
 	Action *Action::def = nullptr;
+
+	void UDJAT_API push_back(std::shared_ptr<Udjat::Menu::Item> action) {
+
+		/// @brief Container to keep menu items alive while application is running.
+		vector<std::shared_ptr<Udjat::Menu::Item>> actions;
+		actions.push_back(action);
+
+	}
 
 	Action::Action(const XML::Node &node) : NamedObject{node}, Udjat::Menu::Item{node}, dialogs{node}, output{node} {
 
