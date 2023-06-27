@@ -49,7 +49,7 @@
 		return *cntrl;
 	}
 
-	void Menu::Controller::push_back(const Item *, const XML::Node &) {
+	void Menu::Controller::push_back(Item *, const XML::Node &) {
 		Logger::String{"The selected backend has no support for menus"}.trace("ui");
 	}
 

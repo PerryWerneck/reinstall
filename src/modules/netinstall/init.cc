@@ -35,27 +35,6 @@
  	class Action : public Reinstall::Action, private iso9660::Settings {
 	public:
 		Action(const XML::Node &node) : Reinstall::Action{node}, iso9660::Settings{node} {
-
-			debug("----------------------");
-
-			/*
-			// Get URL for installation kernel.
-			if(!scan(node,"kernel",[this](const pugi::xml_node &node) {
-				push_back(make_shared<Kernel>(node));
-				return true;
-			})) {
-				throw runtime_error(_("Missing required entry <kernel> with the URL for installation kernel"));
-			}
-
-			// Get URL for installation init.
-			if(!scan(node,"init",[this](const pugi::xml_node &node) {
-				push_back(make_shared<InitRD>(node));
-				return true;
-			})) {
-				throw runtime_error(_("Missing required entry <init> with the URL for the linuxrc program"));
-			}
-			*/
-
 		}
 
 		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
@@ -72,7 +51,7 @@
 		}
 
 		bool generic(const XML::Node &node) override {
-			Reinstall::push_back(make_shared<Action>(node));
+			new Action(node);
 			return true;
 		}
 

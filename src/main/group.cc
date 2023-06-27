@@ -40,6 +40,7 @@
  using namespace ::Gtk;
 
  MainWindow::Group::Group(const XML::Node &node) :
+
 	label{node,"title"}, body{XML::StringFactory(node,"sub-title").c_str()} {
 
 	set_name(XML::StringFactory(node,"name").c_str());
@@ -85,34 +86,8 @@
 		attach(body,1,1,3,1);
 	}
 
-	// Load children.
-	for(auto child : node) {
-
-		Factory::for_each(child.name(),[this,&child](Factory &factory) {
-
-			try {
-
-				return factory.generic(child);
-
-			} catch(const std::exception &e) {
-
-				factory.error() << "Cant parse node <" << child.name() << ">: " << e.what() << endl;
-
-			} catch(...) {
-
-				factory.error() << "Cant parse node <" << child.name() << ">: Unexpected error" << endl;
-
-			}
-
-			return false;
-
-		});
-
-	}
-
 	// The box for group actions.
 	actions.get_style_context()->add_class("group-actions");
 	attach(actions,1,2,2,1);
-	show_all();
 
  };

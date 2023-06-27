@@ -82,12 +82,25 @@
 	/// @brief The active group.
 	std::shared_ptr<Group> group;
 
+	class Item : public ::Gtk::Grid {
+	private:
+		Udjat::Menu::Item *menu;
+		Udjat::Label title;
+		Udjat::Label subtitle;
+
+	public:
+		Item(Udjat::Menu::Item *menu, const Udjat::XML::Node &node);
+
+	};
+
+	std::vector<std::shared_ptr<Item>> items;
+
  public:
 
 	MainWindow();
 	virtual ~MainWindow();
 
-	void push_back(const Udjat::Menu::Item *menu, const Udjat::XML::Node &node) override;
+	void push_back(Udjat::Menu::Item *menu, const Udjat::XML::Node &node) override;
 	void remove(const Udjat::Menu::Item *menu) override;
 
 	// int run(const Udjat::Dialog &dialog, const std::vector<Udjat::Dialog::Button> &buttons) override;

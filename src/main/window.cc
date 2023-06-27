@@ -211,7 +211,35 @@
 		}
 
 		bool generic(const Udjat::XML::Node &node) override {
+
+			// Findo group.
 			controller.find(node,"name");
+
+			// Load group children.
+			for(auto child : node) {
+
+				Factory::for_each(child.name(),[this,&child](Factory &factory) {
+
+					try {
+
+						return factory.generic(child);
+
+					} catch(const std::exception &e) {
+
+						factory.error() << "Cant parse node <" << child.name() << ">: " << e.what() << endl;
+
+					} catch(...) {
+
+						factory.error() << "Cant parse node <" << child.name() << ">: Unexpected error" << endl;
+
+					}
+
+					return false;
+
+				});
+
+			}
+
 			return true;
 		}
 
@@ -229,6 +257,8 @@
 			progress.title(_("Initializing application"));
 			progress.message(_("Loading configuration"));
 			progress.pulse();
+
+			usleep(500);
 
 #ifdef DEBUG
 			Udjat::Module::load(Udjat::File::Path(".bin/Debug/modules"));
@@ -283,10 +313,11 @@
 
  	auto name = XML::StringFactory(node,attrname);
 	if(name.empty()) {
-		if(!this->group) {
-			throw runtime_error("Cant determine group name");
+		if(this->group) {
+			return this->group;
 		}
-		return this->group;
+		Logger::String{"Cant determine group name for <",node.name(),">"}.trace(PACKAGE_NAME);
+		throw runtime_error("Cant determine group name");
 	}
 
 	for(auto group : groups) {
@@ -295,12 +326,14 @@
 		}
 	}
 
-	auto grp = make_shared<Group>(node);
-	groups.push_back(grp);
+	group = make_shared<Group>(node);
+	groups.push_back(group);
 
-	layout.view.add(*grp);
+	layout.view.add(*group);
 
-	return grp;
+	debug("---------------------------->",group->get_name().c_str());
+
+	return group;
 
  }
 
@@ -327,29 +360,24 @@
 
  }
 
- void MainWindow::push_back(const Menu::Item *menu, const XML::Node &node) {
+ MainWindow::Item::Item(Menu::Item *m, const Udjat::XML::Node &node) :
+	menu{m},
+	title{node,"title"},
+	subtitle{node,"sub-title"} {
 
-	class Entry : public ::Gtk::Grid {
-	private:
-		const Menu::Item *menu;
-		Udjat::Label title;
-		Udjat::Label subtitle;
-
-	public:
-		Entry(const Udjat::XML::Node &node, const Menu::Item *m) :
-			menu{m},
-			title{node,"title"},
-			subtitle{node,"sub-title"} {
+	get_style_context()->add_class("action");
 
 
-		}
+ }
 
-	};
+ void MainWindow::push_back(Menu::Item *menu, const XML::Node &node) {
 
-	auto entry = make_shared<Entry>(node,menu);
+	auto item = make_shared<MainWindow::Item>(menu,node);
 	auto group = find(node,"group");
 
-	Glib::signal_idle().connect([this,entry,group](){
+	items.push_back(item);
+
+	Glib::signal_idle().connect([this,item,group](){
 
 
 		group->show_all();
@@ -359,5 +387,5 @@
  }
 
  void MainWindow::remove(const Udjat::Menu::Item *menu) {
-	debug("--------------------> Implement MENU ",__FUNCTION__);
+	debug("--------------------> Implement Menu::Item::",__FUNCTION__);
  }

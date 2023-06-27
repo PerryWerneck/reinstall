@@ -45,14 +45,6 @@
 	Action *Action::selected = nullptr;
 	Action *Action::def = nullptr;
 
-	void UDJAT_API push_back(std::shared_ptr<Udjat::Menu::Item> action) {
-
-		/// @brief Container to keep menu items alive while application is running.
-		static vector<std::shared_ptr<Udjat::Menu::Item>> actions;
-		actions.push_back(action);
-
-	}
-
 	Action::Action(const XML::Node &node) : NamedObject{node}, Udjat::Menu::Item{node}, dialogs{node}, output{node} {
 
 		if(getAttribute(node, "action-defaults", "default", false)) {
