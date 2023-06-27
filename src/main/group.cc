@@ -86,6 +86,29 @@
 	}
 
 	// Load children.
+	for(auto child : node) {
+
+		Factory::for_each(child.name(),[this,&child](Factory &factory) {
+
+			try {
+
+				return factory.generic(child);
+
+			} catch(const std::exception &e) {
+
+				factory.error() << "Cant parse node <" << child.name() << ">: " << e.what() << endl;
+
+			} catch(...) {
+
+				factory.error() << "Cant parse node <" << child.name() << ">: Unexpected error" << endl;
+
+			}
+
+			return false;
+
+		});
+
+	}
 
 	// The box for group actions.
 	actions.get_style_context()->add_class("group-actions");
