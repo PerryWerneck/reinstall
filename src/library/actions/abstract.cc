@@ -310,6 +310,10 @@
 		}
 	}
 
+	bool Action::confirm() const {
+		return dialogs.confirmation.confirm();
+	}
+
 	void Action::activate() {
 
 		class Files : public Reinstall::Source::Files {
@@ -381,7 +385,7 @@
 
 		};
 
-		if(!dialogs.confirmation.confirm()) {
+		if(!this->confirm()) {
 			Logger::String{"Cancel by user choice"}.info(name());
 			return;
 		}

@@ -90,6 +90,9 @@
 
 	protected:
 
+		/// @brief Ask user for confirmation.
+		virtual bool confirm() const;
+
 		/// @brief List of repositories defined by XML.
 		std::vector<Reinstall::Repository> repositories;
 
