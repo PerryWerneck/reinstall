@@ -75,12 +75,14 @@
 	}
 
 	int Dialog::Controller::run(const Dialog &dialog, const std::vector<Button> &) {
+		debug(__FUNCTION__);
 		Logger::String{"The selected backend cant manage dialogs with buttons, assuming '0' for '",dialog.message,"'"}.warning("ui");
 		errno = ENOTSUP;
 		return 0;
 	}
 
 	int Dialog::Controller::run(const Dialog &dialog, const std::function<int(Progress &progress)> &task) {
+		debug(__FUNCTION__);
 		Logger::String{"The selected backend cant manage progress dialogs, using default for '",dialog.message,"'"}.warning("ui");
 		Dialog::Progress progress;
 		progress.set(dialog);
@@ -88,6 +90,7 @@
 	}
 
 	int Dialog::Controller::run(const Dialog &dialog, const std::function<int(Popup &popup)> &task, const std::vector<Button> &) {
+		debug(__FUNCTION__);
 		Logger::String{"The selected backend cant manage popup dialogs, using default for '",dialog.message,"'"}.warning("ui");
 		Dialog::Popup popup;
 		popup.set(dialog);

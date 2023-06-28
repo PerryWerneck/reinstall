@@ -427,7 +427,9 @@
 			});
 
 			// Step 3, get writer.
+			debug("Getting writer");
 			std::shared_ptr<Reinstall::Writer> writer{WriterFactory()};
+			debug("Got writer");
 
 			// Step 4, write image.
 			Logger::String{"Writing"}.info(name());

@@ -117,6 +117,7 @@
 
 	int run(const Udjat::Dialog &dialog, const std::vector<Udjat::Dialog::Button> &buttons) override;
 	int run(const Udjat::Dialog &dialog, const std::function<int(Udjat::Dialog::Progress &progress)> &task) override;
+	int run(const Udjat::Dialog &dialog, const std::function<int(Udjat::Dialog::Popup &popup)> &task, const std::vector<Udjat::Dialog::Button> &) override;
 
 	std::shared_ptr<Group> find(const pugi::xml_node &node, const char *attrname);
 

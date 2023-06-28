@@ -31,11 +31,14 @@
  #include <udjat/tools/threadpool.h>
 
  using namespace std;
+ using namespace Udjat;
 
  namespace Udjat {
 
 	Gtk::Popup::Popup(::Gtk::Window &parent, const char *message, const char *secondary) :
 		::Gtk::MessageDialog{parent,String{"<b><big>",message,"</big></b>"}.c_str(),true,::Gtk::MESSAGE_INFO,::Gtk::BUTTONS_NONE,true} {
+
+		Logger::String{"Popup:\n",message,"\n",(secondary ? secondary : "")}.trace("popup");
 
 		set_modal(true);
 		set_transient_for(parent);
@@ -125,36 +128,53 @@
 
 	}
 
+	void Gtk::Popup::on_response(int response_id) {
+
+		debug("Got response ",response_id);
+
+		running = false;
+		response = response_id;
+
+		auto action_area = get_action_area();
+		if(action_area) {
+			action_area->set_sensitive(false);
+		}
+
+		::Gtk::MessageDialog::on_response(response_id);
+	}
+
 	int Gtk::Popup::run(const std::function<int(Udjat::Dialog::Popup &popup)> &task) {
 
 		std::string error_message;
+		auto mainloop = Glib::MainLoop::create();
 
 		// We cant start thread before the widget initialization is complete.
-		auto connection = signal_show().connect([this,task,&error_message]{
+		auto connection = signal_show().connect([this,task,&error_message,&mainloop]{
 
 			// Widget is showing, start background thread.
-			Udjat::ThreadPool::getInstance().push([this,task,&error_message](){
+			Udjat::ThreadPool::getInstance().push([this,task,&error_message,&mainloop](){
 
 				usleep(100);
 
-				int rc = -1;
-
 				try {
 
-					rc = task(*this);
+					int rc = task(*this);
+					if(running) {
+						response = rc;
+					}
 
 				} catch(const std::exception &e) {
-					rc = -1;
+					response = -1;
 					error_message = e.what();
 					Logger::String{error_message}.error("ui-task");
 				} catch(...) {
-					rc = -1;
+					response = -1;
 					error_message = _("Unexpected error on background task");
 					Logger::String{error_message}.error("ui-task");
 				}
 
-				Glib::signal_idle().connect([this,rc](){
-					response(rc);
+				Glib::signal_idle().connect([mainloop](){
+					mainloop->quit();
 					return 0;
 				});
 
@@ -163,16 +183,16 @@
 		});
 
 		::Gtk::Dialog::show_all();
-		int rc = ::Gtk::Dialog::run();
+		mainloop->run();
 		::Gtk::Dialog::hide();
 
 		connection.disconnect();
 
-		if(rc == -1 && !error_message.empty()) {
+		if(response == -1 && !error_message.empty()) {
 			throw runtime_error(error_message);
 		}
 
-		return rc;
+		return response;
 
 	}
 

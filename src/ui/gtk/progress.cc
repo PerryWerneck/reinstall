@@ -154,6 +154,7 @@
 	}
 
 	Gtk::Progress::~Progress() {
+		debug("Dialog was destroyed");
 		timer.source->destroy();
 	}
 
@@ -246,7 +247,9 @@
 					Logger::String{error_message}.error("ui-task");
 				}
 
+				debug("Background task complete");
 				Glib::signal_idle().connect([this,rc](){
+					Logger::String{"Background task complete with rc=",rc}.trace("progress");
 					response(rc);
 					return 0;
 				});

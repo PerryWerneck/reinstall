@@ -25,10 +25,10 @@
 
 	/// @brief Abstract popup dialog.
 	class UDJAT_API Dialog::Popup {
-	private:
+	protected:
+
 		bool running = true;
 
-	protected:
 		Popup(const Popup &) = delete;
 		Popup(const Popup *) = delete;
 
@@ -52,6 +52,9 @@
 		/// @param id The button id.
 		/// @param enabled the button enable status.
 		virtual void enable(int id, bool enabled = true);
+
+		/// @brief Set button text (if available).
+		virtual bool set_label(int id, const char *label);
 
 		inline void disable(int id) {
 			enable(id,false);

@@ -47,5 +47,9 @@
 		}
 	}
 
+	bool Dialog::Popup::set_label(int, const char *) {
+		return false;
+	}
+
  }
 

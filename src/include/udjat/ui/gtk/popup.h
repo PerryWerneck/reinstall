@@ -33,6 +33,12 @@
 	namespace Gtk {
 
 		class Popup : public ::Gtk::MessageDialog, public Udjat::Dialog::Popup {
+		private:
+			int response = -1;
+
+		protected:
+			void on_response (int response_id) override;
+
 		public:
 			Popup(::Gtk::Window &parent, const char *message = "", const char *secondary = "");
 			Popup(::Gtk::Window &parent, const Udjat::Dialog &dialog, const std::vector<Udjat::Dialog::Button> &buttons);

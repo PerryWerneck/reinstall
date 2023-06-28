@@ -34,3 +34,7 @@
  int MainWindow::run(const Udjat::Dialog &dialog, const std::vector<Udjat::Dialog::Button> &buttons) {
 	return Udjat::Gtk::Popup{*this,dialog,buttons}.run();
  }
+
+ int MainWindow::run(const Udjat::Dialog &dialog, const std::function<int(Udjat::Dialog::Popup &popup)> &task, const std::vector<Udjat::Dialog::Button> &buttons) {
+	return Udjat::Gtk::Popup{*this,dialog,buttons}.run(task);
+ }

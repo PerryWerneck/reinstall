@@ -210,6 +210,7 @@
 		<Unit filename="src/library/testprogram/testprogram.cc" />
 		<Unit filename="src/library/ui/dialogs/abstract.cc" />
 		<Unit filename="src/library/ui/dialogs/controller.cc" />
+		<Unit filename="src/library/ui/dialogs/popup.cc" />
 		<Unit filename="src/library/ui/dialogs/progress.cc" />
 		<Unit filename="src/library/ui/menu/controller.cc" />
 		<Unit filename="src/library/ui/menu/item.cc" />
