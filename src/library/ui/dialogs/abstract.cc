@@ -37,25 +37,15 @@
 
 	void Dialog::setup(const XML::Node &node) {
 
-		icon = XML::QuarkFactory(node,"icon-name").c_str();
-		title = XML::QuarkFactory(node,"title").c_str();
 		message = XML::QuarkFactory(node,"message").c_str();
 		secondary = XML::QuarkFactory(node,"secondary").c_str();
 
-		{
-			XML::Node parent;
+		for(auto parent = node;!(title && *title) && parent;parent = parent.parent()) {
+			title = XML::QuarkFactory(parent,"title").c_str();
+		}
 
-			parent = node.parent();
-			while(!(title && *title) && parent) {
-				title = XML::QuarkFactory(parent,"title").c_str();
-				parent = node.parent();
-			}
-
-			parent = node.parent();
-			while(!(icon && *icon) && parent) {
-				icon = XML::QuarkFactory(parent,"icon-name").c_str();
-				parent = node.parent();
-			}
+		for(auto parent = node;!(icon && *icon) && parent;parent = parent.parent()) {
+			icon = XML::QuarkFactory(parent,"icon-name").c_str();
 		}
 
 		debug("-----------------------------------------------------------------------------------------");

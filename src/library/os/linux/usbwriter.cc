@@ -72,6 +72,7 @@
 	}
 
 	size_t UsbWriter::write(unsigned long long offset, const void *contents, size_t length) {
+		throw runtime_error("Incomplete");
 	}
 
 	void UsbWriter::finalize() {

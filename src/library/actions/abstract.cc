@@ -240,8 +240,19 @@
 			return true;
 		}
 
+		if(!strcasecmp(key,"template-dir")) {
+#ifdef DEBUG
+			value = "./templates";
+#else
+			value = Udjat::Application::DataDir{"templates"};
+#endif // DEBUG
+			return true;
+		}
+
 		if(!Udjat::NamedObject::getProperty(key,value)) {
-			throw runtime_error{Logger::Message{_("Cant get property '{}'"),key}};
+			Logger::Message message{_("Cant get property '{}'"),key};
+			message.error(name());
+			throw runtime_error{message};
 		}
 		return true;
 
@@ -368,7 +379,7 @@
 				if(updates.size()) {
 
 					// Have updates, get template.
-					String text = tmpl.get();
+					String text = tmpl.get(object);
 					text.expand(object);
 
 					if(Logger::enabled(Logger::Debug)) {

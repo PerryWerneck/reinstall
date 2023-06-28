@@ -41,10 +41,10 @@
 	<kernel-parameter name='install' repository='install' />
 
 	<!-- Replace every 'grub.cfg' file with template -->
-	<template name='grub.cfg' url='file://../../templates/grub.cfg' />
+	<template name='grub.cfg' url='file://${template-dir}/grub.cfg' />
 	
 	<!-- Replace every 'isolinux.cfg' file with template -->
-	<template name='isolinux.cfg' url='file://../../templates/isolinux.cfg' />
+	<template name='isolinux.cfg' url='file://${template-dir}/isolinux.cfg' />
 	
 	<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
 	<dialog name='confirmation' icon='dialog-question' message='Do you confirm?'>

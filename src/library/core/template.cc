@@ -89,11 +89,11 @@
 		return false;
 	}
 
-	Udjat::String Template::get() const {
+	Udjat::String Template::get(const Udjat::Abstract::Object &object) const {
 
 		Progress &progress{Progress::instance()};
 
-		auto worker = Protocol::WorkerFactory(this->url);
+		auto worker = Protocol::WorkerFactory(String{this->url}.expand(object).c_str());
 
 		Logger::String{"Loading ",worker->url().c_str()}.write(Logger::Trace,"template");
 		progress.url(worker->url().c_str());
@@ -134,7 +134,7 @@
 		};
 
 		return make_shared<Parsed>(
-					this->get().expand(marker,object,true,true),
+					this->get(object).expand(marker,object,true,true),
 					path
 				);
 	}
