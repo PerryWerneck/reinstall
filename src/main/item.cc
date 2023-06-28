@@ -70,6 +70,8 @@
 
 	add(grid);
 
+	help.get_style_context()->add_class("action-help");
+
 	show_all();
 
  }
@@ -84,30 +86,44 @@
 
 	item->set_name((group->get_name() + "." + XML::StringFactory(node,"name")).c_str());
 
-	/*
 	// The group URL
 	{
 		const char *url = node.attribute("url").as_string();
-		const char *label = nullptr;
-		const char *tooltip = nullptr;
 
-		if(!(url && *url)) {
-			for(const pugi::xml_node &child = node.child("attribute"); child; child = child.next_sibling("attribute")) {
+		if(url && *url) {
+
+			item->help.set_uri(url);
+			item->help.set_label(url);
+
+		} else {
+
+			for(pugi::xml_node child = node.child("attribute"); child; child = child.next_sibling("attribute")) {
 
 				if(strcasecmp("help",child.attribute("name").as_string("")) == 0) {
-					url = node.attribute("value").as_string();
-					label = node.attribute("label").as_string(url);
-					tooltip = node.attribute("tootip").as_string(url);
+
+					url = child.attribute("url").as_string();
+					if(!(url && *url)) {
+						url = child.attribute("value").as_string();
+					}
+
+					debug(url);
+
+					if(url && *url) {
+						item->help.set_uri(url);
+						item->help.set_label(child.attribute("label").as_string(url));
+
+						const char *tooltip = child.attribute("tooltip").as_string();
+						if(tooltip && *tooltip) {
+							item->help.set_tooltip_text(tooltip);
+						}
+					}
+
 					break;
 				}
 			}
 		}
 
-		if(url && *url) {
-
-		}
 	}
-	*/
 
 	Glib::signal_idle().connect([this,item,group,active](){
 
@@ -115,6 +131,16 @@
 		if(active) {
 			item->set_active(true);
 		}
+
+		if(!item->help.get_uri().empty()) {
+			item->help.set_hexpand(false);
+			item->help.set_vexpand(false);
+			item->help.set_valign(::Gtk::ALIGN_START);
+			item->help.set_halign(::Gtk::ALIGN_END);
+			item->help.show_all();
+			group->push_back(item->help);
+		}
+
 		return 0;
 
 	});

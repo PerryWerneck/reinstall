@@ -89,6 +89,8 @@
 		::Gtk::Grid grid;
 
 	public:
+		::Gtk::LinkButton help;
+
 		Item(Udjat::Menu::Item *menu, const Udjat::XML::Node &node);
 
 	};
