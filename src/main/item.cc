@@ -84,7 +84,7 @@
 
 	items.push_back(item);
 
-	item->set_name((group->get_name() + "." + XML::StringFactory(node,"name")).c_str());
+	item->set_name((group->get_name() + "-" + XML::StringFactory(node,"name")).c_str());
 
 	// The group URL
 	{
@@ -127,10 +127,19 @@
 
 	Glib::signal_idle().connect([this,item,group,active](){
 
+		item->signal_toggled().connect([this,item](){
+			if(item->get_active()) {
+				Logger::String{"Selecting '",item->get_name().c_str(),"' (",item->get_text(),")"}.trace("mainwindow");
+				this->selected = item;
+				buttons.apply.set_sensitive();
+			}
+		});
+
 		group->push_back(*item);
 		if(active) {
 			item->set_active(true);
 		}
+		item->toggled();
 
 		if(!item->help.get_uri().empty()) {
 			item->help.set_hexpand(false);

@@ -93,9 +93,14 @@
 
 		Item(Udjat::Menu::Item *menu, const Udjat::XML::Node &node);
 
+		inline std::string get_text() const {
+			return title.get_text();
+		}
 	};
 
 	std::vector<std::shared_ptr<Item>> items;
+
+	std::shared_ptr<Item> selected;
 
  public:
 
