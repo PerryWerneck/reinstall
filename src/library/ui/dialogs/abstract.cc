@@ -42,6 +42,27 @@
 		message = XML::QuarkFactory(node,"message").c_str();
 		secondary = XML::QuarkFactory(node,"secondary").c_str();
 
+		{
+			XML::Node parent;
+
+			parent = node.parent();
+			while(!(title && *title) && parent) {
+				title = XML::QuarkFactory(parent,"title").c_str();
+				parent = node.parent();
+			}
+
+			parent = node.parent();
+			while(!(icon && *icon) && parent) {
+				icon = XML::QuarkFactory(parent,"icon-name").c_str();
+				parent = node.parent();
+			}
+		}
+
+		debug("-----------------------------------------------------------------------------------------");
+		debug("title=",title);
+		debug("message=",title);
+		debug("icon=",icon);
+
 		if(!(secondary && *secondary)) {
 			Udjat::String text{node.child_value()};
 			text.strip();

@@ -35,8 +35,20 @@
 
 	Gtk::Progress::Progress(::Gtk::Window &parent, const Udjat::Dialog &dialog) {
 
+		text.title = dialog.message;
+		widgets.title.set_text(text.title.c_str());
+
+		text.message = dialog.secondary;
+		widgets.message.set_text(text.message.c_str());
+
 		set_modal(true);
 		set_transient_for(parent);
+
+		if(dialog.title && *dialog.title) {
+			set_title(dialog.title);
+		} else {
+			set_title(parent.get_title());
+		}
 
 		auto &content_area = *get_content_area();
 
@@ -254,7 +266,6 @@
 		if(rc == -1 && !error_message.empty()) {
 			throw runtime_error(error_message);
 		}
-
 
 		return rc;
 

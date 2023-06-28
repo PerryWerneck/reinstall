@@ -96,8 +96,6 @@
 
 		};
 
-	protected:
-
 		/// @brief The dialog icon.
 		const char *icon = "";
 
@@ -116,8 +114,6 @@
 		/// @brief Scan for tag "<dialog name='name'>" and setup dialog from it.
 		/// @return true if the dialog was set.
 		bool setup(const char *name, const XML::Node &node);
-
-	public:
 
 		constexpr Dialog() {
 		}

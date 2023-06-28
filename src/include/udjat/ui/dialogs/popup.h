@@ -23,7 +23,7 @@
 
  namespace Udjat {
 
-	/// @brief Abstract progress dialog.
+	/// @brief Abstract popup dialog.
 	class UDJAT_API Dialog::Popup {
 	private:
 		bool running = true;

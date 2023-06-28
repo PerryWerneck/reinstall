@@ -105,8 +105,8 @@
 		}
 
 		vector<Button> buttons = {
+			{ 1, no	 },
 			{ 0, yes },
-			{ 1, no	 }
 		};
 
 		return run(dialog,buttons) == 0;

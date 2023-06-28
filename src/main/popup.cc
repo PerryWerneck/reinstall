@@ -18,12 +18,12 @@
  */
 
  /**
-  * @brief Implement task with progress dialog.
+  * @brief Implements popup dialog.
   */
 
  #include <config.h>
  #include <private/mainwindow.h>
- #include <udjat/ui/gtk/progress.h>
+ #include <udjat/ui/gtk/popup.h>
  #include <udjat/tools/threadpool.h>
  #include <memory>
 
@@ -31,6 +31,6 @@
  using namespace ::Gtk;
  using namespace std;
 
- int MainWindow::run(const Udjat::Dialog &dialog, const std::function<int(Udjat::Dialog::Progress &progress)> &task) {
-	return Udjat::Gtk::Progress{*this,dialog}.run(task);
+ int MainWindow::run(const Udjat::Dialog &dialog, const std::vector<Udjat::Dialog::Button> &buttons) {
+	return Udjat::Gtk::Popup{*this,dialog,buttons}.run();
  }

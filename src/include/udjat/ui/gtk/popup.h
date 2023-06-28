@@ -18,19 +18,34 @@
  */
 
  /**
-  * @brief Implement task with progress dialog.
+  * @brief Describe GTK Progress dialog.
   */
 
- #include <config.h>
- #include <private/mainwindow.h>
- #include <udjat/ui/gtk/progress.h>
- #include <udjat/tools/threadpool.h>
- #include <memory>
+ #pragma once
+ #include <udjat/defs.h>
+ #include <gtkmm.h>
+ #include <glibmm/i18n.h>
+ #include <udjat/ui/dialogs/popup.h>
+ #include <udjat/ui/gtk/label.h>
 
- using namespace Udjat;
- using namespace ::Gtk;
- using namespace std;
+ namespace Udjat {
 
- int MainWindow::run(const Udjat::Dialog &dialog, const std::function<int(Udjat::Dialog::Progress &progress)> &task) {
-	return Udjat::Gtk::Progress{*this,dialog}.run(task);
+	namespace Gtk {
+
+		class Popup : public ::Gtk::MessageDialog, public Udjat::Dialog::Popup {
+		public:
+			Popup(::Gtk::Window &parent, const char *message = "", const char *secondary = "");
+			Popup(::Gtk::Window &parent, const Udjat::Dialog &dialog, const std::vector<Udjat::Dialog::Button> &buttons);
+
+			virtual ~Popup();
+
+			void set(const Udjat::Dialog &dialog) override;
+			void enable(int id, bool enabled = true) override;
+			int run();
+			int run(const std::function<int(Udjat::Dialog::Popup &popup)> &task);
+
+		};
+
+	}
+
  }
