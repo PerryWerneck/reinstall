@@ -40,24 +40,30 @@
  using namespace ::Gtk;
 
  MainWindow::Group::Group(const XML::Node &node) :
-
-	label{node,"title"}, body{XML::StringFactory(node,"sub-title").c_str()} {
-
-	set_name(XML::StringFactory(node,"name").c_str());
+	::Gtk::Box{::Gtk::ORIENTATION_VERTICAL},label{node,"title"}, subtitle{XML::StringFactory(node,"sub-title").c_str()} {
 
 	// Setup group.
+	set_name(XML::StringFactory(node,"name").c_str());
+	get_style_context()->add_class("group-box");
+
 	set_hexpand(true);
+	set_vexpand(false);
 	set_halign(ALIGN_FILL);
 
 	set_vexpand(false);
 	set_valign(ALIGN_START);
 
-	// The group title.
+	// The title box
+	title.set_halign(ALIGN_START);
+	title.set_hexpand(false);
+	title.set_vexpand(false);
+	title.get_style_context()->add_class("group-title-box");
+
+	// The title text.
 	label.set_hexpand(false);
 	label.set_vexpand(false);
-	get_style_context()->add_class("group-box");
 	label.get_style_context()->add_class("group-title");
-	attach(label,1,0,1,1);
+	title.pack_start(label);
 
 	// Check help link.
 	{
@@ -73,21 +79,32 @@
 
 			// https://specifications.freedesktop.org/icon-naming-spec/latest/ar01s04.html
 			linkbutton.set_image_from_icon_name("help-faq");
-			attach_next_to(linkbutton,label,::Gtk::POS_RIGHT);
+			title.pack_start(linkbutton);
 		}
 	}
 
+	pack_start(title);
 
 	// The group sub-title
-	if(body) {
-		body.set_hexpand(true);
-		body.set_vexpand(false);
-		body.get_style_context()->add_class("group-subtitle");
-		attach(body,1,1,3,1);
+	if(subtitle) {
+		subtitle.set_hexpand(true);
+		subtitle.set_vexpand(false);
+		subtitle.get_style_context()->add_class("group-subtitle");
+		pack_start(subtitle);
 	}
 
-	// The box for group actions.
-	actions.get_style_context()->add_class("group-actions");
-	attach(actions,1,2,2,1);
+ }
 
- };
+  void MainWindow::Group::push_back(::Gtk::Widget &child) {
+
+ 	child.set_halign(ALIGN_FILL);
+	child.set_hexpand(true);
+	child.set_vexpand(false);
+	child.get_style_context()->add_class("group-item");
+
+	pack_start(child);
+	show_all();
+
+  }
+
+

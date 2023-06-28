@@ -60,19 +60,17 @@
 	void set_icon_name(const char *icon_name);
 	void set_icon(const char *name);
 
-	class Group : public Gtk::Grid {
+	class Group : public Gtk::Box {
 	private:
 		Udjat::Label label;
-		Udjat::Label body;
+		Udjat::Label subtitle;
 		Gtk::LinkButton linkbutton;
-		Gtk::Box actions{Gtk::ORIENTATION_VERTICAL};
+		Gtk::Box title{Gtk::ORIENTATION_HORIZONTAL};
 
 	public:
 		Group(const Udjat::XML::Node &node);
 
-		inline void append(Gtk::Widget &child) {
-			actions.pack_end(child);
-		}
+		void push_back(Gtk::Widget &child);
 
 	};
 

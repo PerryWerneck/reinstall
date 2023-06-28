@@ -79,26 +79,29 @@
 	margin: 6px;
 }
 
-.group-title-box {
-	margin-bottom: 6px;
+.group-box {
+	margin-left: 6px;
 }
 
-.group-box {
-	padding: 12px;
+.group-title-box {
+	margin-top: 12px;
+	margin-bottom: 0px;
 }
 
 .group-title {
 	font-weight: bold;
+	margin: 0px;
 }
 
 .group-subtitle {
 	font-size: 80%;
 	opacity: 0.9;
+	margin: 0px;
 }
 
-.group-actions {
+.group-item {
 	margin-top: 6px;
-	margin-left: 6px;
+	margin-left: 12px;
 }
 
 .action-subtitle {

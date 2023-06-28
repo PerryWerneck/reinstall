@@ -216,6 +216,7 @@
 		<Unit filename="src/library/writers/abstract.cc" />
 		<Unit filename="src/library/writers/file.cc" />
 		<Unit filename="src/main/group.cc" />
+		<Unit filename="src/main/item.cc" />
 		<Unit filename="src/main/main.cc" />
 		<Unit filename="src/main/progress.cc" />
 		<Unit filename="src/main/window.cc" />

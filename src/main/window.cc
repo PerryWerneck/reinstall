@@ -331,8 +331,6 @@
 
 	layout.view.add(*group);
 
-	debug("---------------------------->",group->get_name().c_str());
-
 	return group;
 
  }
@@ -360,64 +358,4 @@
 
  }
 
- // http://transit.iut2.upmf-grenoble.fr/doc/gtkmm-3.0/reference/html/classGtk_1_1RadioButton.html
- MainWindow::Item::Item(Menu::Item *m, const Udjat::XML::Node &node) :
-	menu{m},
-	title{node,"title"},
-	subtitle{node,"sub-title"},
-	icon{node,::Gtk::ICON_SIZE_DND,"icon-name"} {
 
-	static ::Gtk::RadioButton::Group group;
-
-	set_group(group);
-
-	set_hexpand(true);
-	set_vexpand(false);
-	set_valign(ALIGN_START);
-	set_halign(ALIGN_FILL);
-
-	set_inconsistent();
-	set_mode(false);
-
-	get_style_context()->add_class("action-button");
-	grid.get_style_context()->add_class("action-container");
-	title.get_style_context()->add_class("action-title");
-
-	grid.attach(title,1,0,2,1);
-
-	if(subtitle) {
-		subtitle.get_style_context()->add_class("action-subtitle");
-		grid.attach(subtitle,1,1,2,1);
-	}
-
-	if(XML::StringFactory(node,"show-icon","value","true").as_bool(true)) {
-		icon.get_style_context()->add_class("action-icon");
-		grid.attach(icon,0,0,1,2);
-	}
-
-	add(grid);
-
-	show_all();
-
- }
-
- void MainWindow::push_back(Menu::Item *menu, const XML::Node &node) {
-
-	auto item = make_shared<MainWindow::Item>(menu,node);
-	auto group = find(node,"group");
-
-	items.push_back(item);
-
-	Glib::signal_idle().connect([this,item,group](){
-
-		group->show_all();
-		group->append(*item);
-
-		return 0;
-	});
-
- }
-
- void MainWindow::remove(const Udjat::Menu::Item *menu) {
-	debug("--------------------> Implement Menu::Item::",__FUNCTION__);
- }
