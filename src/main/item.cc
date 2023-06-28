@@ -158,3 +158,4 @@
 
  void MainWindow::remove(const Udjat::Menu::Item *menu) {
  }
+

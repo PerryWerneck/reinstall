@@ -37,6 +37,8 @@
 
  #include <libreinstall/kernelparameter.h>
 
+ #include <unistd.h>
+
  using namespace std;
  using namespace Udjat;
 
@@ -393,6 +395,8 @@
 			// Step 1, get files, prepare for build.
 			Logger::String{"Preparing"}.info(name());
 			dcntrl.run(dialogs.progress,[this,&files](Dialog::Progress &dialog) {
+				dialog.title(dialogs.title);
+				dialog.message(_("Preparing"));
 				prepare(dialog,files);
 				return 0;
 			});
@@ -401,6 +405,8 @@
 			Logger::String{"Building"}.info(name());
 			std::shared_ptr<Reinstall::Builder> builder{BuilderFactory()};
 			dcntrl.run(dialogs.progress,[this,builder,&files](Dialog::Progress &dialog) {
+				dialog.title(dialogs.title);
+				dialog.message(_("Building"));
 				build(dialog,builder,files);
 				return 0;
 			});
@@ -411,6 +417,8 @@
 			// Step 4, write image.
 			Logger::String{"Writing"}.info(name());
 			dcntrl.run(dialogs.progress,[this,builder,writer](Dialog::Progress &dialog) {
+				dialog.title(dialogs.title);
+				dialog.message(_("Writing"));
 				write(dialog,builder,writer);
 				return 0;
 			});

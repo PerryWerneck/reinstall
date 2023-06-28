@@ -100,11 +100,22 @@
 	buttons.apply.set_sensitive(false);
 	buttons.apply.signal_clicked().connect([&]() {
 
+		debug("Apply!");
+
 		buttons.apply.set_sensitive(false);
 		buttons.cancel.set_sensitive(false);
 		layout.view.set_sensitive(false);
 
-		// TODO: Activate selected option
+		if(selected) {
+
+			Logger::String{"Activating '",selected->get_name().c_str(),"' by user action"}.trace("mainwindow");
+			selected->activate();
+
+		} else {
+
+			Logger::String{"'selected' is empty, cant apply"}.error("mainwindow");
+
+		}
 
 		buttons.apply.set_sensitive(true);
 		buttons.cancel.set_sensitive(true);

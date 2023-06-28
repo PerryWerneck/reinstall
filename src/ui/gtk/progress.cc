@@ -148,14 +148,16 @@
 	void Gtk::Progress::title(const char *title)  {
 		text.title = title;
 		Glib::signal_idle().connect([this](){
+			debug("title='",text.title.c_str(),"'");
 			widgets.title.set_text(text.title.c_str());
 			return 0;
 		});
 	}
 
 	void Gtk::Progress::message(const char *message)  {
-		text.title = message;
+		text.message = message;
 		Glib::signal_idle().connect([this](){
+			debug("message='",text.message.c_str(),"'");
 			widgets.message.set_text(text.message.c_str());
 			return 0;
 		});

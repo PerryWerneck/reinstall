@@ -96,6 +96,11 @@
 		inline std::string get_text() const {
 			return title.get_text();
 		}
+
+		inline void activate() {
+			menu->activate();
+		}
+
 	};
 
 	std::vector<std::shared_ptr<Item>> items;
