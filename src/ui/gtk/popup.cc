@@ -36,7 +36,7 @@
  namespace Udjat {
 
 	Gtk::Popup::Popup(::Gtk::Window &parent, const char *message, const char *secondary) :
-		::Gtk::MessageDialog{parent,String{"<b><big>",message,"</big></b>"}.c_str(),true,::Gtk::MESSAGE_INFO,::Gtk::BUTTONS_NONE,true} {
+		::Gtk::MessageDialog{parent,String{"<big>",message,"</big>"}.c_str(),true,::Gtk::MESSAGE_INFO,::Gtk::BUTTONS_NONE,true} {
 
 		Logger::String{"Popup:\n",message,"\n",(secondary ? secondary : "")}.trace("popup");
 
@@ -119,18 +119,29 @@
 	}
 
 	bool Gtk::Popup::set_label(int id, const char *label) {
-		auto widget = get_widget_for_response(id);
-		if(widget) {
-			::Gtk::Button * button = dynamic_cast<::Gtk::Button *>(widget);
-			if(button) {
-				button->set_label(label);
-				return true;
+
+		std::shared_ptr<string> text{std::make_shared<string>(label)};
+
+		bool rc = false;
+		Glib::signal_idle().connect([this,id,text,&rc](){
+
+			auto widget = get_widget_for_response(id);
+			if(widget) {
+				::Gtk::Button * button = dynamic_cast<::Gtk::Button *>(widget);
+				if(button) {
+					button->set_label(text->c_str());
+					rc = true;
+				} else {
+					Logger::String{"Widget for id '",id,"' is not a button"}.error("popup");
+				}
+			} else {
+				Logger::String{"Can't get widget for id '",id,"'"}.error("popup");
 			}
-			Logger::String{"Widget for id '",id,"' is not a button"}.error("popup");
-		} else {
-			Logger::String{"Can't get widget for id '",id,"'"}.error("popup");
-		}
-		return false;
+
+			return 0;
+		});
+
+		return rc;
 	}
 
 	int Gtk::Popup::run() {
@@ -160,51 +171,43 @@
 
 	int Gtk::Popup::run(const std::function<int(Udjat::Dialog::Popup &popup)> &task) {
 
+		::Gtk::Dialog::show_all();
+
+		// Widget is showing, start background thread.
 		std::string error_message;
 		auto mainloop = Glib::MainLoop::create();
 
-		// We cant start thread before the widget initialization is complete.
-		auto connection = signal_show().connect([this,task,&error_message,&mainloop]{
+		Udjat::ThreadPool::getInstance().push([this,task,&error_message,&mainloop](){
 
-			// Widget is showing, start background thread.
-			auto application = ::Gtk::Application::get_default();
-			application->mark_busy();
-			Udjat::ThreadPool::getInstance().push([this,task,&error_message,&mainloop](){
+			usleep(200);
 
-				usleep(100);
+			try {
 
-				try {
-
-					int rc = task(*this);
-					if(running) {
-						response = rc;
-					}
-
-				} catch(const std::exception &e) {
-					response = -1;
-					error_message = e.what();
-					Logger::String{error_message}.error("ui-task");
-				} catch(...) {
-					response = -1;
-					error_message = _("Unexpected error on background task");
-					Logger::String{error_message}.error("ui-task");
+				int rc = task(*this);
+				if(running) {
+					response = rc;
 				}
 
-				Glib::signal_idle().connect([mainloop](){
-					mainloop->quit();
-					return 0;
-				});
+			} catch(const std::exception &e) {
+				response = -1;
+				error_message = e.what();
+				Logger::String{error_message}.error("ui-task");
+			} catch(...) {
+				response = -1;
+				error_message = _("Unexpected error on background task");
+				Logger::String{error_message}.error("ui-task");
+			}
 
+			Glib::signal_idle().connect([mainloop](){
+				mainloop->quit();
+				return 0;
 			});
-			application->unmark_busy();
 
 		});
 
-		::Gtk::Dialog::show_all();
+		debug("Waiting for dialog");
 		mainloop->run();
 		::Gtk::Dialog::hide();
-
-		connection.disconnect();
 
 		if(response == -1 && !error_message.empty()) {
 			throw runtime_error(error_message);
