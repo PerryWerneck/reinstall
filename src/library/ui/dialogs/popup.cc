@@ -48,6 +48,7 @@
 	}
 
 	bool Dialog::Popup::set_label(int, const char *) {
+		Logger::String{"The popup back end is unable to change labels, ignoring"}.warning("ui");
 		return false;
 	}
 

@@ -193,20 +193,21 @@
 												&& (minor(st.st_rdev) & 15) == 0
 												) {
 
+												Logger::String{"Device /dev/",device.name," is valid"}.trace("usbwriter");
+												if(device.fd > 0) {
+													::close(device.fd);
+													Logger::String{"Replacing ",device.name," with ",event->name}.warning("usbwriter");
+												}
+
 												device.name = event->name;
 												device.fd = devfd;
 
-												Logger::String{"Device /dev/",device.name," is valid"}.trace("usbwriter");
 												popup.set_label(0,confirm.c_str());
 												popup.enable(0);
 
 											} else {
 
 												Logger::String{"Ignoring device /dev/",event->name}.trace("usbwriter");
-												::close(devfd);
-												devfd = -1;
-												popup.set_label(0,detecting.c_str());
-												popup.disable(0);
 
 											}
 										}

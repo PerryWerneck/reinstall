@@ -122,6 +122,8 @@
 
 		std::shared_ptr<string> text{std::make_shared<string>(label)};
 
+		debug("id=",id," label=",label);
+
 		bool rc = false;
 		Glib::signal_idle().connect([this,id,text,&rc](){
 
@@ -129,6 +131,7 @@
 			if(widget) {
 				::Gtk::Button * button = dynamic_cast<::Gtk::Button *>(widget);
 				if(button) {
+					debug("Button ",id," label set to '",text->c_str(),"'");
 					button->set_label(text->c_str());
 					rc = true;
 				} else {
