@@ -20,8 +20,41 @@
  #include <config.h>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
+
+ #include <udjat/defs.h>
+ #include <udjat/ui/gtk/application.h>
+
  #include <private/mainwindow.h>
 
+ int main(int argc, char* argv[]) {
+
+	/// @brief The application object.
+ 	class Application : public Udjat::Gtk::Application {
+	private:
+		Application(const char *application_id) : Udjat::Gtk::Application{application_id} {
+		}
+
+	public:
+		static Glib::RefPtr<Application> create() {
+
+#ifdef DEBUG
+			Udjat::Logger::enable(Udjat::Logger::Trace);
+			Udjat::Logger::enable(Udjat::Logger::Debug);
+			Udjat::Logger::console(true);
+#endif // DEBUG
+
+			auto application = Glib::RefPtr<Application>{new Application(PRODUCT_ID "." PACKAGE_NAME)};
+			set_default(application);
+			return application;
+
+		}
+
+ 	};
+
+ 	return Application::create()->run(argc,argv);
+
+ }
+ /*
  using namespace std;
  using namespace Udjat;
  using namespace ::Gtk;
@@ -36,7 +69,7 @@
 		{ G_LOG_FLAG_RECURSION,	Logger::Info		},
 		{ G_LOG_FLAG_FATAL,		Logger::Error		},
 
-		/* GLib log levels */
+		// GLib log levels
 		{ G_LOG_LEVEL_ERROR,	Logger::Error		},
 		{ G_LOG_LEVEL_CRITICAL,	Logger::Error		},
 		{ G_LOG_LEVEL_WARNING,	Logger::Warning		},
@@ -76,7 +109,6 @@
 
 	g_log_set_default_handler(g_syslog,NULL);
 
-	/*
 	for(int ix = 1; ix < argc; ix++) {
 
 		const char *ptr = argv[ix];
@@ -107,8 +139,8 @@
 		}
 
 	}
-	*/
 
 	return gui_mode();
 
  }
+ */

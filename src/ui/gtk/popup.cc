@@ -167,6 +167,8 @@
 		auto connection = signal_show().connect([this,task,&error_message,&mainloop]{
 
 			// Widget is showing, start background thread.
+			auto application = ::Gtk::Application::get_default();
+			application->mark_busy();
 			Udjat::ThreadPool::getInstance().push([this,task,&error_message,&mainloop](){
 
 				usleep(100);
@@ -194,6 +196,7 @@
 				});
 
 			});
+			application->unmark_busy();
 
 		});
 

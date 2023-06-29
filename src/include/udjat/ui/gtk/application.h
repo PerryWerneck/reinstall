@@ -18,7 +18,7 @@
  */
 
  /**
-  * @brief Declare GTK Label widget for udjat.
+  * @brief Brief description of this source.
   */
 
  #pragma once
@@ -27,26 +27,32 @@
  #include <glibmm/i18n.h>
 
  #include <udjat/defs.h>
- #include <udjat/tools/xml.h>
+ #include <udjat/tools/application.h>
 
  namespace Udjat {
 
-	class UDJAT_API Label : public ::Gtk::Label {
-	public:
-		Label(const char *text, ::Gtk::Align halign = ::Gtk::ALIGN_START, ::Gtk::Align valign = ::Gtk::ALIGN_CENTER) : ::Gtk::Label(text,halign,valign) {
-		}
+	namespace Gtk {
 
-		Label(const Udjat::XML::Node &node, const char *attrname, const char *def = "");
+		class Application : public Udjat::Application, public ::Gtk::Application {
+		protected:
+			Application(const Glib::ustring& application_id);
 
-		inline operator bool() const {
-			return !get_text().empty();
-		}
+			inline Application(const char *application_id) : Udjat::Gtk::Application{Glib::ustring{application_id}} {
+			}
 
-		inline Label & operator = (const char *value) {
-			set_text(value);
-			return *this;
-		}
+			int run(const char *definitions = nullptr) override;
 
-	};
+		public:
+			virtual ~Application();
+
+			static Glib::RefPtr<Application> create(const char *application_id);
+
+			inline int run(int argc, char* argv[]) {
+				return Udjat::Application::run(argc,argv);
+			}
+
+		};
+
+	}
 
  }

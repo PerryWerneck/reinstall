@@ -116,6 +116,7 @@
 		<Unit filename="src/include/udjat/ui/dialog.h" />
 		<Unit filename="src/include/udjat/ui/dialogs/popup.h" />
 		<Unit filename="src/include/udjat/ui/dialogs/progress.h" />
+		<Unit filename="src/include/udjat/ui/gtk/application.h" />
 		<Unit filename="src/include/udjat/ui/gtk/icon.h" />
 		<Unit filename="src/include/udjat/ui/gtk/label.h" />
 		<Unit filename="src/include/udjat/ui/gtk/popup.h" />
@@ -232,6 +233,7 @@
 		<Unit filename="src/modules/netinstall/init.cc" />
 		<Unit filename="src/modules/netinstall/private.h" />
 		<Unit filename="src/os/linux/logo.cc" />
+		<Unit filename="src/ui/gtk/application.cc" />
 		<Unit filename="src/ui/gtk/icon.cc" />
 		<Unit filename="src/ui/gtk/label.cc" />
 		<Unit filename="src/ui/gtk/popup.cc" />

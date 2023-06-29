@@ -53,7 +53,6 @@
 		auto &content_area = *get_content_area();
 
 		set_decorated(false);
-
 		set_default_size(500,-1);
 
 		get_style_context()->add_class("dialog-progress");
@@ -227,6 +226,8 @@
 		auto connection = signal_show().connect([this,task,&error_message]{
 
 			// Widget is showing, start background thread.
+			auto application = ::Gtk::Application::get_default();
+			application->mark_busy();
 			Udjat::ThreadPool::getInstance().push([this,task,&error_message](){
 
 				usleep(100);
@@ -255,6 +256,7 @@
 				});
 
 			});
+			application->unmark_busy();
 
 		});
 
