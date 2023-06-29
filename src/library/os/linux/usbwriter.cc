@@ -54,13 +54,10 @@
 
  namespace Reinstall {
 
-	UsbWriter::UsbWriter(int f) : fd{f} {
+	UsbWriter::UsbWriter(int fd) : Udjat::File::Handler{fd} {
 	}
 
 	UsbWriter::~UsbWriter() {
-		if(fd > 0) {
-			::close(fd);
-		}
 	}
 
 	unsigned long long UsbWriter::size() {
@@ -73,10 +70,11 @@
 	}
 
 	size_t UsbWriter::write(unsigned long long offset, const void *contents, size_t length) {
-		throw runtime_error("Incomplete");
+		return Udjat::File::Handler::write(offset,contents,length);
 	}
 
 	void UsbWriter::finalize() {
+		::fsync(fd);
 	}
 
 	shared_ptr<Writer> UsbWriter::factory(const char *title, unsigned long long) {
@@ -207,6 +205,11 @@
 
 											} else {
 
+												// Lock failed.
+												if(devfd > 0) {
+													::close(devfd);
+												}
+
 												Logger::String{"Ignoring device /dev/",event->name}.trace("usbwriter");
 
 											}
@@ -232,7 +235,7 @@
 
 							}
 
-							bytes = read(fd, buffer, INOTIFY_EVENT_BUF_LEN);
+							bytes = ::read(fd, buffer, INOTIFY_EVENT_BUF_LEN);
 
 						}
 

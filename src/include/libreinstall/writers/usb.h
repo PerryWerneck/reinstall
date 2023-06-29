@@ -24,13 +24,11 @@
  #pragma once
  #include <udjat/defs.h>
  #include <libreinstall/writer.h>
+ #include <udjat/tools/file/handler.h>
 
  namespace Reinstall {
 
-	class UDJAT_API UsbWriter : public Writer {
-	private:
-		int fd = -1;
-
+	class UDJAT_API UsbWriter : public Writer, private Udjat::File::Handler {
 	public:
 		UsbWriter(int fd);
 		virtual ~UsbWriter();
