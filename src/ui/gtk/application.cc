@@ -136,11 +136,30 @@
 		mainloop->run();
 		dialog.hide();
 
-		if(rc == -1 && !error_message.empty()) {
-			throw runtime_error(error_message);
+		if(rc) {
+
+			Logger::String{"Initialization procedure has finished with rc=",rc}.error(name());
+
+			::Gtk::MessageDialog dialog_fail{
+				_("The initialization procedure has failed, the application cant continue"),
+				false,
+				::Gtk::MESSAGE_ERROR,
+				::Gtk::BUTTONS_CLOSE,
+				true
+			};
+
+			dialog_fail.set_default_size(500, -1);
+			if(!error_message.empty()) {
+ 				dialog_fail.set_secondary_text(error_message);
+			}
+			dialog_fail.show();
+			dialog_fail.run();
+
+			return rc;
+
 		}
 
-		return rc;
+		return ::Gtk::Application::run(0,NULL);
 
 	}
 

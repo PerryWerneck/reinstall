@@ -1,7 +1,7 @@
 /* SPDX-License-Identifier: LGPL-3.0-or-later */
 
 /*
- * Copyright (C) 2023 Perry Werneck <perry.werneck@gmail.com>
+ * Copyright (C) 2021 Perry Werneck <perry.werneck@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -17,42 +17,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- /**
-  * @brief Brief description of this source.
-  */
-
  #pragma once
 
+ #include <config.h>
+ #include <udjat/defs.h>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
+ #include <udjat/ui/gtk/application.h>
+ #include <private/mainwindow.h>
 
- #include <udjat/defs.h>
- #include <udjat/tools/application.h>
+ /// @brief The application object.
+ class UDJAT_PRIVATE Application : public Udjat::Gtk::Application {
+ private:
 
- namespace Udjat {
+	MainWindow *window = nullptr;
 
-	namespace Gtk {
-
-		class Application : public Udjat::Application, public ::Gtk::Application {
-		protected:
-			Application(const Glib::ustring& application_id);
-
-			inline Application(const char *application_id) : Udjat::Gtk::Application{Glib::ustring{application_id}} {
-			}
-
-			int run(const char *definitions = nullptr) override final;
-
-		public:
-			virtual ~Application();
-
-			static Glib::RefPtr<Application> create(const char *application_id);
-
-			inline int run(int argc, char* argv[]) {
-				return Udjat::Application::run(argc,argv);
-			}
-
-		};
-
+	Application(const char *application_id) : Udjat::Gtk::Application{application_id} {
 	}
 
- }
+ protected:
+
+	void on_startup() override;
+	void on_activate() override;
+
+	int init(const char *) override;
+
+ public:
+	static Glib::RefPtr<Application> create();
+
+ };

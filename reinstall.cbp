@@ -81,6 +81,7 @@
 		<Unit filename="src/include/libreinstall/writer.h" />
 		<Unit filename="src/include/libreinstall/writers/file.h" />
 		<Unit filename="src/include/libreinstall/writers/usb.h" />
+		<Unit filename="src/include/private/application.h" />
 		<Unit filename="src/include/private/dialogs.h" />
 		<Unit filename="src/include/private/mainwindow.h" />
 		<Unit filename="src/include/private/mirror.h" />
@@ -218,6 +219,7 @@
 		<Unit filename="src/library/worker.cc" />
 		<Unit filename="src/library/writers/abstract.cc" />
 		<Unit filename="src/library/writers/file.cc" />
+		<Unit filename="src/main/application.cc" />
 		<Unit filename="src/main/group.cc" />
 		<Unit filename="src/main/item.cc" />
 		<Unit filename="src/main/main.cc" />

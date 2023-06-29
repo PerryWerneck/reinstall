@@ -55,8 +55,6 @@
 		Gtk::Button cancel{_("_Cancel"), true};
  	} buttons;
 
-	void on_show() override;
-
 	void set_icon_name(const char *icon_name);
 	void set_icon(const char *name);
 
@@ -108,6 +106,9 @@
 	std::shared_ptr<Item> selected;
 
  public:
+
+	class PropertyFactory;
+	friend class PropertyFactory;
 
 	MainWindow();
 	virtual ~MainWindow();
