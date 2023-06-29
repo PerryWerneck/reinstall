@@ -190,7 +190,6 @@
 		<Unit filename="src/library/os/linux/private.h" />
 		<Unit filename="src/library/os/linux/reboot.cc" />
 		<Unit filename="src/library/os/linux/source.cc" />
-		<Unit filename="src/library/os/linux/usbstorage.cc" />
 		<Unit filename="src/library/os/linux/usbwriter.cc" />
 		<Unit filename="src/library/parameters.cc" />
 		<Unit filename="src/library/repository/construct.cc" />

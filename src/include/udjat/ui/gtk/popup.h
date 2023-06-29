@@ -47,6 +47,7 @@
 
 			void set(const Udjat::Dialog &dialog) override;
 			void enable(int id, bool enabled = true) override;
+			bool set_label(int id, const char *label) override;
 			int run();
 			int run(const std::function<int(Udjat::Dialog::Popup &popup)> &task);
 

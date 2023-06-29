@@ -25,6 +25,7 @@
  #include <fcntl.h>
 
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/configuration.h>
  #include <udjat/tools/intl.h>
  #include <libreinstall/writer.h>
  #include <libreinstall/writers/usb.h>
@@ -86,9 +87,19 @@
 			_("This action will <b>DELETE ALL CONTENT</b> on the device."), // Secondary
 		};
 
+		Config::Value<string> cancel{"usb","cancel",_("Cancel")};
+
 		const vector<Dialog::Button> buttons = {
-			{ ECANCELED, 	_("Cancel"),	Dialog::Button::Standard 	},
-			{ 0, 			_("Continue"),	Dialog::Button::Destructive },
+			{
+				ECANCELED,
+				cancel.c_str(),
+				Dialog::Button::Standard
+			},
+			{
+				0,
+				_("Continue"),
+				Dialog::Button::Destructive
+			},
 		};
 
 		//
@@ -118,7 +129,11 @@
 
 			rc = dialog.run([fd,wd,&device](Dialog::Popup &popup){
 
+				Config::Value<string> detecting{"usb","detecting",_("Detecting device")};
+				Config::Value<string> confirm{"usb","continue",_("Continue")};
+
 				popup.disable(0);
+				popup.set_label(0,detecting.c_str());
 
 				// Loop until user select device.
 				while(popup) {
@@ -182,6 +197,7 @@
 												device.fd = devfd;
 
 												Logger::String{"Device /dev/",device.name," is valid"}.trace("usbwriter");
+												popup.set_label(0,confirm.c_str());
 												popup.enable(0);
 
 											} else {
@@ -189,6 +205,8 @@
 												Logger::String{"Ignoring device /dev/",event->name}.trace("usbwriter");
 												::close(devfd);
 												devfd = -1;
+												popup.set_label(0,detecting.c_str());
+												popup.disable(0);
 
 											}
 										}
@@ -199,6 +217,8 @@
 										if(device.fd > 0 && !strcmp(event->name,device.name.c_str())) {
 											::close(device.fd);
 											device.fd = -1;
+											popup.set_label(0,detecting.c_str());
+											popup.disable(0);
 											device.name.clear();
 										}
 

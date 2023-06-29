@@ -118,6 +118,21 @@
 
 	}
 
+	bool Gtk::Popup::set_label(int id, const char *label) {
+		auto widget = get_widget_for_response(id);
+		if(widget) {
+			::Gtk::Button * button = dynamic_cast<::Gtk::Button *>(widget);
+			if(button) {
+				button->set_label(label);
+				return true;
+			}
+			Logger::String{"Widget for id '",id,"' is not a button"}.error("popup");
+		} else {
+			Logger::String{"Can't get widget for id '",id,"'"}.error("popup");
+		}
+		return false;
+	}
+
 	int Gtk::Popup::run() {
 
 		::Gtk::Dialog::show_all();
