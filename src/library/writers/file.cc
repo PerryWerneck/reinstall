@@ -34,6 +34,9 @@
 
  namespace Reinstall {
 
+ 	FileWriter::FileWriter(int fd) : Udjat::File::Handler{fd} {
+ 	}
+
  	FileWriter::FileWriter(const char *filename) : Udjat::File::Handler{filename,true} {
  		Logger::String{"Writer to '",filename,"' was initialized"}.trace(PACKAGE_NAME);
  	}

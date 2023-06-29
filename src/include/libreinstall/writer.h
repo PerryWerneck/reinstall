@@ -26,7 +26,12 @@
 	/// @brief The default image writer.
 	class UDJAT_API Writer {
 	private:
-		static const char *devicename;	///< @brief Device set by user, disable detection dialog.
+
+		///< @brief Device set by user, disable detection dialog.
+		static const char *devicename;
+
+		///< @brief Device length set by user, used only if devicename is set.
+		static unsigned long long devicelength;
 
 	protected:
 		Writer() = default;
@@ -41,11 +46,14 @@
 
 		/// @brief Set a fixed device name.
 		/// @param devicename The device name.
+		static void set_device_name(const char *devicename);
+
+		/// @brief Set length for fixed device name.
 		/// @param length Bytes to allocate on device (if it's a file).
-		static void set_device_name(const char *devicename, unsigned long long length = 0LL);
+		static void set_device_length(unsigned long long length);
 
 		/// @brief Detect USB device, build an image writer for it.
-		static std::shared_ptr<Writer> factory();
+		static std::shared_ptr<Writer> factory(const char *title);
 
 		/// @brief Get device length.
 		/// @return Device length (0 if cant be determined).

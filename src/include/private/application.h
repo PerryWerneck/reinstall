@@ -45,4 +45,8 @@
  public:
 	static Glib::RefPtr<Application> create();
 
+	bool argument(const char *name, const char *value = nullptr) override;
+	bool argument(const char name, const char *value = nullptr) override;
+	void help(std::ostream &out) const noexcept override;
+
  };

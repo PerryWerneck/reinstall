@@ -299,8 +299,8 @@
 			return make_shared<Reinstall::FileWriter>(output.filename);
 		}
 
-		return Reinstall::UsbWriter::factory(dialogs.title);
-
+		debug("Calling default writer");
+		return Reinstall::Writer::factory(dialogs.title);
 	}
 
 	void Action::activate(const ActivationType type) {

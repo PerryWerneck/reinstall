@@ -35,6 +35,9 @@
 
 		class Application : public Udjat::Application, public ::Gtk::Application {
 		protected:
+
+			typedef ::Udjat::Gtk::Application super;
+
 			Application(const Glib::ustring& application_id);
 
 			inline Application(const char *application_id) : Udjat::Gtk::Application{Glib::ustring{application_id}} {

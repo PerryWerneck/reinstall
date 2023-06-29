@@ -30,6 +30,7 @@
 
 	class UDJAT_API FileWriter : public Writer, private Udjat::File::Handler {
 	public:
+		FileWriter(int fd);
 		FileWriter(const char *filename);
 		virtual ~FileWriter();
 

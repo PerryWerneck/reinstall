@@ -19,15 +19,72 @@
 
  #include <config.h>
  #include <udjat/defs.h>
+ #include <udjat/tools/logger.h>
  #include <libreinstall/writer.h>
+ #include <libreinstall/writers/file.h>
+ #include <libreinstall/writers/usb.h>
+
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <stdexcept>
+
+ #ifdef HAVE_UNISTD_H
+	#include <unistd.h>
+ #endif // HAVE_UNISTD_H
+
+ using namespace Udjat;
+ using namespace std;
 
  namespace Reinstall {
+
+	const char * Writer::devicename  = "";
+	unsigned long long Writer::devicelength = 0LL;
+
+	void Writer::set_device_name(const char *dname) {
+		devicename = dname;
+		Logger::String{"Output file set to '",devicename,"'"}.trace("writer");
+	}
+
+	void Writer::set_device_length(unsigned long long dlen) {
+		devicelength = dlen;
+	}
 
 	unsigned long long Writer::size() {
 		return 0;
 	}
 
 	void Writer::finalize() {
+	}
+
+	std::shared_ptr<Writer> Writer::factory(const char *title) {
+
+		debug("Default writer, filename='",devicename,"'");
+		if(devicename && *devicename) {
+
+			Logger::String{"Writing image to '",devicename,"'"}.info("writer");
+
+			int fd = ::open(devicename,O_CREAT|O_TRUNC|O_WRONLY,0644);
+			if(fd < 0) {
+				int err = errno;
+				Logger::String{"Error opening '",devicename,"': ",strerror(err)," (rc=",err,")"}.error("writer");
+				throw system_error(err,system_category(),"Cant create image file");
+			}
+
+			if(devicelength) {
+				if(fallocate(fd,0,0,devicelength)) {
+					int err = errno;
+					::close(fd);
+					Logger::String{"Error allocating '",devicename,"': ",strerror(err)," (rc=",err,")"}.error("writer");
+					throw system_error(err,system_category(),"Cant allocate image file");
+				}
+			}
+
+			return make_shared<Reinstall::FileWriter>(fd);
+
+		}
+
+		return Reinstall::UsbWriter::factory(title);
 	}
 
  }

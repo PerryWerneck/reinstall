@@ -31,11 +31,24 @@
 
  #include <udjat/tools/xml.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/string.h>
 
  #include <private/application.h>
  #include <private/mainwindow.h>
 
+ #include <libreinstall/writer.h>
+
  using namespace std;
+
+ static const struct {
+        char to;
+        const char *from;
+        const char *help;
+ } options[] = {
+        { 'O',  "output",   		"\t\tOutput to file"		},
+        { 'O',  "device",   		"\t\tOutput to device"		},
+        { 'L',  "output-length",	"\tLength of output file"	},
+ };
 
  static const Udjat::ModuleInfo moduleinfo{PACKAGE_NAME " application"};
 
@@ -184,5 +197,46 @@
 
 	return Udjat::Gtk::Application::init(definitions);
 
+ }
+
+ void Application::help(std::ostream &out) const noexcept {
+
+	super::help(out);
+	for(auto &option : options) {
+		out << "  --" << option.from << option.help << endl;
+	}
+
+ }
+
+ bool Application::argument(const char *name, const char *value) {
+
+	for(auto &option : options) {
+		if(!strcasecmp(name,option.from)) {
+			return argument(option.to,value);
+		}
+	}
+
+ 	return super::argument(name,value);
+ }
+
+ bool Application::argument(const char name, const char *value) {
+
+	switch(name) {
+	case 'L':
+		Reinstall::Writer::set_device_length(Udjat::String{value}.as_ull());
+		break;
+
+	case 'O':
+		if(!value) {
+			throw runtime_error("Output file name is requires");
+		}
+		Reinstall::Writer::set_device_name(value);
+		break;
+
+	default:
+		return super::argument(name,value);
+	}
+
+	return true;
  }
 
