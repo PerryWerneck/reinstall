@@ -205,7 +205,7 @@
 		// Get files from URL.
 		if(remote[remote.size()-1] == '/') {
 
-			// It's a folder, get contents.
+			// It's a remote folder, get contents.
 			auto worker = Protocol::WorkerFactory(remote.c_str());
 			worker->mimetype(MimeType::json);
 
@@ -233,11 +233,12 @@
 
 		} else {
 
-			debug("remote=",remote.c_str());
-			debug("local=",local.c_str());
+			// It's a remote file
+			debug("src=",remote.c_str());
+			debug("dst=",imgpath);
 
-
-			throw runtime_error("Single file source was not implemented, yet!");
+			Logger::String{"Adding source file ",remote.c_str()}.write(Logger::Debug,name());
+			files.insert(make_shared<Remote>(remote,imgpath));
 
 		}
 

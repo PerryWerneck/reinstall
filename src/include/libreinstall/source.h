@@ -109,6 +109,7 @@
 			virtual void for_each(const std::function<void(std::shared_ptr<File>)> &worker) = 0;
 			virtual void remove_if(const std::function<bool(const File &)> &worker) = 0;
 			virtual void apply(const Udjat::Abstract::Object &object,const Template &tmpl) = 0;
+			virtual size_t size() const = 0;
 		};
 
 		/// @brief Get list of source files.

@@ -28,6 +28,7 @@
  #include <vector>
 
  #include <libreinstall/action.h>
+ #include <libreinstall/source.h>
  #include <libreinstall/repository.h>
  #include <libreinstall/driverupdatedisk.h>
  #include <udjat/ui/dialogs/progress.h>
@@ -133,15 +134,13 @@
 
 	void Action::prepare(Dialog::Progress &progress, Source::Files &files) const {
 
-		progress.message(_("Getting required files"));
+		progress.message(_("Getting file list"));
 		{
 
 			/// @brief Resolved repositories.
 			std::unordered_map<std::string, Udjat::URL> urls;
 
 			for(auto source : sources) {
-
-				debug("---------------------------------------------------------------");
 
 				URL remote{source->remote()};
 
@@ -279,9 +278,14 @@
 
 		progress.pulse();
 		progress.message(_("Building image"));
+		builder->pre();
+
+		progress.message(_("Getting required files"));
 		{
-			builder->pre();
-			files.for_each([builder](std::shared_ptr<Source::File> file){
+			size_t current = 0;
+			size_t total = files.size();
+			files.for_each([builder,&progress,&current,total](std::shared_ptr<Source::File> file){
+				progress.count(++current,total);
 				builder->push_back(file);
 			});
 
@@ -351,6 +355,10 @@
 		public:
 			void insert(std::shared_ptr<Reinstall::Source::File> file) override {
 				files.insert(file);
+			}
+
+			size_t size() const override {
+				return files.size();
 			}
 
 			void for_each(const std::function<void(std::shared_ptr<Reinstall::Source::File>)> &worker) override {
