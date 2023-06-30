@@ -270,16 +270,7 @@
 					File::Handler fil{filename->c_str(),true};
 
 					file->save([&fil,&progress](unsigned long long current, unsigned long long total, const void *buf, size_t length){
-
 						progress.progress(current,total);
-
-						/*
-						if(current == 0 && total) {
-							Logger::String{"Alocating ",String{}.set_byte(total)," for temporary file"}.trace("iso9660");
-							fil.allocate(total);
-						}
-						*/
-
 						fil.write(current, buf, length);
 					});
 

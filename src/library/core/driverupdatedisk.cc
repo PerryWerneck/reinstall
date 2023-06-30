@@ -41,7 +41,7 @@
 	}
 
 	const std::string DriverUpdateDisk::value() const {
-		return Config::Value<string>{"schemes","disk","hd:"} + this->imgpath;
+		return Config::Value<string>{"schemes","disk","disk:"} + this->imgpath;
 	}
 
 	std::shared_ptr<DriverUpdateDisk> DriverUpdateDisk::factory(const Udjat::XML::Node &node) {

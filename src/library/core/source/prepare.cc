@@ -94,10 +94,19 @@
 			Logger::String{"Getting file from ",worker->url().c_str()}.write(Logger::Debug,"source");
 			Progress::instance().url(worker->url().c_str());
 
-			worker->save([&writer](unsigned long long current, unsigned long long total, const void *buf, size_t length){
-				writer(current,total,buf,length);
-				return true;
-			});
+			try {
+
+				worker->save([&writer](unsigned long long current, unsigned long long total, const void *buf, size_t length){
+					writer(current,total,buf,length);
+					return true;
+				});
+
+			} catch(const std::exception &e) {
+
+				Logger::String{"Error getting ",worker->url().c_str(),": ",e.what()}.error("source");
+				throw;
+
+			}
 
 		}
 
