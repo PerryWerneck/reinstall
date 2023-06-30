@@ -35,6 +35,11 @@
  	class Action : public Reinstall::Action, private iso9660::Settings {
 	public:
 		Action(const XML::Node &node) : Reinstall::Action{node}, iso9660::Settings{node} {
+			debug("----------------------------------> Action created");
+		}
+
+		virtual ~Action() {
+			debug("----------------------------------> Action removed");
 		}
 
 		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {

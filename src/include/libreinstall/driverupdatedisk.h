@@ -18,31 +18,30 @@
  */
 
  /**
-  * @brief Implements abstract menu item.
+  * @brief Declare the driver update disk class.
   */
 
- #include <config.h>
+ #pragma once
  #include <udjat/defs.h>
- #include <udjat/ui/menu.h>
- #include <udjat/tools/logger.h>
- #include <udjat/tools/intl.h>
+ #include <udjat/tools/xml.h>
+ #include <memory>
+ #include <libreinstall/source.h>
+ #include <libreinstall/kernelparameter.h>
 
- #include <stdexcept>
+ namespace Reinstall {
 
- using namespace std;
+	class UDJAT_API DriverUpdateDisk : public Source, public Kernel::Parameter {
+	public:
+		DriverUpdateDisk(const Udjat::XML::Node &node);
 
- namespace Udjat {
+		virtual ~DriverUpdateDisk();
 
-	Menu::Item::Item(const XML::Node &node) {
-		Controller::instance().push_back(this,node);
-	}
+		/// @brief Get kernel parameter value.
+		/// @see Kernel::Parameter
+		const std::string value() const override;
 
-	Menu::Item::~Item() {
-		Controller::instance().remove(this);
-	}
+		static std::shared_ptr<DriverUpdateDisk> factory(const Udjat::XML::Node &node);
 
-	void Menu::Item::activate() {
-		throw logic_error(_("This menu option cant be activated"));
-	}
+	};
 
  }

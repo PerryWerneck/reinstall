@@ -29,6 +29,7 @@
 
  #include <libreinstall/action.h>
  #include <libreinstall/repository.h>
+ #include <libreinstall/driverupdatedisk.h>
  #include <udjat/ui/dialogs/progress.h>
 
  #include <libreinstall/writer.h>
@@ -76,6 +77,14 @@
 
 			}
 
+			return false;
+		});
+
+		// Load DUDsq
+		search(node,"driver-update-disk",[this](const pugi::xml_node &node){
+			auto dud = DriverUpdateDisk::factory(node);
+			sources.push_back(dud);
+			kparms.push_back(dud);
 			return false;
 		});
 
@@ -132,9 +141,12 @@
 
 			for(auto source : sources) {
 
+				debug("---------------------------------------------------------------");
+
 				URL remote{source->remote()};
 
 				const char *reponame = source->repository();
+				debug("reponame='",reponame,"'");
 				if(reponame && *reponame && (remote[0] == '/' || remote[0] == '.')) {
 
 					// Using repository, resolve real URLs
@@ -164,13 +176,18 @@
 						local = repo.path(local.ComponentsFactory().path.c_str());
 					}
 
-					debug("Local=",local.c_str());
-
 					// Get file list
+					Udjat::URL u{it->second};
+					u += remote.c_str();
+
+					debug("Local=",local.c_str());
+					// debug("Repository URL=",it->second.c_str());
+					debug("Remote=",u.c_str());
+
 					source->prepare(
-						local,									// URL on local file system.
-						(it->second + remote.c_str()),			// URL for remote repository.
-						files									// File list.
+						local,				// URL on local file system.
+						u,					// URL for remote repository.
+						files				// File list.
 					);
 
 				} else {

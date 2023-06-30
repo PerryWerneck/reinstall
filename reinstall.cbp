@@ -70,6 +70,7 @@
 		<Unit filename="src/include/libreinstall/builder.h" />
 		<Unit filename="src/include/libreinstall/builders/fat.h" />
 		<Unit filename="src/include/libreinstall/builders/iso9660.h" />
+		<Unit filename="src/include/libreinstall/driverupdatedisk.h" />
 		<Unit filename="src/include/libreinstall/iso9660.h" />
 		<Unit filename="src/include/libreinstall/kernelparameter.h" />
 		<Unit filename="src/include/libreinstall/path.h" />
@@ -132,6 +133,7 @@
 		<Unit filename="src/library/builders/fat.cc" />
 		<Unit filename="src/library/builders/iso9660.cc" />
 		<Unit filename="src/library/controller.cc" />
+		<Unit filename="src/library/core/driverupdatedisk.cc" />
 		<Unit filename="src/library/core/kernelparameter.cc" />
 		<Unit filename="src/library/core/path.cc" />
 		<Unit filename="src/library/core/repository.cc" />
@@ -146,6 +148,7 @@
 		<Unit filename="src/library/dialogs/progress.cc" />
 		<Unit filename="src/library/dialogs/taskrunner.cc" />
 		<Unit filename="src/library/dialogs/window.cc" />
+		<Unit filename="src/library/driverupdatedisk.cc" />
 		<Unit filename="src/library/fatfs/documents/res/app1.c">
 			<Option compilerVar="CC" />
 		</Unit>

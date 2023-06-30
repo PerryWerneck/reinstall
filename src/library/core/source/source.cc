@@ -50,9 +50,16 @@
 			if(path.remote[0] == '/') {
 				// The remote path is relative, use it as image path.
 				imgpath = path.remote;
+
 			} else {
 				// No image path, how can I store this source?
-				throw runtime_error("Cant determine image path source");
+				const char *ptr = strrchr(path.local,'/');
+				if(!ptr) {
+					ptr = path.local;
+				}
+
+				imgpath = String{ptr}.as_quark();
+				Logger::String{"Cant determine image path, using default '",imgpath,"'"}.error(name());
 			}
 
 		}
@@ -79,11 +86,6 @@
 			}
 
 		}
-#ifdef DEBUG
-		else {
-			warning("No SLP service defined, using {}",path.remote);
-		}
-#endif // DEBUG
 
 		if(path.remote && *path.remote) {
 			return URL{path.remote};

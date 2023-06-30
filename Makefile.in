@@ -445,7 +445,7 @@ run: \
 	$(foreach MODULE, $(MODULES), $(BINDBG)/modules/$(MODULE)@DLLEXT@)
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
-		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
+		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ --output=/tmp/test.iso --output-length=21Gb
 
 memcheck: \
 	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@

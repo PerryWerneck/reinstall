@@ -56,15 +56,21 @@
 	Udjat::URL Repository::path(const char *filepath) const {
 
 		if(local && *local) {
-			URL url{"file://",local,filepath};
+			URL url{"file://",local};
+			url += filepath;
 			if(url.test() == 200) {
+				Logger::String{"Accepting local '",url.c_str(),"'"}.trace(name);
 				return url;
 			}
-			Logger::String{"Rejecting source URL ",url.c_str()}.warning(name);
+			Logger::String{"Rejecting local '",url.c_str(),"'"}.warning(name);
 		}
 
 		// Return empty url
 		return Udjat::URL{};
+	}
+
+	static Udjat::URL sanitize(const char *url) {
+		return Udjat::URL{url};
 	}
 
 	Udjat::URL Repository::url() const {
@@ -74,13 +80,13 @@
 		if(slpclient) {
 
 			// SLP is set, try it.
-			Udjat::URL url = slpclient.url();
+			string url = slpclient.url();
 			if(!url.empty()) {
 				Logger::String{"Using slp URL ",url.c_str()}.trace(name);
 				if(repo) {
 					repo->kparm.val = kparm.slpval;
 				}
-				return url;
+				return sanitize(url.c_str());
 			}
 
 		}
@@ -90,7 +96,7 @@
 			repo->kparm.val = remote;
 		}
 
-		return Udjat::URL{remote};
+		return sanitize(remote);
 	}
 
 	void Repository::set_kernel_parameter(const Udjat::XML::Node &node) {

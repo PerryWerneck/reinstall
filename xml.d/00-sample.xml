@@ -44,7 +44,7 @@
 	</repository>
 
 	<!-- Path for the driver update (Full URL or repository path) -->
-	<driver-update-disk name='dud' url='../update.dud' path='/tmp/updates.dud' />	
+	<driver-update-disk name='dud' url='../update.dud' path='/update.dud' repository='install' />	
 
 	<!-- Path for the installation kernel (Full URL or repository path) -->
 	<kernel url='/boot/x86_64/loader/linux' repository='install' />

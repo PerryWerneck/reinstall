@@ -340,14 +340,10 @@
 
 				progress.progress(current,total);
 				writer->write(current,buffer,BUFLEN);
-
 				current += BUFLEN;
-				if(total) {
-					progress.progress(current,total);
-				}
 
 			}
-			progress.progress(current,total);
+			progress.progress(total,total);
 
 		} catch(...) {
 

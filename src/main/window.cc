@@ -107,7 +107,30 @@
 		if(selected) {
 
 			Logger::String{"Activating '",selected->get_name().c_str(),"' by user action"}.trace("mainwindow");
-			selected->activate();
+
+			try {
+
+				selected->activate();
+
+			} catch(const std::exception &e) {
+
+				Logger::String{"Cant activate '",selected->get_name().c_str(),"': ",e.what()}.error("mainwindow");
+
+				::Gtk::MessageDialog dialog{
+					*this,
+					"<big>Operation failed</big>",
+					true,
+					::Gtk::MESSAGE_ERROR,
+					::Gtk::BUTTONS_OK,
+					true
+				};
+
+				dialog.set_title(get_title());
+				dialog.set_secondary_text(e.what());
+				dialog.run();
+
+			}
+
 
 		} else {
 

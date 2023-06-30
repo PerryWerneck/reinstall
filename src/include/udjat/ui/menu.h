@@ -36,7 +36,7 @@
 			virtual ~Item();
 
 			/// @brief Activate menu option.
-			virtual void activate() = 0;
+			virtual void activate();
 
 		};
 

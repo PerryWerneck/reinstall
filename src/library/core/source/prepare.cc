@@ -233,77 +233,15 @@
 
 		} else {
 
+			debug("remote=",remote.c_str());
+			debug("local=",local.c_str());
+
+
 			throw runtime_error("Single file source was not implemented, yet!");
 
 		}
 
 	}
 
-	/*
-	void Source::prepare(const Udjat::URL &url, std::set<std::shared_ptr<File>> &files) const {
-
-		Dialog::Progress &progress = Dialog::Progress::getInstance();
-
-		if(url.scheme() == "file") {
-
-			string local = url.ComponentsFactory().path;
-
-			progress.set_url(url.c_str());
-
-			Logger::String{"Getting file list from ",local.c_str()}.trace(name());
-
-			size_t szpath = local.size();
-			Udjat::File::Path{local.c_str()}.for_each([this,szpath,&files](const Udjat::File::Path &path){
-
-				string target{imgpath};
-				target += (path.c_str()+szpath);
-				debug(target);
-
-				files.emplace(make_shared<Local>(path,target));
-
-				return false;
-
-			},true);
-
-			return;
-		}
-
-		// Get files from URL.
-		if(url[url.size()-1] == '/') {
-
-			// It's a folder, get contents.
-			auto worker = Protocol::WorkerFactory(url.c_str());
-			worker->mimetype(MimeType::json);
-
-			info("Getting file list for {}",worker->url().c_str());
-			progress.set_url(worker->url().c_str());
-
-			auto index = worker->get([&progress](double current, double total){
-				progress.set_progress(current,total);
-				return true;
-			});
-
-			if(index.empty()) {
-				throw runtime_error(Logger::Message(_("Empty response from {}"),url.c_str()));
-			}
-
-			trace(
-				"Got a '{}' response form server '{}'",
-					worker->header("Content-Type").value(),
-					worker->header("Server").value()
-			);
-
-			// FIX-ME: Detect server.
-			apache_mirror(index,worker->url().c_str(),imgpath,files);
-
-
-		} else {
-
-			throw runtime_error("Single file source was not implemented, yet!");
-
-		}
-
-	}
-	*/
 
  }
