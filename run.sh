@@ -19,7 +19,7 @@ isolinux() {
 		create \
 		-f qcow2 \
 		/tmp/reinstall.qcow2 \
-		20G
+		40G
 	if [ "$?" != "0" ]; then
 		exit -1
 	fi

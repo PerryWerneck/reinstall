@@ -23,6 +23,7 @@
  #include <udjat/tools/xml.h>
  #include <udjat/tools/object.h>
  #include <udjat/tools/singleton.h>
+ #include <udjat/tools/configuration.h>
  #include <stdexcept>
  #include <unordered_map>
  #include <vector>
@@ -49,7 +50,7 @@
 	Action *Action::selected = nullptr;
 	Action *Action::def = nullptr;
 
-	Action::Action(const XML::Node &node) : NamedObject{node}, Udjat::Menu::Item{node}, dialogs{node}, output{node} {
+	Action::Action(const XML::Node &node) : NamedObject{node}, Udjat::Menu::Item{node}, dialogs{node}, options{node}, output{node} {
 
 		if(getAttribute(node, "action-defaults", "default", false)) {
 			Action::def = this;
@@ -107,6 +108,18 @@
 	Action::OutPut::OutPut(const Udjat::XML::Node &node)
 		: filename{XML::QuarkFactory(node,"output-file-name").c_str()},
 		  length{XML::StringFactory(node,"length").as_ull()} {
+	}
+
+	Action::BootOptions::BootOptions(const Udjat::XML::Node &node)
+		: label{XML::QuarkFactory(node,"boot-label").c_str()} {
+
+		if(!(label && *label) && node.parent()) {
+			label = Logger::Message{
+						Config::Value<string>("boot","label-template",_("Install {}")).c_str(),
+						node.parent().attribute("name").as_string()
+					}.as_quark();
+		}
+
 	}
 
 	Action::~Action() {
@@ -210,6 +223,17 @@
 	}
 
 	bool Action::getProperty(const char *key, std::string &value) const {
+
+		if(!strcasecmp(key,"boot-label")) {
+
+			if(options.label && *options.label) {
+				value = options.label;
+			} else {
+				value = Udjat::Config::Value<string>("boot","label",_("Install system"));
+			}
+
+			return true;
+		}
 
 		if(!strcasecmp(key,"kernel-parameters")) {
 

@@ -90,6 +90,14 @@
 
 	protected:
 
+		struct BootOptions {
+			/// @brief The text for boot label.
+			const char *label = "";
+
+			BootOptions(const Udjat::XML::Node &node);
+
+		} options;
+
 		/// @brief Ask user for confirmation.
 		virtual bool confirm() const;
 
