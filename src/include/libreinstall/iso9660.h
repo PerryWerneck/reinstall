@@ -75,6 +75,12 @@
 				constexpr Efi() = default;
 				Efi(const Udjat::XML::Node &node);
 
+				/// @brief Depicts the partition table entry which shall describe the appended image.
+				int partition_number = 0x02;
+
+				/// @brief The MBR partition type. E.g. FAT12 = 0x01 , FAT16 = 0x06, Linux Native Partition = 0x83. See fdisk command L.
+				uint8_t partition_type = 0xef;
+
 				bool enabled = true;
 				bool isohybrid = true;
 
