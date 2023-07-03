@@ -96,6 +96,16 @@
 		widgets.footer.pack_start(widgets.left,true,true,0);
 		widgets.footer.pack_end(widgets.right,true,true,0);
 
+		// widgets.left.set_max_width_chars(30);
+		// widgets.left.set_lines(1);
+		widgets.left.set_single_line_mode(true);
+		widgets.left.set_ellipsize(Pango::ELLIPSIZE_END);
+
+		// widgets.right.set_max_width_chars(30);
+		// widgets.right.set_lines(1);
+		widgets.right.set_single_line_mode(true);
+		widgets.right.set_ellipsize(Pango::ELLIPSIZE_START);
+
 		content_area.pack_end(widgets.footer,false,false,6);
 
 		widgets.footer.set_valign(::Gtk::ALIGN_END);
