@@ -77,6 +77,9 @@
 	int Dialog::Controller::run(const Dialog &dialog, const std::vector<Button> &) {
 		debug(__FUNCTION__);
 		Logger::String{"The selected backend cant manage dialogs with buttons, assuming '0' for '",dialog.message,"'"}.warning("ui");
+		if(dialog.secondary && *dialog.secondary) {
+			Logger::String{dialog.secondary}.warning("ui");
+		}
 		errno = ENOTSUP;
 		return 0;
 	}

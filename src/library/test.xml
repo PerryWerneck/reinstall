@@ -21,7 +21,7 @@
 	-->
 	<repository name='install' 
 		remote='http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64' 
-		local='/home/perry/public_html/openSUSE-Leap-15.4-NET-x86_64.disabled' 
+		local='/home/perry/public_html/openSUSE-Leap-15.4-NET-x86_64' 
 		slp-service-type='service:install.suse' 
 		slp-scope-list='' 
 		slp-filter='' 
@@ -29,10 +29,10 @@
 		slp-kernel-parameter='slp:/' 
 	/>
 
-	<!-- source name='boot' url='/boot/x86_64/' repository='install' / -->
-	<!-- source name='efi' url='/EFI/' repository='install' / -->
+	<source name='boot' url='/boot/x86_64/' repository='install' />
+	<source name='efi' url='/EFI/' repository='install' />
 	
-  	<driver-update-disk name='dud' url='../force-404.dud' repository='install' />	
+  	<!-- driver-update-disk name='dud' url='../force-404.dud' repository='install' / -->	
 
 	<kernel-parameter name='splash' value='silent' /> 
 	<kernel-parameter name='lang' value='pt_BR' />

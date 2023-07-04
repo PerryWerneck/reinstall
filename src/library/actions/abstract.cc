@@ -493,10 +493,12 @@
 
 		} catch(const std::exception &e) {
 
+			Logger::String{e.what()}.error(name());
 			dialogs.failed.run(e.what());
 
 		} catch(...) {
 
+			Logger::String{"Unexpected error"}.error(name());
 			dialogs.failed.run(_("Unexpected error"));
 
 		}
