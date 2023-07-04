@@ -202,8 +202,6 @@
 
  void MainWindow::set_icon(const char *icon) {
 
-	debug("aaaaaaaaaaaaaaaaaaaaaaaaaaaa-> ",icon);
-
 	if(access(icon, R_OK)) {
 
 		// File not found, try icon name.
