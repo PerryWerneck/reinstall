@@ -308,7 +308,14 @@
 
 				if(settings.boot.efi) {
 					progress.url(_("Installing efi boot image"));
+
+					Logger::String{"EFI Boot partition set to ",efibootpart.c_str()}.trace("iso9660");
 					set_bootable(efibootpart.c_str(),settings.boot.efi);
+
+					if(settings.boot.efi.image && *settings.boot.efi.image) {
+						Logger::String{"EFI Boot image set to ",settings.boot.efi}.trace("iso9660");
+						add_boot_image(settings.boot.efi.image,0xef);
+					}
 				}
 
 			}

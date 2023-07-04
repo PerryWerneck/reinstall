@@ -141,6 +141,13 @@
 		/// @param partfile	The local file with the EFI boot partition image.
 		void set_bootable(const char *partfile, const Settings::Boot::Efi &boot);
 
+		/// @brief Add a further boot image to the set of El-Torito bootable images.
+		/// @param image_path The absolute path of a IsoFile to be used as boot image.
+		/// @param id A Platform ID as of
+		/// 			El Torito 1.0  : 0x00= 80x86,  0x01= PowerPC,  0x02= Mac
+		/// 			Others         : 0xef= EFI
+		void add_boot_image(const char *isopath, uint8_t id);
+
 	};
 
  }

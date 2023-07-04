@@ -303,6 +303,19 @@
 		iso_write_opts_set_part_like_isohybrid(opts, 1);
 	}
 
+	void Image::add_boot_image(const char *isopath, uint8_t id) {
+
+		ElToritoBootImage *bootimg = NULL;
+		int rc = iso_image_add_boot_image(image,isopath,ELTORITO_NO_EMUL,0,&bootimg);
+		if(rc < 0) {
+			cerr << "iso9660\tError '" << iso_error_to_msg(rc) << "' adding boot image" << endl;
+			throw runtime_error(iso_error_to_msg(rc));
+		}
+
+		el_torito_set_boot_platform_id(bootimg, id);
+
+	}
+
 	void Image::write(std::shared_ptr<Reinstall::Writer> writer) {
 
 		debug("Burning ISO image");
