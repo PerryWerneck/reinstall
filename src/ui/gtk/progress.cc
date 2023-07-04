@@ -71,7 +71,7 @@
 		widgets.title.set_ellipsize(Pango::ELLIPSIZE_START);
 		widgets.header.attach(widgets.title,0,0,1,1);
 
-		widgets.message.get_style_context()->add_class("dialog-message");
+		widgets.message.get_style_context()->add_class("dialog-subtitle");
 		widgets.message.set_hexpand(true);
 		widgets.message.set_vexpand(false);
 		widgets.message.set_valign(::Gtk::ALIGN_START);
