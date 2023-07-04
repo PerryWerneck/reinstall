@@ -202,6 +202,8 @@
 
  void MainWindow::set_icon(const char *icon) {
 
+	debug("aaaaaaaaaaaaaaaaaaaaaaaaaaaa-> ",icon);
+
 	if(access(icon, R_OK)) {
 
 		// File not found, try icon name.
@@ -213,6 +215,8 @@
 		// File exists, use it.
 		if(!set_icon_from_file(icon)) {
 			Logger::String{"Unable to set icon from '",icon,"'"}.error("MainWindow");
+		} else {
+			Logger::String{"Icon set from '",icon,"'"}.trace("MainWindow");
 		}
 
 	}

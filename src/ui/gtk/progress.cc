@@ -179,6 +179,7 @@
 		Glib::signal_idle().connect([this](){
 			debug("message='",text.message.c_str(),"'");
 			widgets.message.set_text(text.message.c_str());
+			pulse();
 			return 0;
 		});
 	}
@@ -223,6 +224,8 @@
 	}
 
 	void Gtk::Progress::pulse()  {
+		debug("Pulse!!");
+		values.changed = false;
 		timer.idle = 1000;
 	}
 

@@ -82,7 +82,7 @@
 			return false;
 		});
 
-		// Load DUDsq
+		// Load DUDs
 		search(node,"driver-update-disk",[this](const pugi::xml_node &node){
 			auto dud = DriverUpdateDisk::factory(node);
 			sources.push_back(dud);
@@ -91,10 +91,7 @@
 		});
 
 		// Load sources.
-		search(node,"source",[this](const pugi::xml_node &node){
-			sources.push_back(Source::factory(node));
-			return false;
-		});
+		load_sources(node);
 
 		// Load templates.
 		search(node,"template",[this](const pugi::xml_node &node){
@@ -108,6 +105,13 @@
 	Action::OutPut::OutPut(const Udjat::XML::Node &node)
 		: filename{XML::QuarkFactory(node,"output-file-name").c_str()},
 		  length{XML::StringFactory(node,"length").as_ull()} {
+	}
+
+	void Action::load_sources(const Udjat::XML::Node &node) {
+		search(node,"source",[this](const pugi::xml_node &node){
+			sources.push_back(Source::factory(node));
+			return false;
+		});
 	}
 
 	Action::BootOptions::BootOptions(const Udjat::XML::Node &node)
