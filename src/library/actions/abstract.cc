@@ -111,7 +111,7 @@
 	}
 
 	Action::BootOptions::BootOptions(const Udjat::XML::Node &node)
-		: label{XML::QuarkFactory(node,"boot-label").c_str()} {
+		: label{XML::QuarkFactory(node,"boot-label").c_str()}, theme{XML::QuarkFactory(node,"boot-theme").c_str()} {
 
 		if(!(label && *label) && node.parent()) {
 			label = Logger::Message{
@@ -230,6 +230,17 @@
 				value = options.label;
 			} else {
 				value = Udjat::Config::Value<string>("boot","label",_("Install system"));
+			}
+
+			return true;
+		}
+
+		if(!strcasecmp(key,"boot-theme")) {
+
+			if(options.theme && *options.theme) {
+				value = options.theme;
+			} else {
+				value = Udjat::Config::Value<string>("boot","theme","SLE");
 			}
 
 			return true;

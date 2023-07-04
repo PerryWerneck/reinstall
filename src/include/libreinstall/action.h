@@ -91,8 +91,12 @@
 	protected:
 
 		struct BootOptions {
+
 			/// @brief The text for boot label.
 			const char *label = "";
+
+			/// @brief The boot theme for grub.
+			const char *theme = "";
 
 			BootOptions(const Udjat::XML::Node &node);
 

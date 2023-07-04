@@ -79,10 +79,12 @@
 		widgets.message.set_ellipsize(Pango::ELLIPSIZE_START);
 		widgets.header.attach(widgets.message,0,1,1,1);
 
-		widgets.icon.get_style_context()->add_class("dialog-icon");
 		widgets.icon.set_hexpand(false);
 		widgets.icon.set_vexpand(false);
 		widgets.header.attach(widgets.icon,1,0,2,2);
+		widgets.icon.get_style_context()->add_class("dialog-icon");
+
+		this->icon(dialog.icon);
 
 		content_area.pack_start(widgets.header,false,false,6);
 
@@ -96,13 +98,9 @@
 		widgets.footer.pack_start(widgets.left,true,true,0);
 		widgets.footer.pack_end(widgets.right,true,true,0);
 
-		// widgets.left.set_max_width_chars(30);
-		// widgets.left.set_lines(1);
 		widgets.left.set_single_line_mode(true);
 		widgets.left.set_ellipsize(Pango::ELLIPSIZE_END);
 
-		// widgets.right.set_max_width_chars(30);
-		// widgets.right.set_lines(1);
 		widgets.right.set_single_line_mode(true);
 		widgets.right.set_ellipsize(Pango::ELLIPSIZE_START);
 
@@ -190,6 +188,29 @@
 	}
 
 	void Gtk::Progress::icon(const char *icon_name)  {
+
+		if(icon_name && *icon_name) {
+
+			if(access(icon_name, R_OK)) {
+
+				// File not found, try icon name.
+				widgets.icon.set_from_icon_name(icon_name,::Gtk::ICON_SIZE_DIALOG);
+
+			} else {
+
+				// Set from icon name.
+				widgets.icon.set(icon_name);
+
+			}
+
+			widgets.icon.show();
+
+		} else {
+
+			widgets.icon.hide();
+
+		}
+
 	}
 
 	void Gtk::Progress::url(const char *url)  {

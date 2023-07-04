@@ -369,6 +369,7 @@
 		free(burn_src);
 
 		progress.message(_("Finalizing"));
+		progress.pulse();
 		writer->finalize();
 
 		progress.message("");
