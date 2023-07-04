@@ -231,7 +231,7 @@
 			}
 
 			trace(
-				"Got a '{}' response form server '{}'",
+				"Got a '{}' response from server '{}'",
 					worker->header("Content-Type").value(),
 					worker->header("Server").value()
 			);

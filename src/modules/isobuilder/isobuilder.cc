@@ -89,35 +89,6 @@
 
 	};
 
- 	/*
-	class Module : public Udjat::Module, public Udjat::Factory {
-	public:
-		Module() : Udjat::Module("iso-builder", moduleinfo), Udjat::Factory("iso-builder",moduleinfo) {
-		}
-
-		bool generic(const pugi::xml_node &node) override {
-
-			switch(String{node,"filesystem","iso-9660"}.select("iso-9660","fat32",nullptr)) {
-			case 0:	// iso9660
-				Reinstall::push_back(node,make_shared<Reinstall::IsoBuilder>(node));
-				break;
-
-			case 1: // fat32
-				Reinstall::push_back(node,make_shared<Reinstall::FatBuilder>(node));
-				break;
-
-			default:
-				throw runtime_error("The attribute 'filesystem' is invalid");
-
-			}
-
-			return true;
-
-		}
-
-	};
-	*/
-
 	return new Module();
 
  }

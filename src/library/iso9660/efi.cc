@@ -46,25 +46,23 @@
 		}
 
 		// Set EFI boot partition.
-		int rc;
-
 		if(boot.isohybrid) {
 
 			// iso-hybrid, set partition
 			set_part_like_isohybrid();
-			rc = iso_write_opts_set_partition_img(opts,boot.partition_number,boot.partition_type,(char *) partdata,0);
+			int rc = iso_write_opts_set_partition_img(opts,boot.partition_number,boot.partition_type,(char *) partdata,0);
 
 			if(rc != ISO_SUCCESS) {
 				Logger::String{"Cant set ",partdata," as efi boot image: ",iso_error_to_msg(rc)}.error("iso9660");
 				throw runtime_error(iso_error_to_msg(rc));
 			}
 
-			Logger::String{"EFI partition set from '",partdata,"' (isohybrid)"}.trace("iso9660");
+			Logger::String{"EFI partition ",boot.partition_number," set from '",partdata,"' (isohybrid)"}.trace("iso9660");
 
 		} else {
 
 			// Non iso-hybrid, set bootp.
-			rc = iso_write_opts_set_efi_bootp(opts,(char *) partdata,0);
+			int rc = iso_write_opts_set_efi_bootp(opts,(char *) partdata,0);
 
 			if(rc != ISO_SUCCESS) {
 				Logger::String{"Cant set ",partdata," as bootp image: ",iso_error_to_msg(rc)}.error("iso9660");

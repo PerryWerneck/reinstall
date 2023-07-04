@@ -148,7 +148,6 @@
 		<Unit filename="src/library/dialogs/progress.cc" />
 		<Unit filename="src/library/dialogs/taskrunner.cc" />
 		<Unit filename="src/library/dialogs/window.cc" />
-		<Unit filename="src/library/driverupdatedisk.cc" />
 		<Unit filename="src/library/fatfs/documents/res/app1.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -230,7 +229,7 @@
 		<Unit filename="src/main/progress.cc" />
 		<Unit filename="src/main/window.cc" />
 		<Unit filename="src/modules/grub/init.cc" />
-		<Unit filename="src/modules/isobuilder/init.cc" />
+		<Unit filename="src/modules/isobuilder/isobuilder.cc" />
 		<Unit filename="src/modules/isowriter/diskwriter.cc" />
 		<Unit filename="src/modules/isowriter/init.cc" />
 		<Unit filename="src/modules/isowriter/isowriter.cc" />
