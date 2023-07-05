@@ -114,7 +114,6 @@
 	virtual ~MainWindow();
 
 	void push_back(Udjat::Menu::Item *menu, const Udjat::XML::Node &node) override;
-	void remove(const Udjat::Menu::Item *menu) override;
 
 	int run(const Udjat::Dialog &dialog, const std::vector<Udjat::Dialog::Button> &buttons) override;
 	int run(const Udjat::Dialog &dialog, const std::function<int(Udjat::Dialog::Progress &progress)> &task) override;

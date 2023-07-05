@@ -38,12 +38,28 @@
 			/// @brief Activate menu option.
 			virtual void activate();
 
+			enum ActivationType {
+				Selected,
+				Default
+			};
+
+			void set(const ActivationType type) noexcept;
+
+			inline void select() noexcept {
+				set(Selected);
+			}
+
 		};
 
 		/// @brief Menu controller.
 		class UDJAT_API Controller {
 		private:
 			static Controller *cntrl;
+
+		protected:
+
+			Item *selected = nullptr;	/// @brief Selected item.
+			Item *def = nullptr;		/// @brief Default item.
 
 		public:
 			Controller();
@@ -53,6 +69,10 @@
 
 			virtual void push_back(Item *item, const XML::Node &node);
 			virtual void remove(const Item *item);
+
+			void set(Item *item, const Item::ActivationType type) noexcept;
+
+			void activate(const Item::ActivationType type);
 
 		};
 

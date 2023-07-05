@@ -18,7 +18,7 @@
  */
 
  /**
-  * @brief Implement the application main window.
+  * @brief Implement the application menu item.
   */
 
  #include <config.h>
@@ -77,6 +77,8 @@
  }
 
  void MainWindow::push_back(Menu::Item *menu, const XML::Node &node) {
+
+	Menu::Controller::push_back(menu,node);
 
 	auto item = make_shared<MainWindow::Item>(menu,node);
 	auto group = find(node,"group");
@@ -155,7 +157,3 @@
 	});
 
  }
-
- void MainWindow::remove(const Udjat::Menu::Item *menu) {
- }
-

@@ -45,4 +45,9 @@
 		throw logic_error(_("This menu option cant be activated"));
 	}
 
+	void Menu::Item::set(const ActivationType type) noexcept {
+		Controller::instance().set(this,type);
+	}
+
+
  }

@@ -47,14 +47,7 @@
 
  namespace Reinstall {
 
-	Action *Action::selected = nullptr;
-	Action *Action::def = nullptr;
-
 	Action::Action(const XML::Node &node) : NamedObject{node}, Udjat::Menu::Item{node}, dialogs{node}, options{node}, output{node} {
-
-		if(getAttribute(node, "action-defaults", "default", false)) {
-			Action::def = this;
-		}
 
 		// Load repositories.
 		search(node,"repository",[this](const pugi::xml_node &node){
@@ -127,14 +120,6 @@
 	}
 
 	Action::~Action() {
-		if(Action::selected == this) {
-			Action::selected = nullptr;
-		}
-
-		if(Action::def == this) {
-			Action::def = nullptr;
-		}
-
 	}
 
 	const Reinstall::Repository & Action::repository(const char *name) const {
@@ -361,24 +346,6 @@
 
 		debug("Calling default writer");
 		return Reinstall::Writer::factory(dialogs.title);
-	}
-
-	void Action::activate(const ActivationType type) {
-		switch(type) {
-		case Selected:
-			if(!Action::selected) {
-				throw runtime_error(_("No selected action"));
-			}
-			Action::selected->activate();
-			break;
-
-		case Default:
-			if(!Action::def) {
-				throw runtime_error(_("No default action"));
-			}
-			Action::def->activate();
-			break;
-		}
 	}
 
 	bool Action::confirm() const {

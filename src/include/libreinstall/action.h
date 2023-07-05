@@ -40,8 +40,6 @@
 	/// @brief Standard action.
 	class UDJAT_API Action : public Udjat::NamedObject, public Udjat::Menu::Item {
 	private:
-		static Action *selected;	/// @brief Selected action.
-		static Action *def;			/// @brief Default action.
 
 		/// @brief Action popup
 		class Popup : public Udjat::Dialog {
@@ -163,20 +161,9 @@
 		Action(const Udjat::XML::Node &node);
 		~Action();
 
-		enum ActivationType {
-			Selected,
-			Default
-		};
-
 		bool getProperty(const char *key, std::string &value) const override;
 
-		static void activate(const ActivationType type);
-
 		void activate() override;
-
-		inline void select() noexcept {
-			selected = this;
-		}
 
 	};
 

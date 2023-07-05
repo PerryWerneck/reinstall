@@ -46,7 +46,6 @@
         const char *help;
  } options[] = {
         { 'O',  "output",   		"\t\tOutput to file"		},
-        { 'O',  "device",   		"\t\tOutput to device"		},
         { 'L',  "output-length",	"\tLength of output file"	},
  };
 

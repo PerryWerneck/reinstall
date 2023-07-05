@@ -25,6 +25,8 @@
  #include <udjat/defs.h>
  #include <udjat/ui/menu.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/xml.h>
+ #include <udjat/tools/intl.h>
 
  #include <stdexcept>
 
@@ -49,13 +51,56 @@
 		return *cntrl;
 	}
 
-	void Menu::Controller::push_back(Item *, const XML::Node &) {
-		Logger::String{"The selected backend has no support for menus"}.trace("ui");
+	void Menu::Controller::push_back(Item *item, const XML::Node &node) {
+
+		if(XML::StringFactory(node,"default").as_bool()) {
+			def = item;
+		}
+
+		if(XML::StringFactory(node,"selected").as_bool()) {
+			selected = item;
+		}
+
 	}
 
-	void Menu::Controller::remove(const Item *) {
-		Logger::String{"The selected backend has no support for menus"}.trace("ui");
+	void Menu::Controller::remove(const Item *item) {
+		if(selected == item) {
+			selected = nullptr;
+		}
+
+		if(def == item) {
+			def = nullptr;
+		}
 	}
 
+	void Menu::Controller::set(Item *item, const Item::ActivationType type) noexcept {
+		switch(type) {
+		case Item::Selected:
+			selected = item;
+			break;
+
+		case Item::Default:
+			def = item;
+			break;
+		}
+	}
+
+	void Menu::Controller::activate(const Item::ActivationType type) {
+		switch(type) {
+		case Item::Selected:
+			if(!selected) {
+				throw logic_error(_("The menu is unselected"));
+			}
+			selected->activate();
+			break;
+
+		case Item::Default:
+			if(!def) {
+				throw runtime_error(_("No default option"));
+			}
+			def->activate();
+			break;
+		}
+	}
 
  }
