@@ -19,6 +19,8 @@
 
  #pragma once
  #include <udjat/defs.h>
+ #include <udjat/ui/dialogs/progress.h>
+ #include <udjat/tools/file/handler.h>
  #include <memory>
 
  namespace Reinstall {
@@ -43,6 +45,10 @@
 		/// @param length Data length.
 		/// @return Number of bytes written (allways 'length')
 		virtual size_t write(unsigned long long offset, const void *contents, size_t length) = 0;
+
+		/// @brief Write file to device.
+		/// @param file The file to write.
+		void write(Udjat::Dialog::Progress &dialog, Udjat::File::Handler &file);
 
 		/// @brief Set a fixed device name.
 		/// @param devicename The device name.

@@ -102,6 +102,8 @@
 
 	bool Dialog::Controller::confirm(const Dialog &dialog, const char *yes, const char *no) {
 
+		debug("------------------");
+
 		if(!yes) {
 			yes = _("_Yes");
 		}

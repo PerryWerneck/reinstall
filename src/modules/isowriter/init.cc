@@ -18,6 +18,10 @@
  */
 
  #include <config.h>
+ #include <udjat/defs.h>
+
+ #include "private.h"
+
  #include <udjat/module.h>
  #include <udjat/factory.h>
  #include <udjat/tools/xml.h>
@@ -30,11 +34,12 @@
 
  	class Module : public Udjat::Module, public Udjat::Factory {
 	public:
-		Module() : Udjat::Module("local-installer", moduleinfo), Udjat::Factory("local-installer",moduleinfo) {
+		Module() : Udjat::Module("iso-writer", moduleinfo), Udjat::Factory("iso-writer",moduleinfo) {
 		}
 
 		bool generic(const XML::Node &node) override {
-			return false;
+			new IsoWriter(node);
+			return true;
 		}
  	};
 

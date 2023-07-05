@@ -34,7 +34,7 @@
 
  namespace Reinstall {
 
-	void Action::Popup::setup(const XML::Node &node) {
+	void Popup::setup(const XML::Node &node) {
 
 		Udjat::Dialog::setup(node);
 
@@ -43,7 +43,7 @@
 
 	}
 
-	void Action::Popup::run(const char *error_message, bool allow_close) const {
+	void Popup::run(const char *error_message, bool allow_close) const {
 
 		Popup dialog = *this;
 
@@ -56,7 +56,7 @@
 
 	}
 
-	void Action::Popup::run(bool allow_close) const {
+	void Popup::run(bool allow_close) const {
 
 		vector<Button> buttons;
 

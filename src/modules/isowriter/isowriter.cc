@@ -18,6 +18,49 @@
  */
 
  #include <config.h>
+ #include <udjat/tools/url.h>
+ #include <udjat/tools/file/temporary.h>
+ #include <udjat/ui/dialogs/progress.h>
+
+ #include "private.h"
+ #include <libreinstall/source.h>
+
+ using namespace Udjat;
+ using namespace std;
+
+ std::shared_ptr<Udjat::File::Handler> IsoWriter::get_file(Udjat::Dialog::Progress &dialog) {
+
+	debug("url=",this->remote);
+
+	URL url{this->remote};
+
+	if(url.local()) {
+
+		// It's a local file
+		return make_shared<File::Handler>(url.ComponentsFactory().path.c_str());
+
+	}
+
+	// TODO: Check if 'local' is not empty, if not update local file.
+
+	// It's a remote file, download it.
+	auto file = make_shared<File::Temporary>();
+
+	dialog.message(_("Downloading ISO image"));
+	dialog.url(url.c_str());
+	dialog.pulse();
+
+	debug("aaaaaaaaaaaaaaaaaaaaa");
+
+	url.get([&dialog,file](unsigned long long current, unsigned long long total, const void *buf, size_t length) {
+		file->write(current,buf,length);
+		dialog.progress(current,total);
+		return true;
+	});
+
+	return file;
+
+ }
 
  /*
  #include "private.h"

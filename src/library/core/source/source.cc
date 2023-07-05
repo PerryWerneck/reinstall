@@ -59,7 +59,7 @@
 				}
 
 				imgpath = String{ptr}.as_quark();
-				Logger::String{"Cant determine image path, using default '",imgpath,"'"}.error(name());
+				Logger::String{"Cant determine image path, using default '",imgpath,"'"}.warning(name());
 			}
 
 		}

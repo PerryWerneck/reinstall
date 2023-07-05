@@ -93,6 +93,15 @@
 		return false;
 	}
 
+	bool Dialog::confirm(const char *yes, const char *no) const {
+		if(message && *message) {
+			debug(message);
+			return Controller::instance().confirm(*this,yes,no);
+		}
+		Logger::String{"Confirmation dialog without message, assuming 'yes'"}.warning("dialogs");
+		return true;
+	}
+
 	int Dialog::run(const std::vector<Dialog::Button> &buttons) const {
 		return Controller::instance().run(*this,buttons);
 	}

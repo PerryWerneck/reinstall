@@ -20,6 +20,7 @@
  #include <config.h>
  #include <udjat/defs.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/intl.h>
  #include <libreinstall/writer.h>
  #include <libreinstall/writers/file.h>
  #include <libreinstall/writers/usb.h>
@@ -85,6 +86,26 @@
 		}
 
 		return Reinstall::UsbWriter::factory(title);
+	}
+
+	void Writer::write(Udjat::Dialog::Progress &dialog, Udjat::File::Handler &file) {
+
+		dialog.message(_("Writing image"));
+		dialog.pulse();
+
+		debug("----------------- Saving");
+
+		file.save([this,&dialog](unsigned long long offset, unsigned long long total, const void *buf, size_t length){
+			debug("Writing ",offset,"/",total);
+			this->write(offset,buf,length);
+			dialog.progress(offset,total);
+		});
+
+		dialog.message(_("Finalizing"));
+		dialog.pulse();
+		finalize();
+
+		dialog.message("");
 	}
 
  }

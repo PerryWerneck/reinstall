@@ -33,6 +33,8 @@
  #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/object.h>
 
+ #include <libreinstall/popup.h>
+
  using Progress = Udjat::Dialog::Progress;
 
  namespace Reinstall {
@@ -40,23 +42,6 @@
 	/// @brief Standard action.
 	class UDJAT_API Action : public Udjat::NamedObject, public Udjat::Menu::Item {
 	private:
-
-		/// @brief Action popup
-		class Popup : public Udjat::Dialog {
-		private:
-			bool allow_reboot = false;
-			bool allow_quit = false;
-
-		public:
-			Popup(const char *name, const Udjat::XML::Node &node) {
-				Udjat::Dialog::setup(name,node);
-			}
-
-			void setup(const Udjat::XML::Node &node) override;
-
-			void run(const char *error_message, bool allow_close = true) const;
-			void run(bool allow_close = true) const;
-		};
 
 		/// @brief Action dialogs.
 		struct Dialogs {
@@ -73,7 +58,7 @@
 			/// @brief Success dialog.
 			Popup success;
 
-			/// @brief Success dialog.
+			/// @brief Failed dialog.
 			Popup failed;
 
 			Dialogs(const Udjat::XML::Node &node) :

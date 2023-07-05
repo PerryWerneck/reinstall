@@ -137,12 +137,7 @@
 		}
 
 		/// @brief Run and yes/no dialog.
-		bool confirm(const char *yes = nullptr, const char *no = nullptr) const {
-			if(message && *message) {
-				return Controller::instance().confirm(*this,yes,no);
-			}
-			return true;
-		}
+		bool confirm(const char *yes = nullptr, const char *no = nullptr) const;
 
 		/// @brief Run dialog with buttons.
 		/// @param buttons the dialog buttons.
