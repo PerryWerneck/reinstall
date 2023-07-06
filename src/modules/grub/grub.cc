@@ -23,7 +23,9 @@
  #include <udjat/tools/xml.h>
  #include <udjat/tools/object.h>
  #include <udjat/ui/dialog.h>
+ #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/quark.h>
+ #include <udjat/tools/file/handler.h>
 
  #include <libreinstall/source.h>
  #include <libreinstall/builder.h>
@@ -61,6 +63,27 @@
 
 		void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
 
+			const char *ptr = strrchr(file->c_str(),'/');
+			if(!ptr) {
+				ptr = file->c_str();
+			} else {
+				ptr++;
+			}
+
+			String filename{BOOT_PATH,"/",ptr};
+
+			if(::remove(filename.c_str()) && errno != ENOENT) {
+				throw system_error(errno,system_category(),filename.c_str());
+			}
+
+			Logger::String{"Saving '",filename.c_str(),"'"}.info("grub");
+
+			File::Handler output{filename.c_str(),true};
+			Dialog::Progress &dialog{Dialog::Progress::instance()};
+			file->save([&output,&dialog](unsigned long long offset, unsigned long long total, const void *buf, size_t length){
+				output.write(offset, buf, length);
+				dialog.progress(offset,total);
+			});
 
 		}
 
