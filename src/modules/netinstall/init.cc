@@ -35,11 +35,15 @@
  	class Action : public Reinstall::Action, private iso9660::Settings {
 	public:
 		Action(const XML::Node &node) : Reinstall::Action{node}, iso9660::Settings{node} {
-			debug("----------------------------------> Action created");
+
+			search(node,"source",[this](const pugi::xml_node &node){
+				sources.push_back(Reinstall::Source::factory(node));
+				return false;
+			});
+
 		}
 
 		virtual ~Action() {
-			debug("----------------------------------> Action removed");
 		}
 
 		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {

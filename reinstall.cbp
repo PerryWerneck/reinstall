@@ -229,7 +229,7 @@
 		<Unit filename="src/main/popup.cc" />
 		<Unit filename="src/main/progress.cc" />
 		<Unit filename="src/main/window.cc" />
-		<Unit filename="src/modules/grub/init.cc" />
+		<Unit filename="src/modules/grub/grub.cc" />
 		<Unit filename="src/modules/isobuilder/isobuilder.cc" />
 		<Unit filename="src/modules/isowriter/diskwriter.cc" />
 		<Unit filename="src/modules/isowriter/init.cc" />

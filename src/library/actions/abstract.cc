@@ -83,9 +83,6 @@
 			return false;
 		});
 
-		// Load sources.
-		load_sources(node);
-
 		// Load templates.
 		search(node,"template",[this](const pugi::xml_node &node){
 			templates.emplace_back(node);
@@ -98,13 +95,6 @@
 	Action::OutPut::OutPut(const Udjat::XML::Node &node)
 		: filename{XML::QuarkFactory(node,"output-file-name").c_str()},
 		  length{XML::StringFactory(node,"length").as_ull()} {
-	}
-
-	void Action::load_sources(const Udjat::XML::Node &node) {
-		search(node,"source",[this](const pugi::xml_node &node){
-			sources.push_back(Source::factory(node));
-			return false;
-		});
 	}
 
 	Action::BootOptions::BootOptions(const Udjat::XML::Node &node)

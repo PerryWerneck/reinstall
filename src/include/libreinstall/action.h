@@ -134,10 +134,6 @@
 
 		void reboot() noexcept;
 
-		/// @brief Load sources.
-		/// Scans XML for tags <source></source> loading it on sources list.
-		virtual void load_sources(const Udjat::XML::Node &node);
-
 	public:
 
 		Action(Action *) = delete;

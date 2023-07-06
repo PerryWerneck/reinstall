@@ -84,6 +84,7 @@
 
 	 		<attribute name='title' value='Reinstall this workstation'/>
 	 		<attribute name='sub-title' value='Do a complete network based reinstall on this workstation withot any external boot device' />
+	 		<attribute name='icon-name' value='computer' />
 		
 			<!-- Save configuration for the new boot option (use '%' as marker) -->
 			<template name='grub-config' url='file://${template-dir}/grub2' path='${grub-conf-dir}/51_reinstall' script='yes' marker='%' />

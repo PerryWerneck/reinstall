@@ -21,10 +21,78 @@
  #include <udjat/module.h>
  #include <udjat/factory.h>
  #include <udjat/tools/xml.h>
+ #include <udjat/tools/object.h>
+ #include <udjat/ui/dialog.h>
+ #include <udjat/tools/quark.h>
+
+ #include <libreinstall/source.h>
+ #include <libreinstall/builder.h>
+ #include <libreinstall/repository.h>
+ #include <libreinstall/kernelparameter.h>
+ #include <libreinstall/action.h>
+
+ #include <memory>
 
  using namespace Udjat;
+ using namespace Reinstall;
+ using namespace std;
 
  Udjat::Module * udjat_module_init() {
+
+	// The source for kernel file.
+	class Kernel : public Source {
+	public:
+		Kernel(const Udjat::XML::Node &node) : Source{node} {
+
+			if(!(imgpath && *imgpath)) {
+				imgpath = "kernel.install";
+			}
+
+		}
+	};
+
+	// The source for init file.
+	class InitRD : public Source {
+	public:
+		InitRD(const Udjat::XML::Node &node) : Source{node} {
+
+			if(!(imgpath && *imgpath)) {
+				imgpath = "initrd.install";
+			}
+
+		}
+	};
+
+
+	class Action : public Reinstall::Action {
+	public:
+
+		Action(const Udjat::XML::Node &node) : Reinstall::Action{node} {
+
+			search(node,"kernel",[this](const pugi::xml_node &node){
+				sources.push_back(make_shared<Kernel>(node));
+				return true;
+			});
+
+			// Get init source.
+			search(node,"init",[this](const pugi::xml_node &node){
+				sources.push_back(make_shared<InitRD>(node));
+				return true;
+			});
+
+		}
+
+		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
+			throw runtime_error("incomplete");
+		}
+
+		/// @brief Get image writer.
+		std::shared_ptr<Reinstall::Writer> WriterFactory() const override {
+			throw runtime_error("incomplete");
+		}
+
+
+	};
 
  	static const Udjat::ModuleInfo moduleinfo { "Grub based system installation" };
 
@@ -34,6 +102,7 @@
 		}
 
 		bool generic(const XML::Node &node) override {
+			new Action(node);
 			return false;
 		}
  	};

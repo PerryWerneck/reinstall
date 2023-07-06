@@ -34,6 +34,7 @@
 
  using namespace std;
  using namespace Udjat;
+ using namespace Reinstall;
 
  Udjat::Module * udjat_module_init() {
 
@@ -42,6 +43,12 @@
  	class iso9660Action : public Reinstall::Action, private iso9660::Settings {
 	public:
 		iso9660Action(const XML::Node &node) : Reinstall::Action{node}, iso9660::Settings{node} {
+
+			search(node,"source",[this](const pugi::xml_node &node){
+				sources.push_back(Source::factory(node));
+				return false;
+			});
+
 		}
 
 		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
@@ -56,6 +63,12 @@
 
 	public:
 		FatAction(const XML::Node &node) : Reinstall::Action{node}, length{XML::StringFactory(node,"length").as_ull()} {
+
+			search(node,"source",[this](const pugi::xml_node &node){
+				sources.push_back(Source::factory(node));
+				return false;
+			});
+
 		}
 
 		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {

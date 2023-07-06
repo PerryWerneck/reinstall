@@ -50,8 +50,6 @@
 	dialog.url(url.c_str());
 	dialog.pulse();
 
-	debug("aaaaaaaaaaaaaaaaaaaaa");
-
 	url.get([&dialog,file](unsigned long long current, unsigned long long total, const void *buf, size_t length) {
 		file->write(current,buf,length);
 		dialog.progress(current,total);
