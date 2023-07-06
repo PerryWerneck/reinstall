@@ -64,7 +64,7 @@
 		constexpr Source(const char *n, const char *remote, const char *local = "", const char *path = "") : Udjat::NamedObject{n}, path{remote,local}, imgpath{path} {
 		}
 
-		Source(const Udjat::XML::Node &node);
+		Source(const Udjat::XML::Node &node, bool defpath = true);
 
 		/// @brief Get repository name.
 		inline const char * repository() const noexcept {

@@ -36,22 +36,27 @@
 
  namespace Reinstall {
 
-	Source::Source(const Udjat::XML::Node &node) :
+	/// @brief Build a file source.
+	/// @param node Definitions for file source.
+	/// @param defpath if true use default image path if attribute 'path' is empty.
+	Source::Source(const Udjat::XML::Node &node, bool defpath) :
 		Udjat::NamedObject{ node },
 		path{ node },
 		reponame{ XML::QuarkFactory(node,"repository").c_str() },
 		slpclient{ node },
 		imgpath{ XML::QuarkFactory(node,"path").c_str() } {
 
-		if(!(imgpath && *imgpath)) {
+		if(defpath && !(imgpath && *imgpath)) {
 
 			// No imgpath, use standard.
 
 			if(path.remote[0] == '/') {
+
 				// The remote path is relative, use it as image path.
 				imgpath = path.remote;
 
 			} else {
+
 				// No image path, how can I store this source?
 				const char *ptr = strrchr(path.local,'/');
 				if(!ptr) {

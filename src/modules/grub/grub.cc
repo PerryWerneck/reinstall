@@ -37,27 +37,58 @@
  using namespace Reinstall;
  using namespace std;
 
+#ifdef DEBUG
+	#define BOOT_PATH "/tmp"
+#else
+	#define BOOT_PATH "/boot"
+#endif // DEBUG
+
  Udjat::Module * udjat_module_init() {
 
-	// The source for kernel file.
+ 	/// @brief The 'image' builder.
+ 	class Builder : public Reinstall::Builder {
+	public:
+		constexpr Builder() : Reinstall::Builder{"grub-setup"} {
+		}
+
+		void pre() override {
+			debug("-------------- TODO: ",__FUNCTION__);
+		}
+
+		void post() override {
+			debug("-------------- TODO: ",__FUNCTION__);
+		}
+
+		void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
+
+
+		}
+
+		void write(std::shared_ptr<Writer> writer) override {
+			debug("-------------- TODO: ",__FUNCTION__);
+		}
+
+ 	};
+
+	/// @brief The source for kernel file.
 	class Kernel : public Source {
 	public:
-		Kernel(const Udjat::XML::Node &node) : Source{node} {
+		Kernel(const Udjat::XML::Node &node) : Source{node,false} {
 
 			if(!(imgpath && *imgpath)) {
-				imgpath = "kernel.install";
+				imgpath = "/kernel." PACKAGE_NAME;
 			}
 
 		}
 	};
 
-	// The source for init file.
+	/// @brief The source for init file.
 	class InitRD : public Source {
 	public:
-		InitRD(const Udjat::XML::Node &node) : Source{node} {
+		InitRD(const Udjat::XML::Node &node) : Source{node,false} {
 
 			if(!(imgpath && *imgpath)) {
-				imgpath = "initrd.install";
+				imgpath = "/initrd." PACKAGE_NAME;
 			}
 
 		}
@@ -83,7 +114,7 @@
 		}
 
 		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
-			throw runtime_error("incomplete");
+			return make_shared<Builder>();
 		}
 
 		/// @brief Get image writer.
