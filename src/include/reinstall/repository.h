@@ -80,6 +80,10 @@
 			/// @return SLP response (empty if not found).
 			const char * get_url();
 
+			inline const char * get_kernel_parameter() const noexcept {
+				return kparm;
+			}
+
 		} slp;
 
 	public:
@@ -109,6 +113,9 @@
 		/// @param expand If true resolve the real URL using SLP.
 		/// @param Repository URL.
 		const std::string get_url(bool expand = false);
+
+		/// @brief Get repository kernel parameter.
+		std::string get_kernel_parameter();
 
 	};
 

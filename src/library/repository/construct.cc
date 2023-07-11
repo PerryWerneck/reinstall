@@ -56,6 +56,17 @@
 	Repository::~Repository() {
 	}
 
+	std::string Repository::get_kernel_parameter() {
+
+		std::string url = slp.get_url();
+		if(!url.empty()) {
+			return slp.get_kernel_parameter();
+		}
+
+		return path.remote;
+
+	}
+
 	const std::string Repository::get_url(bool expand) {
 
 		if(path.local && *path.local && access(path.local,R_OK) == 0) {
