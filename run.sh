@@ -3,6 +3,7 @@
 VM_URI="qemu:///system"
 VM_NAME="reinstall"
 VM_TYPE="efi"
+VM_DISK_SIZE="50G"
 
 if [ -e ./kvm/libvirt.conf ]; then
 	. ./kvm/libvirt.conf
@@ -19,7 +20,7 @@ isolinux() {
 		create \
 		-f qcow2 \
 		/tmp/reinstall.qcow2 \
-		40G
+		${VM_DISK_SIZE}
 	if [ "$?" != "0" ]; then
 		exit -1
 	fi
@@ -45,7 +46,7 @@ efi() {
 		create \
 		-f qcow2 \
 		/tmp/reinstall.qcow2 \
-		40G
+		${VM_DISK_SIZE}
 	if [ "$?" != "0" ]; then
 		exit -1
 	fi
@@ -67,7 +68,7 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-rm -f /tmp/test.iso /tmp/51_reinstall
+rm -f /tmp/test.iso /tmp/51_reinstall /tmp/reinstall.qcow2
 if [ "$?" != "0" ]; then
 	echo "Erro ao remover arquivos do teste anterior"
 	exit -1
