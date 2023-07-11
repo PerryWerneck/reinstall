@@ -155,7 +155,7 @@
 	Logger::console(console);
  }
 
- static int text_mode(bool interactive) {
+ static int text_mode(bool interactive, const char *option = nullptr) {
 
 	Logger::console(!interactive);
 
@@ -166,7 +166,9 @@
 
 	try {
 
-		if(interactive) {
+		if(option) {
+			Reinstall::Action::set_selected(option);
+		} else if(interactive) {
 			text_menu();
 		}
 
@@ -305,6 +307,9 @@
 
 		} else if(strcasecmp(ptr,"text") == 0 || strcasecmp(ptr,"t") == 0) {
 			return text_mode(true);
+
+		} else if(strncasecmp(ptr,"select=",7) == 0) {
+			return text_mode(false,ptr+7);
 
 		} else if(strcasecmp(ptr,"apply-default") == 0) {
 			return text_mode(false);

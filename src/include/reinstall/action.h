@@ -213,6 +213,8 @@
 
 		static Action & get_selected();
 
+		static void set_selected(const char *path);
+
 		inline void set_selected() noexcept {
 			selected = this;
 		}

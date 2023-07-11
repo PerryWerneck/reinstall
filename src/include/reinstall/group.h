@@ -46,6 +46,7 @@
 			static std::shared_ptr<Group> find(const pugi::xml_node &node);
 			static std::shared_ptr<Group> find(const unsigned short id);
 			static std::shared_ptr<Group> factory(const pugi::xml_node &node);
+			static std::shared_ptr<Group> find(const char *name);
 
 		};
 

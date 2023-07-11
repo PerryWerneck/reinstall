@@ -25,6 +25,7 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/url.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/string.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/configuration.h>
@@ -40,6 +41,28 @@
 	}
 
 	Action *Action::selected = nullptr;
+
+	void Action::set_selected(const char *path) {
+
+		auto options = String{path}.split("/");
+		if(options.size() != 2) {
+			throw runtime_error(String{"The action path '",path,"' is malformed"});
+		}
+
+		if(!Abstract::Group::find(options[0].c_str())->for_each([options](std::shared_ptr<Action> action) {
+
+			debug("name=",options[1].c_str()," action.name=",action->name());
+			if(!strcasecmp(options[1].c_str(),action->name())) {
+				action->set_selected();
+				return true;
+			}
+			return false;
+
+		})) {
+			throw runtime_error(String{"Can't find action '",path,"'"});
+		}
+
+	}
 
 	Action & Action::get_selected() {
 		if(selected) {
