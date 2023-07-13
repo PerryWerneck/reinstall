@@ -165,15 +165,31 @@
 
 		debug("Destroying disk image");
 
-		for(size_t i = 0; i < 20000; i++) {
+		Dialog::Progress &progress = Dialog::Progress::getInstance();
+		progress.pulse();
+		progress.set_sub_title(_("Releasing disk image"));
 
-			if(::umount(handler->mountpoint.c_str())) {
-				cout << "disk\tDevice '" << handler->device.c_str() << "' umounted" << endl;
-				break;
+		cout << "Umounting " << handler->mountpoint.c_str() << " from " << handler->device.c_str() << endl;
+
+		usleep(200);
+
+		if(::umount(handler->mountpoint.c_str())) {
+
+			clog << "disk\tError '" << strerror(errno) << "' (rc=" << errno << ") umounting " << handler->device.c_str() << endl;
+
+			// First umount has failed.
+			for(size_t i = 0; i < 20000; i++) {
+
+				usleep(200);
+
+				if(::umount2(handler->mountpoint.c_str(),MNT_FORCE) == 0) {
+					cout << "disk\tDevice '" << handler->device.c_str() << "' umounted from " << handler->mountpoint.c_str() << " (" << i << ")" << endl;
+					break;
+				}
+
+				clog << "disk\tError '" << strerror(errno) << "' (rc=" << errno << ") umounting " << handler->device.c_str() << " ("  << i << ")" << endl;
+
 			}
-
-			clog << "disk\tError '" << strerror(errno) << "' (rc=" << errno << ") umounting " << handler->device.c_str() << " ("  << i << "/" << 200 << ")" << endl;
-			usleep(100);
 
 		}
 
