@@ -68,6 +68,9 @@
 			std::string url;
 
 		public:
+			SlpClient(const SlpClient &) = delete;
+			SlpClient(const SlpClient *) = delete;
+
 			SlpClient() = default;
 
 			SlpClient(const pugi::xml_node &node);

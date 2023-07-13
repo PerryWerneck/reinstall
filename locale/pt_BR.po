@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: reinstall 5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-05-11 23:15-0300\n"
-"PO-Revision-Date: 2023-06-05 09:31-0300\n"
+"POT-Creation-Date: 2023-07-13 15:20-0300\n"
+"PO-Revision-Date: 2023-07-13 15:27-0300\n"
 "Last-Translator: Perry Werneck <perry.werneck@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <perry.werneck@gmail.com>\n"
 "Language: pt_BR\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1)\n"
 "X-Generator: Gtranslator 40.0\n"
 
-#: src/gui/main.cc:76
+#: src/gui/main.cc:77
 msgid ""
 "\n"
 "Select option: "
@@ -30,7 +30,7 @@ msgstr ""
 "\n"
 "Selecione opção: "
 
-#: src/gui/apply.cc:208
+#: src/gui/apply.cc:209
 msgid "Action completed"
 msgstr "Operação concluída"
 
@@ -46,7 +46,7 @@ msgstr "Adicionando imagem de boot EFI"
 msgid "Adding el-torito boot image"
 msgstr "Adicionando imagem de boot el-torito"
 
-#: src/library/action/action.cc:512 src/library/action/action.cc:516
+#: src/library/action/action.cc:543 src/library/action/action.cc:547
 msgid "Building"
 msgstr "Construindo"
 
@@ -54,23 +54,15 @@ msgstr "Construindo"
 msgid "Building EFI Boot image"
 msgstr "Criando imagem de boot EFI"
 
-#: src/library/os/linux/loop.cc:50 src/library/os/linux/disk_image.cc:115
+#: src/library/os/linux/loop.cc:50
 msgid "Can't get an available loop device"
 msgstr "Nenhum dispositivo loop disponível"
-
-#: src/library/os/linux/disk_image.cc:157
-msgid "Can't get loop device status"
-msgstr "Não foi possível obter estado do dispositivo de loop"
-
-#: src/library/os/linux/disk_image.cc:166
-msgid "Can't update loop device status"
-msgstr "Não foi possível atualizar estado do dispositivo de loop"
 
 #: src/library/os/linux/usbstorage.cc:298
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/gui/main.cc:85
+#: src/gui/main.cc:86
 msgid "Cancelled by user"
 msgstr "Cancelado pelo usuário"
 
@@ -86,7 +78,7 @@ msgstr "Não foi possível ler o arquivo de definição de área do sistema"
 msgid "Cant update template permissions"
 msgstr "Erro ao atualizar permissões de modelo"
 
-#: src/library/action/action.cc:456
+#: src/library/action/action.cc:488
 msgid "Checking for templates"
 msgstr "Verificando templates"
 
@@ -94,7 +86,7 @@ msgstr "Verificando templates"
 msgid "Continue"
 msgstr "Continuar"
 
-#: src/library/action/action.cc:164
+#: src/library/action/action.cc:188
 msgid "DUD Definition requires path or url attribute."
 msgstr "Definição de imagem DUD requer atributos 'path' ou 'url'"
 
@@ -127,7 +119,7 @@ msgstr "Primeira etapa falhou"
 msgid "Getting configuration"
 msgstr "Obtendo a configuração"
 
-#: src/library/action/action.cc:451
+#: src/library/action/action.cc:483
 msgid "Getting file lists"
 msgstr "Obtendo lista de arquivos"
 
@@ -139,11 +131,10 @@ msgstr "Obtendo inicializador"
 msgid "Getting installation kernel"
 msgstr "Obtendo kernel de instalação"
 
-#: src/library/action/action.cc:270 src/library/action/action.cc:499
+#: src/library/action/action.cc:290 src/library/action/action.cc:530
 msgid "Getting required files"
 msgstr "Obtendo arquivos necessários"
 
-#: src/library/writers/abstract.cc:65
 #: src/library/os/linux/abstract_writer.cc:38
 msgid "I/O error writing image"
 msgstr "Erro de I/O gravando imagem"
@@ -152,7 +143,7 @@ msgstr "Erro de I/O gravando imagem"
 msgid "Initialization has failed"
 msgstr "Inicialização falhou"
 
-#: src/library/action/action.cc:446 src/gui/dialogs/progress.cc:324
+#: src/library/action/action.cc:478 src/gui/dialogs/progress.cc:324
 msgid "Initializing"
 msgstr "Inicializando"
 
@@ -160,11 +151,11 @@ msgstr "Inicializando"
 msgid "Insert an storage device <b>NOW</b> "
 msgstr "Insira um dispositivo de armazenamento <b>AGORA</b>"
 
-#: src/library/action/action.cc:193
+#: src/library/action/action.cc:217
 msgid "Invalid 'type' attribute"
 msgstr "Atributo 'type' é inválido"
 
-#: src/gui/main.cc:146
+#: src/gui/main.cc:147
 msgid "Invalid action id"
 msgstr "Identificador de ação inválida"
 
@@ -172,11 +163,11 @@ msgstr "Identificador de ação inválida"
 msgid "Invalid group ID"
 msgstr "Identificador de grupo inválido"
 
-#: src/library/kernelparameter.cc:69
+#: src/library/kernelparameter.cc:70
 msgid "Invalid kernel parameter value type"
 msgstr "Tipo inválido para parâmetro de kernel"
 
-#: src/library/action/action.cc:348
+#: src/library/action/action.cc:380
 msgid "Loading installation kernel ..."
 msgstr "Obtendo kernel de instalação ..."
 
@@ -184,15 +175,15 @@ msgstr "Obtendo kernel de instalação ..."
 msgid "Loading option list"
 msgstr "Lendo lista de opções"
 
-#: src/library/action/action.cc:355
+#: src/library/action/action.cc:387
 msgid "Loading system installer ..."
 msgstr "Obtendo instalador ..."
 
-#: src/library/object.cc:80 src/library/dialogs/popup.cc:39
+#: src/library/dialogs/popup.cc:39
 msgid "More info"
 msgstr "Mais informações"
 
-#: src/library/action/action.cc:48
+#: src/library/action/action.cc:71
 msgid "No action"
 msgstr "Nenhuma ação"
 
@@ -204,23 +195,27 @@ msgstr "Nenhum diálogo de progresso ativo"
 msgid "No active window"
 msgstr "Nenhuma janela ativa"
 
-#: src/library/action/action.cc:212
+#: src/library/action/action.cc:236
 msgid "No available image builder"
 msgstr "Nenhum construtor de imagem disponível"
 
-#: src/library/action/action.cc:227
+#: src/library/action/action.cc:251
 msgid "No installation media"
 msgstr "Nenhuma mídia de instalação"
 
-#: src/library/action/action.cc:320
+#: src/library/action/action.cc:352
 msgid "No repositories on this action"
 msgstr "Nenhum repositório nesta ação"
 
-#: src/library/action/action.cc:529
+#: src/gui/apply.cc:220
+msgid "Ok"
+msgstr "Ok"
+
+#: src/library/action/action.cc:560
 msgid "Post script has failed"
 msgstr "Script de finalização falhou"
 
-#: src/library/action/action.cc:441
+#: src/library/action/action.cc:473
 msgid "Preparing"
 msgstr "Preparando"
 
@@ -228,11 +223,11 @@ msgstr "Preparando"
 msgid "Preparing to write"
 msgstr "Preparando para gravar"
 
-#: src/gui/apply.cc:219 src/gui/widgets/mainwindow.cc:390
+#: src/gui/apply.cc:225 src/gui/widgets/mainwindow.cc:390
 msgid "Quit application"
 msgstr "Sair da aplicação"
 
-#: src/gui/apply.cc:229
+#: src/gui/apply.cc:235
 msgid "Reboot now"
 msgstr "Reiniciar agora"
 
@@ -244,15 +239,15 @@ msgstr "Rejeitando ponteiro de ação inválido"
 msgid "Required attribute 'path' is missing"
 msgstr "Atributo necessário 'path' não foi encontrado"
 
-#: src/library/action/action.cc:527
+#: src/library/action/action.cc:558
 msgid "Running post scripts"
 msgstr "Executando scripts de finalização"
 
-#: src/library/repository/slpclient.cc:109
+#: src/library/repository/slpclient.cc:110
 msgid "Searching for server"
-msgstr ""
+msgstr "Procurando servidor"
 
-#: src/library/action/action.cc:371
+#: src/library/action/action.cc:403
 msgid "Selected installation has no label"
 msgstr "Instalação selecionada não tem nome"
 
@@ -276,7 +271,7 @@ msgstr "Template não foi carregado"
 msgid "The initialization procedure has failed, the application cant continue"
 msgstr "O processo de inicialização falhou, a aplicação não pode continuar"
 
-#: src/library/action/action.cc:380
+#: src/library/action/action.cc:412
 msgid "The kernel parameters list is empty"
 msgstr "A lista de parâmetros do kernel está vazia"
 
@@ -288,11 +283,13 @@ msgstr "Atributo necessário 'cmdline' não foi encontrado"
 msgid "This action will <b>DELETE ALL CONTENT</b> on the device."
 msgstr "Esta ação irá <b>APAGAR TODO O CONTEÚDO</b> do dispositivo."
 
-#: src/library/source/save.cc:67 src/library/source/save.cc:117
+#: src/library/source/save.cc:58 src/library/source/save.cc:92
+#: src/library/source/save.cc:142
 msgid "Unable to get source with an empty URL"
 msgstr "Não é possível obter uma fonte com URL vazia"
 
-#: src/library/source/save.cc:72 src/library/source/save.cc:122
+#: src/library/source/save.cc:63 src/library/source/save.cc:97
+#: src/library/source/save.cc:147
 msgid "Unable to get source with relative URL"
 msgstr "Não é possível obter fonte com URL relativa"
 
@@ -312,11 +309,11 @@ msgstr "Nome de arquivo inesperado na imagem de boot EFI"
 msgid "Unexpected filename on el-torito boot image"
 msgstr "Nome de arquivo inesperado na imagem de boot el-torito"
 
-#: src/library/kernelparameter.cc:39
+#: src/library/kernelparameter.cc:40
 msgid "Unnamed kernel parameter"
 msgstr "Parametro de kernel sem nome"
 
-#: src/library/action/action.cc:389
+#: src/library/action/action.cc:421
 msgid "Unnamed kernel parameter, possible misconfiguration"
 msgstr "Parametro de kernel sem nome, possível erro de configuração"
 
@@ -336,7 +333,7 @@ msgstr "Gravando imagem de sistema"
 msgid "_Cancel"
 msgstr "_Cancelar"
 
-#: src/library/dialogs/progress.cc:58 src/gui/main.cc:233
+#: src/library/dialogs/progress.cc:58 src/gui/main.cc:236
 #: src/gui/dialogs/progress.cc:113
 msgid "{} of {}"
 msgstr "{} de {}"
@@ -359,6 +356,12 @@ msgstr "{} de {}"
 
 #~ msgid "Bad gateway"
 #~ msgstr "Gateway inválido"
+
+#~ msgid "Can't get loop device status"
+#~ msgstr "Não foi possível obter estado do dispositivo de loop"
+
+#~ msgid "Can't update loop device status"
+#~ msgstr "Não foi possível atualizar estado do dispositivo de loop"
 
 #~ msgid "Cant access downloaded image"
 #~ msgstr "Sem acesso á imagem baixada"
@@ -431,9 +434,6 @@ msgstr "{} de {}"
 
 #~ msgid "Not found"
 #~ msgstr "Não encontrado"
-
-#~ msgid "Ok"
-#~ msgstr "Ok"
 
 #~ msgid "Proxy Authentication Required"
 #~ msgstr "Proxy exige autenticação"

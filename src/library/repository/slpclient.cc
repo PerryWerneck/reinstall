@@ -19,6 +19,7 @@
 
  #include <config.h>
  #include <reinstall/repository.h>
+ #include <reinstall/action.h>
  #include <udjat/tools/quark.h>
  #include <reinstall/dialogs/progress.h>
  #include <udjat/tools/logger.h>
