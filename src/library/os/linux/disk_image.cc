@@ -165,15 +165,15 @@
 
 		debug("Destroying disk image");
 
-		for(size_t i = 0; i < 200; i++) {
+		for(size_t i = 0; i < 20000; i++) {
 
-			if(umount2(handler->mountpoint.c_str(),MNT_FORCE)) {
+			if(::umount(handler->mountpoint.c_str())) {
 				cout << "disk\tDevice '" << handler->device.c_str() << "' umounted" << endl;
 				break;
 			}
 
-			cerr << "disk\tError '" << strerror(errno) << "' (rc=" << errno << ") umounting " << handler->device.c_str() << " ("  << i << "/" << 200 << ")" << endl;
-			sleep(10);
+			clog << "disk\tError '" << strerror(errno) << "' (rc=" << errno << ") umounting " << handler->device.c_str() << " ("  << i << "/" << 200 << ")" << endl;
+			usleep(100);
 
 		}
 
