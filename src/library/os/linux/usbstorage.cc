@@ -304,7 +304,8 @@
 					"messages",
 					"insert-device-body",
 					_("This action will <b>DELETE ALL CONTENT</b> on the device.")
-				}.c_str()
+				}.c_str(),
+				true
 			);
 
 			int errcode = -1;
