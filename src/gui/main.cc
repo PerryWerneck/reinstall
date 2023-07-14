@@ -33,6 +33,7 @@
  #include <unistd.h>
  #include <reinstall/action.h>
  #include <cstdlib>
+ #include <locale.h>
 
  using namespace std;
  using namespace Udjat;
@@ -278,6 +279,13 @@
  }
 
  int main(int argc, char* argv[]) {
+
+#ifdef LC_ALL
+	setlocale( LC_ALL, "" );
+#endif
+
+	bind_textdomain_codeset(G_STRINGIFY(GETTEXT_PACKAGE), "UTF-8");
+	textdomain(G_STRINGIFY(GETTEXT_PACKAGE));
 
 	Udjat::Quark::init();
 	Udjat::Logger::redirect();
