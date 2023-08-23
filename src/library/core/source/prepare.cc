@@ -232,8 +232,8 @@
 
 			trace(
 				"Got a '{}' response from server '{}'",
-					worker->header("Content-Type").value(),
-					worker->header("Server").value()
+					worker->response("Content-Type").value(),
+					worker->response("Server").value()
 			);
 
 			// FIX-ME: Detect server.

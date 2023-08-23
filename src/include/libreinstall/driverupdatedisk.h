@@ -42,6 +42,8 @@
 
 		static std::shared_ptr<DriverUpdateDisk> factory(const Udjat::XML::Node &node);
 
+		void prepare(const Udjat::URL &local, const Udjat::URL &remote, Files &files) const override;
+
 	};
 
  }

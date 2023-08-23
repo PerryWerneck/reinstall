@@ -14,7 +14,18 @@
     <loader readonly="yes" type="pflash">/usr/share/qemu/ovmf-x86_64-smm-ms-code.bin</loader>
     <nvram>/tmp/vars.fd</nvram>
     <boot dev="hd"/>
+	<smbios mode='sysinfo'/>
   </os>
+  <sysinfo type='smbios'>
+  	<!-- https://libvirt.org/formatdomain.html#smbios-system-information -->
+	<chassis>
+		<entry name='manufacturer'>Dell Inc.</entry>
+		<entry name='version'>2.12</entry>
+		<entry name='serial'>65X0XF2</entry>
+		<entry name='asset'>12860435590006</entry>
+		<entry name='sku'>Type3Sku1</entry>
+	</chassis>  	
+  </sysinfo>
   <features>
     <acpi/>
     <apic/>

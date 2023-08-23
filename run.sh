@@ -3,7 +3,7 @@
 VM_URI="qemu:///system"
 VM_NAME="reinstall"
 VM_TYPE="efi"
-VM_DISK_SIZE="50G"
+VM_DISK_SIZE="200G"
 
 if [ -e ./kvm/libvirt.conf ]; then
 	. ./kvm/libvirt.conf
@@ -68,7 +68,7 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
-rm -f /tmp/test.iso /tmp/51_reinstall /tmp/reinstall.qcow2
+sudo rm -f /tmp/test.iso /tmp/51_reinstall /tmp/reinstall.qcow2
 if [ "$?" != "0" ]; then
 	echo "Erro ao remover arquivos do teste anterior"
 	exit -1

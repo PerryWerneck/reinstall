@@ -24,6 +24,7 @@
  #include <config.h>
  #include <udjat/defs.h>
  #include <udjat/tools/configuration.h>
+ #include <libreinstall/source.h>
  #include <libreinstall/driverupdatedisk.h>
  #include <libreinstall/source.h>
  #include <libreinstall/kernelparameter.h>
@@ -40,8 +41,17 @@
 	DriverUpdateDisk::~DriverUpdateDisk() {
 	}
 
+	void DriverUpdateDisk::prepare(const Udjat::URL &local, const Udjat::URL &remote, Files &files) const {
+		if(this->imgpath && *this->imgpath) {
+			Source::prepare(local,remote,files);
+		}
+	}
+
 	const std::string DriverUpdateDisk::value() const {
-		return Config::Value<string>{"schemes","disk","disk:"} + this->imgpath;
+		if(this->imgpath && *this->imgpath) {
+			return Config::Value<string>{"schemes","disk","disk:"} + this->imgpath;
+		}
+		return remote();
 	}
 
 	std::shared_ptr<DriverUpdateDisk> DriverUpdateDisk::factory(const Udjat::XML::Node &node) {

@@ -149,6 +149,7 @@
     });
 
 	layout.bbox.set_layout(::Gtk::BUTTONBOX_END);
+	layout.bbox.set_margin_top(6);
 	layout.bbox.add(buttons.cancel);
 	layout.bbox.add(buttons.apply);
 	layout.bbox.set_hexpand(true);
