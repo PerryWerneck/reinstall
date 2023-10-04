@@ -445,7 +445,7 @@ run: \
 	$(foreach MODULE, $(MODULES), $(BINDBG)/modules/$(MODULE)@DLLEXT@)
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
-		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ --output=/tmp/test.iso --output-length=21Gb
+		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ --output=/tmp/test.iso
 
 memcheck: \
 	$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
@@ -460,7 +460,7 @@ else
 
 	@LD_LIBRARY_PATH=$(BINDBG) \
 		$(VALGRIND) --leak-check=full --track-origins=yes --gen-suppressions=all --suppressions=valgrind.suppression \
-		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@
+		$(BINDBG)/$(PRODUCT_NAME)@EXEEXT@ --output=/tmp/test.iso
 endif
 
 #---[ Clean Targets ]--------------------------------------------------------------------
