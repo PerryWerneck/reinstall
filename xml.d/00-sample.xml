@@ -38,7 +38,6 @@
 		<attribute name='slp-service-type' value='service:install.suse' />
 		<attribute name='slp-scope-list' value='' />
 		<attribute name='slp-filter' value='' />
-		<attribute name='slp-allow-local' value='no' />
 		<attribute name='slp-kernel-parameter' value='slp:/' />
 		<attribute name='layout' value='apache' />
 	</repository>
@@ -82,6 +81,8 @@
  		-->
  		<local-installer name='reinstall-local' default='yes' allow-reboot-when-success='yes'>
 
+			<attribute name='slp-allow-local' value='no' />
+
 	 		<attribute name='title' value='Reinstall this workstation'/>
 	 		<attribute name='sub-title' value='Do a complete network based reinstall on this workstation withot any external boot device' />
 	 		<attribute name='icon-name' value='computer' />
@@ -111,6 +112,8 @@
 		</local-installer>
  		
  		<network-installer name='reinstall-usb' default='no' output-file='/tmp/test.iso'>
+
+			<attribute name='slp-allow-local' value='yes' />
 
 	 		<attribute name='title' value='Build a simple network install image'/>
 	 		<attribute name='sub-title' value='Build an small usb based boot device for network install' />
@@ -158,6 +161,8 @@
 
 		<iso-writer name='netinstall' default='no'>
 		
+			<attribute name='slp-allow-local' value='yes' />
+
 	 		<attribute name='title' value='Create USB drive for offline install' />
 	 		<attribute name='sub-title' value='This will download and write the OpenSUSE full install' />
 	 		<attribute name='icon-name' value='drive-removable-media' />
