@@ -32,6 +32,8 @@
  #include <readline/readline.h>
  #include <unistd.h>
  #include <reinstall/action.h>
+ #include <cstdlib>
+ #include <locale.h>
 
  using namespace std;
  using namespace Udjat;
@@ -154,7 +156,7 @@
 	Logger::console(console);
  }
 
- static int text_mode(bool interactive) {
+ static int text_mode(bool interactive, const char *option = nullptr) {
 
 	Logger::console(!interactive);
 
@@ -165,7 +167,9 @@
 
 	try {
 
-		if(interactive) {
+		if(option) {
+			Reinstall::Action::set_selected(option);
+		} else if(interactive) {
 			text_menu();
 		}
 
@@ -276,6 +280,13 @@
 
  int main(int argc, char* argv[]) {
 
+#ifdef LC_ALL
+	setlocale( LC_ALL, "" );
+#endif
+
+	bind_textdomain_codeset(G_STRINGIFY(GETTEXT_PACKAGE), "UTF-8");
+	textdomain(G_STRINGIFY(GETTEXT_PACKAGE));
+
 	Udjat::Quark::init();
 	Udjat::Logger::redirect();
 
@@ -305,6 +316,9 @@
 		} else if(strcasecmp(ptr,"text") == 0 || strcasecmp(ptr,"t") == 0) {
 			return text_mode(true);
 
+		} else if(strncasecmp(ptr,"select=",7) == 0) {
+			return text_mode(false,ptr+7);
+
 		} else if(strcasecmp(ptr,"apply-default") == 0) {
 			return text_mode(false);
 
@@ -315,6 +329,19 @@
 		} else if(strncasecmp(ptr,"usb-storage-length=",19) == 0) {
 			// Set usb-storage-device
 			Reinstall::Writer::setUsbDeviceLength(Reinstall::Action::getImageSize(ptr+19));
+
+		} else {
+
+			const char *sep = strchr(ptr,'=');
+			if(sep) {
+
+				std::string name{ptr,(size_t) (sep-ptr)};
+				std::string value{sep+1};
+
+				Logger::String{"Setting environment ",name,"='",value,"'"}.info(PACKAGE_NAME);
+				setenv(name.c_str(),value.c_str(),1);
+
+			}
 
 		}
 

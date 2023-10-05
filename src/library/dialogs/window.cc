@@ -54,7 +54,7 @@
 			return *current;
 		}
 
-		void Window::set(const Abstract::Object &object) {
+		void Window::set(const Abstract::Object &) {
 		}
 
 		void Window::show() {

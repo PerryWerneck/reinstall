@@ -35,6 +35,7 @@
  #include <sys/sysmacros.h>
  #include <linux/fs.h>
  #include <sys/ioctl.h>
+ #include <udjat/tools/configuration.h>
 
  using namespace std;
  using namespace Udjat;
@@ -216,7 +217,7 @@
 				return false;
 			}
 
-			void format(const char *fsname) override {
+			void format(const char *) override {
 				throw system_error(ENOTSUP,system_category(),"Method not available");
 			}
 
@@ -289,9 +290,23 @@
 			//
 			// First wait for an storage device
 			//
-			auto taskrunner = UserInterface::getInstance().TaskRunnerFactory(_("Insert an storage device <b>NOW</b> "),true);
+			auto taskrunner = UserInterface::getInstance().TaskRunnerFactory(
+									Config::Value<string>{
+										"messages",
+										"insert-device-message",
+										_("Insert an storage device <b>NOW</b> ")
+									}.c_str(),
+									true
+								);
 
-			taskrunner->set_sub_title(_("This action will <b>DELETE ALL CONTENT</b> on the device."),true);
+			taskrunner->set_sub_title(
+				Config::Value<string>{
+					"messages",
+					"insert-device-body",
+					_("This action will <b>DELETE ALL CONTENT</b> on the device.")
+				}.c_str(),
+				true
+			);
 
 			int errcode = -1;
 

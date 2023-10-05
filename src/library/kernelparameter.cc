@@ -21,6 +21,7 @@
  #include <reinstall/action.h>
  #include <udjat/tools/quark.h>
  #include <udjat/tools/string.h>
+ #include <reinstall/repository.h>
  #include <udjat/tools/url.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/logger.h>
@@ -85,6 +86,9 @@
 			break;
 
 		case Url:
+
+			debug("Kernel parameter '",nm,"' is an URL with value '",value,"'");
+
 			if(value[0] == '/') {
 
 				// Fix URL with repository.
@@ -100,7 +104,8 @@
 			break;
 
 		case Repository:
-			response = action.repository(value)->get_url(false);
+			debug("Kernel parameter '",nm,"' is a repository");
+			response = action.repository(value)->get_kernel_parameter();
 			break;
 
 		}

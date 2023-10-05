@@ -144,6 +144,7 @@
 			bool visible	: 1;	/// @brief True if the action is visible.
 			bool reboot		: 1;	/// @brief True if the action will request reboot.
 			bool quit		: 1;	/// @brief True if the action will enable 'quit application' button.
+			bool allow_cont	: 1;	/// @brief Trie if the action will enable 'ok' button.
 
 			Options(const pugi::xml_node &node);
 
@@ -162,7 +163,7 @@
 		std::unordered_set<std::shared_ptr<Repository>, Repository::Hash, Repository::Equal> repositories;
 
 		/// @brief Sources list.
-		std::unordered_set<std::shared_ptr<Source>, Source::Hash, Source::Equal> sources;
+		std::list<std::shared_ptr<Source>> sources;
 
 		/// @brief Search for source based on image path
 		std::shared_ptr<Source> source(const char *path) const;
@@ -212,6 +213,8 @@
 
 		static Action & get_selected();
 
+		static void set_selected(const char *path);
+
 		inline void set_selected() noexcept {
 			selected = this;
 		}
@@ -230,6 +233,10 @@
 
 		inline bool reboot() const noexcept {
 			return options.reboot;
+		}
+
+		inline bool allow_cont() const noexcept {
+			return options.allow_cont;
 		}
 
 		inline bool quit() const noexcept {
@@ -271,7 +278,10 @@
 		/// @brief Return the URL for installation media.
 		virtual const char * install();
 
-		bool push_back(std::shared_ptr<Source> source);
+		inline void push_back(std::shared_ptr<Source> source) {
+			sources.push_back(source);
+		}
+
 		bool push_back(std::shared_ptr<Template> tmpl);
 
 		inline size_t source_count() const noexcept {

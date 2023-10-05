@@ -25,6 +25,7 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/url.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/string.h>
  #include <pugixml.hpp>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/configuration.h>
@@ -40,6 +41,28 @@
 	}
 
 	Action *Action::selected = nullptr;
+
+	void Action::set_selected(const char *path) {
+
+		auto options = String{path}.split("/");
+		if(options.size() != 2) {
+			throw runtime_error(String{"The action path '",path,"' is malformed"});
+		}
+
+		if(!Abstract::Group::find(options[0].c_str())->for_each([options](std::shared_ptr<Action> action) {
+
+			debug("name=",options[1].c_str()," action.name=",action->name());
+			if(!strcasecmp(options[1].c_str(),action->name())) {
+				action->set_selected();
+				return true;
+			}
+			return false;
+
+		})) {
+			throw runtime_error(String{"Can't find action '",path,"'"});
+		}
+
+	}
 
 	Action & Action::get_selected() {
 		if(selected) {
@@ -81,7 +104,8 @@
 		: enabled{Factory(node,"enabled",true)},
 		  visible{Factory(node,"visible",true)},
 		  reboot{Factory(node,"allow-reboot-when-success",false)},
-		  quit{Factory(node,"allow-quit-application",true)}
+		  quit{Factory(node,"allow-quit-application",true)},
+		  allow_cont{Factory(node,"allow-continue-application",false)}
 		 {
 	}
 
@@ -252,10 +276,6 @@
 
 	}
 
-	bool Action::push_back(std::shared_ptr<Source> source) {
- 		return (sources.insert(source).first != sources.end());
-	}
-
 	bool Action::push_back(std::shared_ptr<Template> tmpl) {
 		templates.push_back(tmpl);
 		return true;
@@ -270,6 +290,10 @@
 		progress.set_sub_title(_("Getting required files"));
 
 		// Expand all sources.
+
+		/// @brief List of expanded sources.
+		std::unordered_set<std::shared_ptr<Source>, Source::Hash, Source::Equal> expanded;
+
 		for(auto iter = sources.begin(); iter != sources.end();) {
 
 			std::shared_ptr<Source> source = *iter;
@@ -277,6 +301,7 @@
 
 			iter = sources.erase(iter);	// Remove it; path can change.
 
+			progress.pulse();
 			source->set(*this);
 
 			if(!source->contents(*this,contents)) {
@@ -289,13 +314,20 @@
 
 			// Add expanded elements.
 			for(std::shared_ptr<Source> source : contents) {
-				if(sources.count(source)) {
+				if(expanded.count(source)) {
 					Logger::String{"Duplicate file '",source->path,"' on source ",source->name()}.trace(name());
 				} else {
-					sources.insert(source);
+					expanded.insert(source);
 				}
 			}
 
+		}
+
+		debug("-------------------------------> ", sources.size());
+
+		// Apply expanded list on sources.
+		for(std::shared_ptr<Source> source : expanded) {
+			sources.push_back(source);
 		}
 
 		info() << "Download list has " << sources.size() << " file(s)" << endl;
@@ -483,12 +515,11 @@
 							str.c_str()
 					);
 
-					auto it = sources.find(source);
-					if(it != sources.end()) {
-						sources.erase(it);
-					}
+					sources.remove_if([source](std::shared_ptr<Source> src){
+						return strcasecmp(source->path,src->path) == 0;
+					});
 
-					sources.insert(source);
+					sources.push_back(source);
 
 				}
 			}

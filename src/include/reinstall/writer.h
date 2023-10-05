@@ -57,6 +57,9 @@
 		Writer(const Reinstall::Action &action);
 		virtual ~Writer();
 
+		/// @brief Create partition.
+		// virtual void make_partition(uint64_t length, const char *parttype = "0c") = 0;
+
 		/// @brief Set USB device name.
 		static void setUsbDeviceName(const char *name);
 

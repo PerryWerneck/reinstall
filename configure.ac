@@ -130,7 +130,6 @@ dnl		AC_CONFIG_FILES(win/userinfo.nsi)
 		DLL_LDFLAGS="-shared -Wl,-soname,\$(@F)"
 		AC_SUBST(SONAME,libreinstall.so.$app_vrs_major.$app_vrs_minor)
 		AC_CONFIG_FILES(sysconf/launcher.desktop)
-		AC_CONFIG_FILES(sysconf/tmpfiles.d)
 
 		app_cv_modules="$app_cv_modules netinstall grub"
 

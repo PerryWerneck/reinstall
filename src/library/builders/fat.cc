@@ -151,7 +151,7 @@
 				}
 
 				if(rc != FR_OK) {
-					throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_open"});
+					throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_open(",filename,")"});
 				}
 
 				debug("Saving '",filename,"'");

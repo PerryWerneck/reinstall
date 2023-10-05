@@ -84,10 +84,10 @@
 		void Progress::pulse() {
 		}
 
-		void Progress::set_step(const char *step) {
+		void Progress::set_step(const char *) {
 		}
 
-		void Progress::set_icon_name(const char *icon_name) {
+		void Progress::set_icon_name(const char *) {
 		}
 
 	}
