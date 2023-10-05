@@ -6,7 +6,7 @@ AC_PREREQ(2.59)
 
 dnl Initialise automake with the package name, version and
 dnl bug-reporting address.
-AC_INIT([reinstall], [5.0.0], [perry.werneck@gmail.com])
+AC_INIT([reinstall], [5.1.0], [perry.werneck@gmail.com])
 
 dnl Place auxilliary scripts here.
 AC_CONFIG_AUX_DIR([scripts])
@@ -266,7 +266,7 @@ dnl ---------------------------------------------------------------------------
 dnl Check for fdisk
 dnl ---------------------------------------------------------------------------
 
-PKG_CHECK_MODULES(FDISK, fdisk, AC_DEFINE(HAVE_FDISK,[],[Do we have libfdisk?]),AC_MSG_ERROR(libfdisk is required))
+PKG_CHECK_MODULES(FDISK, fdisk, AC_DEFINE(HAVE_FDISK,[],[Do we have libfdisk?]),AC_MSG_NOTICE(libfdisk is required))
 AC_SUBST(FDISK_LIBS)
 AC_SUBST(FDISK_CFLAGS)
 

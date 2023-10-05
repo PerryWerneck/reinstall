@@ -129,13 +129,13 @@
  }
 
  MainWindow::~MainWindow() {
- 	Reinstall::Controller::getInstance().clear();
  	Application::finalize();
  }
 
  void MainWindow::on_show() {
 
 	// Load options
+	/*
 	{
 		Dialog::Progress dialog;
 		dialog.Gtk::Window::set_title(get_title());
@@ -198,19 +198,13 @@
 	buttons.apply.set_sensitive( &Reinstall::Action::get_selected() != nullptr);
 
 	layout.view.show_all();
+	*/
 
 	Gtk::Window::on_show();
 
  }
 
- std::shared_ptr<Reinstall::Abstract::Object> MainWindow::ActionFactory(const pugi::xml_node &node, const char *icon_name) {
-	return make_shared<::Widget::Action>(node,icon_name);
- }
-
- std::shared_ptr<Reinstall::Dialog::TaskRunner> MainWindow::TaskRunnerFactory(const char *message, bool markup) {
-	return make_shared<Dialog::TaskRunner>(*this,message,markup);
- }
-
+ /*
  static bool check_file(const Gtk::Entry &entry, bool save) {
 
 		Udjat::File::Path file{entry.get_text()};
@@ -325,21 +319,9 @@
 
 	return group;
  }
+ */
 
- void MainWindow::show(Dialog::Progress &dialog) {
-
-	dialog.set_parent(*this);
-	dialog.set_decorated(false);
-	dialog.set_deletable(false);
-
-	Reinstall::Action &action = Reinstall::Action::get_selected();
-
-	dialog.set(*action.get_button());
-	dialog.set_icon_name(action.get_icon_name());
-	dialog.show();
-
- }
-
+ /*
  void MainWindow::failed(const char *message) {
 
 	std::shared_ptr<string> str = make_shared<string>(message);
@@ -408,6 +390,7 @@
  	});
 
  }
+ */
 
  void MainWindow::set_icon(const char *icon) {
 

@@ -18,7 +18,9 @@
  */
 
  #pragma once
+ #error deprecated
 
+ /*
  #include <udjat/defs.h>
  #include <udjat/tools/object.h>
  #include <memory>
@@ -38,7 +40,7 @@
 			/// @brief Repository PATH on local harddisk from xml definition.
 			const char * local = "";
 
-			Path(const pugi::xml_node &node);
+			Path(const Udjat::XML::Node &node);
 
 		} path;
 
@@ -68,9 +70,6 @@
 			std::string url;
 
 		public:
-			SlpClient(const SlpClient &) = delete;
-			SlpClient(const SlpClient *) = delete;
-
 			SlpClient() = default;
 
 			SlpClient(const pugi::xml_node &node);
@@ -82,10 +81,6 @@
 			/// @brief Resolve SLP service, return URL
 			/// @return SLP response (empty if not found).
 			const char * get_url();
-
-			inline const char * get_kernel_parameter() const noexcept {
-				return kparm;
-			}
 
 		} slp;
 
@@ -117,9 +112,7 @@
 		/// @param Repository URL.
 		const std::string get_url(bool expand = false);
 
-		/// @brief Get repository kernel parameter.
-		std::string get_kernel_parameter();
-
 	};
 
  }
+ */

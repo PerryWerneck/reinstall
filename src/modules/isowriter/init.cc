@@ -18,9 +18,40 @@
  */
 
  #include <config.h>
+ #include <udjat/defs.h>
+
  #include "private.h"
+
  #include <udjat/module.h>
  #include <udjat/factory.h>
+ #include <udjat/tools/xml.h>
+
+ using namespace Udjat;
+
+ Udjat::Module * udjat_module_init() {
+
+ 	static const Udjat::ModuleInfo moduleinfo { "USB/ISO Writer module" };
+
+ 	class Module : public Udjat::Module, public Udjat::Factory {
+	public:
+		Module() : Udjat::Module("iso-writer", moduleinfo), Udjat::Factory("iso-writer",moduleinfo) {
+		}
+
+		bool generic(const XML::Node &node) override {
+			new IsoWriter(node);
+			return true;
+		}
+ 	};
+
+ 	return new Module();
+
+ }
+
+ /*
+ #include <udjat/module.h>
+ #include <udjat/factory.h>
+
+ #include <libreinstall/action.h>
 
  using namespace std;
  using namespace Udjat;
@@ -53,4 +84,5 @@
 	return new Module();
 
  }
+ */
 

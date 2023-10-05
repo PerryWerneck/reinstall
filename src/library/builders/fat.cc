@@ -22,63 +22,51 @@
  //		http://elm-chan.org/fsw/ff/00index_e.html
  //
 
-
  #include <config.h>
- #include <reinstall/actions/fatbuilder.h>
- #include <reinstall/builder.h>
- #include <reinstall/writer.h>
- #include <udjat/tools/file/handler.h>
+ #include <libreinstall/builder.h>
+ #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/file/temporary.h>
- #include <reinstall/dialogs/progress.h>
- #include <udjat/tools/intl.h>
- #include <ff.h>
- #include <diskio.h>
+ #include <udjat/tools/logger.h>
+ #include <udjat/tools/string.h>
 
  #ifndef _GNU_SOURCE
-	#define _GNU_SOURCE             /* See feature_test_macros(7) */
+	#define _GNU_SOURCE             // See feature_test_macros(7)
  #endif // _GNU_SOURCE
 
  #include <fcntl.h>
+ #include <stdexcept>
+ #include <ff.h>
+ #include <diskio.h>
 
- using namespace std;
+ #ifdef HAVE_UNISTD_H
+	#include <unistd.h>
+ #endif // HAVE_UNISTD_H
+
+ #include <libreinstall/builders/fat.h>
+
+ using namespace Reinstall;
  using namespace Udjat;
+ using namespace std;
 
- namespace Reinstall {
+ using Progress = Udjat::Dialog::Progress;
 
-	FatBuilder::FatBuilder(const pugi::xml_node &node, const char *icon_name)
-		: Reinstall::Action(node,icon_name), imglen{getImageSize(node)} {
+ namespace Fat {
 
-		if(!imglen) {
-			throw runtime_error("Required attribute 'size' is missing or invalid");
-		}
+	std::shared_ptr<Reinstall::Builder> BuilderFactory(unsigned long long length) {
 
-	}
-
-	FatBuilder::~FatBuilder() {
-	}
-
-	std::shared_ptr<Reinstall::Builder> FatBuilder::BuilderFactory() {
-
-		class Builder : public Reinstall::Builder, private File::Temporary {
+		class FatBuilder : public Reinstall::Builder, private File::Temporary {
 		private:
 			FATFS fs;
+			bool mounted = false;
 
 		public:
-			Builder(const FatBuilder &action) {
-				if(fallocate(fd,0,0,action.imglen)) {
+			FatBuilder(unsigned long long length) : Builder{"fatfs"} {
+
+				info("Building disk image with {}",String{}.set_byte(length));
+
+				if(fallocate(this->fd,0,0,length)) {
 					throw system_error(errno,system_category(),"Cant allocate FAT image");
 				}
-			}
-
-			virtual ~Builder() {
-				debug("Ummounting FAT image");
-				auto rc = f_mount(NULL, "", 0);
-				if(rc != FR_OK) {
-					Logger::String{"Unexpected error '",rc,"' on f_umount"}.error(name);
-				}
-			}
-
-			void pre(const Action &) override {
 
 				if(disk_ioctl(0, CTRL_FORMAT, &this->fd) != RES_OK) {
 					throw runtime_error("Cant bind fatfs to disk image");
@@ -98,43 +86,46 @@
 
 				}
 
-				// Mount
-				{
-					auto rc = f_mount(&fs, "0:", 1);
-					if(rc != FR_OK) {
-						throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_mount"});
-					}
-				}
-
-
 			}
 
-			/// @brief Step 2, insert source, download it if necessary.
-			/// @return true if source was downloaded.
-			bool apply(Source &source) override {
-
-				Dialog::Progress &dialog = Dialog::Progress::getInstance();
-				dialog.set_url(source.path);
-
-				string filename{"0:"};
-
-				if(*source.path != '/') {
-					filename += '/';
+			virtual ~FatBuilder() {
+				if(mounted) {
+					post();
 				}
+			}
 
-				filename += source.path;
+			void pre() override {
+				auto rc = f_mount(&fs, "0:", 1);
+				if(rc != FR_OK) {
+					throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_mount"});
+				}
+				mounted = true;
+			}
 
-				debug(filename);
+			void post() override {
+				auto rc = f_mount(NULL, "", 0);
+				if(rc != FR_OK) {
+					error("Unexpected error '{}' on f_umount",rc);
+				}
+				fsync(fd);
+				mounted = false;
+			}
+
+			void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
+
+				if(!mounted) {
+					throw runtime_error("Builder is unprepared");
+				}
 
 				FIL fil;
 				memset(&fil,0,sizeof(fil));
 
 				// Create file (and directory), open it ...
-				auto rc = f_open(&fil, filename.c_str(), FA_CREATE_NEW | FA_WRITE);
+				auto rc = f_open(&fil, file->c_str(), FA_CREATE_NEW | FA_WRITE);
 				if(rc == FR_NO_PATH) {
 
 					// Create directory.
-					const char *from = filename.c_str();
+					const char *from = file->c_str();
 					const char *to = strchr(from+3,'/');
 					while(to) {
 
@@ -147,20 +138,23 @@
 					}
 
 					// try again...
-					rc = f_open(&fil, filename.c_str(), FA_CREATE_NEW | FA_WRITE);
+					rc = f_open(&fil, file->c_str(), FA_CREATE_NEW | FA_WRITE);
+
 				}
 
 				if(rc != FR_OK) {
-					throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_open(",filename,")"});
+					throw runtime_error(Logger::String{"Unexpected error '",rc,"' on f_open(",file->c_str(),")"});
 				}
-
-				debug("Saving '",filename,"'");
 
 				try {
 
-					// ... write file contents ...
+					debug("Writing ",file->c_str());
 
-					source.save([&fil](const void *buf, size_t length){
+					Progress &progress{Progress::instance()};
+
+					file->save([&fil,&progress](unsigned long long current, unsigned long long total, const void *buf, size_t length){
+
+						progress.progress(current,total);
 
 						UINT wrote = 0;
 						auto rc = f_write(&fil,buf,length,&wrote);
@@ -181,52 +175,19 @@
 
 				}
 
-				// ... and close it
 				f_close(&fil);
-
-				return false;
-
 			}
 
-			/// @brief Step 3, build (after downloads).
-			void build(Action &) override {
+			void write(std::shared_ptr<Writer> writer) override {
+				throw runtime_error("Incomplete");
 			}
 
-			/// @brief Step 4, finalize.
-			void post(const Action &) override {
-			}
-
-			std::shared_ptr<Writer> burn(std::shared_ptr<Reinstall::Writer> writer) {
-
-				debug("Burning FAT image");
-
-				Dialog::Progress &progress = Dialog::Progress::getInstance();
-				progress.set_sub_title(_("Writing image"));
-
-				writer->open();
-				File::Handler::save([&progress,writer](unsigned long long current, unsigned long long total, const void *buf, size_t length) {
-					progress.set_progress(current,total);
-					writer->write(buf, length);
-				});
-
-				progress.set_sub_title(_("Finalizing"));
-				writer->finalize();
-				writer->close();
-
-				progress.set_sub_title("");
-
-				return writer;
-			}
 
 		};
 
-		return make_shared<Builder>(*this);
-	}
+		return make_shared<FatBuilder>(length);
 
-	std::shared_ptr<Reinstall::Writer> FatBuilder::WriterFactory() {
-		return Reinstall::Writer::USBWriterFactory(*this);
 	}
-
 
  }
 

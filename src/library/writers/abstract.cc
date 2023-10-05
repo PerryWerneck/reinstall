@@ -18,7 +18,100 @@
  */
 
  #include <config.h>
- #include <reinstall/defs.h>
+ #include <udjat/defs.h>
+ #include <udjat/tools/logger.h>
+ #include <udjat/tools/intl.h>
+ #include <libreinstall/writer.h>
+ #include <libreinstall/writers/file.h>
+ #include <libreinstall/writers/usb.h>
+
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <stdexcept>
+
+ #ifdef HAVE_UNISTD_H
+	#include <unistd.h>
+ #endif // HAVE_UNISTD_H
+
+ using namespace Udjat;
+ using namespace std;
+
+ namespace Reinstall {
+
+	const char * Writer::devicename  = "";
+	unsigned long long Writer::devicelength = 0LL;
+
+	void Writer::set_device_name(const char *dname) {
+		devicename = dname;
+		Logger::String{"Output file set to '",devicename,"'"}.trace("writer");
+	}
+
+	void Writer::set_device_length(unsigned long long dlen) {
+		devicelength = dlen;
+	}
+
+	unsigned long long Writer::size() {
+		return 0;
+	}
+
+	void Writer::finalize() {
+	}
+
+	std::shared_ptr<Writer> Writer::factory(const char *title) {
+
+		debug("Default writer, filename='",devicename,"'");
+		if(devicename && *devicename) {
+
+			Logger::String{"Writing image to '",devicename,"'"}.info("writer");
+
+			int fd = ::open(devicename,O_CREAT|O_TRUNC|O_WRONLY,0644);
+			if(fd < 0) {
+				int err = errno;
+				Logger::String{"Error opening '",devicename,"': ",strerror(err)," (rc=",err,")"}.error("writer");
+				throw system_error(err,system_category(),"Cant create image file");
+			}
+
+			if(devicelength) {
+				if(fallocate(fd,0,0,devicelength)) {
+					int err = errno;
+					::close(fd);
+					Logger::String{"Error allocating '",devicename,"': ",strerror(err)," (rc=",err,")"}.error("writer");
+					throw system_error(err,system_category(),"Cant allocate image file");
+				}
+			}
+
+			return make_shared<Reinstall::FileWriter>(fd);
+
+		}
+
+		return Reinstall::UsbWriter::factory(title);
+	}
+
+	void Writer::write(Udjat::Dialog::Progress &dialog, Udjat::File::Handler &file) {
+
+		dialog.message(_("Writing image"));
+		dialog.pulse();
+
+		debug("----------------- Saving");
+
+		file.save([this,&dialog](unsigned long long offset, unsigned long long total, const void *buf, size_t length){
+			debug("Writing ",offset,"/",total);
+			this->write(offset,buf,length);
+			dialog.progress(offset,total);
+		});
+
+		dialog.message(_("Finalizing"));
+		dialog.pulse();
+		finalize();
+
+		dialog.message("");
+	}
+
+ }
+
+
+ /*
  #include <reinstall/writer.h>
  #include <reinstall/diskimage.h>
  #include <system_error>
@@ -146,18 +239,6 @@
 		}
 		fdisk_partition_size_explicit(pa,1);
 
-		/*
-
-		TODO: Find why fdisk_assign_device_by_fd doesnt work.
-
-		errno = - fdisk_assign_device_by_fd(cxt, fd, "diskimage", 0);
-		if(errno) {
-			fdisk_unref_context(cxt);
-			fdisk_unref_partition(pa);
-			throw system_error(errno,system_category(),"fdisk_assign_device_by_fd has failed");
-		}
-		*/
-
 		{
 			// For some reason assing by fd doesnt work, then, I'm using the filename.
 			char fn[4097];
@@ -252,7 +333,6 @@
 				throw system_error(-rc,system_category(),"fdisk_write_disklabel has failed");
 			}
 
-			/*
 			if(Logger::enabled(Logger::Trace)) {
 
 				struct fdisk_parition *pa;
@@ -269,7 +349,6 @@
 				fdisk_unref_partition(pa);
 
 			}
-			*/
 
 		} catch(...) {
 
@@ -299,3 +378,5 @@
 #endif // HAVE_FDISK
 
  }
+
+*/

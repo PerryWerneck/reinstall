@@ -17,6 +17,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ #error deprecated
+
+ /*
  #pragma once
 
  #include <pugixml.hpp>
@@ -60,3 +63,4 @@
 	};
 
  }
+ */

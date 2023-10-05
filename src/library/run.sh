@@ -72,7 +72,7 @@ if [ "$(grep -c Público/openSUSE-Leap-15.4-NET-x86_64 /proc/mounts)" == "0" ]; 
 	sudo mount -o loop ~/Público/iso/openSUSE-Leap-15.4-NET-x86_64-Build243.2-Media.iso ~/Público/openSUSE-Leap-15.4-NET-x86_64/
 fi
 
-sudo setcap cap_dac_override,cap_setuid,cap_setgid,cap_chown,cap_sys_admin+ep .bin/Debug/reinstall 
+#sudo setcap cap_dac_override,cap_setuid,cap_setgid,cap_chown,cap_sys_admin+ep .bin/Debug/reinstall 
 
 .bin/Debug/reinstall
 if [ "$?" != "0" ]; then

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-
+ /*
  #include <config.h>
  #include <reinstall/builder.h>
  #include <reinstall/actions/fsbuilder.h>
@@ -127,7 +127,6 @@
 
 				writer->open();
 
-/*
 #ifdef HAVE_FDISK
 				if(part != NoPartition) {
 
@@ -137,7 +136,6 @@
 
 				}
 #endif // HAVE_FDISK
-				*/
 
 				// Write image.
 				{
@@ -192,4 +190,4 @@
 	}
 
  }
-
+*/

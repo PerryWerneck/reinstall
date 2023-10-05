@@ -18,7 +18,9 @@
  */
 
  #pragma once
+ #error deprecated
 
+ /*
  #include <reinstall/defs.h>
  #include <pugixml.hpp>
  #include <udjat/tools/object.h>
@@ -163,7 +165,7 @@
 		std::unordered_set<std::shared_ptr<Repository>, Repository::Hash, Repository::Equal> repositories;
 
 		/// @brief Sources list.
-		std::list<std::shared_ptr<Source>> sources;
+		std::unordered_set<std::shared_ptr<Source>, Source::Hash, Source::Equal> sources;
 
 		/// @brief Search for source based on image path
 		std::shared_ptr<Source> source(const char *path) const;
@@ -212,8 +214,6 @@
 		unsigned short id;
 
 		static Action & get_selected();
-
-		static void set_selected(const char *path);
 
 		inline void set_selected() noexcept {
 			selected = this;
@@ -278,10 +278,7 @@
 		/// @brief Return the URL for installation media.
 		virtual const char * install();
 
-		inline void push_back(std::shared_ptr<Source> source) {
-			sources.push_back(source);
-		}
-
+		bool push_back(std::shared_ptr<Source> source);
 		bool push_back(std::shared_ptr<Template> tmpl);
 
 		inline size_t source_count() const noexcept {
@@ -308,3 +305,4 @@
 	UDJAT_API void push_back(const pugi::xml_node &node, std::shared_ptr<Action> action);
 
  }
+ */

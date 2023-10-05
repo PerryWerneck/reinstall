@@ -17,6 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ /*
+
  #include <config.h>
  #include <reinstall/dialogs.h>
  #include <iostream>
@@ -92,3 +94,5 @@
 
 	}
  }
+
+ */

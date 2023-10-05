@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ /*
  #include <config.h>
  #include <udjat/version.h>
  #include <private/mainwindow.h>
@@ -120,7 +121,6 @@
 		});
 
 		if(dialog.run() != Gtk::RESPONSE_OK) {
-			Logger::String{"Image builder has failed"}.error("action");
 			return;
 		}
 
@@ -252,84 +252,5 @@
 		}
 
 	}
-	/*
-		//
-		// Build and burn image.
-		//
-
-		show(dialog);
-
-
-		dialog.hide(); // Just hide to wait for all enqueued state changes to run.
-
-		//
-		// Get action writer.
-		//
-		if(error_message.empty()) {
-
-
-		}
-
-		//
-		// Burn image
-		//
-		if(error_message.empty()) {
-
-			dialog.show();
-
-			dialog.hide();
-
-		}
-
-		// Show last dialogs.
-		{
-			std::shared_ptr<Gtk::MessageDialog> popup;
-
-			if(error_message.empty()) {
-
-
-			} else if(action.failed()) {
-
-				// Customized error dialog.
-
-				popup = make_shared<Dialog::Popup>(
-					*this,
-					*action.get_button(),
-					action.failed(),
-					Gtk::MESSAGE_ERROR,
-					Gtk::BUTTONS_OK
-				);
-
-				if(!action.failed().has_secondary()) {
-					popup->set_secondary_text(error_message);
-				}
-
-			} else {
-
-				// Standard error dialog.
-
-				popup = make_shared<Gtk::MessageDialog>(
-					*this,
-					_("Action has failed"),
-					false,
-					Gtk::MESSAGE_ERROR,
-					Gtk::BUTTONS_OK,
-					true
-				);
-
-				popup->set_secondary_text(error_message);
-
-			}
-
-
-
-
-		}
-	}
-
-	buttons.apply.set_sensitive(true);
-	buttons.cancel.set_sensitive(true);
-	layout.view.set_sensitive(true);
-
-	*/
  }
+ */

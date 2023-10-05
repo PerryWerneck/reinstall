@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <udjat/defs.h>
  #include <reinstall/source.h>
  #include <reinstall/builder.h>
@@ -52,32 +54,7 @@
 	}
 
 	void Source::save(const std::function<void(const void *buf, size_t length)> &write) {
-
-		if(!this->url[0]) {
-			error() << "Cant save source with empty URL" << endl;
-			throw runtime_error(_("Unable to get source with an empty URL"));
-		}
-
-		if(this->url[0] == '/') {
-			error() << "Cant save source with relative URL '" << this->url << "'" << endl;
-			throw runtime_error(_("Unable to get source with relative URL"));
-		}
-
-
-		Dialog::Progress &progress = Dialog::Progress::getInstance();
-
-		if(message && *message) {
-			progress.set_sub_title(message);
-		}
-
-		progress.set_url(url);
-
-		Protocol::WorkerFactory(this->url)->save([&progress,&write](unsigned long long current, unsigned long long total, const void *buf, size_t length){
-			progress.set_progress(current,total);
-			write(buf,length);
-			return true;
-		});
-
+		throw runtime_error("Custom saver is unsupported for this source");
 	}
 
  	void Source::save(const char *filename) {
@@ -169,3 +146,4 @@
 	}
 
  }
+ */

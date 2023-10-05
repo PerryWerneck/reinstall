@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <reinstall/controller.h>
  #include <reinstall/group.h>
  #include <udjat/tools/logger.h>
@@ -78,33 +80,11 @@
 		return rc;
 	}
 
-	std::shared_ptr<Abstract::Group> Abstract::Group::find(const char *name) {
-
-		std::shared_ptr<Abstract::Group> rc;
-
-		Controller::getInstance().for_each([&rc,name](std::shared_ptr<Group> group){
-
-			if(*group == name) {
-				rc = group;
-				return true;
-			}
-			return false;
-
-		});
-
-		if(!rc) {
-			throw runtime_error(string{"Cant find group '"} + name + "'");
-		}
-
-		return rc;
-
-	}
-
 	std::shared_ptr<Abstract::Group> Abstract::Group::find(const pugi::xml_node &node) {
 
 		std::shared_ptr<Abstract::Group> rc;
 		const char *name = node.attribute("group-name").as_string("");
-		Controller &controller = Controller::getInstance();
+		Controller &controller = controller.getInstance();
 
 		while(!*name) {
 
@@ -176,3 +156,4 @@
 	}
 
  }
+ */

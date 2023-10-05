@@ -23,68 +23,103 @@
  #include <udjat/defs.h>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
- #include <reinstall/action.h>
- #include <private/dialogs.h>
- #include <reinstall/userinterface.h>
- #include <pugixml.hpp>
+ #include <udjat/tools/xml.h>
+ #include <udjat/ui/dialog.h>
+ #include <udjat/ui/menu.h>
+ #include <udjat/ui/gtk/label.h>
+ #include <udjat/ui/gtk/icon.h>
  #include <udjat/factory.h>
+ #include <memory>
+ #include <vector>
 
- class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Reinstall::UserInterface, private Udjat::Factory {
+ class UDJAT_PRIVATE MainWindow : public Gtk::Window, private Udjat::Menu::Controller, private Udjat::Dialog::Controller {
  private:
 
- 	class Logo : public Gtk::Image {
+	class Logo : public Gtk::Image {
 	public:
 		Logo();
- 	};
-
-	Logo logo;
+		void set(const char *name);
+	} logo;
 
  	struct {
 		Gtk::Label title{ _( "Select option" ), Gtk::ALIGN_START };
-		Gtk::Box hbox, vbox{Gtk::ORIENTATION_VERTICAL}, view{Gtk::ORIENTATION_VERTICAL};
+		Gtk::Box hbox;
+		Gtk::Box vbox{Gtk::ORIENTATION_VERTICAL};
+		Gtk::Box view{Gtk::ORIENTATION_VERTICAL};
 		Gtk::ScrolledWindow swindow;
 		Gtk::ButtonBox bbox;
  	} layout;
 
  	struct {
-		Gtk::Button apply{_("_Apply"), true}, cancel{_("_Cancel"), true};
+		Gtk::Button apply{_("_Apply"), true};
+		Gtk::Button cancel{_("_Cancel"), true};
  	} buttons;
 
-	void on_show() override;
+	void set_icon_name(const char *icon_name);
+	void set_icon(const char *name);
 
-	void apply();
+	class Group : public Gtk::Box {
+	private:
+		Udjat::Label label;
+		Udjat::Label subtitle;
+		Gtk::LinkButton linkbutton;
+		Gtk::Box title{Gtk::ORIENTATION_HORIZONTAL};
+
+	public:
+		Group(const Udjat::XML::Node &node);
+
+		void push_back(Gtk::Widget &child);
+
+	};
+
+	/// @brief The window groups.
+	std::vector<std::shared_ptr<Group>> groups;
+
+	/// @brief The active group.
+	std::shared_ptr<Group> group;
+
+	class Item : public ::Gtk::RadioButton {
+	private:
+		Udjat::Menu::Item *menu;
+		Udjat::Label title;
+		Udjat::Label subtitle;
+		Udjat::Gtk::Icon icon;
+		::Gtk::Grid grid;
+
+	public:
+		::Gtk::LinkButton help;
+
+		Item(Udjat::Menu::Item *menu, const Udjat::XML::Node &node);
+
+		inline std::string get_text() const {
+			return title.get_text();
+		}
+
+		inline void activate() {
+			menu->activate();
+		}
+
+	};
+
+	std::vector<std::shared_ptr<Item>> items;
+
+	std::shared_ptr<Item> selected;
 
  public:
+
+	class PropertyFactory;
+	friend class PropertyFactory;
 
 	MainWindow();
 	virtual ~MainWindow();
 
-	/// @brief Set window icon.
-	void set_icon(const char *name);
+	void push_back(Udjat::Menu::Item *menu, const Udjat::XML::Node &node) override;
 
-	/// @brief Set logo.
-	void set_logo(const char *name);
+	int run(const Udjat::Dialog &dialog, const std::vector<Udjat::Dialog::Button> &buttons) override;
+	int run(const Udjat::Dialog &dialog, const std::function<int(Udjat::Dialog::Progress &progress)> &task) override;
+	int run(const Udjat::Dialog &dialog, const std::function<int(Udjat::Dialog::Popup &popup)> &task, const std::vector<Udjat::Dialog::Button> &) override;
 
-	/// @brief Setup progress dialog.
-	void show(Dialog::Progress &dialog);
-
-	/// @brief Action has failed, notify user.
-	void failed(const char *message);
-
-	/// @brief Construct an action button.
-	std::shared_ptr<Reinstall::Abstract::Object> ActionFactory(const pugi::xml_node &node, const char *icon_name) override;
-
-	/// @brief Construct a filename (gui thread).
-	std::string FilenameFactory(const char *title, const char *label_text, const char *apply, const char *filename, bool save) override;
-
-	/// @brief Construct a group box.
-	std::shared_ptr<Reinstall::Abstract::Group> GroupFactory(const pugi::xml_node &node) override;
-
-	/// @brief Construct a wait for task dialog.
-	std::shared_ptr<Reinstall::Dialog::TaskRunner> TaskRunnerFactory(const char *message, bool markup) override;
-
-	/// @brief Parse XML definition.
-	bool generic(const pugi::xml_node &node) override;
+	std::shared_ptr<Group> find(const pugi::xml_node &node, const char *attrname);
 
  };
 

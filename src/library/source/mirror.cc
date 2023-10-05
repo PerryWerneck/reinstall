@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <reinstall/source.h>
  #include <reinstall/repository.h>
  #include <udjat/tools/protocol.h>
@@ -109,3 +111,4 @@
 	}
 
  }
+ */

@@ -17,6 +17,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ /*
+
  #include <config.h>
  #include <gtkmm.h>
  #include <glibmm/i18n.h>
@@ -48,7 +50,7 @@
 		{ G_LOG_FLAG_RECURSION,	Logger::Info		},
 		{ G_LOG_FLAG_FATAL,		Logger::Error		},
 
-		/* GLib log levels */
+		// GLib log levels
 		{ G_LOG_LEVEL_ERROR,	Logger::Error		},
 		{ G_LOG_LEVEL_CRITICAL,	Logger::Error		},
 		{ G_LOG_LEVEL_WARNING,	Logger::Warning		},
@@ -350,3 +352,5 @@
 	return gui_mode();
 
  }
+
+ */

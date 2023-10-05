@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ /*
  // References:
  //
  //	https://stackoverflow.com/questions/11295154/how-do-i-loop-mount-programmatically
@@ -80,7 +81,6 @@
 			throw system_error(errno, system_category(),c_str());
 		}
 
-		/*
 		// Setup auto cleanup.
 
 		struct loop_info loopinfo;
@@ -95,7 +95,6 @@
 		if (ioctl(fd.device, LOOP_SET_STATUS, &loopinfo) == -1) {
 			throw system_error(errno, system_category(),c_str());
 		}
-		*/
 
 	}
 
@@ -137,4 +136,5 @@
 	}
 
  }
+ */
 

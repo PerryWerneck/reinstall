@@ -18,7 +18,9 @@
  */
 
  #pragma once
+ #error deprecated
 
+ /*
  #include <pugixml.hpp>
  #include <udjat/defs.h>
  #include <udjat/tools/object.h>
@@ -64,4 +66,5 @@
 	}
 
  }
+ */
 

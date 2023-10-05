@@ -19,6 +19,7 @@
 
  #pragma once
 
+ /*
  #include <udjat/defs.h>
  #include <reinstall/source.h>
  #include <pugixml.hpp>
@@ -33,3 +34,4 @@
 	};
 
  }
+ */

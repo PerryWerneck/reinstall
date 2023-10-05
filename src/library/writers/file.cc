@@ -19,81 +19,41 @@
 
  #include <config.h>
  #include <udjat/defs.h>
-
- #include <reinstall/writer.h>
- #include <reinstall/action.h>
- #include <string>
- #include <sys/types.h>
- #include <sys/stat.h>
- #include <fcntl.h>
- #include <system_error>
- #include <unistd.h>
- #include <udjat/tools/intl.h>
+ #include <libreinstall/writer.h>
+ #include <libreinstall/writers/file.h>
+ #include <udjat/tools/file/handler.h>
  #include <udjat/tools/logger.h>
+ #include <stdexcept>
 
- using namespace std;
+ #ifdef HAVE_UNISTD_H
+	#include <unistd.h>
+ #endif // HAVE_UNISTD_H
+
  using namespace Udjat;
+ using namespace std;
 
  namespace Reinstall {
 
-	FileWriter::FileWriter(const Reinstall::Action &action, const char *fn) : Reinstall::Writer(action), filename{fn} {
+ 	FileWriter::FileWriter(int fd) : Udjat::File::Handler{fd} {
+ 	}
 
-		if(filename.empty()) {
-			throw runtime_error("Invalid filename");
-		}
+ 	FileWriter::FileWriter(const char *filename) : Udjat::File::Handler{filename,true} {
+ 		Logger::String{"Writer to '",filename,"' was initialized"}.trace(PACKAGE_NAME);
+ 	}
 
-		Logger::String{"Writer for '",filename.c_str(),"' was constructed"}.trace(PACKAGE_NAME);
-	}
+ 	FileWriter::~FileWriter() {
+ 	}
 
-	FileWriter::~FileWriter() {
-		if(fd > 0) {
-			close();
-		}
-		Logger::String{"Writer for '",filename.c_str(),"' was destroyed"}.trace(PACKAGE_NAME);
-	}
-
-	void FileWriter::open() {
-		Logger::String{"Writer for '",filename.c_str(),"' was open"}.trace(PACKAGE_NAME);
-		fd = ::open(filename.c_str(),O_CREAT|O_TRUNC|O_APPEND|O_RDWR,0666);
-		if(fd < 0) {
-			throw system_error(errno,system_category(),filename);
-		}
-	}
-
-	void FileWriter::format(const char *fsname) {
-		super::format(filename.c_str(),fsname);
-	}
-
-	/*
-	void FileWriter::make_partition(uint64_t length, const char *parttype) {
-		Reinstall::Writer::make_partition(fd,length,parttype);
-	}
-	*/
-
-	std::shared_ptr<Disk::Image> FileWriter::DiskImageFactory(const char *fsname) {
-		return super::DiskImageFactory(filename.c_str(),fsname);
-	}
-
-	void FileWriter::close() {
-		if(fd > 0) {
-			Logger::String{"Writer for '",filename.c_str(),"' was closed"}.trace(PACKAGE_NAME);
-			::close(fd);
-		}
-		fd = -1;
+	size_t FileWriter::write(unsigned long long offset, const void *contents, size_t length) {
+		return Udjat::File::Handler::write(offset,contents,length);
 	}
 
 	void FileWriter::finalize() {
-		Reinstall::Writer::finalize(fd);
-	}
+		if(fsync(fd)) {
+			Logger::String{"Unexpected error on fsync: ",strerror(errno)}.error("Writer");
+			throw runtime_error("Unexpected error finalizing file write");
+		}
 
-	void FileWriter::write(const void *buf, size_t length) {
-		Reinstall::Writer::write(fd,buf,length);
-	}
-
-	std::shared_ptr<Writer> Writer::FileWriterFactory(const Reinstall::Action &action, const char *filename) {
-
-		return make_shared<FileWriter>(action,filename);
-	}
-
+ 	}
 
  }

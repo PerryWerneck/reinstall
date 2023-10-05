@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<config>
+<config log-debug='yes' log-trace='yes'>
 
 	<!-- System version -->
 	<!-- attribute name='osversion' value='15.4' / -->
@@ -44,7 +44,7 @@
 	</repository>
 
 	<!-- Path for the driver update (Full URL or repository path) -->
-	<driver-update-disk name='dud' url='../update.dud' path='/tmp/updates.dud' />	
+	<driver-update-disk name='dud' url='../update.dud' path='/update.dud' repository='install' />	
 
 	<!-- Path for the installation kernel (Full URL or repository path) -->
 	<kernel url='/boot/x86_64/loader/linux' repository='install' />
@@ -84,6 +84,7 @@
 
 	 		<attribute name='title' value='Reinstall this workstation'/>
 	 		<attribute name='sub-title' value='Do a complete network based reinstall on this workstation withot any external boot device' />
+	 		<attribute name='icon-name' value='computer' />
 		
 			<!-- Save configuration for the new boot option (use '%' as marker) -->
 			<template name='grub-config' url='file://${template-dir}/grub2' path='${grub-conf-dir}/51_reinstall' script='yes' marker='%' />
@@ -113,6 +114,7 @@
 
 	 		<attribute name='title' value='Build a simple network install image'/>
 	 		<attribute name='sub-title' value='Build an small usb based boot device for network install' />
+	 		<attribute name='icon-name' value='drive-removable-media' />
 
 			<!-- Replace every 'grub.cfg' file with template -->
 			<template name='grub.cfg' url='file://${template-dir}/grub.cfg' />
@@ -135,14 +137,41 @@
 
 		</network-installer>
 		
-		<iso-writer name='netinstall' default='no' url='http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Current.iso' cache='yes'>
+		<iso-writer name='netinstall' default='no'>
+
 	 		<attribute name='title' value='Create USB drive for network install' />
 	 		<attribute name='sub-title' value='This will download and write the OpenSUSE network install' />
+	 		<attribute name='icon-name' value='drive-removable-media' />
+			<attribute name='remote' value='http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-NET-x86_64-Current.iso' />
+
+			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
+			<dialog name='confirmation' icon='dialog-question' message='Do you confirm?'>
+				This is the secondary text on confirmation message.
+			</dialog>
+
+			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
+			<dialog name='success' title='Success message' icon='dialog-information' message='Operation complete'>
+				This is the secondary text of sucess message.
+			</dialog>
+
 		</iso-writer>
 
-		<iso-writer name='netinstall' default='no' url='http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-DVD-x86_64-Current.iso' cache='yes'>
+		<iso-writer name='netinstall' default='no'>
+		
 	 		<attribute name='title' value='Create USB drive for offline install' />
 	 		<attribute name='sub-title' value='This will download and write the OpenSUSE full install' />
+	 		<attribute name='icon-name' value='drive-removable-media' />
+			<attribute name='remote' value='http://download.opensuse.org/distribution/leap/15.4/iso/openSUSE-Leap-15.4-DVD-x86_64-Current.iso' />
+
+			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
+			<dialog name='confirmation' icon='dialog-question' message='Do you confirm?'>
+				This is the secondary text on confirmation message.
+			</dialog>
+
+			<!-- icon name from https://specifications.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html -->
+			<dialog name='success' title='Success message' icon='dialog-information' message='Operation complete'>
+				This is the secondary text of sucess message.
+			</dialog>
 		</iso-writer>
 
 	</group>

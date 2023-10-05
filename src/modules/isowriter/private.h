@@ -20,8 +20,103 @@
  #pragma once
 
  #include <config.h>
+ #include <udjat/defs.h>
+
+ #include <memory>
+
  #include <udjat/tools/logger.h>
  #include <udjat/tools/intl.h>
+ #include <udjat/tools/xml.h>
+ #include <udjat/tools/string.h>
+ #include <udjat/tools/object.h>
+ #include <udjat/tools/file/handler.h>
+
+ #include <udjat/ui/menu.h>
+ #include <udjat/ui/dialog.h>
+ #include <udjat/ui/dialogs/progress.h>
+
+ #include <libreinstall/popup.h>
+
+ /// @brief Simple image writer, just write an ISO to USB Storage.
+ class UDJAT_PRIVATE MenuItem : public Udjat::NamedObject, public Udjat::Menu::Item {
+ protected:
+
+	/// @brief Action dialogs.
+	struct Dialogs {
+
+		/// @brief The action title.
+		const char *title = "";
+
+		/// @brief Confirmation dialog (Yes/No/Quit)
+		Udjat::Dialog confirmation;
+
+		/// @brief Progress dialog.
+		Udjat::Dialog progress;
+
+		/// @brief Success dialog.
+		Popup success;
+
+		/// @brief Failed dialog.
+		Popup failed;
+
+		Dialogs(const Udjat::XML::Node &node) :
+			title{Udjat::XML::QuarkFactory(node,"title").c_str()},
+			confirmation{"confirmation",node},
+			progress{"progress",node},
+			success{"success",node},
+			failed{"failed",node} {
+		}
+
+	} dialogs;
+
+ protected:
+
+	/// @brief Get ISO file.
+	virtual std::shared_ptr<Udjat::File::Handler> get_file(Udjat::Dialog::Progress &dialog) = 0;
+
+ public:
+
+	MenuItem(const Udjat::XML::Node &node) : Udjat::NamedObject{node}, Udjat::Menu::Item{node}, dialogs{node} {
+	}
+
+	/// @brief Activate menu option.
+	void activate() override;
+
+ };
+
+ /// @brief Simple image writer, just write an ISO to USB Storage.
+ class UDJAT_PRIVATE IsoWriter : public MenuItem {
+ private:
+	const char *remote;
+	const char *local;
+
+ protected:
+
+	std::shared_ptr<Udjat::File::Handler> get_file(Udjat::Dialog::Progress &dialog) override;
+
+ public:
+
+	IsoWriter(const Udjat::XML::Node &node)
+		: MenuItem(node), remote{Udjat::XML::QuarkFactory(node,"remote").c_str()}, local{Udjat::XML::QuarkFactory(node,"local").c_str()} {
+	}
+
+ };
+
+
+ /// @brief Format and write files.
+ class UDJAT_PRIVATE DiskWriter : public MenuItem {
+ protected:
+
+	std::shared_ptr<Udjat::File::Handler> get_file(Udjat::Dialog::Progress &dialog) override;
+
+ public:
+
+	DiskWriter(const Udjat::XML::Node &node) : MenuItem(node) {
+	}
+
+ };
+
+  /*
  #include <reinstall/action.h>
 
  /// @brief Simple image writer, just write an ISO to USB Storage.
@@ -43,3 +138,4 @@
 	void post(std::shared_ptr<Reinstall::Writer> writer) override;
 
  };
+ */

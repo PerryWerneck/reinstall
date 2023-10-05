@@ -19,6 +19,16 @@
 
  #include <config.h>
  #include "private.h"
+ #include <stdexcept>
+
+ using namespace std;
+
+ std::shared_ptr<Udjat::File::Handler> DiskWriter::get_file(Udjat::Dialog::Progress &) {
+	throw system_error(ENOTSUP,system_category());
+ }
+
+ /*
+ #include "private.h"
 
  #include <reinstall/source.h>
  #include <reinstall/action.h>
@@ -91,4 +101,5 @@
 	}
 
  }
+ */
 

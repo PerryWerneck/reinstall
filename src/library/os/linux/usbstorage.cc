@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+/*
  #include <config.h>
  #include <udjat/defs.h>
  #include <reinstall/writer.h>
@@ -48,7 +49,6 @@
 	unsigned long long Writer::usbdevlength = 0;
 	const char * Writer::usbdevname = nullptr;
 
-	/*
 	/// @brief Get the size of the device in fd.
 	static unsigned long long devlen(int fd) {
 
@@ -60,7 +60,6 @@
 
 		return devlen;
 	}
-	*/
 
 	std::shared_ptr<Writer> Writer::USBWriterFactory(const Reinstall::Action &action, size_t length) {
 
@@ -238,11 +237,9 @@
 				super::write(fd,buf,count);
 			}
 
-			/*
-			void make_partition(uint64_t length, const char *parttype) override {
-				Reinstall::Writer::make_partition(fd,length,parttype);
-			}
-			*/
+//			void make_partition(uint64_t length, const char *parttype) override {
+//				Reinstall::Writer::make_partition(fd,length,parttype);
+//			}
 
 			void finalize() override {
 				debug("Finalizing");
@@ -440,3 +437,4 @@
 
 
  }
+ */

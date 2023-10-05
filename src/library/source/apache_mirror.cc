@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <reinstall/source.h>
  #include <udjat/tools/protocol.h>
  #include <reinstall/dialogs.h>
@@ -85,3 +87,4 @@
 	}
 
  }
+ */

@@ -1,91 +1,110 @@
 
- #include "private.h"
  #include <udjat/tools/logger.h>
  #include <udjat/tools/quark.h>
- #include <udjat/tools/application.h>
- #include <udjat/agent.h>
  #include <udjat/module.h>
+ #include <iostream>
+ #include <set>
+ #include <vector>
 
- #include <reinstall/controller.h>
- #include <reinstall/actions/isobuilder.h>
- #include <reinstall/dialogs.h>
- #include <reinstall/writer.h>
+ #include <udjat/ui/dialog.h>
+ #include <udjat/ui/menu.h>
+ #include <udjat/tools/logger.h>
+ #include <pugixml.hpp>
 
- #include <reinstall/sources/kernel.h>
- #include <reinstall/sources/initrd.h>
- #include <reinstall/userinterface.h>
+ #include <libreinstall/builder.h>
+ #include <libreinstall/builders/iso9660.h>
+ #include <libreinstall/builders/fat.h>
 
- #include <udjat/moduleinfo.h>
+ #include <libreinstall/source.h>
+ #include <libreinstall/iso9660.h>
 
- #include <unistd.h>
- #include <reinstall/diskimage.h>
+ #include <libreinstall/action.h>
+
+ #include <libreinstall/writers/file.h>
+ #include <libreinstall/writers/usb.h>
+
+ #include <libreinstall/sources/zip.h>
 
  using namespace std;
  using namespace Udjat;
 
- static const Udjat::ModuleInfo moduleinfo{"Test application"};
+ /*
+ static void object_test() {
 
- class TestModule : public Udjat::Module, public Udjat::Factory {
- public:
-	TestModule() : Udjat::Module("test", moduleinfo), Udjat::Factory("option",moduleinfo) {
-	}
+	class Action : public Reinstall::Action {
+	public:
+		Action() : Reinstall::Action{} {
 
-	bool push_back(const pugi::xml_node &node) override {
+			sources.emplace_back(
+				"suse",
+				"http://localhost/~perry/openSUSE-Leap-15.4-NET-x86_64/",
+				"/home/perry/Público/openSUSE-Leap-15.4-NET-x86_64",
+				""
+			);
 
-		Reinstall::push_back(node,make_shared<Reinstall::IsoBuilder>(node));
-		return true;
-
-	}
-
- };
-
- int main(int argc, char **argv) {
-
-	setlocale( LC_ALL, "" );
-	Udjat::Quark::init(argc,argv);
-
-	// Get default UI
-	Reinstall::UserInterface interface;
-
-	// First get controller to construct the factories.
-	Reinstall::Controller::getInstance();
-
-	/*
-	{
-		Reinstall::Disk::Image("efi.iso","vfat").forEach([](const char *mountpoint, const char *path){
-			cout << mountpoint << " " << path << endl;
-		});
-	}
-	*/
-
-	/*
-	{
-
-		Reinstall::Writer::USBStorageFactory();
-
-	}
-	*/
-
-	{
-		// Initialize module.
-		new TestModule();
-
-		// Initialize application, load xml definitions.
-		Udjat::Application::init(argc,argv,"./test.xml");
-
-		Reinstall::Dialog::Progress progress;
-
-		Reinstall::Action &action = Reinstall::Action::get_selected();
-
-		if(action.interact()) {
-
-			action.activate();
+			tmpls.emplace_back(
+				"grub",
+				"grub.cfg",
+				"file://../../templates/grub.cfg"
+			);
 		}
 
-	}
+		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
+			static iso9660::Settings settings;
+			return iso9660::BuilderFactory(settings);
+		}
 
-	// Finalize application.
-	Udjat::Application::finalize();
+		std::shared_ptr<Reinstall::Writer> WriterFactory() const override {
+			return make_shared<Reinstall::FileWriter>("/tmp/test.iso");
+		}
+
+	};
+
+	Reinstall::Dialog::Progress progress;
+	Action{}.activate(progress);
+
+ }
+ */
+
+ static void xml_test(const char *filename) {
+
+	class Action : public Reinstall::Action {
+	public:
+		Action(const Udjat::XML::Node &node) : Reinstall::Action{node} {
+		}
+
+		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
+			static iso9660::Settings settings;
+			return iso9660::BuilderFactory(settings);
+		}
+
+		std::shared_ptr<Reinstall::Writer> WriterFactory() const override {
+			return make_shared<Reinstall::FileWriter>("/tmp/test.iso");
+		}
+
+	};
+
+	pugi::xml_document document;
+	document.load_file(filename);
+
+	Action{document.document_element()}.activate();
+
+ }
+
+ int main(int, char **) {
+
+	Udjat::Quark::init();
+	Udjat::Logger::redirect();
+	Udjat::Logger::enable(Udjat::Logger::Trace);
+	Udjat::Logger::enable(Udjat::Logger::Debug);
+	Udjat::Logger::console(true);
+	Udjat::Module::load("http");
+
+	Dialog::Controller dialogs;
+	Menu::Controller menus;
+
+	xml_test("test.xml");
+\
+	Udjat::Module::unload();
 	return 0;
-
-}
+ }

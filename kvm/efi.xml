@@ -14,7 +14,18 @@
     <loader readonly="yes" type="pflash">/usr/share/qemu/ovmf-x86_64-smm-ms-code.bin</loader>
     <nvram>/tmp/vars.fd</nvram>
     <boot dev="hd"/>
+	<smbios mode='sysinfo'/>
   </os>
+  <sysinfo type='smbios'>
+  	<!-- https://libvirt.org/formatdomain.html#smbios-system-information -->
+	<chassis>
+		<entry name='manufacturer'>Dell Inc.</entry>
+		<entry name='version'>2.12</entry>
+		<entry name='serial'>65X0XF2</entry>
+		<entry name='asset'>12860435590006</entry>
+		<entry name='sku'>Type3Sku1</entry>
+	</chassis>  	
+  </sysinfo>
   <features>
     <acpi/>
     <apic/>
@@ -92,12 +103,12 @@
       <target chassis="7" port="0x16"/>
       <address type="pci" domain="0x0000" bus="0x00" slot="0x02" function="0x6"/>
     </controller>
-    <interface type="direct">
-      <mac address="52:54:00:67:72:d8"/>
-      <source dev="wlan0" mode="bridge"/>
-      <model type="virtio"/>
-      <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
-    </interface>
+	<interface type="network">
+	  <mac address="52:54:00:15:21:ec"/>
+	  <source network="default"/>
+	  <model type="virtio"/>
+	  <address type="pci" domain="0x0000" bus="0x01" slot="0x00" function="0x0"/>
+	</interface>
     <serial type="pty">
       <target type="isa-serial" port="0">
         <model name="isa-serial"/>

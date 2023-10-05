@@ -18,6 +18,60 @@
  */
 
  #include <config.h>
+ #include <udjat/factory.h>
+ #include <udjat/module.h>
+ #include <udjat/tools/xml.h>
+
+ #include <libreinstall/action.h>
+
+ #include <libreinstall/builder.h>
+ #include <libreinstall/builders/iso9660.h>
+
+ using namespace std;
+ using namespace Udjat;
+
+ Udjat::Module * udjat_module_init() {
+
+ 	class Action : public Reinstall::Action, private iso9660::Settings {
+	public:
+		Action(const XML::Node &node) : Reinstall::Action{node}, iso9660::Settings{node} {
+
+			search(node,"source",[this](const pugi::xml_node &node){
+				sources.push_back(Reinstall::Source::factory(node));
+				return false;
+			});
+
+		}
+
+		virtual ~Action() {
+		}
+
+		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
+			return iso9660::BuilderFactory(*this);
+		}
+
+ 	};
+
+ 	static const Udjat::ModuleInfo moduleinfo { "Basic network install image builder" };
+
+	class Module : public Udjat::Module, public Udjat::Factory {
+	public:
+		Module() : Udjat::Module("network-installer", moduleinfo), Udjat::Factory("network-installer",moduleinfo) {
+		}
+
+		bool generic(const XML::Node &node) override {
+			new Action(node);
+			return true;
+		}
+
+	};
+
+	return new Module();
+
+ }
+
+
+ /*
  #include <udjat/module.h>
  #include <udjat/factory.h>
  #include <udjat/tools/object.h>
@@ -82,4 +136,5 @@
 	return new Module();
 
  }
+ */
 

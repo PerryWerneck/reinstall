@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <private/widgets.h>
  #include <reinstall/action.h>
  #include <cstring>
@@ -54,4 +56,5 @@
 	}
 
  }
+ */
 

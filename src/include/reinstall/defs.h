@@ -18,7 +18,9 @@
  */
 
  #pragma once
+ #error deprecated
 
+ /*
  #include <udjat/defs.h>
 
  namespace Reinstall {
@@ -37,3 +39,4 @@
 	}
 
  }
+ */

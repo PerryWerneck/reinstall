@@ -18,7 +18,9 @@
  */
 
  #pragma once
+ #error deprecated
 
+ /*
  #include <udjat/defs.h>
  #include <functional>
  #include <reinstall/source.h>
@@ -51,3 +53,4 @@
 	}
 
  }
+ */

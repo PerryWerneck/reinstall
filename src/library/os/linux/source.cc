@@ -17,6 +17,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+ /*
  #include <config.h>
  #include <udjat/defs.h>
  #include <reinstall/defs.h>
@@ -87,3 +88,4 @@
 
  }
 
+ */

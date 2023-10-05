@@ -18,6 +18,8 @@
  */
 
  #include <config.h>
+
+ /*
  #include <reinstall/defs.h>
  #include <reinstall/source.h>
  #include <reinstall/sources/zipfile.h>
@@ -125,13 +127,11 @@
 
 				} catch(...) {
 
-					Logger::String{"Download of ",filename," was aborted"};
 					::close(out);
 					throw;
 				}
 
 				::close(out);
-
 
 				container.reset();
 
@@ -167,3 +167,5 @@
 #endif // HAVE_ZIPLIB
 
  }
+
+ */

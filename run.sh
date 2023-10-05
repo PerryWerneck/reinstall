@@ -3,6 +3,7 @@
 VM_URI="qemu:///system"
 VM_NAME="reinstall"
 VM_TYPE="efi"
+VM_DISK_SIZE="200G"
 
 if [ -e ./kvm/libvirt.conf ]; then
 	. ./kvm/libvirt.conf
@@ -19,7 +20,7 @@ isolinux() {
 		create \
 		-f qcow2 \
 		/tmp/reinstall.qcow2 \
-		20G
+		${VM_DISK_SIZE}
 	if [ "$?" != "0" ]; then
 		exit -1
 	fi
@@ -45,7 +46,7 @@ efi() {
 		create \
 		-f qcow2 \
 		/tmp/reinstall.qcow2 \
-		20G
+		${VM_DISK_SIZE}
 	if [ "$?" != "0" ]; then
 		exit -1
 	fi
@@ -67,12 +68,17 @@ if [ "$?" != "0" ]; then
 	exit -1
 fi
 
+sudo rm -f /tmp/test.iso /tmp/51_reinstall /tmp/reinstall.qcow2
+if [ "$?" != "0" ]; then
+	echo "Erro ao remover arquivos do teste anterior"
+	exit -1
+fi
+
 # ./mount.sh
+#sudo setcap cap_dac_override,cap_setuid,cap_setgid,cap_chown,cap_sys_admin+ep .bin/Debug/reinstall 
+#sudo rm -f /tmp/51_reinstall
 
-sudo setcap cap_dac_override,cap_setuid,cap_setgid,cap_chown,cap_sys_admin+ep .bin/Debug/reinstall 
-sudo rm -f /tmp/51_reinstall
-
-.bin/Debug/reinstall usb-storage-device=/tmp/test.iso usb-storage-length=21Gb
+.bin/Debug/reinstall --output=/tmp/test.iso
 if [ "$?" != "0" ]; then
 	exit -1
 fi

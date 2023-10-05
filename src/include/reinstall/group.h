@@ -18,6 +18,9 @@
  */
 
  #pragma once
+ #error deprecated
+
+ /*
  #include <reinstall/action.h>
  #include <list>
  #include <memory>
@@ -46,10 +49,10 @@
 			static std::shared_ptr<Group> find(const pugi::xml_node &node);
 			static std::shared_ptr<Group> find(const unsigned short id);
 			static std::shared_ptr<Group> factory(const pugi::xml_node &node);
-			static std::shared_ptr<Group> find(const char *name);
 
 		};
 
 	}
 
  }
+ */
