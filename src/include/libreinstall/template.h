@@ -41,6 +41,9 @@
 		/// @brief URL for template file, file:// for local file.
 		const char *url = nullptr;
 
+		/// @brief Template path on destination image.
+		const char *filename = "";
+
 		char marker = '$';
 
 	public:
@@ -48,6 +51,13 @@
 		}
 
 		Template(const Udjat::XML::Node &node);
+
+		/// @brief Get template path.
+		/// @return The 'path' attribute with the template path in the destination image.
+		/// @retval "" The template has no 'path' attribute
+		inline const char *path() const noexcept {
+			return filename;
+		}
 
 		/// @brief Test if string matches template filter.
 		/// @param path Path to match.

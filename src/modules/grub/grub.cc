@@ -78,6 +78,19 @@
 
 		}
 
+		void push_back(const Udjat::Abstract::Object &object, const std::vector<Reinstall::Template> &templates) override {
+
+			for(const Reinstall::Template &tmpl : templates) {
+				const char *path = tmpl.path();
+				if(path && *path) {
+					debug("Saving template at '",path,"'");
+					auto source = tmpl.SourceFactory(object,path);
+				}
+
+			}
+
+		}
+
 		void write(std::shared_ptr<Writer> writer) override {
 
 			throw runtime_error("No write");

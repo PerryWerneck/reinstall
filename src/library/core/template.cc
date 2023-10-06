@@ -52,7 +52,8 @@
 	Template::Template(const Udjat::XML::Node &node) :
 		Udjat::NamedObject{node},
 		filter{Udjat::XML::QuarkFactory(node,"filter").c_str()},
-		url{Udjat::XML::QuarkFactory(node,"url").c_str()} {
+		url{Udjat::XML::QuarkFactory(node,"url").c_str()},
+		filename{Udjat::XML::QuarkFactory(node,"path").c_str()} {
 
 		const char *sMarker = node.attribute("marker").as_string(((std::string) Config::Value<String>("template","marker","$")).c_str());
 
@@ -101,7 +102,7 @@
 		return worker->get([&progress](double current, double total){
 			progress.progress(current,total);
 			return true;
-		});
+		}).expand();
 
 	}
 
