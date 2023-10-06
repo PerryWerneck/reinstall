@@ -32,6 +32,10 @@
 	/// @brief The abstract image builder.
 	class UDJAT_API Builder : public Udjat::NamedObject {
 	public:
+
+		/// @brief Construct a dummy builder.
+		static std::shared_ptr<Reinstall::Builder> factory();
+
 		constexpr Builder(const char *name) : Udjat::NamedObject{name} {
 		}
 

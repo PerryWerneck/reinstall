@@ -54,31 +54,22 @@
 		}
 
 		void pre() override {
-			debug("-------------- TODO: ",__FUNCTION__);
 		}
 
 		void post() override {
-			debug("-------------- TODO: ",__FUNCTION__);
 		}
 
 		void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
 
-			const char *ptr = strrchr(file->c_str(),'/');
-			if(!ptr) {
-				ptr = file->c_str();
-			} else {
-				ptr++;
+			String path{BOOT_PATH,file->c_str()};
+
+			if(::remove(path.c_str()) && errno != ENOENT) {
+				throw system_error(errno,system_category(),path.c_str());
 			}
 
-			String filename{BOOT_PATH,"/",ptr};
+			Logger::String{"Saving '",path.c_str(),"'"}.info("grub");
 
-			if(::remove(filename.c_str()) && errno != ENOENT) {
-				throw system_error(errno,system_category(),filename.c_str());
-			}
-
-			Logger::String{"Saving '",filename.c_str(),"'"}.info("grub");
-
-			File::Handler output{filename.c_str(),true};
+			File::Handler output{path.c_str(),true};
 			Dialog::Progress &dialog{Dialog::Progress::instance()};
 			file->save([&output,&dialog](unsigned long long offset, unsigned long long total, const void *buf, size_t length){
 				output.write(offset, buf, length);
@@ -88,7 +79,9 @@
 		}
 
 		void write(std::shared_ptr<Writer> writer) override {
-			debug("-------------- TODO: ",__FUNCTION__);
+
+			throw runtime_error("No write");
+
 		}
 
  	};
@@ -140,9 +133,80 @@
 			return make_shared<Builder>();
 		}
 
-		/// @brief Get image writer.
-		std::shared_ptr<Reinstall::Writer> WriterFactory() const override {
-			throw runtime_error("incomplete");
+		bool getProperty(const char *key, std::string &value) const override {
+
+			debug("Searching for '",key,"' in ",name());
+
+			/*
+			if(strcasecmp(key,"kernel-fspath") == 0 || strcasecmp(key,"kernel-rpath") == 0 ) {
+				value = (kernel->rpath()+1);
+				return true;
+			}
+
+			if(strcasecmp(key,"initrd-fspath") == 0 || strcasecmp(key,"initrd-rpath") == 0 ) {
+				value = (initrd->rpath()+1);
+				return true;
+			}
+			*/
+
+			if(strcasecmp(key,"boot-path") == 0 || strcasecmp(key,"grub-path") == 0) {
+
+				// TODO: Detect boot path ( /proc/cmdline? )
+#ifdef DEBUG
+				value = "/tmp";
+#else
+				value = "/boot";
+#endif // DEBUG
+				return true;
+			}
+
+			if(strcasecmp(key,"grub-conf-dir") == 0) {
+#ifdef DEBUG
+				value = "/tmp";
+#else
+				value = "/etc/grub.d";
+#endif // DEBUG
+				return true;
+			}
+
+			if(strcasecmp(key,"install-enabled") == 0) {
+				value = "1";
+				return true;
+			}
+
+			if(strcasecmp(key,"kernel-path") == 0) {
+				value = Reinstall::Action::getProperty("boot-path") + "/kernel-" PACKAGE_NAME;
+				debug(key,"=",value);
+				return true;
+			}
+
+			if(strcasecmp(key,"initrd-path") == 0) {
+				value = Reinstall::Action::getProperty("boot-path") + "/initrd-" PACKAGE_NAME;
+				debug(key,"=",value);
+				return true;
+			}
+
+			if(strcasecmp(key,"kernel-filename") == 0) {
+				value = "kernel." PACKAGE_NAME;
+				return true;
+			}
+
+			if(strcasecmp(key,"initrd-filename") == 0) {
+				value = "initrd." PACKAGE_NAME;
+				return true;
+			}
+
+			if(strcasecmp(key,"kernel-file") == 0) {
+				value = Reinstall::Action::getProperty("grub-path") + "/" + Reinstall::Action::getProperty("kernel-filename");
+				return true;
+			}
+
+			if(strcasecmp(key,"initrd-file") == 0) {
+				value = Reinstall::Action::getProperty("grub-path") + "/" + Reinstall::Action::getProperty("initrd-filename");
+				return true;
+			}
+
+			return Reinstall::Action::getProperty(key,value);
 		}
 
 

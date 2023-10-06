@@ -142,6 +142,7 @@
 		Action(const Udjat::XML::Node &node);
 		~Action();
 
+		std::string getProperty(const char *key) const;
 		bool getProperty(const char *key, std::string &value) const override;
 
 		void activate() override;

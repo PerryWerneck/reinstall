@@ -193,12 +193,26 @@
 		if(!templates.empty()) {
 
 			progress.message(_("Applying templates"));
+			info() << "Applying " << templates.size() << " template(s)" << endl;
+
 			for(const Reinstall::Template &tmpl : templates) {
 				files.apply(*this,tmpl);
 			}
 
+		} else {
+
+			info() << "No templates" << endl;
+
 		}
 
+	}
+
+	std::string Action::getProperty(const char *key) const {
+		std::string value;
+		if(getProperty(key,value)) {
+			return value;
+		}
+		throw runtime_error(Logger::Message{_("Unable to get value for '{}'"),key});
 	}
 
 	bool Action::getProperty(const char *key, std::string &value) const {
@@ -307,7 +321,10 @@
 
 		if(!templates.empty()) {
 			progress.message(_("Applying templates"));
+			info() << "Applying " << templates.size() << " template(s)" << endl;
 			builder->push_back(*this,templates);
+		} else {
+			info() << "No templates" << endl;
 		}
 
 		progress.message(_("Building image"));
@@ -442,7 +459,7 @@
 			std::shared_ptr<Reinstall::Builder> builder{BuilderFactory()};
 			dcntrl.run(dialogs.progress,[this,builder,&files](Dialog::Progress &dialog) {
 				dialog.title(dialogs.title);
-				dialog.message(_("Building"));
+				dialog.message(_("Building image"));
 				build(dialog,builder,files);
 				return 0;
 			});

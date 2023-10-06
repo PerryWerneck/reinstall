@@ -161,8 +161,6 @@
 
 		<iso-writer name='netinstall' default='no'>
 		
-			<attribute name='slp-allow-local' value='yes' />
-
 	 		<attribute name='title' value='Create USB drive for offline install' />
 	 		<attribute name='sub-title' value='This will download and write the OpenSUSE full install' />
 	 		<attribute name='icon-name' value='drive-removable-media' />

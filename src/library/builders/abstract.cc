@@ -24,8 +24,36 @@
  #include <config.h>
  #include <udjat/defs.h>
  #include <libreinstall/builder.h>
+ #include <udjat/tools/logger.h>
+
+ using namespace Udjat;
 
  namespace Reinstall {
+
+	std::shared_ptr<Builder> Builder::factory() {
+
+		class DummyBuilder : public Builder {
+		public:
+
+			constexpr DummyBuilder() : Builder{"builder"} {
+			}
+
+			void pre() override {
+			}
+
+			void post() override {
+			}
+
+			void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
+				debug("Pushing '",file->c_str(),"' to dummy builder");
+			}
+
+			void write(std::shared_ptr<Writer> writer) {
+			}
+
+		};
+
+	}
 
 	void Builder::push_back(const Udjat::Abstract::Object &, const std::vector<Reinstall::Template> &) {
 	}
