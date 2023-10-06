@@ -239,6 +239,37 @@
 			return true;
 		}
 
+		if(strcasecmp(key,"label") == 0 || strcasecmp(key,"install-label") == 0 ) {
+			if(options.label && *options.label) {
+				value = options.label;
+			} else {
+				value = Udjat::Config::Value<string>("boot","label",_("Reinstall this workstation"));
+			}
+			return true;
+		}
+
+		if(strcasecmp(key,"install-kloading") == 0) {
+
+			value = _("Loading installation kernel ...");
+			return true;
+
+		}
+
+		if(strcasecmp(key,"install-iloading") == 0) {
+
+			value = _("Loading system installer ...");
+			return true;
+
+		}
+
+		if(strcasecmp(key,"install-version") == 0) {
+
+			// FIX-ME: Use kernel version.
+			value = PACKAGE_VERSION;
+			return true;
+
+		}
+
 		if(!strcasecmp(key,"kernel-parameters")) {
 
 			for(auto kparm : kparms) {
