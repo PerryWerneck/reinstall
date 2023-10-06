@@ -63,7 +63,7 @@
 
 		virtual void icon(const char *icon_name);
 
-		virtual void url(const char *url);
+		virtual void url(const char *url = "");
 
 		virtual void pulse();
 		virtual void progress(double current, double total);

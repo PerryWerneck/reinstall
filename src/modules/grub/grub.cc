@@ -25,6 +25,7 @@
  #include <udjat/ui/dialog.h>
  #include <udjat/ui/dialogs/progress.h>
  #include <udjat/tools/quark.h>
+ #include <udjat/tools/intl.h>
  #include <udjat/tools/file/handler.h>
 
  #include <libreinstall/source.h>
@@ -80,11 +81,31 @@
 
 		void push_back(const Udjat::Abstract::Object &object, const std::vector<Reinstall::Template> &templates) override {
 
+			Dialog::Progress &dialog{Dialog::Progress::instance()};
+			dialog.message(_("Saving control files"));
+
 			for(const Reinstall::Template &tmpl : templates) {
 				const char *path = tmpl.path();
+
 				if(path && *path) {
-					debug("Saving template at '",path,"'");
 					auto source = tmpl.SourceFactory(object,path);
+
+					String filename{path};
+					filename.expand(object);
+
+					Logger::String{"Saving '",filename.c_str(),"'"}.info("grub");
+
+					dialog.url(filename.c_str());
+
+					File::Handler output{filename.c_str(),true};
+					source->save([&output,&dialog](unsigned long long offset, unsigned long long total, const void *buf, size_t length){
+						output.write(offset, buf, length);
+						dialog.progress(offset,total);
+					});
+
+					dialog.url();
+					dialog.pulse();
+
 				}
 
 			}

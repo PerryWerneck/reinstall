@@ -106,11 +106,6 @@
 		<Unit filename="src/include/reinstall/builder.h" />
 		<Unit filename="src/include/reinstall/controller.h" />
 		<Unit filename="src/include/reinstall/defs.h" />
-		<Unit filename="src/include/reinstall/dialogs.h" />
-		<Unit filename="src/include/reinstall/dialogs/popup.h" />
-		<Unit filename="src/include/reinstall/dialogs/progress.h" />
-		<Unit filename="src/include/reinstall/dialogs/taskrunner.h" />
-		<Unit filename="src/include/reinstall/dialogs/window.h" />
 		<Unit filename="src/include/reinstall/diskimage.h" />
 		<Unit filename="src/include/reinstall/group.h" />
 		<Unit filename="src/include/reinstall/iso9660.h" />
@@ -124,9 +119,7 @@
 		<Unit filename="src/include/reinstall/sources/kernel.h" />
 		<Unit filename="src/include/reinstall/sources/zipfile.h" />
 		<Unit filename="src/include/reinstall/tools.h" />
-		<Unit filename="src/include/reinstall/userinterface.h" />
 		<Unit filename="src/include/reinstall/value.h" />
-		<Unit filename="src/include/reinstall/writer.h" />
 		<Unit filename="src/include/udjat/ui/dialog.h" />
 		<Unit filename="src/include/udjat/ui/dialogs/popup.h" />
 		<Unit filename="src/include/udjat/ui/dialogs/progress.h" />
