@@ -22,6 +22,7 @@
  #include <udjat/tools/xml.h>
  #include <udjat/tools/object.h>
  #include <udjat/tools/url.h>
+ #include <udjat/tools/string.h>
  #include <list>
  #include <memory>
  #include <string>
@@ -129,6 +130,10 @@
 		/// @brief Get remote path, resolve SLP if necessary.
 		/// @return The remote source path (empty if not available).
 		virtual Udjat::URL remote() const;
+
+		/// @brief Get path inside install image.
+		/// @return The full path inside kernel imagem.
+		virtual Udjat::String image_path() const;
 
 		/// @brief Get list of source files.
 		/// @param local The URL for local repository.

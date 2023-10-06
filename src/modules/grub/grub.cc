@@ -144,20 +144,25 @@
 		}
 	};
 
-
 	class Action : public Reinstall::Action {
+	private:
+		std::shared_ptr<Kernel> kernel;
+		std::shared_ptr<InitRD> initrd;
+
 	public:
 
 		Action(const Udjat::XML::Node &node) : Reinstall::Action{node} {
 
 			search(node,"kernel",[this](const pugi::xml_node &node){
-				sources.push_back(make_shared<Kernel>(node));
+				this->kernel = make_shared<Kernel>(node);
+				sources.push_back(this->kernel);
 				return true;
 			});
 
 			// Get init source.
 			search(node,"init",[this](const pugi::xml_node &node){
-				sources.push_back(make_shared<InitRD>(node));
+				this->initrd = make_shared<InitRD>(node);
+				sources.push_back(this->initrd);
 				return true;
 			});
 
@@ -209,13 +214,15 @@
 			}
 
 			if(strcasecmp(key,"kernel-path") == 0) {
-				value = Reinstall::Action::getProperty("boot-path") + "/kernel-" PACKAGE_NAME;
+				// TODO: Get from kernel source
+				value = Reinstall::Action::getProperty("boot-path") + Reinstall::Action::getProperty("kernel-filename");
 				debug(key,"=",value);
 				return true;
 			}
 
 			if(strcasecmp(key,"initrd-path") == 0) {
-				value = Reinstall::Action::getProperty("boot-path") + "/initrd-" PACKAGE_NAME;
+				// TODO: Get from initrd source
+				value = Reinstall::Action::getProperty("boot-path") + Reinstall::Action::getProperty("initrd-filename");
 				debug(key,"=",value);
 				return true;
 			}
@@ -226,16 +233,19 @@
 			}
 
 			if(strcasecmp(key,"initrd-filename") == 0) {
+				// TODO: Get from initrd source
 				value = "initrd." PACKAGE_NAME;
 				return true;
 			}
 
 			if(strcasecmp(key,"kernel-file") == 0) {
+				// TODO: Get from kernel source
 				value = Reinstall::Action::getProperty("grub-path") + "/" + Reinstall::Action::getProperty("kernel-filename");
 				return true;
 			}
 
 			if(strcasecmp(key,"initrd-file") == 0) {
+				// TODO: Get from initrd source
 				value = Reinstall::Action::getProperty("grub-path") + "/" + Reinstall::Action::getProperty("initrd-filename");
 				return true;
 			}

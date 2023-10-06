@@ -100,6 +100,10 @@
 
 	}
 
+	String Source::image_path() const {
+		return String{imgpath};
+	}
+
 	void Source::prepare(Source::Files &files) {
 		prepare(this->local(),this->remote(),files);
 	}

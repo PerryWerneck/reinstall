@@ -49,7 +49,7 @@
 
 	const std::string DriverUpdateDisk::value() const {
 		if(this->imgpath && *this->imgpath) {
-			return Config::Value<string>{"schemes","disk","disk:"} + this->imgpath;
+			return Config::Value<string>{"schemes","disk","disk:"} + this->image_path();
 		}
 		return remote();
 	}
