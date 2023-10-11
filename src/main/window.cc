@@ -49,7 +49,7 @@
 #ifdef DEBUG
 		css->load_from_path("./stylesheet.css");
 #else
-		css->load_from_path(Application::DataFile("stylesheet.css").c_str());
+		css->load_from_path(Udjat::Application::DataFile("stylesheet.css").c_str());
 #endif // DEBUG
 		get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
  	}
