@@ -87,7 +87,6 @@
 		<Unit filename="src/include/libreinstall/path.h" />
 		<Unit filename="src/include/libreinstall/popup.h" />
 		<Unit filename="src/include/libreinstall/repository.h" />
-		<Unit filename="src/include/libreinstall/script.h" />
 		<Unit filename="src/include/libreinstall/slpclient.h" />
 		<Unit filename="src/include/libreinstall/source.h" />
 		<Unit filename="src/include/libreinstall/sources/zip.h" />
@@ -135,6 +134,7 @@
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
 		<Unit filename="src/library/action/action.cc" />
+		<Unit filename="src/library/action/script.cc" />
 		<Unit filename="src/library/actions/abstract.cc" />
 		<Unit filename="src/library/actions/popup.cc" />
 		<Unit filename="src/library/builders/abstract.cc" />
@@ -220,6 +220,7 @@
 		<Unit filename="src/library/sources/zip.cc" />
 		<Unit filename="src/library/testprogram/private.h" />
 		<Unit filename="src/library/testprogram/testprogram.cc" />
+		<Unit filename="src/library/tools/actionscript.cc" />
 		<Unit filename="src/library/tools/script.cc" />
 		<Unit filename="src/library/ui/dialogs/abstract.cc" />
 		<Unit filename="src/library/ui/dialogs/controller.cc" />

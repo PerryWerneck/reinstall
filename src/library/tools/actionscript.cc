@@ -18,47 +18,29 @@
  */
 
  /**
-  * @brief Brief description of this source.
+  * @brief Implements action scripts.
   */
 
  #include <config.h>
  #include <udjat/defs.h>
- #include <libreinstall/builder.h>
- #include <udjat/tools/logger.h>
- #include <memory>
+ #include <udjat/tools/script.h>
+ #include <udjat/tools/string.h>
+ #include <udjat/tools/intl.h>
+ #include <libreinstall/action.h>
 
- using namespace Udjat;
  using namespace std;
+ using namespace Udjat;
 
  namespace Reinstall {
 
-	std::shared_ptr<Builder> Builder::factory() {
+	Action::Script::Script(const Udjat::XML::Node &node)
+		: Udjat::Script{node},type{(Action::Script::Type) Udjat::String{node,"type","post"}.select("pre","post",NULL)} {
 
-		class DummyBuilder : public Builder {
-		public:
+		if(type < 0) {
+			throw runtime_error(_("Invalid 'type' attribute"));
+		}
 
-			constexpr DummyBuilder() : Builder{"builder"} {
-			}
-
-			void pre() override {
-			}
-
-			void post() override {
-			}
-
-			void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
-				debug("Pushing '",file->c_str(),"' to dummy builder");
-			}
-
-			void write(std::shared_ptr<Writer> writer) {
-			}
-
-		};
-
-		return make_shared<DummyBuilder>();
-	}
-
-	void Builder::push_back(const Udjat::Abstract::Object &, const std::vector<Reinstall::Template> &) {
 	}
 
  }
+

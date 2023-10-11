@@ -114,7 +114,7 @@
 			uid{getuid(node)},
 			gid{getgid(node)},
 			shell{node.attribute("shell").as_bool(false)},
-			message{Quark(node,"message",msg).c_str()} {
+			title{Quark(node,"title",msg).c_str()} {
 		if(!(cmdline && *cmdline)) {
 			throw runtime_error(_("The required attribute 'cmdline' is missing"));
 		}
@@ -124,14 +124,19 @@
 	}
 
 	std::string Script::to_string() const noexcept {
+		return c_str();
+	}
 
-		if(message && *message) {
-			return message;
+	const char * Script::c_str() const noexcept {
+
+		if(title && *title) {
+			return title;
 		}
 
 		return cmdline;
 
 	}
+
 
 	int Script::run(const Udjat::NamedObject &object) {
 		return run(String{cmdline}.expand(object).c_str());
@@ -173,8 +178,8 @@
 			}
 		};
 
-		if(message && *message) {
-			info() << message << endl;
+		if(title && *title) {
+			info() << title << endl;
 		}
 		return SubProcess{uid,gid,name(),cmdline}.run();
 

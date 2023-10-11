@@ -22,3 +22,8 @@ do
 	ln -f "${filename}" "${name}"
 done
 popd
+
+ln -f src/include/udjat/tools/script.h ~/project/udjat/libudjat/src/include/udjat/tools/script.h
+
+ln -f src/library/tools/script.cc ~/project/udjat/libudjat/src/tools/script.cc
+

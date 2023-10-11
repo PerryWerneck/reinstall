@@ -43,7 +43,7 @@
 		Logger::Level out = Logger::Info;
 		Logger::Level err = Logger::Error;
 
-		const char *message = nullptr;
+		const char *title = nullptr;
 		int run(const char *cmdline);
 
 	public:
@@ -51,12 +51,15 @@
 		constexpr Script(const char *str) : NamedObject{"script"}, cmdline{str} {
 		}
 
-		Script(const XML::Node &node, const char *message = "");
+		Script(const XML::Node &node, const char *title = "");
 		~Script();
 
 		/// @brief Run script in foreground.
 		/// @return Script return code.
 		int run(const Udjat::NamedObject &object);
+
+		/// @brief Get string title.
+		const char *c_str() const noexcept;
 
 		/// @brief Get script title.
 		std::string to_string() const noexcept override;

@@ -89,7 +89,13 @@
 			return false;
 		});
 
-		debug("Repositories.size()=",repositories.size()," sources.size()=",sources.size()," templates.size()=",templates.size());
+		// Load scripts.
+		search(node,"script",[this](const pugi::xml_node &node){
+			scripts.emplace_back(node);
+			return false;
+		});
+
+		// debug("Repositories.size()=",repositories.size()," sources.size()=",sources.size()," templates.size()=",templates.size());
 	}
 
 	Action::OutPut::OutPut(const Udjat::XML::Node &node)

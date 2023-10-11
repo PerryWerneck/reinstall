@@ -21,6 +21,7 @@
 
  #include <udjat/defs.h>
  #include <udjat/tools/xml.h>
+ #include <udjat/tools/script.h>
  #include <memory>
 
  #include <libreinstall/source.h>
@@ -73,6 +74,26 @@
 
 	protected:
 
+		class UDJAT_API Script : public Udjat::Script {
+		public:
+
+			enum Type {
+				Pre,
+				Post
+			};
+
+			Script(const Udjat::XML::Node &node);
+
+			inline bool operator==(Type type) const noexcept {
+				return this->type == type;
+			}
+
+		private:
+
+			Type type;
+
+		};
+
 		struct BootOptions {
 
 			/// @brief The text for boot label.
@@ -102,6 +123,9 @@
 
 		/// @brief List of kernel parameters defined by XML.
 		std::vector<std::shared_ptr<Reinstall::Kernel::Parameter>> kparms;
+
+		/// @brief List of scripts
+		std::vector<Script> scripts;
 
 		/// @brief Get image builder.
 		virtual std::shared_ptr<Reinstall::Builder> BuilderFactory() const;
