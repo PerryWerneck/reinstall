@@ -16,6 +16,7 @@ LIBRARY_SOURCES = \
 	$(wildcard src/library/ui/dialogs/*.cc) \
 	$(wildcard src/library/ui/menu/*.cc) \
 	$(wildcard src/library/sources/*.cc) \
+	$(wildcard src/library/tools/*.cc) \
 	$(wildcard src/library/builders/*.cc) \
 	$(wildcard src/library/writers/*.cc) \
 	$(wildcard src/library/actions/*.cc) \
