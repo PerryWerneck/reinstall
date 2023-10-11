@@ -24,6 +24,7 @@
  #include <udjat/tools/object.h>
  #include <udjat/tools/singleton.h>
  #include <udjat/tools/configuration.h>
+ #include <udjat/tools/script.h>
  #include <stdexcept>
  #include <unordered_map>
  #include <vector>
@@ -131,6 +132,16 @@
 	}
 
 	void Action::prepare(Dialog::Progress &progress, Source::Files &files) const {
+
+		progress.message(_("Preparing"));
+		{
+			for(const Action::Script &script : scripts) {
+				if(script == Script::Pre) {
+					progress.url(script.c_str());
+					script.run(*this);
+				}
+			}
+		}
 
 		progress.message(_("Getting file list"));
 		{
@@ -368,6 +379,13 @@
 
 		progress.message(_("Building image"));
 		builder->post();
+
+		for(const Action::Script &script : scripts) {
+			if(script == Script::Post) {
+				progress.url(script.c_str());
+				script.run(*this);
+			}
+		}
 
 		progress.message(_("Build process complete"));
 	}

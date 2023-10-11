@@ -44,7 +44,7 @@
 		Logger::Level err = Logger::Error;
 
 		const char *title = nullptr;
-		int run(const char *cmdline);
+		int run(const char *cmdline) const;
 
 	public:
 
@@ -56,7 +56,7 @@
 
 		/// @brief Run script in foreground.
 		/// @return Script return code.
-		int run(const Udjat::NamedObject &object);
+		int run(const Udjat::NamedObject &object) const;
 
 		/// @brief Get string title.
 		const char *c_str() const noexcept;

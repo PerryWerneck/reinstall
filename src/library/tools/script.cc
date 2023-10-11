@@ -138,11 +138,11 @@
 	}
 
 
-	int Script::run(const Udjat::NamedObject &object) {
+	int Script::run(const Udjat::NamedObject &object) const {
 		return run(String{cmdline}.expand(object).c_str());
 	}
 
-	int Script::run(const char *cmdline) {
+	int Script::run(const char *cmdline) const {
 
 		class SubProcess : public Udjat::SubProcess {
 		private:
