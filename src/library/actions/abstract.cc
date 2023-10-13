@@ -138,7 +138,9 @@
 			for(const Action::Script &script : scripts) {
 				if(script == Script::Pre) {
 					progress.url(script.c_str());
-					script.run(*this);
+					if(script.run(*this)) {
+						throw runtime_error(_("Preparation script has failed"));
+					}
 				}
 			}
 		}
@@ -383,7 +385,9 @@
 		for(const Action::Script &script : scripts) {
 			if(script == Script::Post) {
 				progress.url(script.c_str());
-				script.run(*this);
+				if(script.run(*this)) {
+					throw runtime_error(_("Post script has failed"));
+				}
 			}
 		}
 

@@ -152,6 +152,9 @@
 		protected:
 
 			void pre() override {
+
+				Udjat::SubProcess::pre();
+
 #ifdef _WIN32
 
 				// TODO
@@ -173,15 +176,16 @@
 			}
 
 		public:
-			SubProcess(int u, int g, const char *name, const char *command)
-				: Udjat::SubProcess{name,command,Logger::Info,Logger::Info}, uid{u}, gid{g} {
+			SubProcess(int u, int g, const char *name, const char *command,Logger::Level out, Logger::Level err)
+				: Udjat::SubProcess{name,command,out,err}, uid{u}, gid{g} {
 			}
 		};
 
 		if(title && *title) {
 			info() << title << endl;
 		}
-		return SubProcess{uid,gid,name(),cmdline}.run();
+
+		return SubProcess{uid,gid,name(),cmdline,out,err}.run();
 
 	}
 

@@ -112,10 +112,7 @@
 
 		}
 
-		void write(std::shared_ptr<Writer> writer) override {
-
-			throw runtime_error("No write");
-
+		void write(std::shared_ptr<Writer>) override {
 		}
 
  	};

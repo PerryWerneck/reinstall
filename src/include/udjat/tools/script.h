@@ -34,9 +34,11 @@
 	private:
 		const char *cmdline = "";
 
+#ifndef _WIN32
 		int uid = -1;
 		int gid = -1;
 		bool shell = false;
+#endif // !_WIN32
 
 	protected:
 
@@ -48,7 +50,7 @@
 
 	public:
 
-		constexpr Script(const char *str) : NamedObject{"script"}, cmdline{str} {
+		constexpr Script(const char *str, const char *name = "script") : NamedObject{name}, cmdline{str} {
 		}
 
 		Script(const XML::Node &node, const char *title = "");
