@@ -28,6 +28,7 @@
  #include <udjat/tools/xml.h>
  #include <udjat/tools/file/temporary.h>
  #include <udjat/tools/file/handler.h>
+ #include <udjat/tools/string.h>
  #include <udjat/tools/file.h>
  #include <udjat/tools/protocol.h>
  #include <udjat/tools/string.h>
@@ -66,7 +67,7 @@
 		filename{Udjat::XML::QuarkFactory(node,"path").c_str()},
 		marker{get_marker(node)},
 		escape_values{getAttribute(node,"template","escape-control-characters",strncasecmp(name(),"grub",4) == 0)},
-		escape_chars{Udjat::XML::QuarkFactory(node,"filter","&").c_str()} {
+		escape_chars{Udjat::XML::QuarkFactory(node,"control-characters","value","&").c_str()} {
 
 		if(!(filter && *filter)) {
 			filter = strrchr(url,'/');
@@ -97,22 +98,48 @@
 
 	Udjat::String Template::apply(const Udjat::Abstract::Object &object) const {
 
+		bool dbg = Logger::enabled(Logger::Debug);
 		Progress &progress{Progress::instance()};
 
 		auto worker = Protocol::WorkerFactory(String{this->url}.expand(object).c_str());
-
-		Logger::String{"Loading ",worker->url().c_str()}.write(Logger::Trace,"template");
+		Logger::String{"Loading ",worker->url().c_str()}.trace(name());
 		progress.url(worker->url().c_str());
-
 		String text = worker->get([&progress](double current, double total){
 			progress.progress(current,total);
 			return true;
 		});
 
-		/// TODO: expand escaped values.
-		text.expand(object);
+		if(escape_values) {
 
-		if(Logger::enabled(Logger::Debug)) {
+			// Do string escaping.
+			text.expand(marker,[this,&object](const char *key, std::string &str){
+
+				if(!object.getProperty(key,str)) {
+					return false;
+				}
+
+				// Convert string.
+				for(const char *src = escape_chars;*src;src++) {
+
+					char dst[] = {*escape_char,*src,0};
+					for(size_t pos = str.find(*src); pos != string::npos; pos = str.find(*src,pos+2)) {
+						str.replace(pos,1,dst);
+					}
+
+				}
+
+				return true;
+
+			});
+
+		} else {
+
+			// No need for escaping, just expand it.
+			text.expand(marker,object);
+
+		}
+
+		if(dbg) {
 			Logger::String{"New contents:\n",text.c_str(),"\n"}.write(Logger::Debug,name());
 		}
 
