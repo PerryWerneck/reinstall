@@ -92,8 +92,7 @@
 
 					// Found template
 					Logger::String{"Replacing file fat://",filename," with template"}.trace(tmpl.name());
-					String text{tmpl.get(object)};
-					text.expand(object,true,true);
+					String text{tmpl.apply(object)};
 
 					FIL fp;
 					memset(&fp,0,sizeof(fp));

@@ -49,19 +49,24 @@
 
  namespace Reinstall {
 
+	static char get_marker(const Udjat::XML::Node &node) {
+		const char *marker = node.attribute("marker").as_string(((std::string) Config::Value<String>("template","marker","$")).c_str());
+
+		if(strlen(marker) > 1 || !marker[0]) {
+			throw runtime_error("Marker attribute is invalid");
+		}
+
+		return marker[0];
+	}
+
 	Template::Template(const Udjat::XML::Node &node) :
 		Udjat::NamedObject{node},
 		filter{Udjat::XML::QuarkFactory(node,"filter").c_str()},
 		url{Udjat::XML::QuarkFactory(node,"url").c_str()},
-		filename{Udjat::XML::QuarkFactory(node,"path").c_str()} {
-
-		const char *sMarker = node.attribute("marker").as_string(((std::string) Config::Value<String>("template","marker","$")).c_str());
-
-		if(strlen(sMarker) > 1 || !sMarker[0]) {
-			throw runtime_error("Marker attribute is invalid");
-		}
-
-		this->marker = sMarker[0];
+		filename{Udjat::XML::QuarkFactory(node,"path").c_str()},
+		marker{get_marker(node)},
+		escape_values{getAttribute(node,"template","escape-control-characters",strncasecmp(name(),"grub",4) == 0)},
+		escape_chars{Udjat::XML::QuarkFactory(node,"filter","&").c_str()} {
 
 		if(!(filter && *filter)) {
 			filter = strrchr(url,'/');
@@ -90,7 +95,7 @@
 		return false;
 	}
 
-	Udjat::String Template::get(const Udjat::Abstract::Object &object) const {
+	Udjat::String Template::apply(const Udjat::Abstract::Object &object) const {
 
 		Progress &progress{Progress::instance()};
 
@@ -99,10 +104,19 @@
 		Logger::String{"Loading ",worker->url().c_str()}.write(Logger::Trace,"template");
 		progress.url(worker->url().c_str());
 
-		return worker->get([&progress](double current, double total){
+		String text = worker->get([&progress](double current, double total){
 			progress.progress(current,total);
 			return true;
-		}).expand();
+		});
+
+		/// TODO: expand escaped values.
+		text.expand(object);
+
+		if(Logger::enabled(Logger::Debug)) {
+			Logger::String{"New contents:\n",text.c_str(),"\n"}.write(Logger::Debug,name());
+		}
+
+		return text;
 
 	}
 
@@ -134,43 +148,12 @@
 
 		};
 
+		String text{this->apply(object)};
+
 		return make_shared<Parsed>(
-					this->get(object).expand(marker,object,true,true),
+					text,
 					path
 				);
 	}
-
-	/*
-	void Template::apply(const Udjat::Abstract::Object &object, Source::Files &files) const {
-
-		/// @brief New sources, with prepared templates.
-		vector<shared_ptr<Reinstall::Source::File>> updated;
-
-		// Search for templates, when found, remove files, append on updated.
-		files.remove_if([this,&object,&updated](const Source::File &file){
-
-			if(test(file.c_str())) {
-
-				Logger::String{"Apply ",this->url," on '",file.c_str()}.trace(this->name());
-				updated.push_back(this->SourceFactory(object,file.c_str()));
-
-				debug()
-
-				return true;
-
-			}
-
-			return false;
-
-		});
-
-		// Insert contents of 'updated' in files.
-		for(auto source : updated) {
-			Logger::String{"Replacing '", source->c_str(),"'"}.trace("template");
-			files.insert(source);
-		}
-
-	}
-	*/
 
  }

@@ -478,13 +478,7 @@
 				if(updates.size()) {
 
 					// Have updates, get template.
-					String text = tmpl.get(object);
-					text.expand(object);
-
-					if(Logger::enabled(Logger::Debug)) {
-						Logger::String{"New contents:\n",text.c_str(),"\n"}.write(Logger::Debug,tmpl.name());
-					}
-
+					String text{tmpl.apply(object)};
 					for(string &path : updates) {
 						insert(Source::File::Factory(path.c_str(),text.c_str()));
 					}

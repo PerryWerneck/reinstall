@@ -120,10 +120,10 @@
 	 		<attribute name='icon-name' value='drive-removable-media' />
 
 			<!-- Replace every 'grub.cfg' file with template -->
-			<template name='grub.cfg' url='file://${template-dir}/grub.cfg' />
+			<template name='grub.cfg' url='file://${template-dir}/grub.cfg' escape-control-characters='yes' />
 			
 			<!-- Replace every 'isolinux.cfg' file with template -->
-			<template name='isolinux.cfg' url='file://${template-dir}/isolinux.cfg' />
+			<template name='isolinux.cfg' url='file://${template-dir}/isolinux.cfg' escape-control-characters='no' />
 
 			<!-- Files to copy to ISO image -->
 			<source name='boot' url='/boot/x86_64/' repository='install' />
