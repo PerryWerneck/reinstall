@@ -272,6 +272,9 @@
 
  #else
 
+	Udjat::URL SlpClient::url() const {
+		throw runtime_error(_("Unable to use SLP protocol because the core library was built without it"));
+	}
 
  #endif // HAVE_LIBSLP
 
