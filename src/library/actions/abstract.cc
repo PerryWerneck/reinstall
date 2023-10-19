@@ -23,6 +23,7 @@
  #include <udjat/tools/xml.h>
  #include <udjat/tools/object.h>
  #include <udjat/tools/singleton.h>
+ #include <udjat/tools/application.h>
  #include <udjat/tools/configuration.h>
  #include <udjat/tools/script.h>
  #include <stdexcept>
