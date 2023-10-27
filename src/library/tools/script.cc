@@ -166,6 +166,7 @@
 						throw system_error(errno,system_category(),_("Cant set subprocess user id"));
 					}
 				}
+
 				if(gid != -1) {
 					if(setgid(gid) != 0) {
 						throw system_error(errno,system_category(),_("Cant set subprocess group id"));
