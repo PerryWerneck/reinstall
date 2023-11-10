@@ -113,7 +113,6 @@
 		<Unit filename="src/include/reinstall/repository.h" />
 		<Unit filename="src/include/reinstall/script.h" />
 		<Unit filename="src/include/reinstall/source.h" />
-		<Unit filename="src/include/reinstall/sources/cached.h" />
 		<Unit filename="src/include/reinstall/sources/efiboot.h" />
 		<Unit filename="src/include/reinstall/sources/initrd.h" />
 		<Unit filename="src/include/reinstall/sources/kernel.h" />
