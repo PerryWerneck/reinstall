@@ -212,6 +212,7 @@
 		<Unit filename="src/library/source/kernel.cc" />
 		<Unit filename="src/library/source/mirror.cc" />
 		<Unit filename="src/library/source/mirrorcache_mirror.cc" />
+		<Unit filename="src/library/source/rpath.cc" />
 		<Unit filename="src/library/source/save.cc" />
 		<Unit filename="src/library/source/source.cc" />
 		<Unit filename="src/library/source/zipfile.cc" />

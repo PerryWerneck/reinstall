@@ -58,6 +58,9 @@
 
 		static std::shared_ptr<Source> factory(const Udjat::XML::Node &node);
 
+		/// @brief Get path relative to disk partition
+		static std::string rpath(const char *path, const char *object_name = "rpath");
+
 		/// @brief Build Source using fixed values.
 		/// @param remote URL of the root for remote source.
 		/// @param local Path for source in the local file system.
