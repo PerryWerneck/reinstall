@@ -123,7 +123,7 @@
 					Logger::String{error_message}.error("ui");
 				}
 
-				Glib::signal_idle().connect([mainloop](){
+				Glib::signal_idle().connect([this,mainloop](){
 					mainloop->quit();
 					return 0;
 				});
@@ -133,7 +133,9 @@
 		});
 
 		dialog.show_all();
+		mark_busy();
 		mainloop->run();
+		unmark_busy();
 		dialog.hide();
 
 		if(rc) {
