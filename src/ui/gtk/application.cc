@@ -133,9 +133,7 @@
 		});
 
 		dialog.show_all();
-		mark_busy();
 		mainloop->run();
-		unmark_busy();
 		dialog.hide();
 
 		if(rc) {
