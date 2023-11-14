@@ -148,6 +148,7 @@
 		<Unit filename="src/library/core/source/factory.cc" />
 		<Unit filename="src/library/core/source/file.cc" />
 		<Unit filename="src/library/core/source/prepare.cc" />
+		<Unit filename="src/library/core/source/rpath.cc" />
 		<Unit filename="src/library/core/source/source.cc" />
 		<Unit filename="src/library/core/template.cc" />
 		<Unit filename="src/library/dialogs/button.cc" />

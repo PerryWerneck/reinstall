@@ -260,7 +260,6 @@
 		auto connection = signal_show().connect([this,task,&error_message]{
 
 			// Widget is showing, start background thread.
-			debug("---------------------> BUSY");
 			::Gtk::Application::get_default()->mark_busy();
 			Udjat::ThreadPool::getInstance().push([this,task,&error_message](){
 
@@ -286,7 +285,6 @@
 				Glib::signal_idle().connect([this,rc](){
 					Logger::String{"Background task complete with rc=",rc}.trace("progress");
 					::Gtk::Application::get_default()->unmark_busy();
-					debug("---------------------> NOT BUSY");
 					response(rc);
 					return 0;
 				});

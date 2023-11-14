@@ -27,6 +27,7 @@
  #include <udjat/tools/quark.h>
  #include <udjat/tools/intl.h>
  #include <udjat/tools/file/handler.h>
+ #include <udjat/tools/string.h>
 
  #include <libreinstall/source.h>
  #include <libreinstall/builder.h>
@@ -48,10 +49,14 @@
 
  Udjat::Module * udjat_module_init() {
 
+
  	/// @brief The 'image' builder.
  	class Builder : public Reinstall::Builder {
+	private:
+		const Reinstall::Action &action;
+
 	public:
-		constexpr Builder() : Reinstall::Builder{"grub-setup"} {
+		constexpr Builder(const Reinstall::Action &a) : Reinstall::Builder{"grub-setup"}, action{a} {
 		}
 
 		void pre() override {
@@ -62,10 +67,13 @@
 
 		void push_back(std::shared_ptr<Reinstall::Source::File> file) override {
 
-			String path{BOOT_PATH,file->c_str()};
+			String path{file->c_str()};
 
+			path.expand(action);
+
+			// Allways remove to prevent caching.
 			if(::remove(path.c_str()) && errno != ENOENT) {
-				throw system_error(errno,system_category(),path.c_str());
+				throw system_error(errno,system_category(),file->c_str());
 			}
 
 			Logger::String{"Saving '",path.c_str(),"'"}.info("grub");
@@ -123,7 +131,7 @@
 		Kernel(const Udjat::XML::Node &node) : Source{node,false} {
 
 			if(!(imgpath && *imgpath)) {
-				imgpath = "/kernel." PACKAGE_NAME;
+				imgpath = "${boot-path}/kernel." PACKAGE_NAME;
 			}
 
 		}
@@ -135,7 +143,7 @@
 		InitRD(const Udjat::XML::Node &node) : Source{node,false} {
 
 			if(!(imgpath && *imgpath)) {
-				imgpath = "/initrd." PACKAGE_NAME;
+				imgpath = "${boot-path}/initrd." PACKAGE_NAME;
 			}
 
 		}
@@ -169,24 +177,12 @@
 		}
 
 		std::shared_ptr<Reinstall::Builder> BuilderFactory() const override {
-			return make_shared<Builder>();
+			return make_shared<Builder>(*this);
 		}
 
 		bool getProperty(const char *key, std::string &value) const override {
 
 			debug("Searching for '",key,"' in ",name());
-
-			/*
-			if(strcasecmp(key,"kernel-fspath") == 0 || strcasecmp(key,"kernel-rpath") == 0 ) {
-				value = (kernel->rpath()+1);
-				return true;
-			}
-
-			if(strcasecmp(key,"initrd-fspath") == 0 || strcasecmp(key,"initrd-rpath") == 0 ) {
-				value = (initrd->rpath()+1);
-				return true;
-			}
-			*/
 
 			if(strcasecmp(key,"boot-path") == 0 || strcasecmp(key,"grub-path") == 0) {
 
@@ -199,54 +195,22 @@
 				return true;
 			}
 
+			if(strcasecmp(key,"kernel-file") == 0 || strcasecmp(key,"kernel-rpath") == 0) {
+				value = Source::rpath(String{kernel->image_path()}.expand(*this).c_str(),name());
+				return true;
+			}
+
+			if(strcasecmp(key,"initrd-file") == 0 || strcasecmp(key,"initrd-rpath") == 0) {
+				value = Source::rpath(String{initrd->image_path()}.expand(*this).c_str(),name());
+				return true;
+			}
+
 			if(strcasecmp(key,"grub-conf-dir") == 0) {
 #ifdef DEBUG
 				value = "/tmp";
 #else
 				value = "/etc/grub.d";
 #endif // DEBUG
-				return true;
-			}
-
-			if(strcasecmp(key,"install-enabled") == 0) {
-				value = "1";
-				return true;
-			}
-
-			if(strcasecmp(key,"kernel-path") == 0) {
-				// TODO: Get from kernel source
-				value = Reinstall::Action::getProperty("boot-path") + Reinstall::Action::getProperty("kernel-filename");
-				debug(key,"=",value);
-				return true;
-			}
-
-			if(strcasecmp(key,"initrd-path") == 0) {
-				// TODO: Get from initrd source
-				value = Reinstall::Action::getProperty("boot-path") + Reinstall::Action::getProperty("initrd-filename");
-				debug(key,"=",value);
-				return true;
-			}
-
-			if(strcasecmp(key,"kernel-filename") == 0) {
-				value = "kernel." PACKAGE_NAME;
-				return true;
-			}
-
-			if(strcasecmp(key,"initrd-filename") == 0) {
-				// TODO: Get from initrd source
-				value = "initrd." PACKAGE_NAME;
-				return true;
-			}
-
-			if(strcasecmp(key,"kernel-file") == 0) {
-				// TODO: Get from kernel source
-				value = Reinstall::Action::getProperty("grub-path") + "/" + Reinstall::Action::getProperty("kernel-filename");
-				return true;
-			}
-
-			if(strcasecmp(key,"initrd-file") == 0) {
-				// TODO: Get from initrd source
-				value = Reinstall::Action::getProperty("grub-path") + "/" + Reinstall::Action::getProperty("initrd-filename");
 				return true;
 			}
 

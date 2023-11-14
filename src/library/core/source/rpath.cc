@@ -25,6 +25,7 @@
  #include <udjat/defs.h>
  #include <libreinstall/source.h>
  #include <udjat/tools/logger.h>
+ #include <udjat/tools/intl.h>
  #include <libgen.h>
  #include <mntent.h>
 
@@ -75,7 +76,7 @@
 		}
 
 		if(mountpoint.size() == 1 && mountpoint[0] == '/') {
-			Logger::String{__FUNCTION__,"(",this->path,")='",path,"' (file is on '/' mountpoint)"}.trace(object_name);
+			Logger::String{__FUNCTION__,"(",path,")='",path,"' (file is on '/' mountpoint)"}.trace(object_name);
 			return path;
 		}
 

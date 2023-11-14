@@ -135,7 +135,7 @@
 		virtual Udjat::URL remote() const;
 
 		/// @brief Get path inside install image.
-		/// @return The full path inside kernel imagem.
+		/// @return The full path inside kernel image.
 		virtual Udjat::String image_path() const;
 
 		/// @brief Get list of source files.
